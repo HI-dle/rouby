@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: rouby
+  config:
+    import:
+      - optional:file:.env[.properties]
+      - classpath:properties/base.yml
+      - classpath:properties/datasource.yml
+      - classpath:properties/jpa.yml
+      - classpath:properties/redis.yml
+  profiles:
+    group:
+      local: local
+      test: test
+      dev: dev
+      prod: prod
+    active: local
