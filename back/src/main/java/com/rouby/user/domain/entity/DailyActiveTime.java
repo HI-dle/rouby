@@ -1,4 +1,4 @@
-package com.rouby.user.domain.entity.vo;
+package com.rouby.user.domain.entity;
 
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
@@ -21,11 +21,11 @@ public class DailyActiveTime implements Serializable {
     return new DailyActiveTime(dailyStartTime, dailyEndTime);
   }
 
-  protected DailyActiveTime() {
-  }
-
   private DailyActiveTime(LocalTime dailyStartTime, LocalTime dailyEndTime) {
     this.dailyStartTime = dailyStartTime;
     this.dailyEndTime = dailyEndTime;
+  }
+
+  protected DailyActiveTime() {
   }
 }

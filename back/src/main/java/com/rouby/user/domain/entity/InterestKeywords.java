@@ -1,4 +1,4 @@
-package com.rouby.user.domain.entity.vo;
+package com.rouby.user.domain.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -17,15 +17,18 @@ public class InterestKeywords implements Serializable {
   @Column(columnDefinition = "jsonb")
   private List<String> interestKeywords;
 
-  protected InterestKeywords() {
-    this.interestKeywords = new ArrayList<>();
+  public static InterestKeywords empty(){
+    return new InterestKeywords(new ArrayList<>());
+  }
+
+  public static InterestKeywords of(List<String> keywords) {
+    return new InterestKeywords(keywords);
   }
 
   private InterestKeywords(List<String> interestKeywords) {
     this.interestKeywords = new ArrayList<>(interestKeywords);
   }
 
-  public static InterestKeywords of(List<String> keywords) {
-    return new InterestKeywords(keywords);
+  protected InterestKeywords() {
   }
 }

@@ -1,10 +1,6 @@
 package com.rouby.user.domain.entity;
 
 import com.rouby.common.jpa.BaseEntity;
-import com.rouby.user.domain.entity.vo.AuthProvider;
-import com.rouby.user.domain.entity.vo.CommunicationTone;
-import com.rouby.user.domain.entity.vo.DailyActiveTime;
-import com.rouby.user.domain.entity.vo.InterestKeywords;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -19,6 +15,7 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Builder;
 import lombok.Getter;
 
 @Entity
@@ -48,7 +45,7 @@ public class User extends BaseEntity {
   private CommunicationTone communicationTone;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<NotificationSetting> notificationSettings = new ArrayList<>();
+  private List<NotificationSetting> notificationSettings;
 
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
@@ -56,28 +53,35 @@ public class User extends BaseEntity {
 
   private LocalDateTime lastActivatedAt;
 
-  protected User() {
+  public void addNotificationSetting(NotificationType type, boolean isEnabled) {
+    NotificationSetting setting = NotificationSetting.builder()
+        .user(this)
+        .notificationType(type)
+        .isEnabled(isEnabled)
+        .build();
+
+    this.notificationSettings.add(setting);
   }
 
+  @Builder
   private User(
       String email,
       String password,
       String nickname,
-      DailyActiveTime dailyActiveTime,
-      InterestKeywords interestKeyword,
-      CommunicationTone communicationTone,
-      List<NotificationSetting> notificationSettings,
       AuthProvider authProvider,
       LocalDateTime lastActivatedAt
   ) {
     this.email = email;
     this.password = password;
     this.nickname = nickname;
-    this.dailyActiveTime = dailyActiveTime;
-    this.interestKeyword = interestKeyword;
-    this.communicationTone = communicationTone;
-    this.notificationSettings = notificationSettings;
+    this.dailyActiveTime = DailyActiveTime.defaultTime();
+    this.interestKeyword = InterestKeywords.empty();
+    this.communicationTone = CommunicationTone.empty();
+    this.notificationSettings = new ArrayList<>();
     this.authProvider = authProvider;
     this.lastActivatedAt = lastActivatedAt;
+  }
+
+  protected User() {
   }
 }

@@ -1,4 +1,4 @@
-package com.rouby.user.domain.entity.vo;
+package com.rouby.user.domain.entity;
 
 public enum AuthProvider {
 

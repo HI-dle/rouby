@@ -1,4 +1,4 @@
-package com.rouby.user.domain.entity.vo;
+package com.rouby.user.domain.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -18,11 +18,14 @@ public class CommunicationTone implements Serializable {
   private List<String> roubyCommunicationTone;
 
   protected CommunicationTone() {
-    this.roubyCommunicationTone = new ArrayList<>();
   }
 
   private CommunicationTone(List<String> communicationTone) {
     this.roubyCommunicationTone = new ArrayList<>(communicationTone);
+  }
+
+  public static CommunicationTone empty(){
+    return new CommunicationTone(new ArrayList<>());
   }
 
   public static CommunicationTone of(List<String> communicationTone) {

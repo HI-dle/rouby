@@ -1,7 +1,6 @@
 package com.rouby.user.domain.entity;
 
 import com.rouby.common.jpa.BaseEntity;
-import com.rouby.user.domain.entity.vo.NotificationType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.Builder;
 import lombok.Getter;
 
 @Entity
@@ -33,12 +33,25 @@ public class NotificationSetting extends BaseEntity {
   @Column(nullable = false)
   private boolean isEnabled;
 
-  protected NotificationSetting() {}
+  public void enable() {
+    if (!isEnabled) {
+      this.isEnabled = true;
+    }
+  }
 
+  public void disable() {
+    if (isEnabled) {
+      this.isEnabled = false;
+    }
+  }
+
+  @Builder
   private NotificationSetting(User user, NotificationType notificationType, boolean isEnabled) {
     this.user = user;
     this.notificationType = notificationType;
     this.isEnabled = isEnabled;
   }
+
+  protected NotificationSetting() {}
 }
 
