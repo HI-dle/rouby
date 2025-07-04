@@ -1,5 +1,6 @@
 package com.rouby.user.domain.entity;
 
+import com.rouby.common.jpa.BaseEntity;
 import com.rouby.user.domain.entity.vo.NotificationType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,7 +16,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
-public class NotificationSetting {
+public class NotificationSetting extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
