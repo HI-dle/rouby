@@ -2,6 +2,7 @@ package com.rouby.common.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.rouby.common.exception.CustomException;
 import java.util.List;
 
 public record ErrorResponse(
@@ -16,6 +17,10 @@ public record ErrorResponse(
 
   public static ErrorResponse from(Exception ex) {
     return new ErrorResponse(ex.getMessage(), null, null);
+  }
+
+  public static ErrorResponse from(CustomException ex) {
+    return new ErrorResponse(ex.getMessage(), ex.getCode(), null);
   }
 
   public static ErrorResponse of(String message, String code) {

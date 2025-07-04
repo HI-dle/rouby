@@ -45,7 +45,9 @@ public class GlobalExceptionHandler {
     log(e, request, BAD_REQUEST);
     return ResponseEntity
         .badRequest()
-        .body(ErrorResponse.of(ApiErrorCode.INVALID_REQUEST.getMessage(), errorFields));
+        .body(ErrorResponse.of(ApiErrorCode.INVALID_REQUEST.getMessage(),
+            ApiErrorCode.INVALID_REQUEST.getCode(),
+            errorFields));
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -64,7 +66,9 @@ public class GlobalExceptionHandler {
     log(e, request, BAD_REQUEST);
     return ResponseEntity
         .badRequest()
-        .body(ErrorResponse.of(ApiErrorCode.INVALID_REQUEST.getMessage(), errorFields));
+        .body(ErrorResponse.of(ApiErrorCode.INVALID_REQUEST.getMessage(),
+            ApiErrorCode.INVALID_REQUEST.getCode(),
+            errorFields));
   }
 
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
@@ -84,7 +88,9 @@ public class GlobalExceptionHandler {
     log(e, request, BAD_REQUEST);
     return ResponseEntity
         .badRequest()
-        .body(ErrorResponse.of(ApiErrorCode.TYPE_MISMATCH.getMessage(), errorFields));
+        .body(ErrorResponse.of(ApiErrorCode.TYPE_MISMATCH.getMessage(),
+            ApiErrorCode.TYPE_MISMATCH.getCode(),
+            errorFields));
   }
 
   @ExceptionHandler(HandlerMethodValidationException.class)
@@ -102,7 +108,9 @@ public class GlobalExceptionHandler {
     log(e, request, BAD_REQUEST);
     return ResponseEntity
         .badRequest()
-        .body(ErrorResponse.of(ApiErrorCode.INVALID_REQUEST.getMessage(), errorFields));
+        .body(ErrorResponse.of(ApiErrorCode.INVALID_REQUEST.getMessage(),
+            ApiErrorCode.INVALID_REQUEST.getCode(),
+            errorFields));
   }
 
   @ExceptionHandler(IllegalArgumentException.class)
