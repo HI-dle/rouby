@@ -52,7 +52,7 @@ public class Schedule extends BaseEntity {
   @Column(length = 1000)
   private String recurrenceRule;
 
-  @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "parent_schedule_id")
   private Schedule parentSchedule;
 
@@ -64,14 +64,14 @@ public class Schedule extends BaseEntity {
 
   @Builder
   public Schedule(Long userId, String title, String memo,
-      LocalDate routineActivateDate, Integer alarm_offset_minute,
+      LocalDate routineActivateDate, Integer alarm_offset_minutes,
       LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, String recurrenceRule) {
 
     this.userId = userId;
     this.title = title;
     this.memo = memo;
     this.routineActivateDate = routineActivateDate;
-    this.alarm_offset_minutes = alarm_offset_minute;
+    this.alarm_offset_minutes = alarm_offset_minutes;
     this.period = new Period(startDate, startTime, endDate, endTime);
     this.recurrenceRule = recurrenceRule;
   }

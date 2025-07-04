@@ -6,11 +6,13 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.util.Assert;
 
 @Embeddable
 @EqualsAndHashCode
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Period {
 
@@ -29,7 +31,6 @@ public class Period {
   public Period(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
 
     validate(startDate, startTime, endDate, endTime);
-
     this.startDate = startDate;
     this.startTime = startTime;
     this.endDate = endDate;
