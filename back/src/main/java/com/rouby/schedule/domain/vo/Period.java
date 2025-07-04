@@ -3,6 +3,7 @@ package com.rouby.schedule.domain.vo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -39,7 +40,9 @@ public class Period {
 
   private void validate(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
 
-    boolean result = !startDate.isAfter(endDate) && !startTime.isAfter(endTime);
+    LocalDateTime startDateTime = LocalDateTime.of(startDate, startTime);
+    LocalDateTime endDateTime = LocalDateTime.of(endDate, endTime);
+    boolean result = !startDateTime.isAfter(endDateTime);
     Assert.isTrue(result, "시작일시가 종료일시보다 늦을 수 없습니다.");
   }
 }
