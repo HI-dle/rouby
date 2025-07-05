@@ -24,7 +24,7 @@ import lombok.Getter;
 public class User extends BaseEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private Long id;
 
   @Column(unique = true, nullable = false, length = 100)
@@ -51,6 +51,10 @@ public class User extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private AuthProvider authProvider;
 
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  private UserRole role;
+
   private LocalDateTime lastActivatedAt;
 
   public void addNotificationSetting(NotificationType type, boolean isEnabled) {
@@ -69,6 +73,7 @@ public class User extends BaseEntity {
       String password,
       String nickname,
       AuthProvider authProvider,
+      UserRole role,
       LocalDateTime lastActivatedAt
   ) {
     this.email = email;
@@ -79,6 +84,7 @@ public class User extends BaseEntity {
     this.communicationTone = CommunicationTone.empty();
     this.notificationSettings = new ArrayList<>();
     this.authProvider = authProvider;
+    this.role = role == null ? UserRole.USER : role;
     this.lastActivatedAt = lastActivatedAt;
   }
 

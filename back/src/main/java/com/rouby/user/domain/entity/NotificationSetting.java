@@ -19,7 +19,7 @@ import lombok.Getter;
 public class NotificationSetting extends BaseEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
