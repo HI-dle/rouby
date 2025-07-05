@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.util.Objects;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -34,15 +35,24 @@ public class NotificationSetting extends BaseEntity {
   private boolean isEnabled;
 
   public void enable() {
-    if (!isEnabled) {
-      this.isEnabled = true;
-    }
+    this.isEnabled = true;
   }
 
   public void disable() {
-    if (isEnabled) {
-      this.isEnabled = false;
-    }
+    this.isEnabled = false;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    NotificationSetting that = (NotificationSetting) o;
+    return Objects.equals(user, that.user) && notificationType == that.notificationType;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(user, notificationType);
   }
 
   @Builder
@@ -52,6 +62,7 @@ public class NotificationSetting extends BaseEntity {
     this.isEnabled = isEnabled;
   }
 
-  protected NotificationSetting() {}
+  protected NotificationSetting() {
+  }
 }
 

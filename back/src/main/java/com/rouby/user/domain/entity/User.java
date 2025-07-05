@@ -13,8 +13,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -39,13 +39,13 @@ public class User extends BaseEntity {
   private DailyActiveTime dailyActiveTime;
 
   @Embedded
-  private InterestKeywords interestKeyword;
+  private InterestKeywords interestKeywords;
 
   @Embedded
   private CommunicationTone communicationTone;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<NotificationSetting> notificationSettings;
+  private Set<NotificationSetting> notificationSettings;
 
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
@@ -76,14 +76,15 @@ public class User extends BaseEntity {
       UserRole role,
       LocalDateTime lastActivatedAt
   ) {
+    if(email == null) throw new IllegalArgumentException("이메일은 null일 수 없습니다.");
     this.email = email;
     this.password = password;
     this.nickname = nickname;
     this.dailyActiveTime = DailyActiveTime.defaultTime();
-    this.interestKeyword = InterestKeywords.empty();
+    this.interestKeywords = InterestKeywords.empty();
     this.communicationTone = CommunicationTone.empty();
-    this.notificationSettings = new ArrayList<>();
-    this.authProvider = authProvider;
+    this.notificationSettings = new HashSet<>();
+    this.authProvider = authProvider == null ? AuthProvider.DEFAULT : authProvider;
     this.role = role == null ? UserRole.USER : role;
     this.lastActivatedAt = lastActivatedAt;
   }
