@@ -9,5 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *
  * @author : hanjihoon
  */
-public interface FeedbackJpaRepository extends JpaRepository<Long, Feedback>,
+public interface FeedbackJpaRepository extends JpaRepository<Feedback, Long>,
     FeedbackRepository,FeedbackJpaRepositoryCustom {}
