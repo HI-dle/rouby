@@ -9,7 +9,7 @@ import org.springframework.security.test.context.support.WithSecurityContext;
 @WithSecurityContext(factory = WithMockCustomUserSecurityContextFactory.class)
 public @interface WithMockCustomUser {
 
-    long id() default 1l;
+    long id() default 1L;
     String email() default "test@example.com";
     String name() default "Rob Winch";
     UserRole role() default UserRole.USER;

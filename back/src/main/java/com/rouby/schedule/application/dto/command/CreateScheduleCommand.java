@@ -5,10 +5,8 @@ import com.rouby.schedule.domain.enums.ByDay;
 import com.rouby.schedule.domain.enums.Freq;
 import com.rouby.schedule.domain.vo.RecurrenceRule;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Arrays;
-import java.util.stream.Collectors;
+import java.time.ZonedDateTime;
 import lombok.Builder;
 
 @Builder
@@ -35,7 +33,7 @@ public record CreateScheduleCommand(
         .startTime(startTime)
         .endDate(endDate)
         .endTime(endTime)
-        .recurrenceRule(recurrenceRule.toDomain())
+        .recurrenceRule((recurrenceRule != null) ? recurrenceRule.toDomain() : null)
         .build();
   }
 
@@ -44,14 +42,14 @@ public record CreateScheduleCommand(
       String freq,
       String byDay,
       Integer interval,
-      LocalDateTime until
+      ZonedDateTime until
   ) {
 
     public RecurrenceRule toDomain() {
 
       return RecurrenceRule.builder()
-          .freq(Freq.valueOf(freq))
-          .byDay(Arrays.stream(byDay.split(",")).map(ByDay::valueOf).collect(Collectors.toSet()))
+          .freq(Freq.parse(freq))
+          .byDay(ByDay.parseStringToSet(byDay))
           .interval(interval)
           .until(until)
           .build();

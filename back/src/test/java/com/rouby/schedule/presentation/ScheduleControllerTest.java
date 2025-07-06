@@ -4,7 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -49,11 +49,11 @@ class ScheduleControllerTest extends ControllerTestSupport {
         .title("하이들 모임!")
         .memo("뭉티기 먹을 것!")
         .alarmOffsetMinutes(1440)
-        .startDate(LocalDate.now().plusDays(14))
+        .startDate(LocalDate.of(2025, 7, 21))
         .startTime(LocalTime.of(10, 30))
-        .endDate(LocalDate.now().plusDays(14))
+        .endDate(LocalDate.of(2025, 7, 21))
         .endTime(LocalTime.of(22, 30))
-        .routineActivateDate(LocalDate.now())
+        .routineActivateDate(LocalDate.of(2025, 7, 7))
         .recurrenceRule(RecurrenceRuleRequest.builder()
             .freq("MONTHLY")
             .interval(1)
@@ -68,7 +68,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
         .thenReturn(scheduleId);
 
     // when
-    ResultActions resultActions = mockMvc.perform(put("/api/v1/schedules")
+    ResultActions resultActions = mockMvc.perform(post("/api/v1/schedules")
         .header("Authorization", "Bearer {ACCESS_TOKEN}")
         .content(content)
         .contentType(MediaType.APPLICATION_JSON)
@@ -87,8 +87,8 @@ class ScheduleControllerTest extends ControllerTestSupport {
                 fieldWithPath("memo").description("일정 메모"),
                 fieldWithPath("alarmOffsetMinutes").description("일정 전 알림 시간 설정 (5, 10, 15, 30 분 / 1, 2시간 / 1, 2 일 / 1주일 전"),
                 fieldWithPath("startDate").description("시작 일자 (예: 2025-08-30)"),
-                fieldWithPath("startTime").description("시작 시간 (예: 2025-08-30)"),
-                fieldWithPath("endDate").description("종료 일자 (예: 13:00:00)"),
+                fieldWithPath("startTime").description("시작 시간 (예: 13:00:00)"),
+                fieldWithPath("endDate").description("종료 일자 (예: 2025-08-30)"),
                 fieldWithPath("endTime").description("종료 시간 (예: 15:00:00)"),
                 fieldWithPath("routineActivateDate").description("루틴 활성 시점 (예: 2025-08-10)"),
                 fieldWithPath("recurrenceRule").description("반복 규칙"),

@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class ScheduleFacade {
 
-  private final ScheduleWriteService ScheduleWriteService;
+  private final ScheduleWriteService scheduleWriteService;
 
   public Long createSchedule(Long userId, CreateScheduleCommand command) {
-    return ScheduleWriteService.createSchedule(userId, command);
+    return scheduleWriteService.createSchedule(userId, command);
   }
 }

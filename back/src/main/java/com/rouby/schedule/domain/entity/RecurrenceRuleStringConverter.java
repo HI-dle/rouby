@@ -9,11 +9,13 @@ public class RecurrenceRuleStringConverter implements AttributeConverter<Recurre
 
   @Override
   public String convertToDatabaseColumn(RecurrenceRule attribute) {
+    if (attribute == null) return null;
     return attribute.toString();
   }
 
   @Override
   public RecurrenceRule convertToEntityAttribute(String dbData) {
+    if (dbData == null || dbData.isBlank()) return null;
     return RecurrenceRule.from(dbData);
   }
 }

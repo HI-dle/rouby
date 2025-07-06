@@ -12,10 +12,9 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import lombok.Builder;
-import org.springframework.validation.annotation.Validated;
 
 @Builder
 public record CreateScheduleRequest (
@@ -28,7 +27,7 @@ public record CreateScheduleRequest (
   @NotNull LocalTime startTime,
   @NotNull LocalDate endDate,
   @NotNull LocalTime endTime,
-  @Validated RecurrenceRuleRequest recurrenceRule
+  RecurrenceRuleRequest recurrenceRule
   ) {
 
   public CreateScheduleCommand toCommand() {
@@ -41,7 +40,7 @@ public record CreateScheduleRequest (
         .startTime(startTime)
         .endDate(endDate)
         .endTime(endTime)
-        .recurrenceRule(recurrenceRule.toCommand())
+        .recurrenceRule((recurrenceRule != null) ? recurrenceRule.toCommand() : null)
         .build();
   }
 
@@ -52,7 +51,7 @@ public record CreateScheduleRequest (
       @Pattern(regexp = "^(MO|TU|WE|TH|FR|SA|SU)(,(MO|TU|WE|TH|FR|SA|SU))*$")
       String byDay,
       @Positive @Max(30) Integer interval,
-      @Future LocalDateTime until
+      @Future ZonedDateTime until
   ) {
 
     public RecurrenceRuleCommand toCommand() {

@@ -21,6 +21,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -87,17 +88,23 @@ public class Schedule extends BaseEntity {
 
   private void validate() {
 
-    if (!period.isValidRoutineActivateDate(routineActivateDate)) {
-      throw new IllegalArgumentException("루틴 활성 일자가 일정보다 나중일 수 없습니다.");
+    if (routineActivateDate != null) {
+      if (!period.isValidRoutineActivateDate(routineActivateDate)) {
+        throw new IllegalArgumentException("루틴 활성 일자가 일정보다 나중일 수 없습니다.");
+      }
     }
   }
 
   public void assignUserId(Long userId) {
+    if (this.userId != null) {
+      throw new IllegalStateException("일정의 이미 설정된 user 정보를 변경할 수 없습니다.");
+    }
     this.userId = userId;
   }
 
   public void relateParentSchedule(Schedule schedule) {
     this.parentSchedule = schedule;
+    if (this.parentSchedule.children == null) this.parentSchedule.children = new ArrayList<>();
     this.parentSchedule.children.add(this);
   }
 }
