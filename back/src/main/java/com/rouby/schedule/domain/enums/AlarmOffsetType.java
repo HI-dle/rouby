@@ -6,10 +6,11 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public enum AlarmOffsetMinutes {
+public enum AlarmOffsetType {
 
   M_5(5, "5분 전"),
   M_10(10, "10분 전"),
+  M_15(15, "15분 전"),
   M_30(30, "30분 전"),
   H_1(60, "1시간 전"),
   H_2(120, "2시간 전"),

@@ -1,6 +1,7 @@
 package com.rouby.schedule.domain.entity;
 
 import com.rouby.common.jpa.BaseEntity;
+import com.rouby.schedule.domain.enums.AlarmOffsetType;
 import com.rouby.schedule.domain.enums.OverrideType;
 import com.rouby.schedule.domain.vo.Period;
 import jakarta.persistence.CascadeType;
@@ -44,7 +45,8 @@ public class Schedule extends BaseEntity {
 
   private LocalDate routineActivateDate;
 
-  private Integer alarm_offset_minutes;
+  @Enumerated(EnumType.STRING)
+  private AlarmOffsetType alarm_offset_type;
 
   @Embedded
   private Period period;
@@ -64,14 +66,14 @@ public class Schedule extends BaseEntity {
 
   @Builder
   public Schedule(Long userId, String title, String memo,
-      LocalDate routineActivateDate, Integer alarm_offset_minutes,
+      LocalDate routineActivateDate, AlarmOffsetType alarmOffsetType,
       LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, String recurrenceRule) {
 
     this.userId = userId;
     this.title = title;
     this.memo = memo;
     this.routineActivateDate = routineActivateDate;
-    this.alarm_offset_minutes = alarm_offset_minutes;
+    this.alarm_offset_type = alarmOffsetType;
     this.period = new Period(startDate, startTime, endDate, endTime);
     this.recurrenceRule = recurrenceRule;
   }
