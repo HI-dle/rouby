@@ -4,8 +4,10 @@ import com.rouby.common.jpa.BaseEntity;
 import com.rouby.schedule.domain.enums.AlarmOffsetType;
 import com.rouby.schedule.domain.enums.OverrideType;
 import com.rouby.schedule.domain.vo.Period;
+import com.rouby.schedule.domain.vo.RecurrenceRule;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -43,18 +45,19 @@ public class Schedule extends BaseEntity {
   @Column(columnDefinition = "TEXT")
   private String memo;
 
-  private LocalDate routineActivateDate;
-
-  @Enumerated(EnumType.STRING)
-  private AlarmOffsetType alarm_offset_type;
-
   @Embedded
   private Period period;
 
-  @Column(length = 1000)
-  private String recurrenceRule;
+  private LocalDate routineActivateDate;
 
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @Enumerated(EnumType.STRING)
+  private AlarmOffsetType alarmOffsetType;
+
+  @Column(columnDefinition = "TEXT")
+  @Convert(converter = RecurrenceRuleStringConverter.class)
+  private RecurrenceRule recurrenceRule;
+
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "parent_schedule_id")
   private Schedule parentSchedule;
 
@@ -64,21 +67,37 @@ public class Schedule extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private OverrideType overrideType;
 
+  private LocalDate overrideDate;
+
   @Builder
   public Schedule(Long userId, String title, String memo,
-      LocalDate routineActivateDate, AlarmOffsetType alarmOffsetType,
-      LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, String recurrenceRule) {
+      LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime,
+      LocalDate routineActivateDate, Integer alarmOffsetMinutes, RecurrenceRule recurrenceRule) {
 
     this.userId = userId;
     this.title = title;
     this.memo = memo;
-    this.routineActivateDate = routineActivateDate;
-    this.alarm_offset_type = alarmOffsetType;
     this.period = new Period(startDate, startTime, endDate, endTime);
+    this.routineActivateDate = routineActivateDate;
+    this.alarmOffsetType = AlarmOffsetType.parse(alarmOffsetMinutes);
     this.recurrenceRule = recurrenceRule;
+
+    validate();
+  }
+
+  private void validate() {
+
+    if (!period.isValidRoutineActivateDate(routineActivateDate)) {
+      throw new IllegalArgumentException("루틴 활성 일자가 일정보다 나중일 수 없습니다.");
+    }
+  }
+
+  public void assignUserId(Long userId) {
+    this.userId = userId;
   }
 
   public void relateParentSchedule(Schedule schedule) {
     this.parentSchedule = schedule;
+    this.parentSchedule.children.add(this);
   }
 }
