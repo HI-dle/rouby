@@ -27,7 +27,7 @@ public class FeedbackKeyword {
   private List<String> feedbackKeyword;
 
   private FeedbackKeyword(List<String> feedbackKeyword) {
-    this.feedbackKeyword = feedbackKeyword;
+    this.feedbackKeyword = new ArrayList<>(feedbackKeyword);
   }
 
   public static FeedbackKeyword of(List<String> feedbackKeyword) {
