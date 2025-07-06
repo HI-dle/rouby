@@ -22,8 +22,12 @@ public class BriefingContent {
   @Column(nullable = false, columnDefinition = "TEXT")
   private String content;
 
-  public BriefingContent(String prompt, String content) {
+  private BriefingContent(String prompt, String content) {
     this.prompt = prompt;
     this.content = content;
+  }
+
+  public static BriefingContent of(String prompt, String content){
+    return new BriefingContent(prompt, content);
   }
 }

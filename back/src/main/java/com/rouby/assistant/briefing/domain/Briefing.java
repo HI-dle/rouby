@@ -41,6 +41,6 @@ public class Briefing extends BaseEntity {
     this.id = id;
     this.userId = userId;
     this.promptTemplateId = promptTemplateId;
-    this.briefingContent = new BriefingContent(prompt, content);
+    this.briefingContent = BriefingContent.of(prompt, content);
   }
 }
