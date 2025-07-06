@@ -1,0 +1,13 @@
+= ROUBY REST Docs
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+[[introduction]]
+== 소개
+ROUBY의 API Docs 입니다.
+
+include::src/docs/asciidoc/schedule.adoc[]

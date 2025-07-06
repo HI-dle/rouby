@@ -1,0 +1,7 @@
+[[SCHEDULE-API]]
+== Schedule-API
+
+[[Create-Schedule]]
+=== Schedule 등록
+
+operation::create-schedule-201[snippets='http-request,http-response,request-fields,curl-request']
