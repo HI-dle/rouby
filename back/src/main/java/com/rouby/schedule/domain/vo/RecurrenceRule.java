@@ -3,6 +3,7 @@ package com.rouby.schedule.domain.vo;
 
 import com.rouby.schedule.domain.enums.ByDay;
 import com.rouby.schedule.domain.enums.Freq;
+import jakarta.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -56,12 +57,9 @@ public class RecurrenceRule {
     return sb.toString();
   }
 
-  public static RecurrenceRule from(String str) {
-
-    if (str == null || str.isBlank()) return null;
+  public static RecurrenceRule from(@NotNull String str) {
 
     RecurrenceRule rRule = new RecurrenceRule();
-
     String[] split = str.split(";");
     Arrays.stream(split)
         .forEach(item -> {
