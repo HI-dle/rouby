@@ -37,10 +37,11 @@ public class Briefing extends BaseEntity {
   private BriefingContent briefingContent;
 
   @Builder
-  public Briefing(Long id, Long userId, Long promptTemplateId, String prompt, String content) {
+  private Briefing(Long id, Long userId, Long promptTemplateId, String prompt, String content) {
     this.id = id;
     this.userId = userId;
     this.promptTemplateId = promptTemplateId;
     this.briefingContent = BriefingContent.of(prompt, content);
   }
+
 }

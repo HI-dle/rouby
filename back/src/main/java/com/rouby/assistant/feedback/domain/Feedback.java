@@ -55,7 +55,7 @@ public class Feedback extends BaseEntity {
   private FeedbackKeyword feedbackKeyword;
 
   @Builder
-  public Feedback(Long id, Long userId, Long promptTemplateId, Mood mood, String userInput,
+  private Feedback(Long id, Long userId, Long promptTemplateId, Mood mood, String userInput,
       String prompt, String content, List<String> statusKeyword,
       List<String> feedbackKeyword) {
     this.id = id;

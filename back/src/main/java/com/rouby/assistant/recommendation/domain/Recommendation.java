@@ -38,7 +38,7 @@ public class Recommendation extends BaseEntity {
   private RecommendationContent recommendationContent;
 
   @Builder
-  public Recommendation(Long id, Long userId, Long promptTemplateId,
+  private Recommendation(Long id, Long userId, Long promptTemplateId,
       String prompt, String recommendationResponse) {
     this.id = id;
     this.userId = userId;
