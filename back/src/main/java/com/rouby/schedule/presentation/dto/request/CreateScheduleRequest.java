@@ -9,18 +9,20 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import lombok.Builder;
 import org.springframework.validation.annotation.Validated;
 
-
+@Builder
 public record CreateScheduleRequest (
+
   @NotBlank @Size(max = 500) String title,
   @Size(max = 10_000) String memo,
-  @Pattern(regexp = "^(5|10|15|30|60|120|1440|2880|10080)$")
-  Integer alarmOffsetMinutes,
+  @PositiveOrZero @Max(10080) Integer alarmOffsetMinutes,
   @FutureOrPresent LocalDate routineActivateDate,
   @NotNull LocalDate startDate,
   @NotNull LocalTime startTime,
@@ -43,7 +45,8 @@ public record CreateScheduleRequest (
         .build();
   }
 
-  record RecurrenceRuleRequest(
+  @Builder
+  public record RecurrenceRuleRequest(
       @Pattern(regexp = "^(HOURLY|DAILY|WEEKLY|MONTHLY|YEARLY)$")
       String freq,
       @Pattern(regexp = "^(MO|TU|WE|TH|FR|SA|SU)(,(MO|TU|WE|TH|FR|SA|SU))*$")

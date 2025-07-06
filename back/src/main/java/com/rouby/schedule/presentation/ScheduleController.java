@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -24,7 +25,7 @@ public class ScheduleController {
   @PreAuthorize("hasAnyRole('USER')")
   @PutMapping
   public ResponseEntity<Void> createSchedule(
-      @AuthenticationPrincipal UserDetailsImpl userDetails, @Validated CreateScheduleRequest req) {
+      @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody @Validated CreateScheduleRequest req) {
 
     Long scheduleId = scheduleFacade.createSchedule(userDetails.getId(), req.toCommand());
     URI location =  ServletUriComponentsBuilder
