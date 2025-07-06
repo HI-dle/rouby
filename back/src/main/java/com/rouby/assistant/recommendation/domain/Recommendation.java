@@ -1,6 +1,5 @@
 package com.rouby.assistant.recommendation.domain;
 
-import com.rouby.assistant.briefing.domain.vo.BriefingContent;
 import com.rouby.assistant.recommendation.domain.vo.RecommendationContent;
 import com.rouby.common.jpa.BaseEntity;
 import jakarta.persistence.Column;
