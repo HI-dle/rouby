@@ -42,7 +42,7 @@ public class Notification extends LogBaseEntity {
   private SendStatus status;
 
   @Builder
-  public Notification(Long userId, NotificationMessage message, NotificationType type,
+  private Notification(Long userId, NotificationMessage message, NotificationType type,
       SendStatus status) {
     this.userId = userId;
     this.message = message;
