@@ -10,6 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
  * @author : hanjihoon
  */
 @RestController
-@RequestMapping("/api/v1/assistant/feedback")
+@RequestMapping("/api/v1/assistants/briefings")
 @RequiredArgsConstructor
 public class BriefingController {}
