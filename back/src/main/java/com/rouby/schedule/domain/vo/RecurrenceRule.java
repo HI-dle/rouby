@@ -26,7 +26,7 @@ public class RecurrenceRule {
 
 
   @Builder
-  public RecurrenceRule(Freq freq, Set<ByDay> byDay, Integer interval, ZonedDateTime until) {
+  private RecurrenceRule(Freq freq, Set<ByDay> byDay, Integer interval, ZonedDateTime until) {
     this.freq = freq;
     this.byDay = byDay;
     this.interval = interval;

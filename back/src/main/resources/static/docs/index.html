@@ -474,10 +474,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h4 id="Create-Schedule_http_request"><a class="link" href="#Create-Schedule_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">PUT /api/v1/schedules HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/v1/schedules HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {ACCESS_TOKEN}
-Content-Length: 397
+Content-Length: 398
 Host: localhost:8080
 
 {
@@ -493,7 +493,7 @@ Host: localhost:8080
     "freq" : "MONTHLY",
     "byDay" : "MO",
     "interval" : 1,
-    "until" : "2025-12-30T00:00:00"
+    "until" : "2025-12-30T00:00:00Z"
   }
 }</code></pre>
 </div>
@@ -547,12 +547,12 @@ Location: http://localhost:8080/api/v1/schedules/1</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>startTime</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">시작 시간 (예: 2025-08-30)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">시작 시간 (예: 13:00:00)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>endDate</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">종료 일자 (예: 13:00:00)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">종료 일자 (예: 2025-08-30)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>endTime</code></p></td>
@@ -596,7 +596,7 @@ Location: http://localhost:8080/api/v1/schedules/1</code></pre>
 <h4 id="Create-Schedule_curl_request"><a class="link" href="#Create-Schedule_curl_request">Curl request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/api/v1/schedules' -i -X PUT \
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/api/v1/schedules' -i -X POST \
     -H 'Content-Type: application/json' \
     -H 'Authorization: Bearer {ACCESS_TOKEN}' \
     -d '{
@@ -612,7 +612,7 @@ Location: http://localhost:8080/api/v1/schedules/1</code></pre>
     "freq" : "MONTHLY",
     "byDay" : "MO",
     "interval" : 1,
-    "until" : "2025-12-30T00:00:00"
+    "until" : "2025-12-30T00:00:00Z"
   }
 }'</code></pre>
 </div>

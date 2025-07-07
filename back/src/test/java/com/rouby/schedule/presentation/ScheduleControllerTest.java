@@ -1,5 +1,6 @@
 package com.rouby.schedule.presentation;
 
+import static java.time.ZoneOffset.UTC;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -22,6 +23,7 @@ import com.rouby.schedule.presentation.dto.request.CreateScheduleRequest.Recurre
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -58,7 +60,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
             .freq("MONTHLY")
             .interval(1)
             .byDay("MO")
-            .until(LocalDateTime.of(2025,12,30, 0, 0))
+            .until(ZonedDateTime.of(LocalDateTime.of(2025,12,30, 0, 0), UTC))
             .build())
         .build();
     var content = objectMapper.writeValueAsString(request);

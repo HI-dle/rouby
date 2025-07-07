@@ -71,7 +71,7 @@ public class Schedule extends BaseEntity {
   private LocalDate overrideDate;
 
   @Builder
-  public Schedule(Long userId, String title, String memo,
+  private Schedule(Long userId, String title, String memo,
       LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime,
       LocalDate routineActivateDate, Integer alarmOffsetMinutes, RecurrenceRule recurrenceRule) {
 
