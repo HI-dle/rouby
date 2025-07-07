@@ -1,4 +1,4 @@
-package com.rouby.notification.domain.entity;
+package com.rouby.notification.domain.entity.notificationlog;
 
 public enum NotificationType {
   SCHEDULE,
