@@ -32,19 +32,18 @@ public class EmailLog extends LogBaseEntity {
   private EmailContent content;
 
   @Embedded
-  private EmailSent emailSent;
+  private EmailAddress emailAddress;
 
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   private SendStatus status;
 
   @Builder
-  private EmailLog(Long id, Long userId, EmailContent content, EmailSent emailSent,
+  private EmailLog(Long userId, EmailContent content, EmailAddress emailAddress,
       SendStatus status) {
-    this.id = id;
     this.userId = userId;
     this.content = content;
-    this.emailSent = emailSent;
+    this.emailAddress = emailAddress;
     this.status = status;
   }
 }

@@ -10,22 +10,22 @@ import org.springframework.util.StringUtils;
 @Getter
 @Embeddable
 @EqualsAndHashCode
-public class EmailSent implements Serializable {
+public class EmailAddress implements Serializable {
 
   @Column(nullable = false)
   private String value;
 
-  public static EmailSent of(String value) {
+  public static EmailAddress of(String value) {
     if (!StringUtils.hasText(value)) {
       throw new IllegalArgumentException("이메일 주소는 비어 있을 수 없습니다.");
     }
-    return new EmailSent(value);
+    return new EmailAddress(value);
   }
 
-  private EmailSent(String value) {
+  private EmailAddress(String value) {
     this.value = value;
   }
 
-  protected EmailSent() {}
+  protected EmailAddress() {}
 
 }

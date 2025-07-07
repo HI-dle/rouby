@@ -33,8 +33,7 @@ public class NotificationTemplate extends BaseEntity {
   private NotificationTemplateMessage message;
 
   @Builder
-  private NotificationTemplate(Long id, NotificationType type, NotificationTemplateMessage message) {
-    this.id = id;
+  private NotificationTemplate(NotificationType type, NotificationTemplateMessage message) {
     this.type = type;
     this.message = message;
   }

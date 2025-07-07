@@ -2,6 +2,7 @@ package com.rouby.notificationtemplate.domain.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import java.io.Serializable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.util.StringUtils;
@@ -9,7 +10,7 @@ import org.springframework.util.StringUtils;
 @Getter
 @Embeddable
 @EqualsAndHashCode
-public class NotificationTemplateMessage {
+public class NotificationTemplateMessage implements Serializable {
 
   @Column(columnDefinition = "TEXT", name = "message", nullable = false)
   private String value;
