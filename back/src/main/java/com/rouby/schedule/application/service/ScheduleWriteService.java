@@ -14,8 +14,7 @@ public class ScheduleWriteService {
 
   public Long createSchedule(Long userId, CreateScheduleCommand command) {
 
-    Schedule schedule = command.toEntity();
-    schedule.assignUserId(userId);
+    Schedule schedule = command.toEntityWithUserId(userId);
     scheduleRepository.save(schedule);
 
     return schedule.getId();

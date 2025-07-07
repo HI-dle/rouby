@@ -57,6 +57,7 @@ public class RecurrenceRule {
     return sb.toString();
   }
 
+  // todo. @NotNull 동작 체크하기
   public static RecurrenceRule from(@NotNull String str) {
 
     RecurrenceRule rRule = new RecurrenceRule();

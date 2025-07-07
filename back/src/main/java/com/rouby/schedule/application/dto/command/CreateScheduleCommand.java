@@ -3,6 +3,7 @@ package com.rouby.schedule.application.dto.command;
 import com.rouby.schedule.domain.entity.Schedule;
 import com.rouby.schedule.domain.enums.ByDay;
 import com.rouby.schedule.domain.enums.Freq;
+import com.rouby.schedule.domain.vo.Period;
 import com.rouby.schedule.domain.vo.RecurrenceRule;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -22,17 +23,20 @@ public record CreateScheduleCommand(
     RecurrenceRuleCommand recurrenceRule
 ) {
 
-  public Schedule toEntity() {
+  public Schedule toEntityWithUserId(Long userId) {
 
     return Schedule.builder()
+        .userId(userId)
         .title(title)
         .memo(memo)
         .alarmOffsetMinutes(alarmOffsetMinutes)
         .routineActivateDate(routineActivateDate)
-        .startDate(startDate)
-        .startTime(startTime)
-        .endDate(endDate)
-        .endTime(endTime)
+        .period(Period.builder()
+            .startDate(startDate)
+            .startTime(startTime)
+            .endDate(endDate)
+            .endTime(endTime)
+            .build())
         .recurrenceRule((recurrenceRule != null) ? recurrenceRule.toDomain() : null)
         .build();
   }

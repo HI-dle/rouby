@@ -2,7 +2,7 @@ package com.rouby.schedule.domain.entity;
 
 import com.rouby.common.jpa.BaseEntity;
 import com.rouby.schedule.domain.enums.AlarmOffsetType;
-import com.rouby.schedule.domain.enums.OverrideType;
+import com.rouby.schedule.domain.vo.OverrideInfo;
 import com.rouby.schedule.domain.vo.Period;
 import com.rouby.schedule.domain.vo.RecurrenceRule;
 import jakarta.persistence.CascadeType;
@@ -20,7 +20,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -58,27 +57,24 @@ public class Schedule extends BaseEntity {
   @Convert(converter = RecurrenceRuleStringConverter.class)
   private RecurrenceRule recurrenceRule;
 
+  @OneToMany(mappedBy = "parentSchedule", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Schedule> children;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "parent_schedule_id")
   private Schedule parentSchedule;
 
-  @OneToMany(mappedBy = "parentSchedule", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Schedule> children;
-
-  @Enumerated(EnumType.STRING)
-  private OverrideType overrideType;
-
-  private LocalDate overrideDate;
+  @Embedded
+  private OverrideInfo overrideInfo;
 
   @Builder
-  private Schedule(Long userId, String title, String memo,
-      LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime,
+  private Schedule(Long userId, String title, String memo, Period period,
       LocalDate routineActivateDate, Integer alarmOffsetMinutes, RecurrenceRule recurrenceRule) {
 
     this.userId = userId;
     this.title = title;
     this.memo = memo;
-    this.period = new Period(startDate, startTime, endDate, endTime);
+    this.period = period;
     this.routineActivateDate = routineActivateDate;
     this.alarmOffsetType = AlarmOffsetType.parse(alarmOffsetMinutes);
     this.recurrenceRule = recurrenceRule;
@@ -95,16 +91,13 @@ public class Schedule extends BaseEntity {
     }
   }
 
-  public void assignUserId(Long userId) {
-    if (this.userId != null) {
-      throw new IllegalStateException("일정의 이미 설정된 user 정보를 변경할 수 없습니다.");
-    }
-    this.userId = userId;
+  private void addToParentSchedule() {
+    if (parentSchedule == null) return;
+    this.parentSchedule.appendChildSchedule(this);
   }
 
-  public void relateParentSchedule(Schedule schedule) {
-    this.parentSchedule = schedule;
-    if (this.parentSchedule.children == null) this.parentSchedule.children = new ArrayList<>();
-    this.parentSchedule.children.add(this);
+  private void appendChildSchedule(Schedule schedule) {
+    if (this.children == null) this.children = new ArrayList<>();
+    this.children.add(schedule);
   }
 }
