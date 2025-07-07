@@ -2,10 +2,12 @@ package com.rouby.schedule.domain.entity;
 
 import com.rouby.common.jpa.BaseEntity;
 import com.rouby.schedule.domain.enums.AlarmOffsetType;
-import com.rouby.schedule.domain.enums.OverrideType;
+import com.rouby.schedule.domain.vo.OverrideInfo;
 import com.rouby.schedule.domain.vo.Period;
+import com.rouby.schedule.domain.vo.RecurrenceRule;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -18,7 +20,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -43,42 +45,59 @@ public class Schedule extends BaseEntity {
   @Column(columnDefinition = "TEXT")
   private String memo;
 
-  private LocalDate routineActivateDate;
-
-  @Enumerated(EnumType.STRING)
-  private AlarmOffsetType alarm_offset_type;
-
   @Embedded
   private Period period;
 
-  @Column(length = 1000)
-  private String recurrenceRule;
+  private LocalDate routineActivateDate;
 
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JoinColumn(name = "parent_schedule_id")
-  private Schedule parentSchedule;
+  @Enumerated(EnumType.STRING)
+  private AlarmOffsetType alarmOffsetType;
+
+  @Column(columnDefinition = "TEXT")
+  @Convert(converter = RecurrenceRuleStringConverter.class)
+  private RecurrenceRule recurrenceRule;
 
   @OneToMany(mappedBy = "parentSchedule", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Schedule> children;
 
-  @Enumerated(EnumType.STRING)
-  private OverrideType overrideType;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "parent_schedule_id")
+  private Schedule parentSchedule;
+
+  @Embedded
+  private OverrideInfo overrideInfo;
 
   @Builder
-  public Schedule(Long userId, String title, String memo,
-      LocalDate routineActivateDate, AlarmOffsetType alarmOffsetType,
-      LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime, String recurrenceRule) {
+  private Schedule(Long userId, String title, String memo, Period period,
+      LocalDate routineActivateDate, Integer alarmOffsetMinutes, RecurrenceRule recurrenceRule) {
 
     this.userId = userId;
     this.title = title;
     this.memo = memo;
+    this.period = period;
     this.routineActivateDate = routineActivateDate;
-    this.alarm_offset_type = alarmOffsetType;
-    this.period = new Period(startDate, startTime, endDate, endTime);
+    this.alarmOffsetType = AlarmOffsetType.parse(alarmOffsetMinutes);
     this.recurrenceRule = recurrenceRule;
+
+    validate();
   }
 
-  public void relateParentSchedule(Schedule schedule) {
-    this.parentSchedule = schedule;
+  private void validate() {
+
+    if (routineActivateDate != null) {
+      if (!period.isValidRoutineActivateDate(routineActivateDate)) {
+        throw new IllegalArgumentException("루틴 활성 일자가 일정보다 나중일 수 없습니다.");
+      }
+    }
+  }
+
+  private void addToParentSchedule() {
+    if (parentSchedule == null) return;
+    this.parentSchedule.appendChildSchedule(this);
+  }
+
+  private void appendChildSchedule(Schedule schedule) {
+    if (this.children == null) this.children = new ArrayList<>();
+    this.children.add(schedule);
   }
 }

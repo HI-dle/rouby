@@ -6,14 +6,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.util.Assert;
 
 @Embeddable
 @EqualsAndHashCode
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Period {
 
@@ -29,7 +28,8 @@ public class Period {
   @Column(nullable = false)
   private LocalTime endTime;
 
-  public Period(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
+  @Builder
+  private Period(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
 
     validate(startDate, startTime, endDate, endTime);
     this.startDate = startDate;
@@ -44,5 +44,9 @@ public class Period {
     LocalDateTime endDateTime = LocalDateTime.of(endDate, endTime);
     boolean result = !startDateTime.isAfter(endDateTime);
     Assert.isTrue(result, "시작일시가 종료일시보다 늦을 수 없습니다.");
+  }
+
+  public boolean isValidRoutineActivateDate(LocalDate routineActivateDate) {
+    return !routineActivateDate.isAfter(endDate);
   }
 }

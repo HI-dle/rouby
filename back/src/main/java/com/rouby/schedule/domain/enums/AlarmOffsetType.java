@@ -1,5 +1,6 @@
 package com.rouby.schedule.domain.enums;
 
+import java.util.Arrays;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -21,4 +22,11 @@ public enum AlarmOffsetType {
 
   private final Integer minutes;
   private final String desc;
+
+  public static AlarmOffsetType parse(Integer minutes) {
+    return Arrays.stream(AlarmOffsetType.values())
+        .filter(type -> type.minutes.equals(minutes))
+        .findFirst()
+        .orElseThrow(() -> new IllegalArgumentException("지원되지 않는 알림 설정 시간(분) 정보입니다."));
+  }
 }
