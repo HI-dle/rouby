@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
  * @author : hanjihoon
  */
 @RequiredArgsConstructor
-public class BriefingJpaRepositoryCustomImpl implements BriefingJpaRepositoryCustom{
+public class BriefingJpaRepositoryCustomImpl implements BriefingJpaRepositoryCustom {
 
   private final JPAQueryFactory jpaQueryFactory;
 }

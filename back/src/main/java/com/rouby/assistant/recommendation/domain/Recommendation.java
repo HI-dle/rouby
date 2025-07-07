@@ -34,7 +34,6 @@ public class Recommendation extends BaseEntity {
   private Long promptTemplateId;
 
   @Embedded
-  @Column(nullable = false)
   private RecommendationContent recommendationContent;
 
   @Builder

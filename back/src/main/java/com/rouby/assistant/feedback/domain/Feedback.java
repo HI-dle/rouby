@@ -46,15 +46,12 @@ public class Feedback extends BaseEntity {
   private String userInput;
 
   @Embedded
-  @Column(nullable = false)
   private FeedbackContent feedbackContent;
 
   @Embedded
-  @Column(nullable = false)
   private StatusKeyword statusKeyword;
 
   @Embedded
-  @Column(nullable = false)
   private FeedbackKeyword feedbackKeyword;
 
   @Builder

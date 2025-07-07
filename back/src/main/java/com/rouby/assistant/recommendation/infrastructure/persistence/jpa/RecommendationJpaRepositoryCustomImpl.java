@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
  * @author : hanjihoon
  */
 @RequiredArgsConstructor
-public class RecommendationJpaRepositoryCustomImpl implements RecommendationJpaRepositoryCustom{
+public class RecommendationJpaRepositoryCustomImpl implements RecommendationJpaRepositoryCustom {
 
   private final JPAQueryFactory jpaQueryFactory;
 }

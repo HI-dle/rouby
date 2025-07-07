@@ -34,7 +34,6 @@ public class Briefing extends BaseEntity {
   private Long promptTemplateId;
 
   @Embedded
-  @Column(nullable = false)
   private BriefingContent briefingContent;
 
   @Builder
