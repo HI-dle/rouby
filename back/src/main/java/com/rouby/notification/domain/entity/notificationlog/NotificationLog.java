@@ -1,8 +1,7 @@
-package com.rouby.notification.domain.entity;
+package com.rouby.notification.domain.entity.notificationlog;
 
 
 import com.rouby.common.jpa.LogBaseEntity;
-import com.rouby.user.domain.entity.NotificationType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -19,9 +18,9 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "notification")
+@Table(name = "notification_log")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Notification extends LogBaseEntity {
+public class NotificationLog extends LogBaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -42,7 +41,7 @@ public class Notification extends LogBaseEntity {
   private SendStatus status;
 
   @Builder
-  private Notification(Long userId, NotificationMessage message, NotificationType type,
+  private NotificationLog(Long userId, NotificationMessage message, NotificationType type,
       SendStatus status) {
     this.userId = userId;
     this.message = message;
