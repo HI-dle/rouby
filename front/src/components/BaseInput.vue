@@ -1,14 +1,13 @@
 <script setup>
-defineProps({
-  label: String,
-  placeholder: String,
-  modelValue: String,
-  type: {
-    type: String,
-    default: 'password'
-  }
-});
-
+  defineProps({
+    label: String,
+    placeholder: String,
+    modelValue: String,
+    type: {
+      type: String,
+      default: 'password'
+    }
+  });
 </script>
 
 <!-- components/PasswordInput.vue -->
