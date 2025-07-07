@@ -1,13 +1,15 @@
-package com.rouby.notification.domain.entity;
+package com.rouby.notification.domain.entity.notificationlog;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.util.StringUtils;
 
 @Getter
 @Embeddable
+@EqualsAndHashCode
 public class NotificationMessage implements Serializable {
 
   @Column(columnDefinition = "TEXT", name = "message", nullable = false)
