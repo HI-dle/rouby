@@ -1,11 +1,8 @@
 package com.rouby.auth.application;
 
 import com.rouby.auth.dto.UserDetailsImpl;
-import com.rouby.common.exception.CustomException;
 import com.rouby.user.application.UserService;
-import com.rouby.user.application.exception.UserErrorCode;
 import com.rouby.user.domain.entity.User;
-import com.rouby.user.domain.repository.UserRepository;
 import java.util.Collection;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

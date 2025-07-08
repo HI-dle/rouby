@@ -1,12 +1,11 @@
 package com.rouby.auth.dto;
 
 import com.rouby.user.domain.entity.UserRole;
+import java.util.Collection;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
 
 @Builder
 @AllArgsConstructor
