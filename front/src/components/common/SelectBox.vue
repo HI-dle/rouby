@@ -54,7 +54,7 @@ watch(
   <Select v-model="selected">
     <SelectTrigger
       :class="[
-        'w-32 h-auto text-base focus:outline-none focus:ring-0 focus:border-transparent focus:shadow-[0_0_3px_2px_theme(colors.main-color/30%)] transition',
+        'w-32 h-auto text-base text-content-color focus:outline-none focus:ring-0 focus:border-transparent focus:shadow-[0_0_3px_2px_theme(colors.main-color/30%)] transition',
         props.triggerClass,
       ]"
     >
@@ -66,7 +66,7 @@ watch(
           v-for="opt in options"
           :key="opt.value"
           :value="opt.value"
-          class="group cursor-pointer px-3 py-2 text-base rounded-md transition-colors focus:bg-focus-color data-[state=checked]:bg-focus-color"
+          class="group cursor-pointer px-3 py-2 text-base text-content-color rounded-md transition-colors focus:bg-focus-color data-[state=checked]:bg-focus-color"
         >
           {{ opt.label }}
         </SelectItem>
