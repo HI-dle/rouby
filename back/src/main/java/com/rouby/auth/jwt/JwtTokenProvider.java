@@ -24,6 +24,7 @@ public class JwtTokenProvider {
   private static final String CLAIM_ROLE_KEY = "role";
   private static final String CLAIM_EMAIL_KEY = "email";
 
+
   private final SecretKey key;
   private final long tokenTime;
 

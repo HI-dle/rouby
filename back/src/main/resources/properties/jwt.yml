@@ -2,7 +2,7 @@
 spring:
   config.activate.on-profile: local
 jwt:
-  secret_key: ${JWT_SECRET}
+  secret: ${JWT_SECRET}
   expiration: ${JWT_ACCESS_EXPIRATION}
 
 ---
@@ -10,5 +10,5 @@ jwt:
 spring:
   config.activate.on-profile: test
 jwt:
-  secret_key: ${JWT_SECRET}
+  secret: ${JWT_SECRET}
   expiration: ${JWT_ACCESS_EXPIRATION}

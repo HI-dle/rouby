@@ -7,7 +7,8 @@ import com.rouby.auth.application.dto.request.LoginCommand;
  *
  * @author : hanjihoon
  */
-public record LoginRequest(String email, String password) {
+public record LoginRequest(String email,
+                           String password) {
 
   public LoginCommand toApplication(){
   return new LoginCommand(email, password);
