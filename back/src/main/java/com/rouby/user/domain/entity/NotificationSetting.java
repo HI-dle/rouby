@@ -55,6 +55,14 @@ public class NotificationSetting extends BaseEntity {
     return Objects.hash(user, notificationType);
   }
 
+  public static NotificationSetting createDefault(User user, NotificationType type){
+    return NotificationSetting.builder()
+        .user(user)
+        .notificationType(type)
+        .isEnabled(false)
+        .build();
+  }
+
   @Builder
   private NotificationSetting(User user, NotificationType notificationType, boolean isEnabled) {
     this.user = user;
