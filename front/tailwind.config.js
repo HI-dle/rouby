@@ -9,6 +9,7 @@ export default {
         'placeholder-color': '#6667D07A',
         'placeholder-pink-color': '#9F7AEA',
         'content-color': '#5A67D8',
+        'focus-color': '#f7f8fd',
         'error-color': '#EB4335',
 
         // tailwind - 뉴욕 테마

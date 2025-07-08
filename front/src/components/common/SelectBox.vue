@@ -18,6 +18,10 @@ const props = defineProps({
     type: Array,
     required: true,
   },
+  triggerClass: {
+    type: String,
+    default: '',
+  },
 })
 const emit = defineEmits(['update:modelValue'])
 const selected = ref(props.modelValue)
@@ -41,13 +45,21 @@ watch(
 <template>
   <Select v-model="selected">
     <SelectTrigger
-      class="w-32 h-9 text-base focus:outline-none focus:ring-0 focus:border-transparent focus:shadow-[0_0_3px_2px_rgba(102,103,208,0.3)] transition"
+      :class="[
+        'w-32 h-9 text-base focus:outline-none focus:ring-0 focus:border-transparent focus:shadow-[0_0_3px_2px_rgba(102,103,208,0.3)] transition',
+        props.triggerClass,
+      ]"
     >
       <SelectValue placeholder="없음" />
     </SelectTrigger>
     <SelectContent>
       <SelectGroup>
-        <SelectItem v-for="opt in options" :key="opt.value" :value="opt.value">
+        <SelectItem
+          v-for="opt in options"
+          :key="opt.value"
+          :value="opt.value"
+          class="group cursor-pointer px-3 py-2 text-base rounded-md transition-colors focus:bg-focus-color data-[state=checked]:bg-focus-color"
+        >
           {{ opt.label }}
         </SelectItem>
       </SelectGroup>
