@@ -1,0 +1,17 @@
+### 회원가입 API
+POST {{url}}/api/v1/users
+content-type: application/json
+
+{
+  "email": "hyezuu@hidle.com",
+  "password": "aaaaaaaa"
+}
+
+### 회원가입 API (실패)
+POST {{url}}/api/v1/users
+content-type: application/json
+
+{
+  "email": "hyezuu@hidle.com",
+  "password": "qwe3"
+}
