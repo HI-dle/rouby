@@ -1,5 +1,6 @@
 package com.rouby.auth.dto;
 
+import com.rouby.user.domain.entity.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,9 +15,14 @@ public class UserDetailsImpl implements UserDetails {
     private final Long id;
     private final String email;
     private final String password;
+    private final UserRole userRole;
     private final Collection<? extends GrantedAuthority> authorities;
 
     public Long getId() { return id; }
+
+    public UserRole getRole() {
+        return userRole;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
