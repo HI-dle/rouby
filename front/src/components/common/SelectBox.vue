@@ -1,0 +1,56 @@
+<script setup>
+import { ref, watch } from 'vue'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+
+const props = defineProps({
+  modelValue: {
+    type: [String, Number],
+    default: '',
+  },
+  options: {
+    type: Array,
+    required: true,
+  },
+})
+const emit = defineEmits(['update:modelValue'])
+const selected = ref(props.modelValue)
+
+watch(
+  () => props.modelValue,
+  (val) => {
+    selected.value = val
+  },
+  { immediate: true },
+)
+
+watch(
+  () => selected.value,
+  (val) => {
+    emit('update:modelValue', val)
+  },
+)
+</script>
+
+<template>
+  <Select v-model="selected">
+    <SelectTrigger
+      class="w-32 h-9 text-base focus:outline-none focus:ring-0 focus:border-transparent focus:shadow-[0_0_3px_2px_rgba(102,103,208,0.3)] transition"
+    >
+      <SelectValue placeholder="없음" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectGroup>
+        <SelectItem v-for="opt in options" :key="opt.value" :value="opt.value">
+          {{ opt.label }}
+        </SelectItem>
+      </SelectGroup>
+    </SelectContent>
+  </Select>
+</template>

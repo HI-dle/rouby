@@ -19,6 +19,15 @@
   --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
   --vt-c-text-dark-1: var(--vt-c-white);
   --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+
+  --rouby-bg: linear-gradient(
+    180deg,
+    #f9fbff 0%,
+    #f7f8fd 15%,
+    #f5f8ff 30%,
+    #f7f8fd 75%,
+    #fafcfe 100%
+  );
 }
 
 /* semantic color variables for this project */
@@ -59,14 +68,17 @@
 }
 
 body {
-  min-height: 100vh;
   color: var(--color-text);
-  background: var(--color-background);
+  background: var(--rouby-bg);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
   transition:
     color 0.5s,
     background-color 0.5s;
   line-height: 1.6;
   font-family:
+    'Pretendard',
     Inter,
     -apple-system,
     BlinkMacSystemFont,
