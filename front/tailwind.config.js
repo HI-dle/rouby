@@ -8,9 +8,9 @@ export default {
         'main-color': '#6667D0',
         'placeholder-color': '#6667D07A',
         'placeholder-pink-color': '#9F7AEA',
-        'content-color': '#5A67D8',
-        'focus-color': '#f7f8fd',
+        'content-color': '#4A5568',
         'error-color': '#EB4335',
+        'focus-color': '#f7f8fd',
 
         // tailwind - 뉴욕 테마
         background: 'hsl(var(--background))',
