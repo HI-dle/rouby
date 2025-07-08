@@ -13,8 +13,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum UserErrorCode implements ErrorCode {
-  INVALID_USER("존재하지 않는 사용자 입니다.", "INVALID_USER", HttpStatus.NOT_FOUND),
-  INVALID_USER_PASSWORD("잘못된 비밀번호 입니다.", "INVALID_USER_PASSWORD", HttpStatus.NOT_FOUND),
+  INVALID_USER("존재하지 않는 사용자 입니다.", "INVALID_USER", HttpStatus.UNAUTHORIZED),
+  INVALID_USER_PASSWORD("잘못된 비밀번호 입니다.", "INVALID_USER_PASSWORD", HttpStatus.UNAUTHORIZED),
   ;
 
   private final String message;

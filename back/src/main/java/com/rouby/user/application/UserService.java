@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
  *
  * @author : hanjihoon
  */
-@Service
+
 public interface UserService {
 
   public User findByEmail(String email);
