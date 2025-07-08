@@ -1,4 +1,8 @@
-<script setup></script>
+<script setup>
+defineOptions({
+  name: 'MypageView',
+})
+</script>
 
 <template>
   <div></div>

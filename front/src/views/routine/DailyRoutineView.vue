@@ -1,4 +1,8 @@
-<script setup></script>
+<script setup>
+defineOptions({
+  name: 'DailyRoutineView',
+})
+</script>
 
 <template>
   <div></div>

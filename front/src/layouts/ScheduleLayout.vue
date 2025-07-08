@@ -1,10 +1,7 @@
 <script setup></script>
 
 <template>
-  <div>
-    <!-- class="p-4"> -->
-    <router-view />
-  </div>
+  <router-view />
 </template>
 
 <style scoped></style>

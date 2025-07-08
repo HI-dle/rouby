@@ -32,12 +32,12 @@ const router = createRouter({
             {
               path: 'daily',
               name: 'routine-daily',
-              component: () => import('../views/routine/DailyRoutineView.vue'),
+              component: () => import('@/views/routine/DailyRoutineView.vue'),
             },
           ],
         },
         {
-          path: '/mypage',
+          path: 'mypage',
           name: 'mypage',
           component: () => import('../views/user/MypageView.vue'),
         },

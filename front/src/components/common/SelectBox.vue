@@ -17,6 +17,14 @@ const props = defineProps({
   options: {
     type: Array,
     required: true,
+    validator: (opts) =>
+      Array.isArray(opts) &&
+      opts.every(
+        (opt) =>
+          opt &&
+          typeof opt.label === 'string' &&
+          (typeof opt.value === 'string' || typeof opt.value === 'number'),
+      ),
   },
   triggerClass: {
     type: String,
@@ -46,7 +54,7 @@ watch(
   <Select v-model="selected">
     <SelectTrigger
       :class="[
-        'w-32 h-9 text-base focus:outline-none focus:ring-0 focus:border-transparent focus:shadow-[0_0_3px_2px_rgba(102,103,208,0.3)] transition',
+        'w-32 h-auto text-base focus:outline-none focus:ring-0 focus:border-transparent focus:shadow-[0_0_3px_2px_theme(colors.main-color/30%)] transition',
         props.triggerClass,
       ]"
     >

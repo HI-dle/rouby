@@ -19,6 +19,7 @@
 }
 
 .main-container {
+  width: 100%;
   padding: 2rem 2rem 0 2rem;
 }
 
@@ -31,7 +32,7 @@ a {
 
 @media (hover: hover) {
   a:hover {
-    background-color:;
+    background-color: transparent;
   }
 }
 

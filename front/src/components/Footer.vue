@@ -1,6 +1,6 @@
 <script setup>
 import { useRoute } from 'vue-router'
-import { Calendar, ClipboardList, Clock3, User, Plus } from 'lucide-vue-next'
+import { Calendar, ClipboardList, Clock3, User, MoreHorizontal, Plus } from 'lucide-vue-next'
 
 const route = useRoute()
 
@@ -10,7 +10,7 @@ const isActive = (path) => route.path.startsWith(path)
 
 <template>
   <div
-    class="max-w-md fixed mx-auto bottom-0 left-0 right-0 bg-white border-t shadow-md flex justify-between items-center px-6 py-3 z-50 rounded-t-3xl"
+    class="max-w-md fixed mx-auto bottom-0 left-0 right-0 bg-white border-t shadow-md flex justify-between items-center px-4 sm:px-6 py-3 z-50 rounded-t-3xl safe-area-inset-bottom"
   >
     <RouterLink
       to="/schedule"
@@ -44,12 +44,21 @@ const isActive = (path) => route.path.startsWith(path)
       <User class="w-6 h-6" />
     </RouterLink>
 
+    <!-- ... 버튼 -->
+    <div
+      class="absolute -top-16 right-6 bg-main-color text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center"
+      aria-label="새 항목 추가"
+    >
+      <MoreHorizontal class="w-6 h-6" />
+    </div>
     <!-- + 버튼 -->
-    <RouterLink
+    <!-- <RouterLink
       to="/create"
       class="absolute -top-16 right-6 bg-main-color text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center"
+      aria-label="새 항목 추가"
     >
       <Plus class="w-6 h-6" />
     </RouterLink>
+     -->
   </div>
 </template>

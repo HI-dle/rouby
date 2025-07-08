@@ -5,6 +5,8 @@ import Header from '@/components/Header.vue'
 
 <template>
   <Header class="bg-inherit" />
-  <router-view class="wrapper" />
+  <div class="wrapper">
+    <router-view />
+  </div>
   <Footer />
 </template>

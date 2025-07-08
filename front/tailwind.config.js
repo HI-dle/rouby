@@ -11,6 +11,10 @@ export default {
         'content-color': '#4A5568',
         'error-color': '#EB4335',
         'focus-color': '#f7f8fd',
+        'border-color': '#e5e7eb',
+        'focus-border-color': '#6366f1',
+        'focus-shadow-color': 'rgba(99, 102, 241, 0.1)',
+        'text-color': '#6d37df',
 
         // tailwind - 뉴욕 테마
         background: 'hsl(var(--background))',
