@@ -34,9 +34,6 @@ import org.springframework.test.web.servlet.ResultActions;
 
 class ScheduleControllerTest extends ControllerTestSupport {
 
-  @MockitoBean
-  ScheduleFacade scheduleFacade;
-
   @BeforeEach
   void setUp() {
   }
@@ -51,11 +48,11 @@ class ScheduleControllerTest extends ControllerTestSupport {
         .title("하이들 모임!")
         .memo("뭉티기 먹을 것!")
         .alarmOffsetMinutes(1440)
-        .startDate(LocalDate.of(2025, 7, 21))
+        .startDate(LocalDate.now().plusDays(14))
         .startTime(LocalTime.of(10, 30))
-        .endDate(LocalDate.of(2025, 7, 21))
+        .endDate(LocalDate.now().plusDays(14))
         .endTime(LocalTime.of(22, 30))
-        .routineActivateDate(LocalDate.of(2025, 7, 7))
+        .routineActivateDate(LocalDate.now())
         .recurrenceRule(RecurrenceRuleRequest.builder()
             .freq("MONTHLY")
             .interval(1)

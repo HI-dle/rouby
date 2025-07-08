@@ -2,6 +2,7 @@ package com.rouby.auth.application;
 
 import com.rouby.auth.dto.UserDetailsImpl;
 import com.rouby.common.exception.CustomException;
+import com.rouby.user.application.UserService;
 import com.rouby.user.application.exception.UserErrorCode;
 import com.rouby.user.domain.entity.User;
 import com.rouby.user.domain.repository.UserRepository;
@@ -24,12 +25,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-  //유저의 응용계층 참조하기
-  private final UserRepository userRepository;
+  private final UserService userService;
+
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    User user = userRepository.findByEmail(username)
-        .orElseThrow(() -> CustomException.from(UserErrorCode.INVALID_USER));
+    User user = userService.findByEmail(username);
 
     Collection<? extends GrantedAuthority> authorities =
         List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
