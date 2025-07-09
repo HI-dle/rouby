@@ -29,7 +29,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     User user = userService.findByEmail(username);
 
     Collection<? extends GrantedAuthority> authorities =
-        List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
+        List.of(new SimpleGrantedAuthority(user.getRole().getRoleName()));
 
     return UserDetailsImpl.builder()
         .id(user.getId())

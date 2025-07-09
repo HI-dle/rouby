@@ -5,6 +5,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.function.Function;
 import javax.crypto.SecretKey;
@@ -67,6 +68,19 @@ public class JwtTokenProvider {
     }
   }
 
+  public Long getUserId(String token) {
+    return Long.parseLong(getClaimFromToken(token, Claims::getSubject));
+  }
+
+  public String getEmail(String token) {
+    return getClaimFromToken(token, claims -> claims.get(CLAIM_EMAIL_KEY, String.class));
+  }
+
+  public String getRole(String token) {
+    return getClaimFromToken(token, claims -> claims.get(CLAIM_ROLE_KEY, String.class));
+  }
+
+
   private <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
     Claims claims = Jwts.parser()
         .verifyWith(key)
@@ -86,4 +100,14 @@ public class JwtTokenProvider {
     }
     return token;
   }
+  public String resolveToken(HttpServletRequest request) {
+    String bearerToken = request.getHeader("Authorization");
+    if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
+      return bearerToken;
+    }
+    return null;
+  }
+
+
+
 }

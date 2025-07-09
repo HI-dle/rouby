@@ -5,79 +5,76 @@ import com.rouby.auth.dto.UserDetailsImpl;
 import com.rouby.auth.jwt.JwtTokenProvider;
 import com.rouby.auth.presentation.dto.request.LoginRequest;
 import com.rouby.common.exception.type.ApiErrorCode;
+import com.rouby.user.domain.entity.UserRole;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
  * @Date : 2025. 07. 08.
  *
  * @author : hanjihoon
  */
-@Component
 @Slf4j
-public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+@RequiredArgsConstructor
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-  private final AuthenticationManager authenticationManager;
   private final JwtTokenProvider jwtTokenProvider;
-  private final ObjectMapper objectMapper = new ObjectMapper();
-
-  public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
-    this.authenticationManager = authenticationManager;
-    this.setAuthenticationManager(authenticationManager);
-    this.jwtTokenProvider = jwtTokenProvider;
-    setFilterProcessesUrl("/api/v1/auth/login");
-  }
 
   @Override
-  public Authentication attemptAuthentication(HttpServletRequest request,
-      HttpServletResponse response) throws AuthenticationException {
+  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+      FilterChain filterChain)
+      throws ServletException, IOException {
+
     try {
-      LoginRequest loginRequest = objectMapper.readValue(request.getInputStream(), LoginRequest.class);
+      String token = jwtTokenProvider.resolveToken(request);
 
-      UsernamePasswordAuthenticationToken authToken =
-          new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password());
+      if (token != null && jwtTokenProvider.validateToken(token)) {
 
-      log.info("로그인 시도: {}", loginRequest.email());
+        Long userId = jwtTokenProvider.getUserId(token);
+        String email = jwtTokenProvider.getEmail(token);
+        String role = jwtTokenProvider.getRole(token);
 
-      return authenticationManager.authenticate(authToken);
+        UserDetailsImpl userDetails = UserDetailsImpl.builder()
+            .id(userId)
+            .email(email)
+            .password(null)
+            .userRole(UserRole.valueOf(role))
+            .authorities(List.of(new SimpleGrantedAuthority(role)))
+            .build();
 
-    } catch (IOException e) {
-      throw new RuntimeException("로그인 실패", e);
+        UsernamePasswordAuthenticationToken authentication =
+            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        log.info("인증 완료: userId={}, email={}", userId, email);
+      }
+
+    } catch (Exception ex) {
+      log.warn("JWT 필터 인증 실패: {}", ex.getMessage());
+      response.sendError(ApiErrorCode.UNAUTHORIZED.getStatus().value(),
+          ApiErrorCode.UNAUTHORIZED.getMessage());
+      return;
     }
+
+    filterChain.doFilter(request, response);
   }
 
-  @Override
-  protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-      FilterChain chain, Authentication authResult) throws IOException, ServletException {
-    UserDetailsImpl userDetails = (UserDetailsImpl) authResult.getPrincipal();
-
-    String token = jwtTokenProvider.createAccessToken(
-        userDetails.getId().toString(),
-        userDetails.getRole().toString(),
-        userDetails.getUsername() //email
-    );
-
-    response.setHeader("Authorization", token);
-    log.info("로그인 성공, 토큰 발급: {}", token);
-  }
-
-  @Override
-  protected void unsuccessfulAuthentication(HttpServletRequest request,
-      HttpServletResponse response, AuthenticationException failed)
-      throws IOException, ServletException {
-    log.warn("로그인 실패: {}", failed.getMessage());
-    response.sendError(
-        ApiErrorCode.UNAUTHORIZED.getStatus().value(),
-        ApiErrorCode.UNAUTHORIZED.getMessage());
-  }
 }
