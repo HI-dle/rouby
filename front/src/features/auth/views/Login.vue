@@ -67,14 +67,19 @@
 
       <!-- 소셜 로그인 -->
       <div class="flex justify-between gap-4 mb-6">
-        <button class="w-full py-3 rounded-2xl border border-[#D5C8FF] hover:bg-violet-50 transition">
-          <span class="text-xl">😊</span>
+        <!-- 카카오 로그인 -->
+        <button class="w-full py-3 rounded-2xl border border-[#D5C8FF] hover:bg-violet-50 transition flex justify-center items-center">
+          <img src="@/features/auth/icon/kakao.svg" alt="Kakao Login" class="h-6" />
         </button>
-        <button class="w-full py-3 rounded-2xl border border-[#D5C8FF] hover:bg-violet-50 transition">
-          <span class="text-xl">🌐</span>
+
+        <!-- 구글 로그인 -->
+        <button class="w-full py-3 rounded-2xl border border-[#D5C8FF] hover:bg-violet-50 transition flex justify-center items-center">
+          <img src="@/features/auth/icon/google.svg" alt="Google Login" class="h-6" />
         </button>
-        <button class="w-full py-3 rounded-2xl border border-[#D5C8FF] hover:bg-violet-50 transition">
-          <span class="text-xl">🍎</span>
+
+        <!-- 애플 로그인 -->
+        <button class="w-full py-3 rounded-2xl border border-[#D5C8FF] hover:bg-violet-50 transition flex justify-center items-center">
+          <img src="@/features/auth/icon/apple.svg" alt="Apple Login" class="h-6" />
         </button>
       </div>
 
