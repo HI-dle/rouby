@@ -1,0 +1,19 @@
+package com.rouby.user.application;
+
+import org.springframework.http.HttpStatus;
+
+import com.rouby.common.exception.type.ErrorCode;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
+public enum UserErrorCode implements ErrorCode {
+	USER_NOT_FOUND("USER_404","존재하지 않는 유저입니다.", HttpStatus.NOT_FOUND),
+	INVALID_PASSWORD("USER_401","비밀번호가 일치하지 않습니다.", HttpStatus.UNAUTHORIZED);
+
+	private final String code;
+	private final String message;
+	private final HttpStatus status;
+}
