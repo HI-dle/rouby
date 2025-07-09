@@ -1,3 +1,5 @@
+//yyyy-mm-ddThh:mi 포맷
+
 export const formatDateTime = (date, { type = 'datetime', noMins = false } = {}) => {
   const copy = new Date(date) // 원본 보호
 
@@ -15,6 +17,10 @@ export const formatDateTime = (date, { type = 'datetime', noMins = false } = {})
 
 export const toDate = (dateTimeStr) => {
   return dateTimeStr?.slice(0, 10)
+}
+
+export const toTime = (dateTimeStr) => {
+  return dateTimeStr?.slice(11, dateTimeStr.length)
 }
 
 export const toDateTime = (dateStr, hours) => {

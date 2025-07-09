@@ -1,5 +1,4 @@
 <script setup>
-import { nextTick, onMounted, ref } from 'vue'
 import { CalendarClock, Calendar, Bell, RefreshCw } from 'lucide-vue-next'
 import SelectBox from '@/components/common/SelectBox.vue'
 import ToggleSwitch from '@/components/common/ToggleSwitch.vue'
@@ -11,19 +10,15 @@ const props = defineProps({
   form: Object,
   errors: Object,
 })
-const emit = defineEmits(['submit', 'input-datetime'])
-
-const autoResize = (e) => {
-  const el = e.target
-  if (!el) return
-  el.style.height = 'auto'
-  el.style.height = `${el.scrollHeight}px`
-}
+const emit = defineEmits(['submit', 'inputDatetime', 'autoResize'])
 </script>
 
 <template>
-  <form @submit.prevent="emit('submit')" class="w-full">
-    <div class="min-h-[100vh] max-w-md mx-auto p-4 space-y-6 bg-white main-container rounded-t-2xl">
+  <form
+    @submit.prevent="emit('submit')"
+    class="h-[calc(var(--vh,1vh)_*100)] flex-grow overflow-y-auto"
+  >
+    <div class="main-container p-4 space-y-6 bg-white rounded-t-2xl">
       <!-- 제목 -->
       <div>
         <input
@@ -39,9 +34,9 @@ const autoResize = (e) => {
       <textarea
         v-model="form.memo"
         placeholder="메모"
-        class="w-full text-base border-b px-2 pb-2 border-gray-300 focus:outline-none focus:border-black resize-none placeholder-gray-400 overflow-hidden bg-inherit"
+        class="w-full text-base border-b px-2 pb-2 border-gray-300 focus:outline-none focus:border-black placeholder-gray-400 resize-none overflow-auto max-h-[30vh] bg-inherit"
         rows="1"
-        @input="autoResize"
+        @input="(e) => emit('autoResize', e)"
       />
 
       <div class="flex flex-row">
@@ -62,7 +57,7 @@ const autoResize = (e) => {
               :type="form.allDay ? 'date' : 'datetime-local'"
               :value="form.allDay ? toDate(form.start) : form.start"
               @input="(e) => emit('input-datetime', e, 'start')"
-              class="w-60 text-base text-content-color border rounded-md px-3 py-2 shadow-sm focus:outline-none focus:border-transparent focus:shadow-[0_0_3px_2px_theme(colors.main-color/30%)] transition"
+              class="w-60 xs:w-56 xxs:w-44 xs:text-sm xxs:text-xs text-base text-content-color border rounded-md px-3 py-2 shadow-sm focus:outline-none focus:border-transparent focus:shadow-[0_0_3px_2px_theme(colors.main-color/30%)] transition"
             />
           </div>
           <div class="flex justify-between items-center mx-2">
@@ -70,8 +65,8 @@ const autoResize = (e) => {
             <input
               :type="form.allDay ? 'date' : 'datetime-local'"
               :value="form.allDay ? toDate(form.end) : form.end"
-              @input="(e) => emit('input-datetime', e, 'end')"
-              class="w-60 text-base text-content-color border rounded-md px-3 py-2 shadow-sm focus:outline-none focus:border-transparent focus:shadow-[0_0_3px_2px_theme(colors.main-color/30%)] transition"
+              @input="(e) => emit('inputDatetime', e, 'end')"
+              class="w-60 xs:w-56 xxs:w-44 xs:text-sm xxs:text-xs text-base text-content-color border rounded-md px-3 py-2 shadow-sm focus:outline-none focus:border-transparent focus:shadow-[0_0_3px_2px_theme(colors.main-color/30%)] transition"
             />
           </div>
           <p v-if="errors.period" class="text-sm text-error-color mt-1 mx-2">{{ errors.period }}</p>
@@ -92,6 +87,7 @@ const autoResize = (e) => {
           v-model="form.alarmOffsetMinutes"
           :options="alarmOptions"
           :placeholder="alarmOptions[0].label"
+          trigger-class="w-40"
         />
       </div>
 
@@ -107,6 +103,7 @@ const autoResize = (e) => {
           v-model="form.repeat"
           :options="repeatOptions"
           :placeholder="repeatOptions[0].label"
+          trigger-class="w-40"
         />
       </div>
 
@@ -129,9 +126,14 @@ const autoResize = (e) => {
       </div>
 
       <!-- 버튼 -->
-      <div class="flex justify-evenly pt-10">
-        <button class="w-44 *:px-4 py-2 rounded-lg bg-gray-100 text-gray-700">취소</button>
-        <button @click="onSubmit" class="w-44 px-4 py-2 rounded-lg bg-main-color text-white">
+      <div class="flex justify-evenly pt-10 pb-10">
+        <button class="w-full lg:w-80 px-4 py-2 mx-1 rounded-lg bg-gray-100 text-gray-700">
+          취소
+        </button>
+        <button
+          @click="onSubmit"
+          class="w-full lg:w-80 px-4 py-2 mx-1 rounded-lg bg-main-color text-white"
+        >
           저장
         </button>
       </div>

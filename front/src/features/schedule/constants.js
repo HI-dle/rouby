@@ -34,3 +34,10 @@ export const errorMessage = {
     reversed: '루틴 시작일은 종료일보다 나중일 수 없습니다.',
   },
 }
+
+export const BYDAY = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA']
+
+export const MIDNIGHT = '00:00'
+export const NONE = 'NONE'
+export const BIWEEKLY = 'BIWEEKLY'
+export const WEEKELY = 'WEEKLY'

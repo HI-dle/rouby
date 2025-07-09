@@ -1,5 +1,4 @@
 <script setup>
-import { nextTick, onMounted, watch } from 'vue'
 import ScheduleForm from '../components/ScheduleForm.vue'
 import { useScheduleForm } from '../useScheduleForm'
 
@@ -7,7 +6,7 @@ defineOptions({
   name: 'CreateScheduleView',
 })
 
-const { form, errors, memoRef, onSubmit, onDateTimeInput } = useScheduleForm()
+const { form, errors, memoRef, onSubmit, onDateTimeInput, autoResize } = useScheduleForm()
 </script>
 
 <template>
@@ -15,7 +14,7 @@ const { form, errors, memoRef, onSubmit, onDateTimeInput } = useScheduleForm()
     v-model:form="form"
     :errors="errors"
     :memoRef="memoRef"
-    @input-datetime="onDateTimeInput"
+    @inputDatetime="onDateTimeInput"
     @submit="onSubmit"
     @autoResize="autoResize"
   />
