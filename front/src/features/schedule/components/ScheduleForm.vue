@@ -4,7 +4,6 @@ import SelectBox from '@/components/common/SelectBox.vue'
 import ToggleSwitch from '@/components/common/ToggleSwitch.vue'
 import { alarmOptions, repeatOptions } from '../constants'
 import { toDate } from '@/shared/utils/formatDate'
-import {} from 'vue'
 
 const props = defineProps({
   form: Object,
@@ -128,11 +127,14 @@ const emit = defineEmits(['submit', 'inputDatetime', 'autoResize'])
 
       <!-- 버튼 -->
       <div class="flex justify-evenly pt-10 pb-10">
-        <button class="w-full lg:w-80 px-4 py-2 mx-1 rounded-lg bg-gray-100 text-gray-700">
+        <button
+          type="button"
+          class="w-full lg:w-80 px-4 py-2 mx-1 rounded-lg bg-gray-100 text-gray-700"
+        >
           취소
         </button>
         <button
-          @click="onSubmit"
+          type="submit"
           class="w-full lg:w-80 px-4 py-2 mx-1 rounded-lg bg-main-color text-white"
         >
           저장

@@ -23,7 +23,7 @@ export const toTime = (dateTimeStr) => {
 }
 
 export const toDateTime = (dateStr, hours) => {
-  if (dateStr >= 10) return dateStr
+  if (dateStr.includes('T')) return dateStr
   const hoursStr = String(hours).padStart(2, '0')
   return `${dateStr}T${hoursStr}:00`
 }

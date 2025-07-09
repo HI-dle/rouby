@@ -15,7 +15,7 @@ export const validateForm = (form, errors) => {
     return false
   }
 
-  if (form.start && form.end && form.start > form.end) {
+  if (form.start > form.end) {
     errors.period = errorMessage.period.invalidRange
     return false
   }

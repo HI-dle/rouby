@@ -6,14 +6,13 @@ defineOptions({
   name: 'CreateScheduleView',
 })
 
-const { form, errors, memoRef, onSubmit, onDateTimeInput, autoResize } = useScheduleForm()
+const { form, errors, onSubmit, onDateTimeInput, autoResize } = useScheduleForm()
 </script>
 
 <template>
   <ScheduleForm
     v-model:form="form"
     :errors="errors"
-    :memoRef="memoRef"
     @inputDatetime="onDateTimeInput"
     @submit="onSubmit"
     @autoResize="autoResize"

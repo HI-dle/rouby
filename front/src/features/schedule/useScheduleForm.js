@@ -45,7 +45,7 @@ export const useScheduleForm = () => {
         if (newVal) {
           let errorKey = key
           if (['start', 'end'].includes(key)) errorKey = 'period'
-          errors[errorKey] = ''
+          delete errors[errorKey]
         }
       },
     )

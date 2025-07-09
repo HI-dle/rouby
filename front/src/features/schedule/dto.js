@@ -1,27 +1,33 @@
 import { formatDateTime, toDate, toTime } from '@/shared/utils/formatDate'
 import { BIWEEKLY, BYDAY, MIDNIGHT, NONE, WEEKELY } from './constants'
 
+const getWeekdays = (from, end) => {
+  const startDate = new Date(from)
+  const endDate = new Date(end)
+  const includedWeekdays = new Set()
+
+  for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+    includedWeekdays.add(d.getDay())
+  }
+  if (includedWeekdays.size === 7) return [] // all days covered
+
+  return [...includedWeekdays].map((d) => BYDAY[d])
+}
+
+const getNxtDate = (dateStr) => {
+  const date = new Date(dateStr)
+  date.setDate(date.getDate() + 1)
+
+  return formatDateTime(date)
+}
+
 export function toCreateSchedulePayload(form) {
-  const getWeekdays = (from, end) => {
-    const startDate = new Date(from)
-    const endDate = new Date(end)
-    const includedWeekdays = new Set()
-
-    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-      includedWeekdays.add(d.getDay())
-    }
-    if (includedWeekdays.size === 7) return [] // all days covered
-
-    return [...includedWeekdays].map((d) => BYDAY[d])
+  if (!form || typeof form !== 'object') {
+    throw new Error('유효하지 않은 form 객체입니다.')
   }
 
-  const getNxtDate = (dateStr) => {
-    const date = new Date(dateStr)
-    date.setDate(date.getDate() + 1)
-
-    return formatDateTime(date)
-  }
   const weekdays = getWeekdays(form.start, form.end)
+
   return {
     title: form.title,
     memo: form.memo,
