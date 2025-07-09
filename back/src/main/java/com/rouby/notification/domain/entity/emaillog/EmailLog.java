@@ -25,9 +25,6 @@ public class EmailLog extends LogBaseEntity {
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private Long id;
 
-  @Column(nullable = false)
-  private Long userId;
-
   @Embedded
   private EmailContent content;
 
@@ -38,10 +35,23 @@ public class EmailLog extends LogBaseEntity {
   @Enumerated(EnumType.STRING)
   private SendStatus status;
 
+  public static EmailLog sent(EmailContent content, EmailAddress address) {
+    return EmailLog.builder()
+        .content(content)
+        .emailAddress(address)
+        .status(SendStatus.SENT).build();
+  }
+
+  public static EmailLog failed(EmailContent content, EmailAddress address) {
+    return EmailLog.builder()
+        .content(content)
+        .emailAddress(address)
+        .status(SendStatus.FAILED).build();
+  }
+
   @Builder
-  private EmailLog(Long userId, EmailContent content, EmailAddress emailAddress,
+  private EmailLog(EmailContent content, EmailAddress emailAddress,
       SendStatus status) {
-    this.userId = userId;
     this.content = content;
     this.emailAddress = emailAddress;
     this.status = status;

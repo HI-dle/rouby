@@ -15,7 +15,7 @@ import org.springframework.util.StringUtils;
 public class EmailContent implements Serializable {
 
   @JdbcTypeCode(SqlTypes.JSON)
-  @Column(columnDefinition = "jsonb", nullable = false)
+  @Column(name = "content", columnDefinition = "jsonb", nullable = false)
   private String value;
 
   public static EmailContent of(String value) {
