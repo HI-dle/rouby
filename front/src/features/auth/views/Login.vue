@@ -1,4 +1,3 @@
-<!-- LoginPage.vue -->
 <template>
   <div class="min-h-screen flex justify-center items-start bg-gradient-to-br from-[#f4f5ff] via-[#edf0ff] to-[#e9f3ff] overflow-y-auto">
 
@@ -23,8 +22,10 @@
         v-model="email"
         type="email"
         placeholder="your@email.com"
-        class="w-full mb-4 px-4 py-3 rounded-2xl bg-white/90 border border-violet-100 focus:outline-none focus:ring-2 focus:ring-violet-400"
+        class="w-full mb-1 px-4 py-3 rounded-2xl bg-white/90 border border-violet-100 focus:outline-none focus:ring-2 focus:ring-violet-400"
+        @keyup.enter="onLogin"
       />
+      <p v-if="emailError" class="text-xs text-red-500 mb-3">{{ emailError }}</p>
 
       <!-- 비밀번호 입력 -->
       <label class="block text-sm font-medium text-indigo-600 mb-1">비밀번호</label>
@@ -32,14 +33,21 @@
         v-model="password"
         type="password"
         placeholder="••••••••"
-        class="w-full mb-4 px-4 py-3 rounded-2xl bg-white/90 border border-violet-100 focus:outline-none focus:ring-2 focus:ring-violet-400"
+        class="w-full mb-1 px-4 py-3 rounded-2xl bg-white/90 border border-violet-100 focus:outline-none focus:ring-2 focus:ring-violet-400"
+        @keyup.enter="onLogin"
       />
+      <p v-if="passwordError" class="text-xs text-red-500 mb-3">{{ passwordError }}</p>
 
       <!-- 로그인 상태 유지 체크박스 -->
       <label class="inline-flex items-center mb-6 cursor-pointer select-none">
         <input type="checkbox" v-model="staySignedIn" class="accent-violet-600" />
         <span class="ml-2 text-sm text-indigo-600">로그인 상태 유지</span>
       </label>
+
+      <!-- 로그인 실패 메시지 -->
+      <p v-if="loginError" class="text-sm text-red-500 text-center mb-4">
+        {{ loginError }}
+      </p>
 
       <!-- 로그인 버튼 -->
       <button
@@ -60,7 +68,6 @@
       <!-- 소셜 로그인 -->
       <div class="flex justify-between gap-4 mb-6">
         <button class="w-full py-3 rounded-2xl border border-[#D5C8FF] hover:bg-violet-50 transition">
-          <!-- 소셜 아이콘 -->
           <span class="text-xl">😊</span>
         </button>
         <button class="w-full py-3 rounded-2xl border border-[#D5C8FF] hover:bg-violet-50 transition">
@@ -87,31 +94,55 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import HeaderIcon from "@/assets/header_logo.svg";
+import { storeToken } from '@/features/auth/storeToken';
 import { login } from '@/features/auth/loginApi';
 
+
+// 입력값 및 상태
 const email = ref('');
 const password = ref('');
 const staySignedIn = ref(false);
+
+// 에러 메시지
+const emailError = ref('');
+const passwordError = ref('');
+const loginError = ref('');
+
 const router = useRouter();
 
-async function onLogin() {
-  try {
-    const token = await login({ email: email.value, password: password.value });
-
-    // 토큰 저장 방식 선택
-    if (staySignedIn.value) {
-      localStorage.setItem('token', token); // 상태 유지
-    } else {
-      sessionStorage.setItem('token', token); // 세션만 유지
-    }
-
-    // 페이지 이동
-    await router.push('/');
-
-  } catch (error) {
-    console.error('로그인 실패:', error);
-    alert('로그인에 실패했습니다. 이메일 또는 비밀번호를 확인하세요.');
-  }
+// 이메일 형식 검사 함수
+function validateEmailFormat(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+// 로그인 함수
+async function onLogin() {
+  // 에러 초기화
+  emailError.value = '';
+  passwordError.value = '';
+  loginError.value = '';
+
+  // 이메일 검사
+  if (!validateEmailFormat(email.value)) {
+    emailError.value = '잘못된 이메일 형식입니다.';
+    return;
+  }
+
+  // 비밀번호 검사
+  if (!password.value) {
+    passwordError.value = '비밀번호를 입력해주세요.';
+    return;
+  }
+
+  try {
+    const token = await login({ email: email.value.trim(), password: password.value });
+
+    storeToken(token, staySignedIn.value);
+
+    await router.push('/');
+  } catch (error) {
+    loginError.value = '아이디 혹은 비밀번호가 일치하지 않습니다. 다시 확인해주세요.';
+    console.error('로그인 실패:', error);
+  }
+}
 </script>
