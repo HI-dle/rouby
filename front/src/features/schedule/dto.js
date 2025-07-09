@@ -1,5 +1,5 @@
 import { formatDateTime, toDate, toTime } from '@/shared/utils/formatDate'
-import { BIWEEKLY, BYDAY, MIDNIGHT, NONE, WEEKELY } from './constants'
+import { BIWEEKLY, BYDAY, MIDNIGHT, WEEKELY } from './constants'
 
 const getWeekdays = (from, end) => {
   const startDate = new Date(from)
@@ -31,17 +31,19 @@ export function toCreateSchedulePayload(form) {
   return {
     title: form.title,
     memo: form.memo,
-    alarmOffsetMinutes: form.alarmOffsetMinutes === NONE ? null : form.alarmOffsetMinutes,
+    alarmOffsetMinutes: form.alarmOffsetMinutes,
     routineStart: toDate(form.routineStart),
     startDate: toDate(form.start),
     startTime: form.allDay ? MIDNIGHT : toTime(form.start),
     endDate: form.allDay ? toDate(getNxtDate(form.end)) : toDate(form.end),
     endTime: form.allDay ? MIDNIGHT : toTime(form.end),
-    recurrenceRule: {
-      freq: form.repeat === NONE ? null : form.repeat !== BIWEEKLY ? form.reapet : WEEKELY,
-      byDay: weekdays.length < 1 ? null : weekdays.map((d) => d).join(','),
-      interval: form.reapet === NONE ? null : form.repeat !== BIWEEKLY ? 1 : 2,
-      until: '2100-01-01T00:00Z', // null로 하거나, 현재 화면으로 선택 불가
-    },
+    recurrenceRule: !form.reapet
+      ? null
+      : {
+          freq: form.repeat !== BIWEEKLY ? form.reapet : WEEKELY,
+          byDay: weekdays.length < 1 ? null : weekdays.map((d) => d).join(','),
+          interval: !form.reapet ? null : form.repeat !== BIWEEKLY ? 1 : 2,
+          until: '2100-01-01T00:00Z', // null로 하거나, 현재 화면으로 선택 불가
+        },
   }
 }

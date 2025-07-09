@@ -1,9 +1,9 @@
 import { useRouter } from 'vue-router'
 
-export const useGoBack = () => {
+export const useGoBack = (path = '/') => {
   const router = useRouter()
 
-  const goBack = (path = '/') => {
+  const goBackOrPath = (path = '/') => {
     if (window.history.length > 1) {
       router.back()
     } else {
@@ -11,5 +11,5 @@ export const useGoBack = () => {
     }
   }
 
-  return { goBack }
+  return { goBackOrPath }
 }

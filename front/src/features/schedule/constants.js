@@ -2,13 +2,11 @@ export const BYDAY = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA']
 
 export const MIDNIGHT = '00:00'
 
-export const NONE = 'NONE'
-
 export const BIWEEKLY = 'BIWEEKLY'
 export const WEEKELY = 'WEEKLY'
 
 export const alarmOptions = [
-  { value: NONE, label: '없음' },
+  { value: null, label: '없음' },
   { value: 0, label: '일정 시간' },
   { value: 5, label: '5분 전' },
   { value: 10, label: '10분 전' },
@@ -22,7 +20,7 @@ export const alarmOptions = [
 ]
 
 export const repeatOptions = [
-  { value: NONE, label: '안 함' },
+  { value: null, label: '안 함' },
   { value: 'DAILY', label: '매일' },
   { value: 'WEEKLY', label: '매주' },
   { value: 'BIWEEKLY', label: '2주마다' },

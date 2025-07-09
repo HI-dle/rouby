@@ -1,8 +1,5 @@
-import { ref, onMounted, reactive, watch, nextTick } from 'vue'
-import { createSchedule } from '@/features/schedule/scheduleService'
+import { reactive, watch } from 'vue'
 import { formatDateTime, toDateTime } from '@/shared/utils/formatDate'
-import { validateForm } from './validations'
-import { NONE } from './constants'
 
 export const useScheduleForm = () => {
   const errors = reactive({})
@@ -12,9 +9,9 @@ export const useScheduleForm = () => {
     allDay: false,
     start: formatDateTime(new Date(), { noMins: true }),
     end: formatDateTime(new Date(Date.now() + 3600000), { noMins: true }),
-    alarmOffsetMinutes: NONE,
+    alarmOffsetMinutes: null,
     routineStart: formatDateTime(new Date(), { type: 'date' }),
-    repeat: NONE,
+    repeat: null,
   })
 
   const autoResize = (e) => {
@@ -27,15 +24,6 @@ export const useScheduleForm = () => {
   const onDateTimeInput = (e, key) => {
     const val = e.target.value
     form[key] = form.allDay ? toDateTime(val, 0) : val
-  }
-
-  const onSubmit = async () => {
-    if (!validateForm(form, errors)) return
-    try {
-      await createSchedule(form)
-    } catch (e) {
-      console.error(e)
-    }
   }
 
   ;['title', 'start', 'end', 'routineStart'].forEach((key) => {
@@ -56,6 +44,5 @@ export const useScheduleForm = () => {
     errors,
     autoResize,
     onDateTimeInput,
-    onSubmit,
   }
 }
