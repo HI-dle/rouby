@@ -42,19 +42,6 @@ public class NotificationSetting extends BaseEntity {
     this.isEnabled = false;
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    NotificationSetting that = (NotificationSetting) o;
-    return Objects.equals(user, that.user) && notificationType == that.notificationType;
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(user, notificationType);
-  }
-
   public static NotificationSetting createDefault(User user, NotificationType type){
     return NotificationSetting.builder()
         .user(user)
@@ -68,6 +55,19 @@ public class NotificationSetting extends BaseEntity {
     this.user = user;
     this.notificationType = notificationType;
     this.isEnabled = isEnabled;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    NotificationSetting that = (NotificationSetting) o;
+    return Objects.equals(user, that.user) && notificationType == that.notificationType;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(user, notificationType);
   }
 
   protected NotificationSetting() {

@@ -17,8 +17,6 @@ import com.rouby.auth.config.SecurityConfig;
 import com.rouby.common.config.WebConfig;
 import com.rouby.common.exception.GlobalExceptionHandler;
 import com.rouby.common.resolver.CustomPageableArgumentResolver;
-import com.rouby.common.support.ControllerTestSupport;
-import com.rouby.schedule.presentation.ScheduleController;
 import com.rouby.user.application.UserFacade;
 import com.rouby.user.presentation.dto.CreateUserRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -41,7 +39,10 @@ import org.springframework.test.web.servlet.ResultActions;
 @WebMvcTest(
     controllers = {UserController.class,},
     excludeFilters = {
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE) //, classes = JwtAuthenticationFilter.class)
+        @ComponentScan.Filter(
+            type = FilterType.ASSIGNABLE_TYPE,
+            classes = SecurityConfig.class
+        )
     }
 )
 @AutoConfigureMockMvc(addFilters = false)
@@ -63,7 +64,7 @@ class UserControllerTest {
   UserFacade userFacade;
 
   @Test
-  @DisplayName("회원 가입 API")
+  @DisplayName("회원 가입 성공")
   void createUser() throws Exception {
 
     // given
@@ -76,7 +77,7 @@ class UserControllerTest {
         .contentType(MediaType.APPLICATION_JSON));
 
     // then
-    result.andExpect(status().isOk())
+    result.andExpect(status().isCreated())
         .andDo(print())
         .andDo(document("user-create",
             preprocessRequest(prettyPrint()),
@@ -89,7 +90,7 @@ class UserControllerTest {
   }
 
   @Test
-  @DisplayName("이메일 형식 오류 시 400 응답 문서화")
+  @DisplayName("회원 가입 실패 - 이메일 형식 오류")
   void createUser_invalidEmail() throws Exception {
     CreateUserRequest request = UserRequestStub.withInvalidEmail();
 
@@ -119,7 +120,7 @@ class UserControllerTest {
 
 
   @Test
-  @DisplayName("비밀번호 형식 오류 시 400 응답 문서화")
+  @DisplayName("회원 가입 실패 - 비밀번호 형식 오류")
   void createUser_invalidPassword() throws Exception {
     CreateUserRequest request = UserRequestStub.withInvalidPassword();
 

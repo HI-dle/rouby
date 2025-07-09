@@ -6,6 +6,7 @@ import com.rouby.user.application.exception.UserException;
 import com.rouby.user.domain.entity.User;
 import com.rouby.user.domain.repository.UserRepository;
 import com.rouby.user.domain.service.UserPasswordEncoder;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ public class UserWriteService {
   private final UserRepository userRepository;
   private final UserPasswordEncoder passwordEncoder;
 
+  @Transactional
   public void create(CreateUserCommand command) {
     //Todo. command.email() 인증 여부 확인
 

@@ -4,7 +4,7 @@ content-type: application/json
 
 {
   "email": "hyezuu@hidle.com",
-  "password": "aaaaaaaa"
+  "password": "aaaaaa11!"
 }
 
 ### 회원가입 API (실패)
