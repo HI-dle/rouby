@@ -105,11 +105,11 @@ class UserControllerTest {
                 fieldWithPath("email").description("이메일 주소 (형식 오류)"),
                 fieldWithPath("password").description("비밀번호")
             ),
-            getErrorResponseFieldssnippet()
+            getErrorResponseFieldsSnippet()
         ));
   }
 
-  private static ResponseFieldsSnippet getErrorResponseFieldssnippet() {
+  private static ResponseFieldsSnippet getErrorResponseFieldsSnippet() {
     return responseFields(
         fieldWithPath("message").description("에러 메시지"),
         fieldWithPath("code").description("에러 코드"),
@@ -135,7 +135,7 @@ class UserControllerTest {
                 fieldWithPath("email").description("이메일 주소"),
                 fieldWithPath("password").description("비밀번호 (형식 오류)")
             ),
-            getErrorResponseFieldssnippet()
+            getErrorResponseFieldsSnippet()
         ));
   }
 }

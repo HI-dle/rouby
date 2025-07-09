@@ -3,15 +3,15 @@ POST {{url}}/api/v1/users
 content-type: application/json
 
 {
-  "email": "hyezuu@hidle.com",
+  "email": "valid@hidle.com",
   "password": "aaaaaa11!"
 }
 
-### 회원가입 API (실패)
+### 회원가입 API (실패 - 비밀번호 검증 오류)
 POST {{url}}/api/v1/users
 content-type: application/json
 
 {
-  "email": "hyezuu@hidle.com",
+  "email": "invalid@hidle.com",
   "password": "qwe3"
 }
