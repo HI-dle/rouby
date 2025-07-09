@@ -85,13 +85,33 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import HeaderIcon from "@/assets/header_logo.svg";
+import { login } from '@/features/auth/loginApi';
 
 const email = ref('');
 const password = ref('');
 const staySignedIn = ref(false);
+const router = useRouter();
 
-function onLogin() {
-  alert(`로그인 시도\n이메일: ${email.value}\n비밀번호: ${password.value}\n상태 유지: ${staySignedIn.value}`);
+async function onLogin() {
+  try {
+    const token = await login({ email: email.value, password: password.value });
+
+    // 토큰 저장 방식 선택
+    if (staySignedIn.value) {
+      localStorage.setItem('token', token); // 상태 유지
+    } else {
+      sessionStorage.setItem('token', token); // 세션만 유지
+    }
+
+    // 페이지 이동
+    await router.push('/');
+
+  } catch (error) {
+    console.error('로그인 실패:', error);
+    alert('로그인에 실패했습니다. 이메일 또는 비밀번호를 확인하세요.');
+  }
 }
+
 </script>
