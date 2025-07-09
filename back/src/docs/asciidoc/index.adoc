@@ -10,4 +10,5 @@
 == 소개
 ROUBY의 API Docs 입니다.
 
+include::src/docs/asciidoc/auth.adoc[]
 include::src/docs/asciidoc/schedule.adoc[]
