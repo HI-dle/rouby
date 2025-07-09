@@ -9,37 +9,37 @@ const router = createRouter({
       children: [
         {
           path: 'schedule',
-          component: () => import('@/layouts/ScheduleLayout.vue'),
+          component: () => import('@/features/schedule/views/ScheduleLayout.vue'),
           redirect: '/schedule/daily',
           children: [
             // {
             //   path: 'create',
             //   name: 'schedule-create',
-            //   component: () => import('@/views/schedule/CreateScheduleView.vue'),
+            //   component: () => import('@/features/schedule/views/CreateScheduleView.vue'),
             // },
             {
               path: 'daily',
               name: 'schedule-daily',
-              component: () => import('@/views/schedule/DailyScheduleView.vue'),
+              component: () => import('@/features/schedule/views/DailyScheduleView.vue'),
             },
           ],
         },
         {
           path: 'routine',
-          component: () => import('@/layouts/RoutineLayout.vue'),
+          component: () => import('@/features/routine/views/RoutineLayout.vue'),
           redirect: '/routine/daily',
           children: [
             {
               path: 'daily',
               name: 'routine-daily',
-              component: () => import('@/views/routine/DailyRoutineView.vue'),
+              component: () => import('@/features/routine/views/DailyRoutineView.vue'),
             },
           ],
         },
         {
           path: 'mypage',
           name: 'mypage',
-          component: () => import('../views/user/MypageView.vue'),
+          component: () => import('@/features/user/views/MypageView.vue'),
         },
       ],
     },
