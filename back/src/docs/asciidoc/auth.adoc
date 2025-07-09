@@ -1,0 +1,7 @@
+[[AUTH-API]]
+== Auth-API
+
+[[Login-Auth]]
+=== Auth 로그인
+
+operation::login-auth-200[snippets='http-request,http-response,request-fields,response-fields,curl-request']

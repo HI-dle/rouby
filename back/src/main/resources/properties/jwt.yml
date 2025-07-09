@@ -1,0 +1,14 @@
+  # local 환경
+spring:
+  config.activate.on-profile: local
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_ACCESS_EXPIRATION}
+
+---
+# test 환경
+spring:
+  config.activate.on-profile: test
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_ACCESS_EXPIRATION}
