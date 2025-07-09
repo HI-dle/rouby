@@ -26,6 +26,10 @@ const props = defineProps({
           (typeof opt.value === 'string' || typeof opt.value === 'number'),
       ),
   },
+  placeholder: {
+    type: String,
+    default: '선택 안함',
+  },
   triggerClass: {
     type: String,
     default: '',
@@ -58,7 +62,7 @@ watch(
         props.triggerClass,
       ]"
     >
-      <SelectValue placeholder="없음" />
+      <SelectValue :placeholder="props.placeholder" />
     </SelectTrigger>
     <SelectContent>
       <SelectGroup>
