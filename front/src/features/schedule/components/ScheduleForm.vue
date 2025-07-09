@@ -10,6 +10,7 @@ const props = defineProps({
   form: Object,
   errors: Object,
 })
+
 const emit = defineEmits(['submit', 'inputDatetime', 'autoResize'])
 </script>
 

@@ -1,5 +1,4 @@
 //yyyy-mm-ddThh:mi 포맷
-
 export const formatDateTime = (date, { type = 'datetime', noMins = false } = {}) => {
   const copy = new Date(date) // 원본 보호
 
