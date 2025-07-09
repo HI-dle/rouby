@@ -34,8 +34,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 class ScheduleControllerTest extends ControllerTestSupport {
 
-  @MockitoBean
-  ScheduleFacade scheduleFacade;
+
 
   @BeforeEach
   void setUp() {
