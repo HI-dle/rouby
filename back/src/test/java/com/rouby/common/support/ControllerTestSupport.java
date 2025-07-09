@@ -1,6 +1,10 @@
 package com.rouby.common.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rouby.common.config.WebConfig;
+import com.rouby.common.config.WebMvcConfig;
+import com.rouby.common.exception.GlobalExceptionHandler;
+import com.rouby.common.resolver.CustomPageableArgumentResolver;
 import com.rouby.schedule.presentation.ScheduleController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -8,17 +12,24 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 @AutoConfigureRestDocs
+@AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(
     controllers = {ScheduleController.class,},
     excludeFilters = {
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebMvcConfig.class),
         @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE) //, classes = JwtAuthenticationFilter.class)
     }
 )
-@AutoConfigureMockMvc(addFilters = false)
+@Import({
+    WebConfig.class,
+    CustomPageableArgumentResolver.class,
+    GlobalExceptionHandler.class,
+})
 @ActiveProfiles("test")
 public abstract class ControllerTestSupport {
 
