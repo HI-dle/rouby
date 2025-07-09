@@ -1,0 +1,7 @@
+[[USER-API]]
+== User-API
+
+[[Create-User]]
+=== User 등록
+
+operation::reset-password-user-200[snippets='http-request,http-response,request-fields,curl-request']
