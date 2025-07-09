@@ -9,8 +9,8 @@ const isActive = (path) => route.path.startsWith(path)
 </script>
 
 <template>
-  <div
-    class="max-w-md fixed mx-auto bottom-0 left-0 right-0 bg-white border-t shadow-md flex justify-between items-center px-4 sm:px-6 py-3 z-50 rounded-t-3xl safe-area-inset-bottom"
+  <footer
+    class="w-full lg:max-w-screen-md fixed mx-auto bottom-0 left-0 right-0 bg-white border-t shadow-md flex justify-between items-center px-4 sm:px-6 py-3 z-50 rounded-t-3xl safe-area-inset-bottom"
   >
     <RouterLink
       to="/schedule"
@@ -60,5 +60,5 @@ const isActive = (path) => route.path.startsWith(path)
       <Plus class="w-6 h-6" />
     </RouterLink>
      -->
-  </div>
+  </footer>
 </template>
