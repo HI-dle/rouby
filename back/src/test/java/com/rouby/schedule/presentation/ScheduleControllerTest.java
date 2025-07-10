@@ -32,8 +32,6 @@ import org.springframework.test.web.servlet.ResultActions;
 
 class ScheduleControllerTest extends ControllerTestSupport {
 
-
-
   @BeforeEach
   void setUp() {
   }
