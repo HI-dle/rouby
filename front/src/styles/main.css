@@ -4,16 +4,19 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  @apply bg-gradient-to-br from-[#f4f5ff] via-[#edf0ff] to-[#e9f3ff];
+  min-width: 300px;
+}
+
 #app {
-  max-width: 1280px;
+  width: 100%;
   margin: 0 auto;
   font-weight: normal;
 }
 
 .wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @apply bg-white/75;
 }
 
 .main-container {
@@ -41,8 +44,6 @@
   #app {
     display: grid;
     /* grid-template-columns: 1fr 1fr; */
-    max-width: 1024px;
-    width: 100%;
   }
 }
 
