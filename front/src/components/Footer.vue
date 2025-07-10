@@ -6,9 +6,8 @@ const route = useRoute()
 
 // 현재 경로와 일치하는지 확인하는 함수
 const isActive = (path) => route.path.startsWith(path)
-const create = 'create'
-const modify = 'modify'
-const isNotCreateOrModify = () => ![create, modify].some((p) => route.path.includes(p))
+const createOrModify = ['create', 'modify']
+const isNotCreateOrModify = () => !createOrModify.some((p) => route.path.includes(p))
 </script>
 
 <template>
