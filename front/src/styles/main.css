@@ -17,11 +17,11 @@
 }
 
 .main-container {
-  @apply h-[calc(var(--vh,1vh)_*100)] flex-grow overflow-y-auto bg-white rounded-2xl pb-8;
+  @apply h-[calc(var(--vh,1vh)_*100)] flex-grow overflow-y-auto;
 }
 
 .sub-main-container {
-  padding: 2rem 2rem 3rem 2rem;
+  padding: 2rem 2rem 6rem 2rem;
   @apply flex flex-col min-h-full overflow-hidden;
 }
 

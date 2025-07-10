@@ -9,16 +9,15 @@ const props = defineProps({
   form: Object,
   errors: Object,
 })
-
-const emit = defineEmits(['submit', 'inputDatetime', 'autoResize'])
+const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
 </script>
 
 <template>
-  <form
-    @submit.prevent="emit('submit')"
-    class="h-[calc(var(--vh,1vh)_*100)] flex-grow overflow-y-auto"
-  >
-    <div class="main-container p-4 space-y-6 bg-white rounded-t-2xl">
+  <div class="main-container">
+    <form
+      @submit.prevent="emit('submit')"
+      class="sub-main-container space-y-6 rounded-2xl bg-white"
+    >
       <!-- 제목 -->
       <div>
         <input
@@ -126,9 +125,10 @@ const emit = defineEmits(['submit', 'inputDatetime', 'autoResize'])
       </div>
 
       <!-- 버튼 -->
-      <div class="flex justify-evenly pt-10 pb-10">
+      <div class="flex justify-evenly pt-10">
         <button
           type="button"
+          @click="() => emit('cancel')"
           class="w-full lg:w-80 px-4 py-2 mx-1 rounded-lg bg-gray-100 text-gray-700"
         >
           취소
@@ -140,6 +140,6 @@ const emit = defineEmits(['submit', 'inputDatetime', 'autoResize'])
           저장
         </button>
       </div>
-    </div>
-  </form>
+    </form>
+  </div>
 </template>
