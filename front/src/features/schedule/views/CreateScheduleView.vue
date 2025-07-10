@@ -1,5 +1,5 @@
 <script setup>
-import { useGoBack } from '@/shared/composable/useGoBackOrPath'
+import { useGoBack } from '@/shared/composable/useGoBack'
 import ScheduleForm from '../components/ScheduleForm.vue'
 import { createSchedule } from '../scheduleService'
 import { useScheduleForm } from '../useScheduleForm'
