@@ -2,7 +2,7 @@ package com.rouby.notification.application.service;
 
 import com.rouby.notification.application.service.event.SendEmailFailedEvent;
 import com.rouby.notification.application.service.event.SendEmailSuccessEvent;
-import com.rouby.user.application.SendEmailCommand;
+import com.rouby.user.application.dto.SendEmailCommand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mail.MailException;
