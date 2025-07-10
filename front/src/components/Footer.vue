@@ -10,6 +10,7 @@ const isActive = (path) => route.path.startsWith(path)
 
 <template>
   <footer
+    role="contentinfo"
     class="w-full lg:max-w-screen-md fixed mx-auto bottom-0 left-0 right-0 bg-white border-t shadow-md flex justify-between items-center px-4 sm:px-6 py-3 z-50 rounded-t-3xl safe-area-inset-bottom"
   >
     <RouterLink
