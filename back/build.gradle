@@ -123,11 +123,10 @@ jacocoTestCoverageVerification {
 }
 
 jacocoTestReport {
-    dependsOn test
     reports {
         html.required.set(true)
         csv.required.set(true)
         xml.required.set(false)
     }
-    //finalizedBy 'jacocoTestCoverageVerification'
+    finalizedBy 'jacocoTestCoverageVerification'
 }

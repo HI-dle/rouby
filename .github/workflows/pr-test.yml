@@ -1,11 +1,11 @@
 name: Test with Gradle
 on:
   pull_request:
-    branches: dev
+    branches: [ "dev" ]
 permissions:
   contents: write
   pull-requests: write
-  
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -27,7 +27,7 @@ jobs:
         working-directory: back
         run: ./gradlew clean test
 
-      - name: if fail
+      - name: Notify on failure
         if: failure()
         uses: actions/github-script@v7
         with:
@@ -35,12 +35,12 @@ jobs:
           script: |
             const pull_number = context.payload.pull_request.number;
             const title = context.payload.pull_request.title;
-            const updated_title = `❌[BUILD FAIL] ${title}`;
+            const updated_title = `[BUILD FAIL] ${title}`;
       
             await github.rest.pulls.createReview({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number,
-              body: "Test failed: 코드를 다시 확인해주세요.",
+              body: "❌Test failed: 코드를 다시 확인해주세요.",
               event: "REQUEST_CHANGES"
             });
