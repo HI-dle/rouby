@@ -29,7 +29,6 @@ public class AuthController {
   public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request) {
     log.info("요청 받았습니다~!");
     log.info(request.email());
-    log.info(request.password());
     return ResponseEntity.ok(LoginResponse.from(authFacade.login(request.toApplication())));
   }
 

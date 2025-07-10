@@ -1,5 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+import axios from '@/api/axios';
+import { getStoredToken } from '@/features/auth/storeToken';
+
+// 앱 시작 시 토큰이 있으면 기본 헤더에 설정
+const token = getStoredToken();
+if (token) {
+  axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+}
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
