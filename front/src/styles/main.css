@@ -17,7 +17,11 @@
 }
 
 .main-container {
-  padding: 2rem 2rem 0 2rem;
+  @apply h-[calc(var(--vh,1vh)_*100)] flex-grow overflow-y-auto bg-white rounded-2xl pb-8;
+}
+
+.sub-main-container {
+  padding: 2rem 2rem 3rem 2rem;
   @apply flex flex-col min-h-full overflow-hidden;
 }
 
