@@ -76,7 +76,7 @@ public class Schedule extends BaseEntity {
     this.memo = memo;
     this.period = period;
     this.routineActivateDate = routineActivateDate;
-    this.alarmOffsetType = AlarmOffsetType.parse(alarmOffsetMinutes);
+    this.alarmOffsetType = alarmOffsetMinutes != null ? AlarmOffsetType.parse(alarmOffsetMinutes) : null;
     this.recurrenceRule = recurrenceRule;
 
     validate();

@@ -31,10 +31,12 @@ public class RecurrenceRule {
     this.byDay = byDay;
     this.interval = interval;
     this.until = until;
+
     validate();
   }
 
   public void validate() {
+    if (this.interval == null || this.freq == null) return;
     this.freq.validateInterval(this.interval);
   }
 
@@ -43,17 +45,23 @@ public class RecurrenceRule {
 
     String separator = ";";
     String equal = "=";
-
-    String byDayStr = byDay != null ? String.join(",", byDay.stream().map(Enum::name).toList()) : "";
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmssX");
-    String untilStr = until != null ? formatter.format(until): "";
-
     StringBuilder sb = new StringBuilder();
-    sb.append(RuleType.FREQ).append(equal).append(freq).append(separator)
-        .append(RuleType.BYDAY).append(equal).append(byDayStr).append(separator)
-        .append(RuleType.INTERVAL).append(equal).append(interval).append(separator)
-        .append(RuleType.UNTIL).append(equal).append(untilStr).append(separator);
 
+    if (freq != null) {
+      sb.append(RuleType.FREQ).append(equal).append(freq).append(separator);
+    }
+    if (byDay != null && !byDay.isEmpty()) {
+      String byDayStr = String.join(",", byDay.stream().map(Enum::name).toList());
+      sb.append(RuleType.BYDAY).append(equal).append(byDayStr).append(separator);
+    }
+    if (interval != null) {
+       sb.append(RuleType.INTERVAL).append(equal).append(interval).append(separator);
+    }
+    if (until != null) {
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmssX");
+      String untilStr = formatter.format(until);
+      sb.append(RuleType.UNTIL).append(equal).append(untilStr).append(separator);
+    }
     return sb.toString();
   }
 
@@ -66,7 +74,8 @@ public class RecurrenceRule {
         .forEach(item -> {
 
           String[] keyVal = item.split("=");
-          if (keyVal.length != 2) {
+          if (keyVal.length == 1) return;
+          if (keyVal.length > 2) {
             throw new IllegalArgumentException("데이터에 잘못된 RecurrenceRule 형식이 존재합니다.: " + item);
           }
 
