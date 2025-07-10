@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.5.4-SNAPSHOT'
+    id 'org.springframework.boot' version '3.5.3'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
 }
@@ -61,6 +61,9 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+
+    //jwt
+    implementation 'io.jsonwebtoken:jjwt:0.12.6'
 }
 
 dependencyManagement {
