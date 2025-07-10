@@ -1,6 +1,6 @@
 package com.rouby.user.presentation.dto;
 
-import com.rouby.user.application.SendEmailCommand;
+import com.rouby.user.application.dto.SendEmailVerificationCommand;
 import jakarta.validation.constraints.Email;
 
 public record SendEmailVerificationRequest(
@@ -8,7 +8,7 @@ public record SendEmailVerificationRequest(
     String email
 ) {
 
-  public SendEmailCommand toCommand(String to, String subject, String text) {
-    return new SendEmailCommand(to, subject, text);
+  public SendEmailVerificationCommand toCommand() {
+    return new SendEmailVerificationCommand(email);
   }
 }

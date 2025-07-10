@@ -1,4 +1,4 @@
-package com.rouby.user.application;
+package com.rouby.user.application.dto;
 
 public record SendEmailCommand(
     String to,
