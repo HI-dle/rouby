@@ -66,6 +66,7 @@ export default {
       screens: {
         xs: { max: '475px' },
         xxs: { max: '400px' },
+        xxxs: { max: '340px' },
       },
     },
   },

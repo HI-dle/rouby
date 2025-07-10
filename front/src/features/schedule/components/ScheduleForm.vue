@@ -38,44 +38,47 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
         @input="(e) => emit('autoResize', e)"
       />
 
-      <div class="flex flex-row">
-        <div class="mx-2 h-9 flex items-center justify-center">
-          <CalendarClock class="w-4 h-4 text-content-color" />
-        </div>
-        <div class="space-y-2 w-full">
-          <!-- 하루종일 토글 -->
-          <div class="flex items-center justify-between mx-2 h-9">
-            <span class="text-base font-semibold text-content-color">하루종일</span>
-            <ToggleSwitch v-model="form.allDay" />
+      <div class="grid grid-cols-[2fr_4fr] gap-4 xxs:grid-cols-[4fr_4fr]">
+        <!-- 하루종일 -->
+        <div class="flex justify-normal items-center">
+          <div class="flex items-center gap-2 mx-2 h-9">
+            <CalendarClock class="w-4 h-4 text-content-color" />
           </div>
+          <label class="ml-2 text-base font-semibold text-content-color">하루종일</label>
+        </div>
+        <div class="flex items-center justify-end mx-2">
+          <ToggleSwitch v-model="form.allDay" />
+        </div>
 
-          <!-- 시작/종료 -->
-          <div class="flex justify-between items-center mx-2">
-            <label class="text-base font-semibold text-content-color">시작</label>
-            <input
-              :type="form.allDay ? 'date' : 'datetime-local'"
-              :value="form.allDay ? toDate(form.start) : form.start"
-              @input="(e) => emit('input-datetime', e, 'start')"
-              class="w-60 xs:w-56 xxs:w-44 xs:text-sm xxs:text-xs text-base text-content-color border rounded-md px-3 py-2 shadow-sm focus:outline-none focus:border-transparent focus:shadow-[0_0_3px_2px_theme(colors.main-color/30%)] transition"
-            />
-          </div>
-          <div class="flex justify-between items-center mx-2">
-            <label class="text-base font-semibold text-content-color">종료</label>
-            <input
-              :type="form.allDay ? 'date' : 'datetime-local'"
-              :value="form.allDay ? toDate(form.end) : form.end"
-              @input="(e) => emit('inputDatetime', e, 'end')"
-              class="w-60 xs:w-56 xxs:w-44 xs:text-sm xxs:text-xs text-base text-content-color border rounded-md px-3 py-2 shadow-sm focus:outline-none focus:border-transparent focus:shadow-[0_0_3px_2px_theme(colors.main-color/30%)] transition"
-            />
-          </div>
-          <p v-if="errors.period" class="text-sm text-error-color mt-1 mx-2">{{ errors.period }}</p>
+        <!-- 시작 -->
+        <div class="flex items-center mx-2">
+          <label class="ml-8 text-base font-semibold text-content-color">시작</label>
         </div>
+        <input
+          :type="form.allDay ? 'date' : 'datetime-local'"
+          :value="form.allDay ? toDate(form.start) : form.start"
+          @input="(e) => emit('input-datetime', e, 'start')"
+          class="w-full xxs:w-40 xxxs:w-[123px] text-base xs:text-sm xxs:text-xs text-content-color border rounded-md px-3 py-2 shadow-sm focus:outline-none focus:border-transparent focus:shadow-[0_0_3px_2px_theme(colors.main-color/30%)] transition"
+        />
+
+        <!-- 종료 -->
+        <div class="flex items-center mx-2">
+          <label class="ml-8 text-base font-semibold text-content-color">종료</label>
+        </div>
+        <input
+          :type="form.allDay ? 'date' : 'datetime-local'"
+          :value="form.allDay ? toDate(form.end) : form.end"
+          @input="(e) => emit('inputDatetime', e, 'end')"
+          class="w-full xxs:w-40 xxxs:w-[123px] text-base xs:text-sm xxs:text-xs text-content-color border rounded-md px-3 py-2 shadow-sm focus:outline-none focus:border-transparent focus:shadow-[0_0_3px_2px_theme(colors.main-color/30%)] transition"
+        />
+
+        <!-- 에러 메시지 -->
+        <p v-if="errors.period" class="text-sm text-error-color mt-1 mx-2">{{ errors.period }}</p>
       </div>
-
       <hr />
 
       <!-- 알림 -->
-      <div class="flex justify-between items-center mr-2">
+      <div class="grid grid-cols-[2fr_4fr] gap-4 xxs:grid-cols-[4fr_4fr]">
         <div class="flex justify-normal items-center">
           <div class="mx-2 h-9 flex items-center justify-center">
             <Bell class="w-4 h-4 text-content-color" />
@@ -86,12 +89,12 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
           v-model="form.alarmOffsetMinutes"
           :options="alarmOptions"
           :placeholder="alarmOptions[0].label"
-          trigger-class="w-40"
+          trigger-class="w-full"
         />
       </div>
 
       <!-- 반복 -->
-      <div class="flex justify-between items-center mr-2">
+      <div class="grid grid-cols-[2fr_4fr] gap-4 xxs:grid-cols-[4fr_4fr]">
         <div class="flex justify-normal items-center">
           <div class="mx-2 h-9 flex items-center justify-center">
             <RefreshCw class="w-4 h-4 text-content-color" />
@@ -102,12 +105,12 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
           v-model="form.repeat"
           :options="repeatOptions"
           :placeholder="repeatOptions[0].label"
-          trigger-class="w-40"
+          trigger-class="w-full"
         />
       </div>
 
       <!-- 루틴 시작 -->
-      <div class="flex justify-between items-center mr-2">
+      <div class="grid grid-cols-[2fr_4fr] gap-4 xxs:grid-cols-[4fr_4fr]">
         <div class="flex justify-normal items-center">
           <div class="mx-2 h-9 flex items-center justify-center">
             <Calendar class="w-4 h-4 text-content-color" />
@@ -117,7 +120,7 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
         <input
           type="date"
           v-model="form.routineStart"
-          class="text-base text-content-color border rounded-md px-3 py-2 w-40 shadow-sm focus:outline-none focus:border-transparent focus:shadow-[0_0_3px_2px_theme(colors.main-color/30%)] transition"
+          class="w-full xxxs:w-[120px] text-base xxs:text-xs text-content-color border rounded-md px-3 py-2 shadow-sm focus:outline-none focus:border-transparent focus:shadow-[0_0_3px_2px_theme(colors.main-color/30%)] transition"
         />
         <p v-if="errors.routineStart" class="text-sm text-error-color mt-1 mx-2">
           {{ errors.routineStart }}
@@ -125,18 +128,15 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
       </div>
 
       <!-- 버튼 -->
-      <div class="flex justify-evenly pt-10">
+      <div class="flex justify-between pt-10 gap-2">
         <button
           type="button"
           @click="() => emit('cancel')"
-          class="w-full lg:w-80 px-4 py-2 mx-1 rounded-lg bg-gray-100 text-gray-700"
+          class="w-full px-4 py-2 rounded-lg bg-gray-100 text-gray-700"
         >
           취소
         </button>
-        <button
-          type="submit"
-          class="w-full lg:w-80 px-4 py-2 mx-1 rounded-lg bg-main-color text-white"
-        >
+        <button type="submit" class="w-full px-4 py-2 rounded-lg bg-main-color text-white">
           저장
         </button>
       </div>
