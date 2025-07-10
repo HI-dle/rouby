@@ -8,26 +8,21 @@
   max-width: 1280px;
   margin: 0 auto;
   font-weight: normal;
-  min-height: 100vh;
 }
 
 .wrapper {
-  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .main-container {
-  width: 100%;
-  padding: 2rem 2rem 0 2rem;
+  @apply h-[calc(var(--vh,1vh)_*100)] flex-grow overflow-y-auto;
 }
 
-a {
-  text-decoration: none;
-  color: rgb(14, 16, 15);
-  transition: 0.4s;
-  padding: 3px;
+.sub-main-container {
+  padding: 2rem 2rem 6rem 2rem;
+  @apply flex flex-col min-h-full overflow-hidden;
 }
 
 @media (hover: hover) {
@@ -48,8 +43,14 @@ a {
     /* grid-template-columns: 1fr 1fr; */
     max-width: 1024px;
     width: 100%;
-    min-height: 100vh;
   }
+}
+
+a {
+  text-decoration: none;
+  color: rgb(14, 16, 15);
+  transition: 0.4s;
+  padding: 3px;
 }
 
 @layer base {
