@@ -19,10 +19,12 @@ jobs:
           distribution: 'zulu'
 
       - name: Grant execute permission for gradlew
+        working-directory: back
         run: chmod +x gradlew
 
       # test
       - name: Build with Gradle
+        working-directory: back
         run: ./gradlew clean test
 
       - name: if fail
