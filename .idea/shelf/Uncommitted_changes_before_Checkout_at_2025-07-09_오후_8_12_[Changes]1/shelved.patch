@@ -1,0 +1,941 @@
+Index: front/src/App.vue
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><script setup>\nimport { RouterLink, RouterView } from 'vue-router'\nimport HelloWorld from './components/HelloWorld.vue'\n</script>\n\n<template>\n  <header>\n    <img alt=\"Vue logo\" class=\"logo\" src=\"@/assets/logo.svg\" width=\"125\" height=\"125\" />\n\n    <div class=\"wrapper\">\n      <HelloWorld msg=\"You did it!\" />\n\n      <nav>\n        <RouterLink to=\"/\">Home</RouterLink>\n        <RouterLink to=\"/about\">About</RouterLink>\n      </nav>\n    </div>\n  </header>\n\n  <RouterView />\n</template>\n\n<style scoped>\nheader {\n  line-height: 1.5;\n  max-height: 100vh;\n}\n\n.logo {\n  display: block;\n  margin: 0 auto 2rem;\n}\n\nnav {\n  width: 100%;\n  font-size: 12px;\n  text-align: center;\n  margin-top: 2rem;\n}\n\nnav a.router-link-exact-active {\n  color: var(--color-text);\n}\n\nnav a.router-link-exact-active:hover {\n  background-color: transparent;\n}\n\nnav a {\n  display: inline-block;\n  padding: 0 1rem;\n  border-left: 1px solid var(--color-border);\n}\n\nnav a:first-of-type {\n  border: 0;\n}\n\n@media (min-width: 1024px) {\n  header {\n    display: flex;\n    place-items: center;\n    padding-right: calc(var(--section-gap) / 2);\n  }\n\n  .logo {\n    margin: 0 2rem 0 0;\n  }\n\n  header .wrapper {\n    display: flex;\n    place-items: flex-start;\n    flex-wrap: wrap;\n  }\n\n  nav {\n    text-align: left;\n    margin-left: -1rem;\n    font-size: 1rem;\n\n    padding: 1rem 0;\n    margin-top: 1rem;\n  }\n}\n</style>\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/front/src/App.vue b/front/src/App.vue
+--- a/front/src/App.vue	(revision a3455dc00bf02ebd2412f0d72ef32eeca8fe5e18)
++++ b/front/src/App.vue	(date 1752056252807)
+@@ -1,29 +1,30 @@
+ <script setup>
+-import { RouterLink, RouterView } from 'vue-router'
+-import HelloWorld from './components/HelloWorld.vue'
++import {ref} from 'vue'
++import FindPassword from "./views/FindPassword.vue";
++import ResetPassword from "./views/ResetPassword.vue";
++import MyPageResetPassword from "./views/MyPageResetPassword.vue";
++
++
++import Header from "@/components/Header.vue";
++
+ </script>
+ 
+ <template>
++
+   <header>
+-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+-
+-    <div class="wrapper">
+-      <HelloWorld msg="You did it!" />
+-
+-      <nav>
+-        <RouterLink to="/">Home</RouterLink>
+-        <RouterLink to="/about">About</RouterLink>
+-      </nav>
+-    </div>
++    <Header />
+   </header>
+ 
+-  <RouterView />
++  <main>
++    <FindPassword />
++  </main>
++
+ </template>
+ 
+ <style scoped>
+ header {
+-  line-height: 1.5;
+-  max-height: 100vh;
++  display: block;
++  padding: 40px 0 0;
+ }
+ 
+ .logo {
+@@ -32,10 +33,10 @@
+ }
+ 
+ nav {
++  margin-top: 2rem;
+   width: 100%;
+   font-size: 12px;
+   text-align: center;
+-  margin-top: 2rem;
+ }
+ 
+ nav a.router-link-exact-active {
+@@ -56,11 +57,9 @@
+   border: 0;
+ }
+ 
+-@media (min-width: 1024px) {
++@media (min-width: 480px) {
+   header {
+-    display: flex;
+-    place-items: center;
+-    padding-right: calc(var(--section-gap) / 2);
++    padding: 40px 0 0;
+   }
+ 
+   .logo {
+Index: back/src/main/java/com/rouby/user/infrastructure/redis/UserRedisRepositoryImpl.java
+===================================================================
+diff --git a/back/src/main/java/com/rouby/user/infrastructure/redis/UserRedisRepositoryImpl.java b/back/src/main/java/com/rouby/user/infrastructure/redis/UserRedisRepositoryImpl.java
+new file mode 100644
+--- /dev/null	(date 1752056252798)
++++ b/back/src/main/java/com/rouby/user/infrastructure/redis/UserRedisRepositoryImpl.java	(date 1752056252798)
+@@ -0,0 +1,36 @@
++package com.rouby.user.infrastructure.redis;
++
++import java.time.Duration;
++import java.util.Objects;
++import java.util.Optional;
++
++import org.springframework.data.redis.core.RedisTemplate;
++import org.springframework.stereotype.Repository;
++
++import lombok.RequiredArgsConstructor;
++
++@Repository
++@RequiredArgsConstructor
++public class UserRedisRepositoryImpl implements UserRedisRepository {
++
++	private final RedisTemplate<String, Object> redisTemplate;
++	private static final String PREFIX = "password:reset:";
++
++	@Override
++	public void save(String token, Long userId, Duration ttl) {
++		System.out.println("Saving to Redis: token=" + token + ", id=" + userId);
++		redisTemplate.opsForValue()
++				.set(PREFIX + token, userId.toString(), ttl);
++	}
++
++	@Override
++	public Optional<Long> getUserIdByToken(String token) {
++		String userId = Objects.requireNonNull(redisTemplate.opsForValue().get(PREFIX + token)).toString();
++		return Optional.ofNullable(userId).map(Long::valueOf);
++	}
++
++	@Override
++	public void delete(String token) {
++		redisTemplate.delete(PREFIX + token);
++	}
++}
+Index: back/src/main/java/com/rouby/user/infrastructure/redis/UserRedisRepository.java
+===================================================================
+diff --git a/back/src/main/java/com/rouby/user/infrastructure/redis/UserRedisRepository.java b/back/src/main/java/com/rouby/user/infrastructure/redis/UserRedisRepository.java
+new file mode 100644
+--- /dev/null	(date 1752056252797)
++++ b/back/src/main/java/com/rouby/user/infrastructure/redis/UserRedisRepository.java	(date 1752056252797)
+@@ -0,0 +1,13 @@
++package com.rouby.user.infrastructure.redis;
++
++import java.time.Duration;
++import java.util.Optional;
++
++public interface UserRedisRepository {
++
++	void save(String token, Long userId, Duration ttl);
++
++	Optional<Long> getUserIdByToken(String token);
++
++	void delete(String token);
++}
+Index: front/src/assets/password_key_icon.svg
+===================================================================
+diff --git a/front/src/assets/password_key_icon.svg b/front/src/assets/password_key_icon.svg
+new file mode 100644
+--- /dev/null	(date 1752056252810)
++++ b/front/src/assets/password_key_icon.svg	(date 1752056252810)
+@@ -0,0 +1,24 @@
++<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
++<rect width="60" height="60" rx="30" fill="url(#paint0_linear_67_2329)"/>
++<path d="M34.481 25.5191C34.7571 25.5191 34.981 25.2953 34.981 25.0191C34.981 24.743 34.7571 24.5191 34.481 24.5191C34.2048 24.5191 33.981 24.743 33.981 25.0191C33.981 25.2953 34.2048 25.5191 34.481 25.5191Z" fill="url(#paint1_linear_67_2329)" fill-opacity="0.8"/>
++<path d="M20.567 34.9331C20.1919 35.3081 19.9811 35.8167 19.981 36.3471V38.5191C19.981 38.7843 20.0863 39.0387 20.2739 39.2262C20.4614 39.4138 20.7157 39.5191 20.981 39.5191H23.981C24.2462 39.5191 24.5005 39.4138 24.6881 39.2262C24.8756 39.0387 24.981 38.7843 24.981 38.5191V37.5191C24.981 37.2539 25.0863 36.9996 25.2739 36.812C25.4614 36.6245 25.7157 36.5191 25.981 36.5191H26.981C27.2462 36.5191 27.5005 36.4138 27.6881 36.2262C27.8756 36.0387 27.981 35.7843 27.981 35.5191V34.5191C27.981 34.2539 28.0863 33.9996 28.2739 33.812C28.4614 33.6245 28.7157 33.5191 28.981 33.5191H29.153C29.6833 33.519 30.192 33.3082 30.567 32.9331L31.381 32.1191C32.7708 32.6033 34.2838 32.6014 35.6724 32.1139C37.0611 31.6263 38.2432 30.682 39.0253 29.4353C39.8075 28.1885 40.1434 26.7133 39.9781 25.2509C39.8128 23.7884 39.1561 22.4254 38.1154 21.3847C37.0747 20.344 35.7117 19.6873 34.2492 19.522C32.7868 19.3567 31.3115 19.6926 30.0648 20.4748C28.8181 21.2569 27.8737 22.439 27.3862 23.8276C26.8987 25.2163 26.8968 26.7293 27.381 28.1191L20.567 34.9331Z" stroke="url(#paint2_linear_67_2329)" stroke-opacity="0.8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
++<path d="M34.481 25.5191C34.7571 25.5191 34.981 25.2953 34.981 25.0191C34.981 24.743 34.7571 24.5191 34.481 24.5191C34.2048 24.5191 33.981 24.743 33.981 25.0191C33.981 25.2953 34.2048 25.5191 34.481 25.5191Z" stroke="url(#paint3_linear_67_2329)" stroke-opacity="0.8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
++<defs>
++<linearGradient id="paint0_linear_67_2329" x1="0" y1="0" x2="60" y2="60" gradientUnits="userSpaceOnUse">
++<stop stop-color="#667EEA"/>
++<stop offset="1" stop-color="#764BA2"/>
++</linearGradient>
++<linearGradient id="paint1_linear_67_2329" x1="30.0001" y1="19.4809" x2="30.0001" y2="39.5191" gradientUnits="userSpaceOnUse">
++<stop stop-color="#E8D3FF"/>
++<stop offset="1" stop-color="#DEECFF"/>
++</linearGradient>
++<linearGradient id="paint2_linear_67_2329" x1="30.0001" y1="19.4809" x2="30.0001" y2="39.5191" gradientUnits="userSpaceOnUse">
++<stop stop-color="#E8D3FF"/>
++<stop offset="1" stop-color="#DEECFF"/>
++</linearGradient>
++<linearGradient id="paint3_linear_67_2329" x1="30.0001" y1="19.4809" x2="30.0001" y2="39.5191" gradientUnits="userSpaceOnUse">
++<stop stop-color="#E8D3FF"/>
++<stop offset="1" stop-color="#DEECFF"/>
++</linearGradient>
++</defs>
++</svg>
+Index: back/src/main/java/com/rouby/user/application/dto/command/FindPasswordCommand.java
+===================================================================
+diff --git a/back/src/main/java/com/rouby/user/application/dto/command/FindPasswordCommand.java b/back/src/main/java/com/rouby/user/application/dto/command/FindPasswordCommand.java
+new file mode 100644
+--- /dev/null	(date 1752056252790)
++++ b/back/src/main/java/com/rouby/user/application/dto/command/FindPasswordCommand.java	(date 1752056252790)
+@@ -0,0 +1,10 @@
++package com.rouby.user.application.dto.command;
++
++import lombok.Builder;
++
++@Builder
++public record FindPasswordCommand(
++	String email
++) {
++
++}
+Index: front/src/views/ResetPassword.vue
+===================================================================
+diff --git a/front/src/views/ResetPassword.vue b/front/src/views/ResetPassword.vue
+new file mode 100644
+--- /dev/null	(date 1752056252819)
++++ b/front/src/views/ResetPassword.vue	(date 1752056252819)
+@@ -0,0 +1,214 @@
++<script setup>
++  import { ref } from 'vue';
++  import { useRouter } from 'vue-router';
++  import PasswordKeyIcon from '@/assets/password_key_icon.svg'
++  import BaseInput from "@/components/BaseInput.vue";
++
++  const password = ref('');
++  const isLoading = ref(false);
++  const router = useRouter();
++
++  function isValidValidPassword(password) {
++    return 0;
++  }
++
++  async function handleSubmit() {
++    if (!password.value) {
++      alert('비밀번호를 입력해주세요.');
++      return;
++    }
++
++    if (!isValidValidPassword(password.value)) {
++      alert('올바른 비밀번호를 입력해주세요.');
++      return;
++    }
++
++    isLoading.value = true;
++
++    try {
++      await isValidValidPassword(password.value);
++      alert('재설정 링크가 이메일로 전송되었습니다.');
++      router.push('/login');
++    } catch (error) {
++      console.error('Error:', error);
++      alert('전송 중 오류가 발생했습니다. 다시 시도해주세요.');
++    } finally {
++      isLoading.value = false;
++    }
++  }
++
++  function goBack() {
++    router.push('/login');
++    // 또는 router.go(-1);
++  }
++</script>
++
++<template>
++  <div class="password-reset-container">
++
++    <!-- Main Content -->
++    <div class="main-content">
++      <!-- Lock Icon -->
++      <div class="lock-container">
++        <div class="lock-icon">
++          <figure>
++            <img :src="PasswordKeyIcon" alt="패스워드 아이콘">
++          </figure>
++        </div>
++      </div>
++
++      <!-- Title -->
++      <h1 class="title text-bodyText">비밀번호 변경</h1>
++
++      <!-- Subtitle -->
++      <p class="subtitle">
++        비밀번호를 재설정 해주세요
++      </p>
++
++      <!-- Password BaseInput -->
++      <BaseInput
++        label="변경할 비밀번호"
++        v-model="password"
++        placeholder="••••••••"
++      />
++      <BaseInput
++        label="비밀번호 확인"
++        v-model="confirmPassword"
++        placeholder="••••••••"
++      />
++
++      <!-- Submit Button -->
++      <button
++        @click="handleSubmit"
++        class="submit-button"
++      >
++        {{ '비밀번호 수정하기' }}
++      </button>
++
++      <!-- Back Link -->
++      <button
++        @click="goBack"
++        class="back-link"
++      >
++        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
++          <path d="M15 18l-6-6 6-6"></path>
++        </svg>
++        로그인 페이지로 돌아가기
++      </button>
++    </div>
++  </div>
++</template>
++
++<style scoped>
++  .password-reset-container {
++    max-width: 375px;
++    margin: 0 auto;
++    background: white;
++    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
++    position: relative;
++  }
++
++  /* Main Content */
++  .main-content {
++    padding: 32px 24px;
++    display: flex;
++    flex-direction: column;
++    align-items: center;
++  }
++
++  .lock-container {
++    margin-bottom: 32px;
++  }
++
++  .lock-icon {
++    width: 64px;
++    height: 64px;
++    background: rgba(99, 102, 241, 0.1);
++    border-radius: 50%;
++    display: flex;
++    align-items: center;
++    justify-content: center;
++    color: #6366f1;
++  }
++
++  .lock-icon svg {
++    width: 32px;
++    height: 32px;
++  }
++
++  .title {
++    font-size: 28px;
++    font-weight: 700;
++    margin-bottom: 12px;
++    text-align: center;
++  }
++
++  .subtitle {
++    color: #6b7280;
++    text-align: center;
++    line-height: 1.6;
++    margin-bottom: 40px;
++    font-size: 14px;
++  }
++
++  .submit-button {
++    width: 100%;
++    padding: 18px;
++    background: #6366f1;
++    color: white;
++    border: none;
++    border-radius: 12px;
++    font-size: 16px;
++    font-weight: 600;
++    cursor: pointer;
++    transition: all 0.2s ease;
++    margin-bottom: 24px;
++  }
++
++  .submit-button:hover:not(:disabled) {
++    background: #5856eb;
++    transform: translateY(-1px);
++  }
++
++  .submit-button:disabled {
++    opacity: 0.7;
++    cursor: not-allowed;
++  }
++
++  .back-link {
++    display: flex;
++    align-items: center;
++    color: #6366f1;
++    font-size: 14px;
++    font-weight: 500;
++    background: none;
++    border: none;
++    cursor: pointer;
++    transition: color 0.2s ease;
++  }
++
++  .back-link:hover {
++    color: #5856eb;
++  }
++
++  .back-link svg {
++    width: 16px;
++    height: 16px;
++    margin-right: 4px;
++  }
++
++  /* 반응형 디자인 */
++  @media (max-width: 375px) {
++    .password-reset-container {
++      max-width: 100%;
++    }
++
++    .main-content {
++      padding: 24px 20px;
++    }
++
++    .title {
++      font-size: 24px;
++    }
++  }
++</style>
+Index: front/src/views/MyPageResetPassword.vue
+===================================================================
+diff --git a/front/src/views/MyPageResetPassword.vue b/front/src/views/MyPageResetPassword.vue
+new file mode 100644
+--- /dev/null	(date 1752056252818)
++++ b/front/src/views/MyPageResetPassword.vue	(date 1752056252818)
+@@ -0,0 +1,187 @@
++<script setup>
++import { ref } from 'vue';
++import { useRouter } from 'vue-router';
++import PasswordKeyIcon from "@/assets/password_key_icon.svg";
++import BaseInput from "@/components/BaseInput.vue";
++
++const password = ref('');
++const isLoading = ref(false);
++const router = useRouter();
++
++function isValidValidPassword(password) {
++  return 0;
++}
++
++async function handleSubmit() {
++  if (!password.value) {
++    alert('비밀번호를 입력해주세요.');
++    return;
++  }
++
++  if (!isValidValidPassword(password.value)) {
++    alert('올바른 비밀번호를 입력해주세요.');
++    return;
++  }
++
++  isLoading.value = true;
++
++  try {
++    await isValidValidPassword(password.value);
++    alert('재설정 링크가 이메일로 전송되었습니다.');
++    router.push('/login');
++  } catch (error) {
++    console.error('Error:', error);
++    alert('전송 중 오류가 발생했습니다. 다시 시도해주세요.');
++  } finally {
++    isLoading.value = false;
++  }
++}
++
++function goBack() {
++  router.push('/login');
++  // 또는 router.go(-1);
++}
++</script>
++
++<template>
++  <div class="password-reset-container">
++
++    <!-- Main Content -->
++    <div class="main-content">
++      <!-- Lock Icon -->
++      <div class="lock-container">
++        <div class="lock-icon">
++          <figure>
++            <img :src="PasswordKeyIcon" alt="패스워드 아이콘">
++          </figure>
++        </div>
++      </div>
++
++      <!-- Title -->
++      <h1 class="title text-bodyText">비밀번호 변경</h1>
++
++      <!-- Subtitle -->
++      <p class="subtitle">
++        비밀번호를 재설정 해주세요
++      </p>
++
++      <!-- Password BaseInput -->
++      <BaseInput
++        label="기존 비밀번호"
++        v-model="currentPassword"
++        placeholder="••••••••"
++      />
++      <BaseInput
++        label="변경할 비밀번호"
++        v-model="password"
++        placeholder="••••••••"
++      />
++      <BaseInput
++        label="비밀번호 확인"
++        v-model="confirmPassword"
++        placeholder="••••••••"
++      />
++
++      <!-- Submit Button -->
++      <button
++        @click="handleSubmit"
++        class="submit-button"
++      >
++        {{ '비밀번호 수정하기' }}
++      </button>
++
++    </div>
++  </div>
++</template>
++
++<style scoped>
++.password-reset-container {
++  max-width: 375px;
++  margin: 0 auto;
++  background: white;
++  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
++  position: relative;
++}
++
++/* Main Content */
++.main-content {
++  padding: 32px 24px;
++  display: flex;
++  flex-direction: column;
++  align-items: center;
++}
++
++.lock-container {
++  margin-bottom: 32px;
++}
++
++.lock-icon {
++  width: 64px;
++  height: 64px;
++  background: rgba(99, 102, 241, 0.1);
++  border-radius: 50%;
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  color: #6366f1;
++}
++
++.lock-icon svg {
++  width: 32px;
++  height: 32px;
++}
++
++.title {
++  font-size: 28px;
++  font-weight: 700;
++  margin-bottom: 12px;
++  text-align: center;
++}
++
++.subtitle {
++  color: #6b7280;
++  text-align: center;
++  line-height: 1.6;
++  margin-bottom: 40px;
++  font-size: 14px;
++}
++
++.submit-button {
++  width: 100%;
++  padding: 18px;
++  background: #6366f1;
++  color: white;
++  border: none;
++  border-radius: 12px;
++  font-size: 16px;
++  font-weight: 600;
++  cursor: pointer;
++  transition: all 0.2s ease;
++  margin-bottom: 24px;
++}
++
++.submit-button:hover:not(:disabled) {
++  background: #5856eb;
++  transform: translateY(-1px);
++}
++
++.submit-button:disabled {
++  opacity: 0.7;
++  cursor: not-allowed;
++}
++
++/* 반응형 디자인 */
++@media (max-width: 375px) {
++  .password-reset-container {
++    max-width: 100%;
++  }
++
++  .main-content {
++    padding: 24px 20px;
++  }
++
++  .title {
++    font-size: 24px;
++  }
++}
++</style>
+Index: front/src/assets/password_lock_icon.svg
+===================================================================
+diff --git a/front/src/assets/password_lock_icon.svg b/front/src/assets/password_lock_icon.svg
+new file mode 100644
+--- /dev/null	(date 1752056252812)
++++ b/front/src/assets/password_lock_icon.svg	(date 1752056252812)
+@@ -0,0 +1,14 @@
++<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
++<rect width="60" height="60" rx="30" fill="url(#paint0_linear_50_2253)"/>
++<path d="M25 27.5V24.5C25 23.1739 25.5268 21.9021 26.4645 20.9645C27.4021 20.0268 28.6739 19.5 30 19.5C31.3261 19.5 32.5979 20.0268 33.5355 20.9645C34.4732 21.9021 35 23.1739 35 24.5V27.5M31 33.5C31 34.0523 30.5523 34.5 30 34.5C29.4477 34.5 29 34.0523 29 33.5C29 32.9477 29.4477 32.5 30 32.5C30.5523 32.5 31 32.9477 31 33.5ZM23 27.5H37C38.1046 27.5 39 28.3954 39 29.5V37.5C39 38.6046 38.1046 39.5 37 39.5H23C21.8954 39.5 21 38.6046 21 37.5V29.5C21 28.3954 21.8954 27.5 23 27.5Z" stroke="url(#paint1_linear_50_2253)" stroke-opacity="0.8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
++<defs>
++<linearGradient id="paint0_linear_50_2253" x1="0" y1="0" x2="60" y2="60" gradientUnits="userSpaceOnUse">
++<stop stop-color="#667EEA"/>
++<stop offset="1" stop-color="#764BA2"/>
++</linearGradient>
++<linearGradient id="paint1_linear_50_2253" x1="30" y1="19.5" x2="30" y2="39.5" gradientUnits="userSpaceOnUse">
++<stop stop-color="#E8D3FF"/>
++<stop offset="1" stop-color="#DEECFF"/>
++</linearGradient>
++</defs>
++</svg>
+Index: front/src/views/FindPassword.vue
+===================================================================
+diff --git a/front/src/views/FindPassword.vue b/front/src/views/FindPassword.vue
+new file mode 100644
+--- /dev/null	(date 1752056252814)
++++ b/front/src/views/FindPassword.vue	(date 1752056252814)
+@@ -0,0 +1,225 @@
++<script setup>
++  import { ref } from 'vue';
++  import { useRouter } from 'vue-router';
++  import PasswordLockIcon from '@/assets/password_lock_icon.svg'
++  import BaseInput from "@/components/BaseInput.vue";
++
++  const email = ref('');
++  const isLoading = ref(false);
++  const router = useRouter();
++
++
++  function isValidEmail(email) {
++    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
++    return emailRegex.test(email);
++  }
++
++  async function sendResetLink(email) {
++    // 실제 API 호출 예시
++    // 예: return await axios.post('/api/reset-password', { email });
++
++    // 시뮬레이션을 위한 지연
++    return new Promise((resolve) => {
++      setTimeout(() => {
++        resolve({ success: true });
++      }, 1000);
++    });
++  }
++
++  async function handleSubmit() {
++    if (!email.value) {
++      alert('이메일 주소를 입력해주세요.');
++      return;
++    }
++
++    if (!isValidEmail(email.value)) {
++      alert('올바른 이메일 주소를 입력해주세요.');
++      return;
++    }
++
++    isLoading.value = true;
++
++    try {
++      await sendResetLink(email.value);
++      alert('재설정 링크가 이메일로 전송되었습니다.');
++      router.push('/login');
++    } catch (error) {
++      console.error('Error:', error);
++      alert('전송 중 오류가 발생했습니다. 다시 시도해주세요.');
++    } finally {
++      isLoading.value = false;
++    }
++  }
++
++  function goBack() {
++    router.push('/login');
++    // 또는 router.go(-1);
++  }
++</script>
++
++<template>
++  <div class="password-reset-container">
++
++    <!-- Main Content -->
++    <div class="main-content">
++      <!-- Lock Icon -->
++      <div class="lock-container">
++        <div class="lock-icon">
++          <figure>
++            <img :src="PasswordLockIcon" alt="패스워드 아이콘">
++          </figure>
++        </div>
++      </div>
++
++      <!-- Title -->
++      <h1 class="title text-bodyText">비밀번호 찾기</h1>
++
++      <!-- Subtitle -->
++      <p class="subtitle">
++        가입하신 이메일 정보를 입력해주시면<br>
++        비밀번호 재설정 링크를 보내드려요
++      </p>
++
++      <!-- Email BaseInput -->
++      <BaseInput
++        label="이메일 주소"
++        v-model="email"
++        placeholder="user@email.com"
++      />
++
++      <!-- Submit Button -->
++      <button
++        @click="handleSubmit"
++        class="submit-button"
++        :disabled="!email || isLoading"
++      >
++        {{ isLoading ? '전송중...' : '재설정 링크 전송' }}
++      </button>
++
++      <!-- Back Link -->
++      <button
++        @click="goBack"
++        class="back-link"
++      >
++        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
++          <path d="M15 18l-6-6 6-6"></path>
++        </svg>
++        로그인 페이지로 돌아가기
++      </button>
++    </div>
++  </div>
++</template>
++
++<style scoped>
++  .password-reset-container {
++    max-width: 375px;
++    margin: 0 auto;
++    background: white;
++    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
++    position: relative;
++  }
++
++  /* Main Content */
++  .main-content {
++    padding: 32px 24px;
++    display: flex;
++    flex-direction: column;
++    align-items: center;
++  }
++
++  .lock-container {
++    margin-bottom: 32px;
++  }
++
++  .lock-icon {
++    width: 64px;
++    height: 64px;
++    background: rgba(99, 102, 241, 0.1);
++    border-radius: 50%;
++    display: flex;
++    align-items: center;
++    justify-content: center;
++    color: #6366f1;
++  }
++
++  .lock-icon svg {
++    width: 32px;
++    height: 32px;
++  }
++
++  .title {
++    font-size: 28px;
++    font-weight: 700;
++    margin-bottom: 12px;
++    text-align: center;
++  }
++
++  .subtitle {
++    color: #6b7280;
++    text-align: center;
++    line-height: 1.6;
++    margin-bottom: 40px;
++    font-size: 14px;
++  }
++
++  .submit-button {
++    width: 100%;
++    padding: 18px;
++    background: #6366f1;
++    color: white;
++    border: none;
++    border-radius: 12px;
++    font-size: 16px;
++    font-weight: 600;
++    cursor: pointer;
++    transition: all 0.2s ease;
++    margin-bottom: 24px;
++  }
++
++  .submit-button:hover:not(:disabled) {
++    background: #5856eb;
++    transform: translateY(-1px);
++  }
++
++  .submit-button:disabled {
++    opacity: 0.7;
++    cursor: not-allowed;
++  }
++
++  .back-link {
++    display: flex;
++    align-items: center;
++    color: #6366f1;
++    font-size: 14px;
++    font-weight: 500;
++    background: none;
++    border: none;
++    cursor: pointer;
++    transition: color 0.2s ease;
++  }
++
++  .back-link:hover {
++    color: #5856eb;
++  }
++
++  .back-link svg {
++    width: 16px;
++    height: 16px;
++    margin-right: 4px;
++  }
++
++  /* 반응형 디자인 */
++  @media (max-width: 375px) {
++    .password-reset-container {
++      max-width: 100%;
++    }
++
++    .main-content {
++      padding: 24px 20px;
++    }
++
++    .title {
++      font-size: 24px;
++    }
++  }
++</style>
+Index: front/vite.config.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import { fileURLToPath, URL } from 'node:url'\n\nimport { defineConfig } from 'vite'\nimport vue from '@vitejs/plugin-vue'\nimport vueDevTools from 'vite-plugin-vue-devtools'\n\n// https://vite.dev/config/\nexport default defineConfig({\n  plugins: [\n    vue(),\n    vueDevTools(),\n  ],\n  resolve: {\n    alias: {\n      '@': fileURLToPath(new URL('./src', import.meta.url))\n    },\n  },\n})\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/front/vite.config.js b/front/vite.config.js
+--- a/front/vite.config.js	(revision a3455dc00bf02ebd2412f0d72ef32eeca8fe5e18)
++++ b/front/vite.config.js	(date 1752056252820)
+@@ -15,4 +15,7 @@
+       '@': fileURLToPath(new URL('./src', import.meta.url))
+     },
+   },
++  server: {
++    port: 3000, // 여기에서 포트 번호 설정
++  }
+ })
+Index: back/src/main/java/com/rouby/common/config/RedisConfig.java
+===================================================================
+diff --git a/back/src/main/java/com/rouby/common/config/RedisConfig.java b/back/src/main/java/com/rouby/common/config/RedisConfig.java
+new file mode 100644
+--- /dev/null	(date 1752057380832)
++++ b/back/src/main/java/com/rouby/common/config/RedisConfig.java	(date 1752057380832)
+@@ -0,0 +1,31 @@
++package com.rouby.common.config;
++
++import org.springframework.context.annotation.Bean;
++import org.springframework.context.annotation.Configuration;
++import org.springframework.data.redis.connection.RedisConnectionFactory;
++import org.springframework.data.redis.core.RedisTemplate;
++import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
++import org.springframework.data.redis.serializer.StringRedisSerializer;
++
++@Configuration
++public class RedisConfig {
++
++	@Bean
++	public RedisTemplate<String, Object> couponRedisTemplate(
++			RedisConnectionFactory redisConnectionFactory) {
++
++		Jackson2JsonRedisSerializer<Object> serializer =
++				new Jackson2JsonRedisSerializer<>(Object.class);
++		StringRedisSerializer stringSerializer = new StringRedisSerializer();
++
++		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
++		redisTemplate.setConnectionFactory(redisConnectionFactory);
++		redisTemplate.setKeySerializer(stringSerializer);
++		redisTemplate.setValueSerializer(serializer);
++		redisTemplate.setHashKeySerializer(stringSerializer);
++		redisTemplate.setHashValueSerializer(serializer);
++
++		return redisTemplate;
++	}
++
++}
+Index: back/src/main/java/com/rouby/user/presentation/dto/request/FindPasswordRequest.java
+===================================================================
+diff --git a/back/src/main/java/com/rouby/user/presentation/dto/request/FindPasswordRequest.java b/back/src/main/java/com/rouby/user/presentation/dto/request/FindPasswordRequest.java
+new file mode 100644
+--- /dev/null	(date 1752056252801)
++++ b/back/src/main/java/com/rouby/user/presentation/dto/request/FindPasswordRequest.java	(date 1752056252801)
+@@ -0,0 +1,17 @@
++package com.rouby.user.presentation.dto.request;
++
++import com.rouby.user.application.dto.command.FindPasswordCommand;
++
++import lombok.Builder;
++
++@Builder
++public record FindPasswordRequest(
++	String email
++) {
++
++	public FindPasswordCommand toCommand() {
++		return FindPasswordCommand.builder()
++				.email(email)
++				.build();
++	}
++}

@@ -1,0 +1,290 @@
+Index: front/vite.config.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import { fileURLToPath, URL } from 'node:url'\n\nimport { defineConfig } from 'vite'\nimport vue from '@vitejs/plugin-vue'\nimport vueDevTools from 'vite-plugin-vue-devtools'\n\n// https://vite.dev/config/\nexport default defineConfig({\n  plugins: [\n    vue(),\n    vueDevTools(),\n  ],\n  resolve: {\n    alias: {\n      '@': fileURLToPath(new URL('./src', import.meta.url))\n    },\n  },\n})\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/front/vite.config.js b/front/vite.config.js
+--- a/front/vite.config.js	(revision 8b0d51d41a5e9ef7d382c7f76ccdd5cdb9b7117e)
++++ b/front/vite.config.js	(date 1752059824037)
+@@ -15,4 +15,7 @@
+       '@': fileURLToPath(new URL('./src', import.meta.url))
+     },
+   },
++  server: {
++    port: 3000, // 여기에서 포트 번호 설정
++  }
+ })
+Index: back/src/main/java/com/rouby/user/presentation/dto/request/ResetPasswordRequest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/main/java/com/rouby/user/presentation/dto/request/ResetPasswordRequest.java b/back/src/main/java/com/rouby/user/presentation/dto/request/ResetPasswordRequest.java
+new file mode 100644
+--- /dev/null	(date 1752059824018)
++++ b/back/src/main/java/com/rouby/user/presentation/dto/request/ResetPasswordRequest.java	(date 1752059824018)
+@@ -0,0 +1,18 @@
++package com.rouby.user.presentation.dto.request;
++
++import com.rouby.user.application.dto.command.ResetPasswordCommand;
++
++import lombok.Builder;
++
++@Builder
++public record ResetPasswordRequest(
++	String currentPassword,
++	String newPassword) {
++
++	public ResetPasswordCommand toCommand() {
++		return ResetPasswordCommand.builder()
++			.currentPassword(currentPassword)
++			.newPassword(newPassword)
++			.build();
++	}
++}
+Index: back/src/main/java/com/rouby/user/application/UserErrorCode.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/main/java/com/rouby/user/application/UserErrorCode.java b/back/src/main/java/com/rouby/user/application/UserErrorCode.java
+new file mode 100644
+--- /dev/null	(date 1752059823989)
++++ b/back/src/main/java/com/rouby/user/application/UserErrorCode.java	(date 1752059823989)
+@@ -0,0 +1,21 @@
++package com.rouby.user.application;
++
++import org.springframework.http.HttpStatus;
++
++import com.rouby.common.exception.type.ErrorCode;
++
++import lombok.Getter;
++import lombok.RequiredArgsConstructor;
++
++@Getter
++@RequiredArgsConstructor
++public enum UserErrorCode implements ErrorCode {
++	USER_NOT_FOUND("USER_404","존재하지 않는 유저입니다.", HttpStatus.NOT_FOUND),
++	EMAIL_NOT_FOUND("USER_404","일치하는 이메일이 없습니다.", HttpStatus.NOT_FOUND),
++	INVALID_PASSWORD("USER_401","비밀번호가 일치하지 않습니다.", HttpStatus.UNAUTHORIZED),
++	PASSWORD_TOKEN_EXPIRED("USER_401","비밀번호 토큰이 만료되었습니다.", HttpStatus.UNAUTHORIZED);
++
++	private final String code;
++	private final String message;
++	private final HttpStatus status;
++}
+Index: back/src/main/java/com/rouby/user/application/service/UserService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/main/java/com/rouby/user/application/service/UserService.java b/back/src/main/java/com/rouby/user/application/service/UserService.java
+new file mode 100644
+--- /dev/null	(date 1752059823996)
++++ b/back/src/main/java/com/rouby/user/application/service/UserService.java	(date 1752059823996)
+@@ -0,0 +1,67 @@
++package com.rouby.user.application.service;
++
++import java.time.Duration;
++import java.util.UUID;
++
++import org.springframework.security.crypto.password.PasswordEncoder;
++import org.springframework.stereotype.Service;
++import org.springframework.transaction.annotation.Transactional;
++
++import com.rouby.common.exception.CustomException;
++import com.rouby.user.application.UserErrorCode;
++import com.rouby.user.application.dto.command.FindPasswordCommand;
++import com.rouby.user.application.dto.command.ResetPasswordCommand;
++import com.rouby.user.domain.entity.User;
++import com.rouby.user.domain.repository.UserRepository;
++
++import lombok.RequiredArgsConstructor;
++
++@Service
++@RequiredArgsConstructor
++public class UserService {
++
++	private final PasswordEncoder passwordEncoder;
++	private final UserRepository userRepository;
++
++	@Transactional
++	public void resetPassword(Long userId, ResetPasswordCommand command) {
++		User user = userRepository.findById(userId).orElseThrow(() ->
++				new CustomException(UserErrorCode.USER_NOT_FOUND));
++
++		if (!passwordEncoder.matches(command.currentPassword(), user.getPassword())) {
++			throw new CustomException(UserErrorCode.INVALID_PASSWORD);
++		}
++
++		user.updatePassword(passwordEncoder.encode(command.newPassword()));
++	}
++
++	@Transactional
++	public void resetPasswordByToken(String token, ResetPasswordCommand command) {
++		String key = "reset-password:" + token;
++		Long userId = userRepository.getUserIdByToken(key).orElseThrow(() ->
++				new CustomException(UserErrorCode.PASSWORD_TOKEN_EXPIRED));
++
++		User user = userRepository.findById(userId)
++				.orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
++
++		user.updatePassword(passwordEncoder.encode(command.newPassword()));
++
++		userRepository.delete(key);
++	}
++
++
++	@Transactional
++	public void findPassword(FindPasswordCommand command) {
++		User user = userRepository.findByEmail(command.email()).orElseThrow(()
++				-> new CustomException(UserErrorCode.EMAIL_NOT_FOUND));
++
++		String token = UUID.randomUUID().toString();
++
++		userRepository.save(token, user.getId(), Duration.ofMinutes(15));
++
++		String resetPasswordLink = "/reset-password?token=" + token;
++
++		//이메일 전송
++	}
++
++}
+\ No newline at end of file
+Index: back/src/test/java/com/rouby/user/presentation/UserControllerTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/test/java/com/rouby/user/presentation/UserControllerTest.java b/back/src/test/java/com/rouby/user/presentation/UserControllerTest.java
+new file mode 100644
+--- /dev/null	(date 1752059824023)
++++ b/back/src/test/java/com/rouby/user/presentation/UserControllerTest.java	(date 1752059824023)
+@@ -0,0 +1,86 @@
++package com.rouby.user.presentation;
++
++import static org.mockito.ArgumentMatchers.*;
++import static org.mockito.Mockito.*;
++import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
++import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
++import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
++import static org.springframework.restdocs.payload.PayloadDocumentation.*;
++import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
++import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
++
++import org.junit.jupiter.api.DisplayName;
++import org.junit.jupiter.api.Test;
++import org.springframework.http.MediaType;
++import org.springframework.test.web.servlet.ResultActions;
++
++import com.rouby.common.security.WithMockCustomUser;
++import com.rouby.common.support.ControllerTestSupport;
++import com.rouby.user.presentation.dto.request.FindPasswordRequest;
++import com.rouby.user.presentation.dto.request.ResetPasswordRequest;
++
++class UserControllerTest extends ControllerTestSupport {
++
++	@WithMockCustomUser
++	@DisplayName("비밀번호 변경 API")
++	@Test
++	void resetPassword() throws Exception {
++
++		//given
++		ResetPasswordRequest request = ResetPasswordRequest.builder()
++				.currentPassword("currentPassword")
++				.newPassword("newPassword")
++				.build();
++
++		Long userId = 1L;
++
++		doNothing().when(userFacade).resetPassword(eq(userId), any());
++
++		//when
++		ResultActions resultActions = mockMvc.perform(patch("/api/v1/users/reset-password")
++				.header("Authorization", "Bearer {ACCESS_TOKEN}")
++				.content(objectMapper.writeValueAsString(request))
++				.contentType(MediaType.APPLICATION_JSON));
++
++		// then
++		resultActions.andExpect(status().isOk())
++				.andDo(print())
++				.andDo(document("resetPassword-user-200",
++						preprocessRequest(prettyPrint()),
++						preprocessResponse(prettyPrint()),
++						requestFields(
++								fieldWithPath("currentPassword").description("현재 비밀번호"),
++								fieldWithPath("newPassword").description("새 비밀번호"))
++				));
++	}
++
++	@WithMockCustomUser
++	@DisplayName("비밀번호 찾기 API")
++	@Test
++	void findPassword() throws Exception {
++
++		//given
++		FindPasswordRequest request = FindPasswordRequest.builder()
++				.email("user@email.com")
++				.build();
++
++		Long userId = 1L;
++
++		//when
++		ResultActions resultActions = mockMvc.perform(post("/api/v1/users/find-password")
++				.header("Authorization", "Bearer {ACCESS_TOKEN}")
++				.content(objectMapper.writeValueAsString(request))
++				.contentType(MediaType.APPLICATION_JSON));
++
++		// then
++		resultActions.andExpect(status().isOk())
++				.andDo(print())
++				.andDo(document("findPassword-user-200",
++						preprocessRequest(prettyPrint()),
++						preprocessResponse(prettyPrint()),
++						requestFields(
++								fieldWithPath("email").description("유저 이메일")
++						)
++				));
++	}
++}
+\ No newline at end of file
+Index: back/src/main/java/com/rouby/user/application/dto/command/ResetPasswordCommand.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/main/java/com/rouby/user/application/dto/command/ResetPasswordCommand.java b/back/src/main/java/com/rouby/user/application/dto/command/ResetPasswordCommand.java
+new file mode 100644
+--- /dev/null	(date 1752059823994)
++++ b/back/src/main/java/com/rouby/user/application/dto/command/ResetPasswordCommand.java	(date 1752059823994)
+@@ -0,0 +1,10 @@
++package com.rouby.user.application.dto.command;
++
++import lombok.Builder;
++
++@Builder
++public record ResetPasswordCommand(
++	String currentPassword,
++	String newPassword
++) {
++}
+Index: back/src/docs/asciidoc/user.adoc
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/docs/asciidoc/user.adoc b/back/src/docs/asciidoc/user.adoc
+new file mode 100644
+--- /dev/null	(date 1752059823983)
++++ b/back/src/docs/asciidoc/user.adoc	(date 1752059823983)
+@@ -0,0 +1,8 @@
++[[USER-API]]
++== User-API
++
++[[Create-User]]
++=== User 등록
++
++operation::reset-password-user-200[snippets='http-request,http-response,request-fields,curl-request']
++operation::find-password-user-200[snippets='http-request,http-response,request-fields,curl-request']

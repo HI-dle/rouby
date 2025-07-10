@@ -1,0 +1,1895 @@
+Index: front/vite.config.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import { fileURLToPath, URL } from 'node:url'\n\nimport { defineConfig } from 'vite'\nimport vue from '@vitejs/plugin-vue'\nimport vueDevTools from 'vite-plugin-vue-devtools'\n\n// https://vite.dev/config/\nexport default defineConfig({\n  plugins: [\n    vue(),\n    vueDevTools(),\n  ],\n  resolve: {\n    alias: {\n      '@': fileURLToPath(new URL('./src', import.meta.url))\n    },\n  },\n})\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/front/vite.config.js b/front/vite.config.js
+--- a/front/vite.config.js	(revision 8b0d51d41a5e9ef7d382c7f76ccdd5cdb9b7117e)
++++ b/front/vite.config.js	(date 1752064317072)
+@@ -15,4 +15,7 @@
+       '@': fileURLToPath(new URL('./src', import.meta.url))
+     },
+   },
++  server: {
++    port: 3000, // 여기에서 포트 번호 설정
++  }
+ })
+Index: back/src/main/java/com/rouby/user/domain/repository/UserRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.rouby.user.domain.repository;\r\n\r\npublic interface UserRepository {\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/main/java/com/rouby/user/domain/repository/UserRepository.java b/back/src/main/java/com/rouby/user/domain/repository/UserRepository.java
+--- a/back/src/main/java/com/rouby/user/domain/repository/UserRepository.java	(revision 8b0d51d41a5e9ef7d382c7f76ccdd5cdb9b7117e)
++++ b/back/src/main/java/com/rouby/user/domain/repository/UserRepository.java	(date 1752064317053)
+@@ -1,5 +1,19 @@
+ package com.rouby.user.domain.repository;
+ 
++import java.time.Duration;
++import java.util.Optional;
++
++import com.rouby.user.domain.entity.User;
++
+ public interface UserRepository {
+ 
++	Optional<User> findById(Long id);
++
++	Optional<User> findByEmail(String email);
++
++	void save(String token, Long id, Duration duration);
++
++	Optional<Long> getUserIdByToken(String token);
++
++	void delete(String token);
+ }
+Index: back/src/main/java/com/rouby/user/application/UserFacade.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.rouby.user.application;\r\n\r\nimport lombok.RequiredArgsConstructor;\r\nimport org.springframework.stereotype.Service;\r\n\r\n@Service\r\n@RequiredArgsConstructor\r\npublic class UserFacade {\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/main/java/com/rouby/user/application/UserFacade.java b/back/src/main/java/com/rouby/user/application/UserFacade.java
+--- a/back/src/main/java/com/rouby/user/application/UserFacade.java	(revision 8b0d51d41a5e9ef7d382c7f76ccdd5cdb9b7117e)
++++ b/back/src/main/java/com/rouby/user/application/UserFacade.java	(date 1752064317047)
+@@ -1,10 +1,29 @@
+ package com.rouby.user.application;
+ 
+ import lombok.RequiredArgsConstructor;
++
+ import org.springframework.stereotype.Service;
+ 
++import com.rouby.user.application.dto.command.FindPasswordCommand;
++import com.rouby.user.application.dto.command.ResetPasswordCommand;
++import com.rouby.user.application.service.UserService;
++
+ @Service
+ @RequiredArgsConstructor
+ public class UserFacade {
++	private final UserService userService;
++
++	public void resetPassword(Long userId, ResetPasswordCommand command) {
++		userService.resetPassword(userId, command);
++	}
++
++	public void resetPasswordByToken(String token, ResetPasswordCommand command) {
++		userService.resetPasswordByToken(token, command);
++	}
++
++	public void findPassword(FindPasswordCommand command) {
++		userService.findPassword(command);
++	}
++
+ 
+ }
+Index: back/src/main/java/com/rouby/common/config/RedisConfig.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/main/java/com/rouby/common/config/RedisConfig.java b/back/src/main/java/com/rouby/common/config/RedisConfig.java
+new file mode 100644
+--- /dev/null	(date 1752064317044)
++++ b/back/src/main/java/com/rouby/common/config/RedisConfig.java	(date 1752064317044)
+@@ -0,0 +1,31 @@
++package com.rouby.common.config;
++
++import org.springframework.context.annotation.Bean;
++import org.springframework.context.annotation.Configuration;
++import org.springframework.data.redis.connection.RedisConnectionFactory;
++import org.springframework.data.redis.core.RedisTemplate;
++import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
++import org.springframework.data.redis.serializer.StringRedisSerializer;
++
++@Configuration
++public class RedisConfig {
++
++	@Bean
++	public RedisTemplate<String, Object> couponRedisTemplate(
++			RedisConnectionFactory redisConnectionFactory) {
++
++		Jackson2JsonRedisSerializer<Object> serializer =
++				new Jackson2JsonRedisSerializer<>(Object.class);
++		StringRedisSerializer stringSerializer = new StringRedisSerializer();
++
++		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
++		redisTemplate.setConnectionFactory(redisConnectionFactory);
++		redisTemplate.setKeySerializer(stringSerializer);
++		redisTemplate.setValueSerializer(serializer);
++		redisTemplate.setHashKeySerializer(stringSerializer);
++		redisTemplate.setHashValueSerializer(serializer);
++
++		return redisTemplate;
++	}
++
++}
+Index: .idea/modules/com.rouby.main.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/modules/com.rouby.main.iml b/.idea/modules/com.rouby.main.iml
+new file mode 100644
+--- /dev/null	(date 1752064317038)
++++ b/.idea/modules/com.rouby.main.iml	(date 1752064317038)
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<module version="4">
++  <component name="AdditionalModuleElements">
++    <content url="file://$MODULE_DIR$/../../back/build/generated/sources/annotationProcessor/java/main">
++      <sourceFolder url="file://$MODULE_DIR$/../../back/build/generated/sources/annotationProcessor/java/main" isTestSource="false" generated="true" />
++    </content>
++  </component>
++</module>
+\ No newline at end of file
+Index: .idea/git_toolbox_prj.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/git_toolbox_prj.xml b/.idea/git_toolbox_prj.xml
+new file mode 100644
+--- /dev/null	(date 1752064317035)
++++ b/.idea/git_toolbox_prj.xml	(date 1752064317035)
+@@ -0,0 +1,15 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="GitToolBoxProjectSettings">
++    <option name="commitMessageIssueKeyValidationOverride">
++      <BoolValueOverride>
++        <option name="enabled" value="true" />
++      </BoolValueOverride>
++    </option>
++    <option name="commitMessageValidationEnabledOverride">
++      <BoolValueOverride>
++        <option name="enabled" value="true" />
++      </BoolValueOverride>
++    </option>
++  </component>
++</project>
+\ No newline at end of file
+Index: back/src/main/java/com/rouby/user/infrastructure/UserRepositoryImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/main/java/com/rouby/user/infrastructure/UserRepositoryImpl.java b/back/src/main/java/com/rouby/user/infrastructure/UserRepositoryImpl.java
+new file mode 100644
+--- /dev/null	(date 1752064317054)
++++ b/back/src/main/java/com/rouby/user/infrastructure/UserRepositoryImpl.java	(date 1752064317054)
+@@ -0,0 +1,46 @@
++package com.rouby.user.infrastructure;
++
++import java.time.Duration;
++import java.util.Optional;
++
++import org.springframework.stereotype.Repository;
++
++import com.rouby.user.domain.entity.User;
++import com.rouby.user.domain.repository.UserRepository;
++import com.rouby.user.infrastructure.persistence.jpa.UserJpaRepository;
++import com.rouby.user.infrastructure.redis.UserRedisRepository;
++
++import lombok.RequiredArgsConstructor;
++
++@Repository
++@RequiredArgsConstructor
++public class UserRepositoryImpl implements UserRepository {
++	private final UserJpaRepository userJpaRepository;
++	private final UserRedisRepository userRedisRepository;
++
++	@Override
++	public Optional<User> findById(Long id) {
++		return userJpaRepository.findById(id);
++	}
++
++	@Override
++	public Optional<User> findByEmail(String email) {
++		return userJpaRepository.findByEmail(email);
++	}
++
++	@Override
++	public void save(String token, Long id, Duration duration) {
++		userRedisRepository.save(token, id, duration);
++	}
++
++	@Override
++	public Optional<Long> getUserIdByToken(String token) {
++		return userRedisRepository.getUserIdByToken(token);
++	}
++
++	@Override
++	public void delete(String token) {
++		userRedisRepository.delete(token);
++	}
++
++}
+Index: back/src/main/java/com/rouby/user/infrastructure/redis/UserRedisRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/main/java/com/rouby/user/infrastructure/redis/UserRedisRepository.java b/back/src/main/java/com/rouby/user/infrastructure/redis/UserRedisRepository.java
+new file mode 100644
+--- /dev/null	(date 1752064317056)
++++ b/back/src/main/java/com/rouby/user/infrastructure/redis/UserRedisRepository.java	(date 1752064317056)
+@@ -0,0 +1,13 @@
++package com.rouby.user.infrastructure.redis;
++
++import java.time.Duration;
++import java.util.Optional;
++
++public interface UserRedisRepository {
++
++	void save(String token, Long userId, Duration ttl);
++
++	Optional<Long> getUserIdByToken(String token);
++
++	void delete(String token);
++}
+Index: .idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/vcs.xml b/.idea/vcs.xml
+new file mode 100644
+--- /dev/null	(date 1752064317040)
++++ b/.idea/vcs.xml	(date 1752064317040)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="VcsDirectoryMappings">
++    <mapping directory="" vcs="Git" />
++  </component>
++</project>
+\ No newline at end of file
+Index: front/src/assets/main.css
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/front/src/assets/main.css b/front/src/assets/main.css
+new file mode 100644
+--- /dev/null	(date 1752064317066)
++++ b/front/src/assets/main.css	(date 1752064317066)
+@@ -0,0 +1,41 @@
++@import './base.css';
++
++@tailwind base;
++@tailwind components;
++@tailwind utilities;
++
++
++#app {
++  max-width: 1280px;
++  margin: 0 auto;
++  padding: 2rem;
++  font-weight: normal;
++}
++
++a,
++.green {
++  text-decoration: none;
++  color: hsla(160, 100%, 37%, 1);
++  transition: 0.4s;
++  padding: 3px;
++}
++
++@media (hover: hover) {
++  a:hover {
++    background-color: hsla(160, 100%, 37%, 0.2);
++  }
++}
++
++@media (min-width: 1024px) {
++  body {
++    display: flex;
++    place-items: center;
++  }
++
++  #app {
++    display: flex;
++    grid-template-columns: 1fr 1fr;
++    flex-direction: column;
++    padding: 0 2rem;
++  }
++}
+Index: front/src/assets/password_lock_icon.svg
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/front/src/assets/password_lock_icon.svg b/front/src/assets/password_lock_icon.svg
+new file mode 100644
+--- /dev/null	(date 1752064317068)
++++ b/front/src/assets/password_lock_icon.svg	(date 1752064317068)
+@@ -0,0 +1,14 @@
++<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
++<rect width="60" height="60" rx="30" fill="url(#paint0_linear_50_2253)"/>
++<path d="M25 27.5V24.5C25 23.1739 25.5268 21.9021 26.4645 20.9645C27.4021 20.0268 28.6739 19.5 30 19.5C31.3261 19.5 32.5979 20.0268 33.5355 20.9645C34.4732 21.9021 35 23.1739 35 24.5V27.5M31 33.5C31 34.0523 30.5523 34.5 30 34.5C29.4477 34.5 29 34.0523 29 33.5C29 32.9477 29.4477 32.5 30 32.5C30.5523 32.5 31 32.9477 31 33.5ZM23 27.5H37C38.1046 27.5 39 28.3954 39 29.5V37.5C39 38.6046 38.1046 39.5 37 39.5H23C21.8954 39.5 21 38.6046 21 37.5V29.5C21 28.3954 21.8954 27.5 23 27.5Z" stroke="url(#paint1_linear_50_2253)" stroke-opacity="0.8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
++<defs>
++<linearGradient id="paint0_linear_50_2253" x1="0" y1="0" x2="60" y2="60" gradientUnits="userSpaceOnUse">
++<stop stop-color="#667EEA"/>
++<stop offset="1" stop-color="#764BA2"/>
++</linearGradient>
++<linearGradient id="paint1_linear_50_2253" x1="30" y1="19.5" x2="30" y2="39.5" gradientUnits="userSpaceOnUse">
++<stop stop-color="#E8D3FF"/>
++<stop offset="1" stop-color="#DEECFF"/>
++</linearGradient>
++</defs>
++</svg>
+Index: front/src/assets/password_key_icon.svg
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/front/src/assets/password_key_icon.svg b/front/src/assets/password_key_icon.svg
+new file mode 100644
+--- /dev/null	(date 1752064317067)
++++ b/front/src/assets/password_key_icon.svg	(date 1752064317067)
+@@ -0,0 +1,24 @@
++<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
++<rect width="60" height="60" rx="30" fill="url(#paint0_linear_67_2329)"/>
++<path d="M34.481 25.5191C34.7571 25.5191 34.981 25.2953 34.981 25.0191C34.981 24.743 34.7571 24.5191 34.481 24.5191C34.2048 24.5191 33.981 24.743 33.981 25.0191C33.981 25.2953 34.2048 25.5191 34.481 25.5191Z" fill="url(#paint1_linear_67_2329)" fill-opacity="0.8"/>
++<path d="M20.567 34.9331C20.1919 35.3081 19.9811 35.8167 19.981 36.3471V38.5191C19.981 38.7843 20.0863 39.0387 20.2739 39.2262C20.4614 39.4138 20.7157 39.5191 20.981 39.5191H23.981C24.2462 39.5191 24.5005 39.4138 24.6881 39.2262C24.8756 39.0387 24.981 38.7843 24.981 38.5191V37.5191C24.981 37.2539 25.0863 36.9996 25.2739 36.812C25.4614 36.6245 25.7157 36.5191 25.981 36.5191H26.981C27.2462 36.5191 27.5005 36.4138 27.6881 36.2262C27.8756 36.0387 27.981 35.7843 27.981 35.5191V34.5191C27.981 34.2539 28.0863 33.9996 28.2739 33.812C28.4614 33.6245 28.7157 33.5191 28.981 33.5191H29.153C29.6833 33.519 30.192 33.3082 30.567 32.9331L31.381 32.1191C32.7708 32.6033 34.2838 32.6014 35.6724 32.1139C37.0611 31.6263 38.2432 30.682 39.0253 29.4353C39.8075 28.1885 40.1434 26.7133 39.9781 25.2509C39.8128 23.7884 39.1561 22.4254 38.1154 21.3847C37.0747 20.344 35.7117 19.6873 34.2492 19.522C32.7868 19.3567 31.3115 19.6926 30.0648 20.4748C28.8181 21.2569 27.8737 22.439 27.3862 23.8276C26.8987 25.2163 26.8968 26.7293 27.381 28.1191L20.567 34.9331Z" stroke="url(#paint2_linear_67_2329)" stroke-opacity="0.8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
++<path d="M34.481 25.5191C34.7571 25.5191 34.981 25.2953 34.981 25.0191C34.981 24.743 34.7571 24.5191 34.481 24.5191C34.2048 24.5191 33.981 24.743 33.981 25.0191C33.981 25.2953 34.2048 25.5191 34.481 25.5191Z" stroke="url(#paint3_linear_67_2329)" stroke-opacity="0.8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
++<defs>
++<linearGradient id="paint0_linear_67_2329" x1="0" y1="0" x2="60" y2="60" gradientUnits="userSpaceOnUse">
++<stop stop-color="#667EEA"/>
++<stop offset="1" stop-color="#764BA2"/>
++</linearGradient>
++<linearGradient id="paint1_linear_67_2329" x1="30.0001" y1="19.4809" x2="30.0001" y2="39.5191" gradientUnits="userSpaceOnUse">
++<stop stop-color="#E8D3FF"/>
++<stop offset="1" stop-color="#DEECFF"/>
++</linearGradient>
++<linearGradient id="paint2_linear_67_2329" x1="30.0001" y1="19.4809" x2="30.0001" y2="39.5191" gradientUnits="userSpaceOnUse">
++<stop stop-color="#E8D3FF"/>
++<stop offset="1" stop-color="#DEECFF"/>
++</linearGradient>
++<linearGradient id="paint3_linear_67_2329" x1="30.0001" y1="19.4809" x2="30.0001" y2="39.5191" gradientUnits="userSpaceOnUse">
++<stop stop-color="#E8D3FF"/>
++<stop offset="1" stop-color="#DEECFF"/>
++</linearGradient>
++</defs>
++</svg>
+Index: back/src/docs/asciidoc/user.adoc
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/docs/asciidoc/user.adoc b/back/src/docs/asciidoc/user.adoc
+new file mode 100644
+--- /dev/null	(date 1752064317042)
++++ b/back/src/docs/asciidoc/user.adoc	(date 1752064317042)
+@@ -0,0 +1,8 @@
++[[USER-API]]
++== User-API
++
++[[Create-User]]
++=== User 등록
++
++operation::reset-password-user-200[snippets='http-request,http-response,request-fields,curl-request']
++operation::find-password-user-200[snippets='http-request,http-response,request-fields,curl-request']
+Index: back/src/main/java/com/rouby/user/presentation/dto/request/ResetPasswordRequest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/main/java/com/rouby/user/presentation/dto/request/ResetPasswordRequest.java b/back/src/main/java/com/rouby/user/presentation/dto/request/ResetPasswordRequest.java
+new file mode 100644
+--- /dev/null	(date 1752064317061)
++++ b/back/src/main/java/com/rouby/user/presentation/dto/request/ResetPasswordRequest.java	(date 1752064317061)
+@@ -0,0 +1,18 @@
++package com.rouby.user.presentation.dto.request;
++
++import com.rouby.user.application.dto.command.ResetPasswordCommand;
++
++import lombok.Builder;
++
++@Builder
++public record ResetPasswordRequest(
++	String currentPassword,
++	String newPassword) {
++
++	public ResetPasswordCommand toCommand() {
++		return ResetPasswordCommand.builder()
++			.currentPassword(currentPassword)
++			.newPassword(newPassword)
++			.build();
++	}
++}
+Index: back/src/main/java/com/rouby/user/application/UserErrorCode.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/main/java/com/rouby/user/application/UserErrorCode.java b/back/src/main/java/com/rouby/user/application/UserErrorCode.java
+new file mode 100644
+--- /dev/null	(date 1752064317045)
++++ b/back/src/main/java/com/rouby/user/application/UserErrorCode.java	(date 1752064317045)
+@@ -0,0 +1,21 @@
++package com.rouby.user.application;
++
++import org.springframework.http.HttpStatus;
++
++import com.rouby.common.exception.type.ErrorCode;
++
++import lombok.Getter;
++import lombok.RequiredArgsConstructor;
++
++@Getter
++@RequiredArgsConstructor
++public enum UserErrorCode implements ErrorCode {
++	USER_NOT_FOUND("USER_404","존재하지 않는 유저입니다.", HttpStatus.NOT_FOUND),
++	EMAIL_NOT_FOUND("USER_404","일치하는 이메일이 없습니다.", HttpStatus.NOT_FOUND),
++	INVALID_PASSWORD("USER_401","비밀번호가 일치하지 않습니다.", HttpStatus.UNAUTHORIZED),
++	PASSWORD_TOKEN_EXPIRED("USER_401","비밀번호 토큰이 만료되었습니다.", HttpStatus.UNAUTHORIZED);
++
++	private final String code;
++	private final String message;
++	private final HttpStatus status;
++}
+Index: back/src/main/java/com/rouby/user/infrastructure/redis/UserRedisRepositoryImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/main/java/com/rouby/user/infrastructure/redis/UserRedisRepositoryImpl.java b/back/src/main/java/com/rouby/user/infrastructure/redis/UserRedisRepositoryImpl.java
+new file mode 100644
+--- /dev/null	(date 1752064317057)
++++ b/back/src/main/java/com/rouby/user/infrastructure/redis/UserRedisRepositoryImpl.java	(date 1752064317057)
+@@ -0,0 +1,36 @@
++package com.rouby.user.infrastructure.redis;
++
++import java.time.Duration;
++import java.util.Objects;
++import java.util.Optional;
++
++import org.springframework.data.redis.core.RedisTemplate;
++import org.springframework.stereotype.Repository;
++
++import lombok.RequiredArgsConstructor;
++
++@Repository
++@RequiredArgsConstructor
++public class UserRedisRepositoryImpl implements UserRedisRepository {
++
++	private final RedisTemplate<String, Object> redisTemplate;
++	private static final String PREFIX = "password:reset:";
++
++	@Override
++	public void save(String token, Long userId, Duration ttl) {
++		System.out.println("Saving to Redis: token=" + token + ", id=" + userId);
++		redisTemplate.opsForValue()
++				.set(PREFIX + token, userId.toString(), ttl);
++	}
++
++	@Override
++	public Optional<Long> getUserIdByToken(String token) {
++		String userId = Objects.requireNonNull(redisTemplate.opsForValue().get(PREFIX + token)).toString();
++		return Optional.ofNullable(userId).map(Long::valueOf);
++	}
++
++	@Override
++	public void delete(String token) {
++		redisTemplate.delete(PREFIX + token);
++	}
++}
+Index: back/src/main/java/com/rouby/user/presentation/dto/request/FindPasswordRequest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/main/java/com/rouby/user/presentation/dto/request/FindPasswordRequest.java b/back/src/main/java/com/rouby/user/presentation/dto/request/FindPasswordRequest.java
+new file mode 100644
+--- /dev/null	(date 1752064317060)
++++ b/back/src/main/java/com/rouby/user/presentation/dto/request/FindPasswordRequest.java	(date 1752064317060)
+@@ -0,0 +1,17 @@
++package com.rouby.user.presentation.dto.request;
++
++import com.rouby.user.application.dto.command.FindPasswordCommand;
++
++import lombok.Builder;
++
++@Builder
++public record FindPasswordRequest(
++	String email
++) {
++
++	public FindPasswordCommand toCommand() {
++		return FindPasswordCommand.builder()
++				.email(email)
++				.build();
++	}
++}
+Index: back/src/main/java/com/rouby/user/application/service/UserService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/main/java/com/rouby/user/application/service/UserService.java b/back/src/main/java/com/rouby/user/application/service/UserService.java
+new file mode 100644
+--- /dev/null	(date 1752064317051)
++++ b/back/src/main/java/com/rouby/user/application/service/UserService.java	(date 1752064317051)
+@@ -0,0 +1,67 @@
++package com.rouby.user.application.service;
++
++import java.time.Duration;
++import java.util.UUID;
++
++import org.springframework.security.crypto.password.PasswordEncoder;
++import org.springframework.stereotype.Service;
++import org.springframework.transaction.annotation.Transactional;
++
++import com.rouby.common.exception.CustomException;
++import com.rouby.user.application.UserErrorCode;
++import com.rouby.user.application.dto.command.FindPasswordCommand;
++import com.rouby.user.application.dto.command.ResetPasswordCommand;
++import com.rouby.user.domain.entity.User;
++import com.rouby.user.domain.repository.UserRepository;
++
++import lombok.RequiredArgsConstructor;
++
++@Service
++@RequiredArgsConstructor
++public class UserService {
++
++	private final PasswordEncoder passwordEncoder;
++	private final UserRepository userRepository;
++
++	@Transactional
++	public void resetPassword(Long userId, ResetPasswordCommand command) {
++		User user = userRepository.findById(userId).orElseThrow(() ->
++				new CustomException(UserErrorCode.USER_NOT_FOUND));
++
++		if (!passwordEncoder.matches(command.currentPassword(), user.getPassword())) {
++			throw new CustomException(UserErrorCode.INVALID_PASSWORD);
++		}
++
++		user.updatePassword(passwordEncoder.encode(command.newPassword()));
++	}
++
++	@Transactional
++	public void resetPasswordByToken(String token, ResetPasswordCommand command) {
++		String key = "reset-password:" + token;
++		Long userId = userRepository.getUserIdByToken(key).orElseThrow(() ->
++				new CustomException(UserErrorCode.PASSWORD_TOKEN_EXPIRED));
++
++		User user = userRepository.findById(userId)
++				.orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
++
++		user.updatePassword(passwordEncoder.encode(command.newPassword()));
++
++		userRepository.delete(key);
++	}
++
++
++	@Transactional
++	public void findPassword(FindPasswordCommand command) {
++		User user = userRepository.findByEmail(command.email()).orElseThrow(()
++				-> new CustomException(UserErrorCode.EMAIL_NOT_FOUND));
++
++		String token = UUID.randomUUID().toString();
++
++		userRepository.save(token, user.getId(), Duration.ofMinutes(15));
++
++		String resetPasswordLink = "/reset-password?token=" + token;
++
++		//이메일 전송
++	}
++
++}
+\ No newline at end of file
+Index: back/src/main/java/com/rouby/user/application/dto/command/FindPasswordCommand.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/main/java/com/rouby/user/application/dto/command/FindPasswordCommand.java b/back/src/main/java/com/rouby/user/application/dto/command/FindPasswordCommand.java
+new file mode 100644
+--- /dev/null	(date 1752064317049)
++++ b/back/src/main/java/com/rouby/user/application/dto/command/FindPasswordCommand.java	(date 1752064317049)
+@@ -0,0 +1,10 @@
++package com.rouby.user.application.dto.command;
++
++import lombok.Builder;
++
++@Builder
++public record FindPasswordCommand(
++	String email
++) {
++
++}
+Index: back/src/main/java/com/rouby/user/application/dto/command/ResetPasswordCommand.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/main/java/com/rouby/user/application/dto/command/ResetPasswordCommand.java b/back/src/main/java/com/rouby/user/application/dto/command/ResetPasswordCommand.java
+new file mode 100644
+--- /dev/null	(date 1752064317050)
++++ b/back/src/main/java/com/rouby/user/application/dto/command/ResetPasswordCommand.java	(date 1752064317050)
+@@ -0,0 +1,10 @@
++package com.rouby.user.application.dto.command;
++
++import lombok.Builder;
++
++@Builder
++public record ResetPasswordCommand(
++	String currentPassword,
++	String newPassword
++) {
++}
+Index: back/src/test/java/com/rouby/schedule/presentation/ScheduleControllerTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.rouby.schedule.presentation;\r\n\r\nimport static java.time.ZoneOffset.UTC;\r\nimport static org.mockito.ArgumentMatchers.any;\r\nimport static org.mockito.ArgumentMatchers.eq;\r\nimport static org.mockito.Mockito.when;\r\nimport static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;\r\nimport static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;\r\nimport static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;\r\nimport static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;\r\nimport static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;\r\nimport static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;\r\nimport static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;\r\nimport static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;\r\nimport static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;\r\nimport static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;\r\n\r\nimport com.rouby.common.security.WithMockCustomUser;\r\nimport com.rouby.common.support.ControllerTestSupport;\r\nimport com.rouby.schedule.application.facade.ScheduleFacade;\r\nimport com.rouby.schedule.presentation.dto.request.CreateScheduleRequest;\r\nimport com.rouby.schedule.presentation.dto.request.CreateScheduleRequest.RecurrenceRuleRequest;\r\nimport java.time.LocalDate;\r\nimport java.time.LocalDateTime;\r\nimport java.time.LocalTime;\r\nimport java.time.ZonedDateTime;\r\nimport org.hamcrest.Matchers;\r\nimport org.junit.jupiter.api.BeforeEach;\r\nimport org.junit.jupiter.api.DisplayName;\r\nimport org.junit.jupiter.api.Test;\r\nimport org.springframework.http.MediaType;\r\nimport org.springframework.test.context.bean.override.mockito.MockitoBean;\r\nimport org.springframework.test.web.servlet.ResultActions;\r\n\r\nclass ScheduleControllerTest extends ControllerTestSupport {\r\n\r\n  @MockitoBean\r\n  ScheduleFacade scheduleFacade;\r\n\r\n  @BeforeEach\r\n  void setUp() {\r\n  }\r\n\r\n  @WithMockCustomUser\r\n  @DisplayName(\"스케쥴 생성 API\")\r\n  @Test\r\n  void createSchedule() throws Exception {\r\n\r\n    // given\r\n    var request = CreateScheduleRequest.builder()\r\n        .title(\"하이들 모임!\")\r\n        .memo(\"뭉티기 먹을 것!\")\r\n        .alarmOffsetMinutes(1440)\r\n        .startDate(LocalDate.of(2025, 7, 21))\r\n        .startTime(LocalTime.of(10, 30))\r\n        .endDate(LocalDate.of(2025, 7, 21))\r\n        .endTime(LocalTime.of(22, 30))\r\n        .routineActivateDate(LocalDate.of(2025, 7, 7))\r\n        .recurrenceRule(RecurrenceRuleRequest.builder()\r\n            .freq(\"MONTHLY\")\r\n            .interval(1)\r\n            .byDay(\"MO\")\r\n            .until(ZonedDateTime.of(LocalDateTime.of(2025,12,30, 0, 0), UTC))\r\n            .build())\r\n        .build();\r\n    var content = objectMapper.writeValueAsString(request);\r\n\r\n    var scheduleId = 1L;\r\n    when(scheduleFacade.createSchedule(any(Long.class), eq(request.toCommand())))\r\n        .thenReturn(scheduleId);\r\n\r\n    // when\r\n    ResultActions resultActions = mockMvc.perform(post(\"/api/v1/schedules\")\r\n        .header(\"Authorization\", \"Bearer {ACCESS_TOKEN}\")\r\n        .content(content)\r\n        .contentType(MediaType.APPLICATION_JSON)\r\n    );\r\n\r\n    // then\r\n    resultActions.andExpect(status().isCreated())\r\n        .andExpect(header().string(\r\n            \"Location\", Matchers.endsWith(String.format(\"/api/v1/schedules/%s\", scheduleId))))\r\n        .andDo(print())\r\n        .andDo(document(\"create-schedule-201\",\r\n            preprocessRequest(prettyPrint()),\r\n            preprocessResponse(prettyPrint()),\r\n            requestFields(\r\n                fieldWithPath(\"title\").description(\"일정 제목\"),\r\n                fieldWithPath(\"memo\").description(\"일정 메모\"),\r\n                fieldWithPath(\"alarmOffsetMinutes\").description(\"일정 전 알림 시간 설정 (5, 10, 15, 30 분 / 1, 2시간 / 1, 2 일 / 1주일 전\"),\r\n                fieldWithPath(\"startDate\").description(\"시작 일자 (예: 2025-08-30)\"),\r\n                fieldWithPath(\"startTime\").description(\"시작 시간 (예: 13:00:00)\"),\r\n                fieldWithPath(\"endDate\").description(\"종료 일자 (예: 2025-08-30)\"),\r\n                fieldWithPath(\"endTime\").description(\"종료 시간 (예: 15:00:00)\"),\r\n                fieldWithPath(\"routineActivateDate\").description(\"루틴 활성 시점 (예: 2025-08-10)\"),\r\n                fieldWithPath(\"recurrenceRule\").description(\"반복 규칙\"),\r\n                fieldWithPath(\"recurrenceRule.freq\").description(\"반복 주기 (예: MONTHLY)\"),\r\n                fieldWithPath(\"recurrenceRule.byDay\").description(\"반복 요일 (예: MO)\"),\r\n                fieldWithPath(\"recurrenceRule.interval\").description(\"반복 간격\"),\r\n                fieldWithPath(\"recurrenceRule.until\").description(\"반복 종료일 (예: 2025-12-30T00:00:00)\")\r\n            )\r\n        ));\r\n  }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/test/java/com/rouby/schedule/presentation/ScheduleControllerTest.java b/back/src/test/java/com/rouby/schedule/presentation/ScheduleControllerTest.java
+--- a/back/src/test/java/com/rouby/schedule/presentation/ScheduleControllerTest.java	(revision 8b0d51d41a5e9ef7d382c7f76ccdd5cdb9b7117e)
++++ b/back/src/test/java/com/rouby/schedule/presentation/ScheduleControllerTest.java	(date 1752064317064)
+@@ -34,8 +34,7 @@
+ 
+ class ScheduleControllerTest extends ControllerTestSupport {
+ 
+-  @MockitoBean
+-  ScheduleFacade scheduleFacade;
++
+ 
+   @BeforeEach
+   void setUp() {
+Index: .idea/compiler.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/compiler.xml b/.idea/compiler.xml
+new file mode 100644
+--- /dev/null	(date 1752064317033)
++++ b/.idea/compiler.xml	(date 1752064317033)
+@@ -0,0 +1,24 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="CompilerConfiguration">
++    <annotationProcessing>
++      <profile name="Gradle Imported" enabled="true">
++        <outputRelativeToContentRoot value="true" />
++        <processorPath useClasspath="false">
++          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.querydsl/querydsl-apt/5.1.0/3b1cbe05851840b5dc926833908747a193c097cc/querydsl-apt-5.1.0-jakarta.jar" />
++          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/jakarta.annotation/jakarta.annotation-api/2.1.1/48b9bda22b091b1f48b13af03fe36db3be6e1ae3/jakarta.annotation-api-2.1.1.jar" />
++          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/jakarta.persistence/jakarta.persistence-api/3.1.0/66901fa1c373c6aff65c13791cc11da72060a8d6/jakarta.persistence-api-3.1.0.jar" />
++          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.38/57f8f5e02e92a30fd21b80cbd426a4172b5f8e29/lombok-1.18.38.jar" />
++          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.querydsl/querydsl-codegen/5.1.0/a8504ea51fbc2258543cedab6a37fe6039b2d20a/querydsl-codegen-5.1.0.jar" />
++          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.querydsl/querydsl-core/5.1.0/be322c3fe98de8e7c204afb8860bfabd81a3bafd/querydsl-core-5.1.0.jar" />
++          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.querydsl/codegen-utils/5.1.0/ba401554d613760617992eafb6cdba175c811e6f/codegen-utils-5.1.0.jar" />
++          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/javax.inject/javax.inject/1/6975da39a7040257bd51d21a231b76c915872d38/javax.inject-1.jar" />
++          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.classgraph/classgraph/4.8.146/360448a09bfa5689d89cfa97fea53b3fdefa9c23/classgraph-4.8.146.jar" />
++          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.mysema.commons/mysema-commons-lang/0.2.4/d09c8489d54251a6c22fbce804bdd4a070557317/mysema-commons-lang-0.2.4.jar" />
++          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.jdt/ecj/3.26.0/4837be609a3368a0f7e7cf0dc1bdbc7fe94993de/ecj-3.26.0.jar" />
++        </processorPath>
++        <module name="com.rouby.main" />
++      </profile>
++    </annotationProcessing>
++  </component>
++</project>
+\ No newline at end of file
+Index: back/src/test/java/com/rouby/common/support/ControllerTestSupport.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.rouby.common.support;\r\n\r\nimport com.fasterxml.jackson.databind.ObjectMapper;\r\nimport com.rouby.schedule.presentation.ScheduleController;\r\nimport org.springframework.beans.factory.annotation.Autowired;\r\nimport org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;\r\nimport org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;\r\nimport org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;\r\nimport org.springframework.context.annotation.ComponentScan;\r\nimport org.springframework.context.annotation.FilterType;\r\nimport org.springframework.test.context.ActiveProfiles;\r\nimport org.springframework.test.web.servlet.MockMvc;\r\n\r\n@AutoConfigureRestDocs\r\n@WebMvcTest(\r\n    controllers = {ScheduleController.class,},\r\n    excludeFilters = {\r\n        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE) //, classes = JwtAuthenticationFilter.class)\r\n    }\r\n)\r\n@AutoConfigureMockMvc(addFilters = false)\r\n@ActiveProfiles(\"test\")\r\npublic abstract class ControllerTestSupport {\r\n\r\n  @Autowired\r\n  protected MockMvc mockMvc;\r\n\r\n  @Autowired\r\n  protected ObjectMapper objectMapper;\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/test/java/com/rouby/common/support/ControllerTestSupport.java b/back/src/test/java/com/rouby/common/support/ControllerTestSupport.java
+--- a/back/src/test/java/com/rouby/common/support/ControllerTestSupport.java	(revision 8b0d51d41a5e9ef7d382c7f76ccdd5cdb9b7117e)
++++ b/back/src/test/java/com/rouby/common/support/ControllerTestSupport.java	(date 1752064317062)
+@@ -1,7 +1,12 @@
+ package com.rouby.common.support;
+ 
+ import com.fasterxml.jackson.databind.ObjectMapper;
++import com.rouby.schedule.application.facade.ScheduleFacade;
+ import com.rouby.schedule.presentation.ScheduleController;
++import com.rouby.user.application.UserFacade;
++import com.rouby.user.domain.entity.User;
++import com.rouby.user.presentation.UserController;
++
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
+ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+@@ -9,11 +14,12 @@
+ import org.springframework.context.annotation.ComponentScan;
+ import org.springframework.context.annotation.FilterType;
+ import org.springframework.test.context.ActiveProfiles;
++import org.springframework.test.context.bean.override.mockito.MockitoBean;
+ import org.springframework.test.web.servlet.MockMvc;
+ 
+ @AutoConfigureRestDocs
+ @WebMvcTest(
+-    controllers = {ScheduleController.class,},
++    controllers = {ScheduleController.class, UserController.class},
+     excludeFilters = {
+         @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE) //, classes = JwtAuthenticationFilter.class)
+     }
+@@ -27,4 +33,10 @@
+ 
+   @Autowired
+   protected ObjectMapper objectMapper;
++
++  @MockitoBean
++  protected UserFacade userFacade;
++
++  @MockitoBean
++  protected ScheduleFacade scheduleFacade;
+ }
+\ No newline at end of file
+Index: .idea/inspectionProfiles/Project_Default.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/inspectionProfiles/Project_Default.xml b/.idea/inspectionProfiles/Project_Default.xml
+new file mode 100644
+--- /dev/null	(date 1752064317036)
++++ b/.idea/inspectionProfiles/Project_Default.xml	(date 1752064317036)
+@@ -0,0 +1,6 @@
++<component name="InspectionProjectProfileManager">
++  <profile version="1.0">
++    <option name="myName" value="Project Default" />
++    <inspection_tool class="Eslint" enabled="true" level="WARNING" enabled_by_default="true" />
++  </profile>
++</component>
+\ No newline at end of file
+Index: .idea/.gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/.gitignore b/.idea/.gitignore
+new file mode 100644
+--- /dev/null	(date 1752064317031)
++++ b/.idea/.gitignore	(date 1752064317031)
+@@ -0,0 +1,8 @@
++# Default ignored files
++/shelf/
++/workspace.xml
++# Editor-based HTTP Client requests
++/httpRequests/
++# Datasource local storage ignored files
++/dataSources/
++/dataSources.local.xml
+Index: .idea/dataSources.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/dataSources.xml b/.idea/dataSources.xml
+new file mode 100644
+--- /dev/null	(date 1752064317033)
++++ b/.idea/dataSources.xml	(date 1752064317033)
+@@ -0,0 +1,29 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
++    <data-source source="LOCAL" name="rouby@localhost" uuid="8a4613f4-590a-41a1-a3fa-162c14e179e1">
++      <driver-ref>postgresql</driver-ref>
++      <synchronize>true</synchronize>
++      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
++      <jdbc-url>jdbc:postgresql://localhost:5432/rouby</jdbc-url>
++      <jdbc-additional-properties>
++        <property name="com.intellij.clouds.kubernetes.db.host.port" />
++        <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
++        <property name="com.intellij.clouds.kubernetes.db.container.port" />
++      </jdbc-additional-properties>
++      <working-dir>$ProjectFileDir$</working-dir>
++    </data-source>
++    <data-source source="LOCAL" name="0@localhost" uuid="1ee33206-f66e-4423-a5a0-7eca83dc3043">
++      <driver-ref>redis</driver-ref>
++      <synchronize>true</synchronize>
++      <jdbc-driver>jdbc.RedisDriver</jdbc-driver>
++      <jdbc-url>jdbc:redis://localhost:6379/0</jdbc-url>
++      <jdbc-additional-properties>
++        <property name="com.intellij.clouds.kubernetes.db.host.port" />
++        <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
++        <property name="com.intellij.clouds.kubernetes.db.container.port" />
++      </jdbc-additional-properties>
++      <working-dir>$ProjectFileDir$</working-dir>
++    </data-source>
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/checkstyle-idea.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/checkstyle-idea.xml b/.idea/checkstyle-idea.xml
+new file mode 100644
+--- /dev/null	(date 1752064317032)
++++ b/.idea/checkstyle-idea.xml	(date 1752064317032)
+@@ -0,0 +1,16 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="CheckStyle-IDEA" serialisationVersion="2">
++    <checkstyleVersion>10.22.0</checkstyleVersion>
++    <scanScope>JavaOnly</scanScope>
++    <copyLibs>true</copyLibs>
++    <option name="thirdPartyClasspath" />
++    <option name="activeLocationIds" />
++    <option name="locations">
++      <list>
++        <ConfigurationLocation id="bundled-sun-checks" type="BUNDLED" scope="All" description="Sun Checks">(bundled)</ConfigurationLocation>
++        <ConfigurationLocation id="bundled-google-checks" type="BUNDLED" scope="All" description="Google Checks">(bundled)</ConfigurationLocation>
++      </list>
++    </option>
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+new file mode 100644
+--- /dev/null	(date 1752064317037)
++++ b/.idea/misc.xml	(date 1752064317037)
+@@ -0,0 +1,10 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="ExternalStorageConfigurationManager" enabled="true" />
++  <component name="FrameworkDetectionExcludesConfiguration">
++    <file type="web" url="file://$PROJECT_DIR$/back" />
++  </component>
++  <component name="ProjectRootManager">
++    <output url="file://$PROJECT_DIR$/out" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/rouby.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/rouby.iml b/.idea/rouby.iml
+new file mode 100644
+--- /dev/null	(date 1752064317039)
++++ b/.idea/rouby.iml	(date 1752064317039)
+@@ -0,0 +1,11 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<module type="JAVA_MODULE" version="4">
++  <component name="NewModuleRootManager" inherit-compiler-output="true">
++    <exclude-output />
++    <content url="file://$MODULE_DIR$">
++      <sourceFolder url="file://$MODULE_DIR$/front" type="java-resource" />
++    </content>
++    <orderEntry type="inheritedJdk" />
++    <orderEntry type="sourceFolder" forTests="false" />
++  </component>
++</module>
+\ No newline at end of file
+Index: .idea/modules.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/modules.xml b/.idea/modules.xml
+new file mode 100644
+--- /dev/null	(date 1752064317037)
++++ b/.idea/modules.xml	(date 1752064317037)
+@@ -0,0 +1,9 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="ProjectModuleManager">
++    <modules>
++      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.rouby.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.rouby.main.iml" />
++      <module fileurl="file://$PROJECT_DIR$/.idea/rouby.iml" filepath="$PROJECT_DIR$/.idea/rouby.iml" />
++    </modules>
++  </component>
++</project>
+\ No newline at end of file
+Index: back/src/main/java/com/rouby/user/presentation/UserController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.rouby.user.presentation;\r\n\r\nimport com.rouby.user.application.UserFacade;\r\nimport lombok.RequiredArgsConstructor;\r\nimport org.springframework.web.bind.annotation.RequestMapping;\r\nimport org.springframework.web.bind.annotation.RestController;\r\n\r\n@RestController\r\n@RequestMapping(\"/api/v1/users\")\r\n@RequiredArgsConstructor\r\npublic class UserController {\r\n\r\n  private final UserFacade userFacade;\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/main/java/com/rouby/user/presentation/UserController.java b/back/src/main/java/com/rouby/user/presentation/UserController.java
+--- a/back/src/main/java/com/rouby/user/presentation/UserController.java	(revision 8b0d51d41a5e9ef7d382c7f76ccdd5cdb9b7117e)
++++ b/back/src/main/java/com/rouby/user/presentation/UserController.java	(date 1752064317058)
+@@ -1,15 +1,61 @@
+ package com.rouby.user.presentation;
+ 
++import java.net.URI;
++import java.time.LocalDateTime;
++
++import com.rouby.auth.dto.UserDetailsImpl;
+ import com.rouby.user.application.UserFacade;
++import com.rouby.user.domain.entity.AuthProvider;
++import com.rouby.user.domain.entity.User;
++import com.rouby.user.domain.entity.UserRole;
++import com.rouby.user.domain.repository.UserRepository;
++import com.rouby.user.presentation.dto.request.FindPasswordRequest;
++import com.rouby.user.presentation.dto.request.ResetPasswordRequest;
++
+ import lombok.RequiredArgsConstructor;
++
++import org.springframework.http.ResponseEntity;
++import org.springframework.security.core.annotation.AuthenticationPrincipal;
++import org.springframework.web.bind.annotation.PatchMapping;
++import org.springframework.web.bind.annotation.PostMapping;
++import org.springframework.web.bind.annotation.RequestBody;
+ import org.springframework.web.bind.annotation.RequestMapping;
++import org.springframework.web.bind.annotation.RequestParam;
+ import org.springframework.web.bind.annotation.RestController;
++import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+ 
+ @RestController
+ @RequestMapping("/api/v1/users")
+ @RequiredArgsConstructor
+ public class UserController {
+ 
+-  private final UserFacade userFacade;
++	private final UserFacade userFacade;
+ 
++	@PostMapping("/find-password")
++	public ResponseEntity<Void> findPassword(
++		@RequestBody FindPasswordRequest request) {
++
++		userFacade.findPassword(request.toCommand());
++
++		return ResponseEntity.ok().build();
++	}
++
++	@PatchMapping("/reset-password")
++	public ResponseEntity<Void> resetPassword(
++		@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody ResetPasswordRequest request) {
++
++		userFacade.resetPassword(userDetails.getId(), request.toCommand());
++
++		return ResponseEntity.ok().build();
++	}
++
++	@PatchMapping("/reset-password/{token}")
++	public ResponseEntity<Void> resetPassword(
++			@RequestParam String token, @RequestBody ResetPasswordRequest request) {
++
++		userFacade.resetPasswordByToken(token, request.toCommand());
++
++		return ResponseEntity.ok().build();
++	}
++
+ }
+Index: .idea/git_toolbox_blame.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/git_toolbox_blame.xml b/.idea/git_toolbox_blame.xml
+new file mode 100644
+--- /dev/null	(date 1752064317034)
++++ b/.idea/git_toolbox_blame.xml	(date 1752064317034)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="GitToolBoxBlameSettings">
++    <option name="version" value="2" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/prettier.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/prettier.xml b/.idea/prettier.xml
+new file mode 100644
+--- /dev/null	(date 1752064317039)
++++ b/.idea/prettier.xml	(date 1752064317039)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="PrettierConfiguration">
++    <option name="myConfigurationMode" value="AUTOMATIC" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/gradle.xml b/.idea/gradle.xml
+new file mode 100644
+--- /dev/null	(date 1752064317035)
++++ b/.idea/gradle.xml	(date 1752064317035)
+@@ -0,0 +1,17 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="GradleMigrationSettings" migrationVersion="1" />
++  <component name="GradleSettings">
++    <option name="linkedExternalProjectsSettings">
++      <GradleProjectSettings>
++        <option name="externalProjectPath" value="$PROJECT_DIR$/back" />
++        <option name="gradleJvm" value="corretto-17" />
++        <option name="modules">
++          <set>
++            <option value="$PROJECT_DIR$/back" />
++          </set>
++        </option>
++      </GradleProjectSettings>
++    </option>
++  </component>
++</project>
+\ No newline at end of file
+Index: back/src/docs/asciidoc/index.adoc
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>= ROUBY REST Docs\r\n:doctype: book\r\n:icons: font\r\n:source-highlighter: highlightjs\r\n:toc: left\r\n:toclevels: 2\r\n:sectlinks:\r\n\r\n[[introduction]]\r\n== 소개\r\nROUBY의 API Docs 입니다.\r\n\r\ninclude::src/docs/asciidoc/schedule.adoc[]
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/docs/asciidoc/index.adoc b/back/src/docs/asciidoc/index.adoc
+--- a/back/src/docs/asciidoc/index.adoc	(revision 8b0d51d41a5e9ef7d382c7f76ccdd5cdb9b7117e)
++++ b/back/src/docs/asciidoc/index.adoc	(date 1752064317042)
+@@ -10,4 +10,5 @@
+ == 소개
+ ROUBY의 API Docs 입니다.
+ 
+-include::src/docs/asciidoc/schedule.adoc[]
+\ No newline at end of file
++include::src/docs/asciidoc/schedule.adoc[]
++include::src/docs/asciidoc/user.adoc[]
+\ No newline at end of file
+Index: back/src/main/java/com/rouby/notification/domain/entity/emaillog/EmailAddress.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.rouby.notification.domain.entity.emaillog;\r\n\r\nimport jakarta.persistence.Column;\r\nimport jakarta.persistence.Embeddable;\r\nimport java.io.Serializable;\r\nimport lombok.EqualsAndHashCode;\r\nimport lombok.Getter;\r\nimport org.springframework.util.StringUtils;\r\n\r\n@Getter\r\n@Embeddable\r\n@EqualsAndHashCode\r\npublic class EmailAddress implements Serializable {\r\n\r\n  @Column(nullable = false)\r\n  private String value;\r\n\r\n  public static EmailAddress of(String value) {\r\n    if (!StringUtils.hasText(value)) {\r\n      throw new IllegalArgumentException(\"이메일 주소는 비어 있을 수 없습니다.\");\r\n    }\r\n    return new EmailAddress(value);\r\n  }\r\n\r\n  private EmailAddress(String value) {\r\n    this.value = value;\r\n  }\r\n\r\n  protected EmailAddress() {}\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/main/java/com/rouby/notification/domain/entity/emaillog/EmailAddress.java b/back/src/main/java/com/rouby/notification/domain/entity/emaillog/EmailAddress.java
+--- a/back/src/main/java/com/rouby/notification/domain/entity/emaillog/EmailAddress.java	(revision 8b0d51d41a5e9ef7d382c7f76ccdd5cdb9b7117e)
++++ b/back/src/main/java/com/rouby/notification/domain/entity/emaillog/EmailAddress.java	(date 1752064317044)
+@@ -13,7 +13,7 @@
+ public class EmailAddress implements Serializable {
+ 
+   @Column(nullable = false)
+-  private String value;
++  private String valuee;
+ 
+   public static EmailAddress of(String value) {
+     if (!StringUtils.hasText(value)) {
+@@ -23,7 +23,7 @@
+   }
+ 
+   private EmailAddress(String value) {
+-    this.value = value;
++    this.valuee = value;
+   }
+ 
+   protected EmailAddress() {}
+Index: front/src/views/FindPassword.vue
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/front/src/views/FindPassword.vue b/front/src/views/FindPassword.vue
+new file mode 100644
+--- /dev/null	(date 1752064317069)
++++ b/front/src/views/FindPassword.vue	(date 1752064317069)
+@@ -0,0 +1,225 @@
++<script setup>
++  import { ref } from 'vue';
++  import { useRouter } from 'vue-router';
++  import PasswordLockIcon from '@/assets/password_lock_icon.svg'
++  import BaseInput from "@/components/BaseInput.vue";
++
++  const email = ref('');
++  const isLoading = ref(false);
++  const router = useRouter();
++
++
++  function isValidEmail(email) {
++    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
++    return emailRegex.test(email);
++  }
++
++  async function sendResetLink(email) {
++    // 실제 API 호출 예시
++    // 예: return await axios.post('/api/reset-password', { email });
++
++    // 시뮬레이션을 위한 지연
++    return new Promise((resolve) => {
++      setTimeout(() => {
++        resolve({ success: true });
++      }, 1000);
++    });
++  }
++
++  async function handleSubmit() {
++    if (!email.value) {
++      alert('이메일 주소를 입력해주세요.');
++      return;
++    }
++
++    if (!isValidEmail(email.value)) {
++      alert('올바른 이메일 주소를 입력해주세요.');
++      return;
++    }
++
++    isLoading.value = true;
++
++    try {
++      await sendResetLink(email.value);
++      alert('재설정 링크가 이메일로 전송되었습니다.');
++      router.push('/login');
++    } catch (error) {
++      console.error('Error:', error);
++      alert('전송 중 오류가 발생했습니다. 다시 시도해주세요.');
++    } finally {
++      isLoading.value = false;
++    }
++  }
++
++  function goBack() {
++    router.push('/login');
++    // 또는 router.go(-1);
++  }
++</script>
++
++<template>
++  <div class="password-reset-container">
++
++    <!-- Main Content -->
++    <div class="main-content">
++      <!-- Lock Icon -->
++      <div class="lock-container">
++        <div class="lock-icon">
++          <figure>
++            <img :src="PasswordLockIcon" alt="패스워드 아이콘">
++          </figure>
++        </div>
++      </div>
++
++      <!-- Title -->
++      <h1 class="title text-bodyText">비밀번호 찾기</h1>
++
++      <!-- Subtitle -->
++      <p class="subtitle">
++        가입하신 이메일 정보를 입력해주시면<br>
++        비밀번호 재설정 링크를 보내드려요
++      </p>
++
++      <!-- Email BaseInput -->
++      <BaseInput
++        label="이메일 주소"
++        v-model="email"
++        placeholder="user@email.com"
++      />
++
++      <!-- Submit Button -->
++      <button
++        @click="handleSubmit"
++        class="submit-button"
++        :disabled="!email || isLoading"
++      >
++        {{ isLoading ? '전송중...' : '재설정 링크 전송' }}
++      </button>
++
++      <!-- Back Link -->
++      <button
++        @click="goBack"
++        class="back-link"
++      >
++        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
++          <path d="M15 18l-6-6 6-6"></path>
++        </svg>
++        로그인 페이지로 돌아가기
++      </button>
++    </div>
++  </div>
++</template>
++
++<style scoped>
++  .password-reset-container {
++    max-width: 375px;
++    margin: 0 auto;
++    background: white;
++    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
++    position: relative;
++  }
++
++  /* Main Content */
++  .main-content {
++    padding: 32px 24px;
++    display: flex;
++    flex-direction: column;
++    align-items: center;
++  }
++
++  .lock-container {
++    margin-bottom: 32px;
++  }
++
++  .lock-icon {
++    width: 64px;
++    height: 64px;
++    background: rgba(99, 102, 241, 0.1);
++    border-radius: 50%;
++    display: flex;
++    align-items: center;
++    justify-content: center;
++    color: #6366f1;
++  }
++
++  .lock-icon svg {
++    width: 32px;
++    height: 32px;
++  }
++
++  .title {
++    font-size: 28px;
++    font-weight: 700;
++    margin-bottom: 12px;
++    text-align: center;
++  }
++
++  .subtitle {
++    color: #6b7280;
++    text-align: center;
++    line-height: 1.6;
++    margin-bottom: 40px;
++    font-size: 14px;
++  }
++
++  .submit-button {
++    width: 100%;
++    padding: 18px;
++    background: #6366f1;
++    color: white;
++    border: none;
++    border-radius: 12px;
++    font-size: 16px;
++    font-weight: 600;
++    cursor: pointer;
++    transition: all 0.2s ease;
++    margin-bottom: 24px;
++  }
++
++  .submit-button:hover:not(:disabled) {
++    background: #5856eb;
++    transform: translateY(-1px);
++  }
++
++  .submit-button:disabled {
++    opacity: 0.7;
++    cursor: not-allowed;
++  }
++
++  .back-link {
++    display: flex;
++    align-items: center;
++    color: #6366f1;
++    font-size: 14px;
++    font-weight: 500;
++    background: none;
++    border: none;
++    cursor: pointer;
++    transition: color 0.2s ease;
++  }
++
++  .back-link:hover {
++    color: #5856eb;
++  }
++
++  .back-link svg {
++    width: 16px;
++    height: 16px;
++    margin-right: 4px;
++  }
++
++  /* 반응형 디자인 */
++  @media (max-width: 375px) {
++    .password-reset-container {
++      max-width: 100%;
++    }
++
++    .main-content {
++      padding: 24px 20px;
++    }
++
++    .title {
++      font-size: 24px;
++    }
++  }
++</style>
+Index: back/src/main/java/com/rouby/user/domain/entity/User.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.rouby.user.domain.entity;\r\n\r\nimport com.rouby.common.jpa.BaseEntity;\r\nimport jakarta.persistence.CascadeType;\r\nimport jakarta.persistence.Column;\r\nimport jakarta.persistence.Embedded;\r\nimport jakarta.persistence.Entity;\r\nimport jakarta.persistence.EnumType;\r\nimport jakarta.persistence.Enumerated;\r\nimport jakarta.persistence.GeneratedValue;\r\nimport jakarta.persistence.GenerationType;\r\nimport jakarta.persistence.Id;\r\nimport jakarta.persistence.OneToMany;\r\nimport jakarta.persistence.Table;\r\nimport java.time.LocalDateTime;\r\nimport java.util.HashSet;\r\nimport java.util.Set;\r\nimport lombok.Builder;\r\nimport lombok.Getter;\r\n\r\n@Entity\r\n@Getter\r\n@Table(name = \"users\")\r\npublic class User extends BaseEntity {\r\n\r\n  @Id\r\n  @GeneratedValue(strategy = GenerationType.SEQUENCE)\r\n  private Long id;\r\n\r\n  @Column(unique = true, nullable = false, length = 100)\r\n  private String email;\r\n\r\n  private String password;\r\n\r\n  @Column(length = 20)\r\n  private String nickname;\r\n\r\n  @Embedded\r\n  private DailyActiveTime dailyActiveTime;\r\n\r\n  @Embedded\r\n  private InterestKeywords interestKeywords;\r\n\r\n  @Embedded\r\n  private CommunicationTone communicationTone;\r\n\r\n  @OneToMany(mappedBy = \"user\", cascade = CascadeType.ALL, orphanRemoval = true)\r\n  private Set<NotificationSetting> notificationSettings;\r\n\r\n  @Column(nullable = false)\r\n  @Enumerated(EnumType.STRING)\r\n  private AuthProvider authProvider;\r\n\r\n  @Column(nullable = false)\r\n  @Enumerated(EnumType.STRING)\r\n  private UserRole role;\r\n\r\n  private LocalDateTime lastActivatedAt;\r\n\r\n  public void addNotificationSetting(NotificationType type, boolean isEnabled) {\r\n    NotificationSetting setting = NotificationSetting.builder()\r\n        .user(this)\r\n        .notificationType(type)\r\n        .isEnabled(isEnabled)\r\n        .build();\r\n\r\n    this.notificationSettings.add(setting);\r\n  }\r\n\r\n  @Builder\r\n  private User(\r\n      String email,\r\n      String password,\r\n      String nickname,\r\n      AuthProvider authProvider,\r\n      UserRole role,\r\n      LocalDateTime lastActivatedAt\r\n  ) {\r\n    if(email == null) throw new IllegalArgumentException(\"이메일은 null일 수 없습니다.\");\r\n    this.email = email;\r\n    this.password = password;\r\n    this.nickname = nickname;\r\n    this.dailyActiveTime = DailyActiveTime.defaultTime();\r\n    this.interestKeywords = InterestKeywords.empty();\r\n    this.communicationTone = CommunicationTone.empty();\r\n    this.notificationSettings = new HashSet<>();\r\n    this.authProvider = authProvider == null ? AuthProvider.DEFAULT : authProvider;\r\n    this.role = role == null ? UserRole.USER : role;\r\n    this.lastActivatedAt = lastActivatedAt;\r\n  }\r\n\r\n  protected User() {\r\n  }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/main/java/com/rouby/user/domain/entity/User.java b/back/src/main/java/com/rouby/user/domain/entity/User.java
+--- a/back/src/main/java/com/rouby/user/domain/entity/User.java	(revision 8b0d51d41a5e9ef7d382c7f76ccdd5cdb9b7117e)
++++ b/back/src/main/java/com/rouby/user/domain/entity/User.java	(date 1752064317052)
+@@ -91,4 +91,8 @@
+ 
+   protected User() {
+   }
++
++  public void updatePassword(String newPassword) {
++    this.password = newPassword;
++  }
+ }
+Index: front/src/views/MyPageResetPassword.vue
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/front/src/views/MyPageResetPassword.vue b/front/src/views/MyPageResetPassword.vue
+new file mode 100644
+--- /dev/null	(date 1752064317070)
++++ b/front/src/views/MyPageResetPassword.vue	(date 1752064317070)
+@@ -0,0 +1,187 @@
++<script setup>
++import { ref } from 'vue';
++import { useRouter } from 'vue-router';
++import PasswordKeyIcon from "@/assets/password_key_icon.svg";
++import BaseInput from "@/components/BaseInput.vue";
++
++const password = ref('');
++const isLoading = ref(false);
++const router = useRouter();
++
++function isValidValidPassword(password) {
++  return 0;
++}
++
++async function handleSubmit() {
++  if (!password.value) {
++    alert('비밀번호를 입력해주세요.');
++    return;
++  }
++
++  if (!isValidValidPassword(password.value)) {
++    alert('올바른 비밀번호를 입력해주세요.');
++    return;
++  }
++
++  isLoading.value = true;
++
++  try {
++    await isValidValidPassword(password.value);
++    alert('재설정 링크가 이메일로 전송되었습니다.');
++    router.push('/login');
++  } catch (error) {
++    console.error('Error:', error);
++    alert('전송 중 오류가 발생했습니다. 다시 시도해주세요.');
++  } finally {
++    isLoading.value = false;
++  }
++}
++
++function goBack() {
++  router.push('/login');
++  // 또는 router.go(-1);
++}
++</script>
++
++<template>
++  <div class="password-reset-container">
++
++    <!-- Main Content -->
++    <div class="main-content">
++      <!-- Lock Icon -->
++      <div class="lock-container">
++        <div class="lock-icon">
++          <figure>
++            <img :src="PasswordKeyIcon" alt="패스워드 아이콘">
++          </figure>
++        </div>
++      </div>
++
++      <!-- Title -->
++      <h1 class="title text-bodyText">비밀번호 변경</h1>
++
++      <!-- Subtitle -->
++      <p class="subtitle">
++        비밀번호를 재설정 해주세요
++      </p>
++
++      <!-- Password BaseInput -->
++      <BaseInput
++        label="기존 비밀번호"
++        v-model="currentPassword"
++        placeholder="••••••••"
++      />
++      <BaseInput
++        label="변경할 비밀번호"
++        v-model="password"
++        placeholder="••••••••"
++      />
++      <BaseInput
++        label="비밀번호 확인"
++        v-model="confirmPassword"
++        placeholder="••••••••"
++      />
++
++      <!-- Submit Button -->
++      <button
++        @click="handleSubmit"
++        class="submit-button"
++      >
++        {{ '비밀번호 수정하기' }}
++      </button>
++
++    </div>
++  </div>
++</template>
++
++<style scoped>
++.password-reset-container {
++  max-width: 375px;
++  margin: 0 auto;
++  background: white;
++  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
++  position: relative;
++}
++
++/* Main Content */
++.main-content {
++  padding: 32px 24px;
++  display: flex;
++  flex-direction: column;
++  align-items: center;
++}
++
++.lock-container {
++  margin-bottom: 32px;
++}
++
++.lock-icon {
++  width: 64px;
++  height: 64px;
++  background: rgba(99, 102, 241, 0.1);
++  border-radius: 50%;
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  color: #6366f1;
++}
++
++.lock-icon svg {
++  width: 32px;
++  height: 32px;
++}
++
++.title {
++  font-size: 28px;
++  font-weight: 700;
++  margin-bottom: 12px;
++  text-align: center;
++}
++
++.subtitle {
++  color: #6b7280;
++  text-align: center;
++  line-height: 1.6;
++  margin-bottom: 40px;
++  font-size: 14px;
++}
++
++.submit-button {
++  width: 100%;
++  padding: 18px;
++  background: #6366f1;
++  color: white;
++  border: none;
++  border-radius: 12px;
++  font-size: 16px;
++  font-weight: 600;
++  cursor: pointer;
++  transition: all 0.2s ease;
++  margin-bottom: 24px;
++}
++
++.submit-button:hover:not(:disabled) {
++  background: #5856eb;
++  transform: translateY(-1px);
++}
++
++.submit-button:disabled {
++  opacity: 0.7;
++  cursor: not-allowed;
++}
++
++/* 반응형 디자인 */
++@media (max-width: 375px) {
++  .password-reset-container {
++    max-width: 100%;
++  }
++
++  .main-content {
++    padding: 24px 20px;
++  }
++
++  .title {
++    font-size: 24px;
++  }
++}
++</style>
+Index: front/src/views/ResetPassword.vue
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/front/src/views/ResetPassword.vue b/front/src/views/ResetPassword.vue
+new file mode 100644
+--- /dev/null	(date 1752064317071)
++++ b/front/src/views/ResetPassword.vue	(date 1752064317071)
+@@ -0,0 +1,214 @@
++<script setup>
++  import { ref } from 'vue';
++  import { useRouter } from 'vue-router';
++  import PasswordKeyIcon from '@/assets/password_key_icon.svg'
++  import BaseInput from "@/components/BaseInput.vue";
++
++  const password = ref('');
++  const isLoading = ref(false);
++  const router = useRouter();
++
++  function isValidValidPassword(password) {
++    return 0;
++  }
++
++  async function handleSubmit() {
++    if (!password.value) {
++      alert('비밀번호를 입력해주세요.');
++      return;
++    }
++
++    if (!isValidValidPassword(password.value)) {
++      alert('올바른 비밀번호를 입력해주세요.');
++      return;
++    }
++
++    isLoading.value = true;
++
++    try {
++      await isValidValidPassword(password.value);
++      alert('재설정 링크가 이메일로 전송되었습니다.');
++      router.push('/login');
++    } catch (error) {
++      console.error('Error:', error);
++      alert('전송 중 오류가 발생했습니다. 다시 시도해주세요.');
++    } finally {
++      isLoading.value = false;
++    }
++  }
++
++  function goBack() {
++    router.push('/login');
++    // 또는 router.go(-1);
++  }
++</script>
++
++<template>
++  <div class="password-reset-container">
++
++    <!-- Main Content -->
++    <div class="main-content">
++      <!-- Lock Icon -->
++      <div class="lock-container">
++        <div class="lock-icon">
++          <figure>
++            <img :src="PasswordKeyIcon" alt="패스워드 아이콘">
++          </figure>
++        </div>
++      </div>
++
++      <!-- Title -->
++      <h1 class="title text-bodyText">비밀번호 변경</h1>
++
++      <!-- Subtitle -->
++      <p class="subtitle">
++        비밀번호를 재설정 해주세요
++      </p>
++
++      <!-- Password BaseInput -->
++      <BaseInput
++        label="변경할 비밀번호"
++        v-model="password"
++        placeholder="••••••••"
++      />
++      <BaseInput
++        label="비밀번호 확인"
++        v-model="confirmPassword"
++        placeholder="••••••••"
++      />
++
++      <!-- Submit Button -->
++      <button
++        @click="handleSubmit"
++        class="submit-button"
++      >
++        {{ '비밀번호 수정하기' }}
++      </button>
++
++      <!-- Back Link -->
++      <button
++        @click="goBack"
++        class="back-link"
++      >
++        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
++          <path d="M15 18l-6-6 6-6"></path>
++        </svg>
++        로그인 페이지로 돌아가기
++      </button>
++    </div>
++  </div>
++</template>
++
++<style scoped>
++  .password-reset-container {
++    max-width: 375px;
++    margin: 0 auto;
++    background: white;
++    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
++    position: relative;
++  }
++
++  /* Main Content */
++  .main-content {
++    padding: 32px 24px;
++    display: flex;
++    flex-direction: column;
++    align-items: center;
++  }
++
++  .lock-container {
++    margin-bottom: 32px;
++  }
++
++  .lock-icon {
++    width: 64px;
++    height: 64px;
++    background: rgba(99, 102, 241, 0.1);
++    border-radius: 50%;
++    display: flex;
++    align-items: center;
++    justify-content: center;
++    color: #6366f1;
++  }
++
++  .lock-icon svg {
++    width: 32px;
++    height: 32px;
++  }
++
++  .title {
++    font-size: 28px;
++    font-weight: 700;
++    margin-bottom: 12px;
++    text-align: center;
++  }
++
++  .subtitle {
++    color: #6b7280;
++    text-align: center;
++    line-height: 1.6;
++    margin-bottom: 40px;
++    font-size: 14px;
++  }
++
++  .submit-button {
++    width: 100%;
++    padding: 18px;
++    background: #6366f1;
++    color: white;
++    border: none;
++    border-radius: 12px;
++    font-size: 16px;
++    font-weight: 600;
++    cursor: pointer;
++    transition: all 0.2s ease;
++    margin-bottom: 24px;
++  }
++
++  .submit-button:hover:not(:disabled) {
++    background: #5856eb;
++    transform: translateY(-1px);
++  }
++
++  .submit-button:disabled {
++    opacity: 0.7;
++    cursor: not-allowed;
++  }
++
++  .back-link {
++    display: flex;
++    align-items: center;
++    color: #6366f1;
++    font-size: 14px;
++    font-weight: 500;
++    background: none;
++    border: none;
++    cursor: pointer;
++    transition: color 0.2s ease;
++  }
++
++  .back-link:hover {
++    color: #5856eb;
++  }
++
++  .back-link svg {
++    width: 16px;
++    height: 16px;
++    margin-right: 4px;
++  }
++
++  /* 반응형 디자인 */
++  @media (max-width: 375px) {
++    .password-reset-container {
++      max-width: 100%;
++    }
++
++    .main-content {
++      padding: 24px 20px;
++    }
++
++    .title {
++      font-size: 24px;
++    }
++  }
++</style>
+Index: back/src/test/java/com/rouby/user/presentation/UserControllerTest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/test/java/com/rouby/user/presentation/UserControllerTest.java b/back/src/test/java/com/rouby/user/presentation/UserControllerTest.java
+new file mode 100644
+--- /dev/null	(date 1752064317065)
++++ b/back/src/test/java/com/rouby/user/presentation/UserControllerTest.java	(date 1752064317065)
+@@ -0,0 +1,86 @@
++package com.rouby.user.presentation;
++
++import static org.mockito.ArgumentMatchers.*;
++import static org.mockito.Mockito.*;
++import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
++import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
++import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
++import static org.springframework.restdocs.payload.PayloadDocumentation.*;
++import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
++import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
++
++import org.junit.jupiter.api.DisplayName;
++import org.junit.jupiter.api.Test;
++import org.springframework.http.MediaType;
++import org.springframework.test.web.servlet.ResultActions;
++
++import com.rouby.common.security.WithMockCustomUser;
++import com.rouby.common.support.ControllerTestSupport;
++import com.rouby.user.presentation.dto.request.FindPasswordRequest;
++import com.rouby.user.presentation.dto.request.ResetPasswordRequest;
++
++class UserControllerTest extends ControllerTestSupport {
++
++	@WithMockCustomUser
++	@DisplayName("비밀번호 변경 API")
++	@Test
++	void resetPassword() throws Exception {
++
++		//given
++		ResetPasswordRequest request = ResetPasswordRequest.builder()
++				.currentPassword("currentPassword")
++				.newPassword("newPassword")
++				.build();
++
++		Long userId = 1L;
++
++		doNothing().when(userFacade).resetPassword(eq(userId), any());
++
++		//when
++		ResultActions resultActions = mockMvc.perform(patch("/api/v1/users/reset-password")
++				.header("Authorization", "Bearer {ACCESS_TOKEN}")
++				.content(objectMapper.writeValueAsString(request))
++				.contentType(MediaType.APPLICATION_JSON));
++
++		// then
++		resultActions.andExpect(status().isOk())
++				.andDo(print())
++				.andDo(document("resetPassword-user-200",
++						preprocessRequest(prettyPrint()),
++						preprocessResponse(prettyPrint()),
++						requestFields(
++								fieldWithPath("currentPassword").description("현재 비밀번호"),
++								fieldWithPath("newPassword").description("새 비밀번호"))
++				));
++	}
++
++	@WithMockCustomUser
++	@DisplayName("비밀번호 찾기 API")
++	@Test
++	void findPassword() throws Exception {
++
++		//given
++		FindPasswordRequest request = FindPasswordRequest.builder()
++				.email("user@email.com")
++				.build();
++
++		Long userId = 1L;
++
++		//when
++		ResultActions resultActions = mockMvc.perform(post("/api/v1/users/find-password")
++				.header("Authorization", "Bearer {ACCESS_TOKEN}")
++				.content(objectMapper.writeValueAsString(request))
++				.contentType(MediaType.APPLICATION_JSON));
++
++		// then
++		resultActions.andExpect(status().isOk())
++				.andDo(print())
++				.andDo(document("findPassword-user-200",
++						preprocessRequest(prettyPrint()),
++						preprocessResponse(prettyPrint()),
++						requestFields(
++								fieldWithPath("email").description("유저 이메일")
++						)
++				));
++	}
++}
+\ No newline at end of file
+Index: back/src/main/java/com/rouby/user/infrastructure/persistence/jpa/UserJpaRepository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.rouby.user.infrastructure.persistence.jpa;\r\n\r\nimport com.rouby.user.domain.entity.User;\r\nimport com.rouby.user.domain.repository.UserRepository;\r\nimport org.springframework.data.jpa.repository.JpaRepository;\r\n\r\npublic interface UserJpaRepository extends\r\n    JpaRepository<User, Long>, UserJpaRepositoryCustom, UserRepository {\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/main/java/com/rouby/user/infrastructure/persistence/jpa/UserJpaRepository.java b/back/src/main/java/com/rouby/user/infrastructure/persistence/jpa/UserJpaRepository.java
+--- a/back/src/main/java/com/rouby/user/infrastructure/persistence/jpa/UserJpaRepository.java	(revision 8b0d51d41a5e9ef7d382c7f76ccdd5cdb9b7117e)
++++ b/back/src/main/java/com/rouby/user/infrastructure/persistence/jpa/UserJpaRepository.java	(date 1752064317055)
+@@ -1,10 +1,13 @@
+ package com.rouby.user.infrastructure.persistence.jpa;
+ 
++import java.util.Optional;
++
+ import com.rouby.user.domain.entity.User;
+ import com.rouby.user.domain.repository.UserRepository;
+ import org.springframework.data.jpa.repository.JpaRepository;
+ 
+ public interface UserJpaRepository extends
+-    JpaRepository<User, Long>, UserJpaRepositoryCustom, UserRepository {
++    JpaRepository<User, Long>, UserJpaRepositoryCustom {
+ 
++	Optional<User> findByEmail(String email);
+ }

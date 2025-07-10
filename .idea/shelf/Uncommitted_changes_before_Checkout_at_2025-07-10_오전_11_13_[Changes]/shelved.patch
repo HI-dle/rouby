@@ -1,0 +1,562 @@
+Index: back/src/main/java/com/rouby/user/application/service/UserService.java
+===================================================================
+diff --git a/back/src/main/java/com/rouby/user/application/service/UserService.java b/back/src/main/java/com/rouby/user/application/service/UserService.java
+deleted file mode 100644
+--- a/back/src/main/java/com/rouby/user/application/service/UserService.java	(revision e0a6ce5b46225b9c5290c0948f34bd0d9d3bb927)
++++ /dev/null	(revision e0a6ce5b46225b9c5290c0948f34bd0d9d3bb927)
+@@ -1,34 +0,0 @@
+-package com.rouby.user.application.service;
+-
+-import org.springframework.security.crypto.password.PasswordEncoder;
+-import org.springframework.stereotype.Service;
+-import org.springframework.transaction.annotation.Transactional;
+-
+-import com.rouby.common.exception.CustomException;
+-import com.rouby.user.application.UserErrorCode;
+-import com.rouby.user.application.dto.command.ResetPasswordCommand;
+-import com.rouby.user.domain.entity.User;
+-import com.rouby.user.domain.repository.UserRepository;
+-
+-import lombok.RequiredArgsConstructor;
+-
+-@Service
+-@RequiredArgsConstructor
+-public class UserService {
+-
+-	private final PasswordEncoder passwordEncoder;
+-	private final UserRepository userRepository;
+-
+-	@Transactional
+-	public void resetPassword(Long userId, ResetPasswordCommand command) {
+-		User user = userRepository.findById(userId).orElseThrow(() ->
+-				new CustomException(UserErrorCode.USER_NOT_FOUND));
+-
+-		if (!passwordEncoder.matches(command.currentPassword(), user.getPassword())) {
+-			throw new CustomException(UserErrorCode.INVALID_PASSWORD);
+-		}
+-
+-		user.updatePassword(passwordEncoder.encode(command.newPassword()));
+-	}
+-
+-}
+\ No newline at end of file
+Index: front/src/views/AboutView.vue
+===================================================================
+diff --git a/front/src/views/AboutView.vue b/front/src/views/AboutView.vue
+deleted file mode 100644
+--- a/front/src/views/AboutView.vue	(revision e0a6ce5b46225b9c5290c0948f34bd0d9d3bb927)
++++ /dev/null	(revision e0a6ce5b46225b9c5290c0948f34bd0d9d3bb927)
+@@ -1,15 +0,0 @@
+-<template>
+-  <div class="about">
+-    <h1>This is an about page</h1>
+-  </div>
+-</template>
+-
+-<style>
+-@media (min-width: 1024px) {
+-  .about {
+-    min-height: 100vh;
+-    display: flex;
+-    align-items: center;
+-  }
+-}
+-</style>
+Index: back/src/main/java/com/rouby/user/application/UserErrorCode.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/back/src/main/java/com/rouby/user/application/UserErrorCode.java b/back/src/main/java/com/rouby/user/application/UserErrorCode.java
+deleted file mode 100644
+--- a/back/src/main/java/com/rouby/user/application/UserErrorCode.java	(revision e0a6ce5b46225b9c5290c0948f34bd0d9d3bb927)
++++ /dev/null	(revision e0a6ce5b46225b9c5290c0948f34bd0d9d3bb927)
+@@ -1,19 +0,0 @@
+-package com.rouby.user.application;
+-
+-import org.springframework.http.HttpStatus;
+-
+-import com.rouby.common.exception.type.ErrorCode;
+-
+-import lombok.Getter;
+-import lombok.RequiredArgsConstructor;
+-
+-@Getter
+-@RequiredArgsConstructor
+-public enum UserErrorCode implements ErrorCode {
+-	USER_NOT_FOUND("USER_404","존재하지 않는 유저입니다.", HttpStatus.NOT_FOUND),
+-	INVALID_PASSWORD("USER_401","비밀번호가 일치하지 않습니다.", HttpStatus.UNAUTHORIZED);
+-
+-	private final String code;
+-	private final String message;
+-	private final HttpStatus status;
+-}
+Index: front/src/components/HelloWorld.vue
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/front/src/components/HelloWorld.vue b/front/src/components/HelloWorld.vue
+deleted file mode 100644
+--- a/front/src/components/HelloWorld.vue	(revision e0a6ce5b46225b9c5290c0948f34bd0d9d3bb927)
++++ /dev/null	(revision e0a6ce5b46225b9c5290c0948f34bd0d9d3bb927)
+@@ -1,44 +0,0 @@
+-<script setup>
+-defineProps({
+-  msg: {
+-    type: String,
+-    required: true,
+-  },
+-})
+-</script>
+-
+-<template>
+-  <div class="greetings">
+-    <h1 class="green">{{ msg }}</h1>
+-    <h3>
+-      You’ve successfully created a project with
+-      <a href="https://vite.dev/" target="_blank" rel="noopener">Vite</a> +
+-      <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>.
+-    </h3>
+-  </div>
+-</template>
+-
+-<style scoped>
+-h1 {
+-  font-weight: 500;
+-  font-size: 2.6rem;
+-  position: relative;
+-  top: -10px;
+-}
+-
+-h3 {
+-  font-size: 1.2rem;
+-}
+-
+-.greetings h1,
+-.greetings h3 {
+-  text-align: center;
+-}
+-
+-@media (min-width: 1024px) {
+-  .greetings h1,
+-  .greetings h3 {
+-    text-align: left;
+-  }
+-}
+-</style>
+Index: front/src/views/HomeView.vue
+===================================================================
+diff --git a/front/src/views/HomeView.vue b/front/src/views/HomeView.vue
+deleted file mode 100644
+--- a/front/src/views/HomeView.vue	(revision e0a6ce5b46225b9c5290c0948f34bd0d9d3bb927)
++++ /dev/null	(revision e0a6ce5b46225b9c5290c0948f34bd0d9d3bb927)
+@@ -1,9 +0,0 @@
+-<script setup>
+-import TheWelcome from '../components/TheWelcome.vue'
+-</script>
+-
+-<template>
+-  <main>
+-    <TheWelcome />
+-  </main>
+-</template>
+Index: front/src/assets/logo.svg
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/front/src/assets/logo.svg b/front/src/assets/logo.svg
+deleted file mode 100644
+--- a/front/src/assets/logo.svg	(revision e0a6ce5b46225b9c5290c0948f34bd0d9d3bb927)
++++ /dev/null	(revision e0a6ce5b46225b9c5290c0948f34bd0d9d3bb927)
+@@ -1,1 +0,0 @@
+-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 261.76 226.69"><path d="M161.096.001l-30.225 52.351L100.647.001H-.005l130.877 226.688L261.749.001z" fill="#41b883"/><path d="M161.096.001l-30.225 52.351L100.647.001H52.346l78.526 136.01L209.398.001z" fill="#34495e"/></svg>
+Index: front/src/assets/base.css
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/front/src/assets/base.css b/front/src/assets/base.css
+deleted file mode 100644
+--- a/front/src/assets/base.css	(revision e0a6ce5b46225b9c5290c0948f34bd0d9d3bb927)
++++ /dev/null	(revision e0a6ce5b46225b9c5290c0948f34bd0d9d3bb927)
+@@ -1,86 +0,0 @@
+-/* color palette from <https://github.com/vuejs/theme> */
+-:root {
+-  --vt-c-white: #ffffff;
+-  --vt-c-white-soft: #f8f8f8;
+-  --vt-c-white-mute: #f2f2f2;
+-
+-  --vt-c-black: #181818;
+-  --vt-c-black-soft: #222222;
+-  --vt-c-black-mute: #282828;
+-
+-  --vt-c-indigo: #2c3e50;
+-
+-  --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
+-  --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
+-  --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
+-  --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
+-
+-  --vt-c-text-light-1: var(--vt-c-indigo);
+-  --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
+-  --vt-c-text-dark-1: var(--vt-c-white);
+-  --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+-}
+-
+-/* semantic color variables for this project */
+-:root {
+-  --color-background: var(--vt-c-white);
+-  --color-background-soft: var(--vt-c-white-soft);
+-  --color-background-mute: var(--vt-c-white-mute);
+-
+-  --color-border: var(--vt-c-divider-light-2);
+-  --color-border-hover: var(--vt-c-divider-light-1);
+-
+-  --color-heading: var(--vt-c-text-light-1);
+-  --color-text: var(--vt-c-text-light-1);
+-
+-  --section-gap: 160px;
+-}
+-
+-@media (prefers-color-scheme: dark) {
+-  :root {
+-    --color-background: var(--vt-c-black);
+-    --color-background-soft: var(--vt-c-black-soft);
+-    --color-background-mute: var(--vt-c-black-mute);
+-
+-    --color-border: var(--vt-c-divider-dark-2);
+-    --color-border-hover: var(--vt-c-divider-dark-1);
+-
+-    --color-heading: var(--vt-c-text-dark-1);
+-    --color-text: var(--vt-c-text-dark-2);
+-  }
+-}
+-
+-*,
+-*::before,
+-*::after {
+-  box-sizing: border-box;
+-  margin: 0;
+-  font-weight: normal;
+-}
+-
+-body {
+-  min-height: 100vh;
+-  color: var(--color-text);
+-  background: var(--color-background);
+-  transition:
+-    color 0.5s,
+-    background-color 0.5s;
+-  line-height: 1.6;
+-  font-family:
+-    Inter,
+-    -apple-system,
+-    BlinkMacSystemFont,
+-    'Segoe UI',
+-    Roboto,
+-    Oxygen,
+-    Ubuntu,
+-    Cantarell,
+-    'Fira Sans',
+-    'Droid Sans',
+-    'Helvetica Neue',
+-    sans-serif;
+-  font-size: 15px;
+-  text-rendering: optimizeLegibility;
+-  -webkit-font-smoothing: antialiased;
+-  -moz-osx-font-smoothing: grayscale;
+-}
+Index: front/src/router/index.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import { createRouter, createWebHistory } from 'vue-router'\nimport HomeView from '../views/HomeView.vue'\n\nconst router = createRouter({\n  history: createWebHistory(import.meta.env.BASE_URL),\n  routes: [\n    {\n      path: '/',\n      name: 'home',\n      component: HomeView,\n    },\n    {\n      path: '/about',\n      name: 'about',\n      // route level code-splitting\n      // this generates a separate chunk (About.[hash].js) for this route\n      // which is lazy-loaded when the route is visited.\n      component: () => import('../views/AboutView.vue'),\n    },\n  ],\n})\n\nexport default router\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/front/src/router/index.js b/front/src/router/index.js
+--- a/front/src/router/index.js	(revision e0a6ce5b46225b9c5290c0948f34bd0d9d3bb927)
++++ b/front/src/router/index.js	(date 1752113462431)
+@@ -1,21 +1,47 @@
+ import { createRouter, createWebHistory } from 'vue-router'
+-import HomeView from '../views/HomeView.vue'
+ 
+ const router = createRouter({
+   history: createWebHistory(import.meta.env.BASE_URL),
+   routes: [
+     {
+       path: '/',
+-      name: 'home',
+-      component: HomeView,
+-    },
+-    {
+-      path: '/about',
+-      name: 'about',
+-      // route level code-splitting
+-      // this generates a separate chunk (About.[hash].js) for this route
+-      // which is lazy-loaded when the route is visited.
+-      component: () => import('../views/AboutView.vue'),
++      component: () => import('@/layouts/DefaultLayout.vue'),
++      children: [
++        {
++          path: 'schedule',
++          component: () => import('@/features/schedule/views/ScheduleLayout.vue'),
++          redirect: '/schedule/daily',
++          children: [
++            // {
++            //   path: 'create',
++            //   name: 'schedule-create',
++            //   component: () => import('@/features/schedule/views/CreateScheduleView.vue'),
++            // },
++            {
++              path: 'daily',
++              name: 'schedule-daily',
++              component: () => import('@/features/schedule/views/DailyScheduleView.vue'),
++            },
++          ],
++        },
++        {
++          path: 'routine',
++          component: () => import('@/features/routine/views/RoutineLayout.vue'),
++          redirect: '/routine/daily',
++          children: [
++            {
++              path: 'daily',
++              name: 'routine-daily',
++              component: () => import('@/features/routine/views/DailyRoutineView.vue'),
++            },
++          ],
++        },
++        {
++          path: 'mypage',
++          name: 'mypage',
++          component: () => import('@/features/user/views/MypageView.vue'),
++        },
++      ],
+     },
+   ],
+ })
+Index: front/src/App.vue
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><script setup>\nimport { RouterLink, RouterView } from 'vue-router'\nimport HelloWorld from './components/HelloWorld.vue'\n</script>\n\n<template>\n  <header>\n    <img alt=\"Vue logo\" class=\"logo\" src=\"@/assets/logo.svg\" width=\"125\" height=\"125\" />\n\n    <div class=\"wrapper\">\n      <HelloWorld msg=\"You did it!\" />\n\n      <nav>\n        <RouterLink to=\"/\">Home</RouterLink>\n        <RouterLink to=\"/about\">About</RouterLink>\n      </nav>\n    </div>\n  </header>\n\n  <RouterView />\n</template>\n\n<style scoped>\nheader {\n  line-height: 1.5;\n  max-height: 100vh;\n}\n\n.logo {\n  display: block;\n  margin: 0 auto 2rem;\n}\n\nnav {\n  width: 100%;\n  font-size: 12px;\n  text-align: center;\n  margin-top: 2rem;\n}\n\nnav a.router-link-exact-active {\n  color: var(--color-text);\n}\n\nnav a.router-link-exact-active:hover {\n  background-color: transparent;\n}\n\nnav a {\n  display: inline-block;\n  padding: 0 1rem;\n  border-left: 1px solid var(--color-border);\n}\n\nnav a:first-of-type {\n  border: 0;\n}\n\n@media (min-width: 1024px) {\n  header {\n    display: flex;\n    place-items: center;\n    padding-right: calc(var(--section-gap) / 2);\n  }\n\n  .logo {\n    margin: 0 2rem 0 0;\n  }\n\n  header .wrapper {\n    display: flex;\n    place-items: flex-start;\n    flex-wrap: wrap;\n  }\n\n  nav {\n    text-align: left;\n    margin-left: -1rem;\n    font-size: 1rem;\n\n    padding: 1rem 0;\n    margin-top: 1rem;\n  }\n}\n</style>\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/front/src/App.vue b/front/src/App.vue
+--- a/front/src/App.vue	(revision e0a6ce5b46225b9c5290c0948f34bd0d9d3bb927)
++++ b/front/src/App.vue	(date 1752113462448)
+@@ -1,85 +1,9 @@
+ <script setup>
+-import { RouterLink, RouterView } from 'vue-router'
+-import HelloWorld from './components/HelloWorld.vue'
++import { RouterView } from 'vue-router'
+ </script>
+ 
+ <template>
+-  <header>
+-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+-
+-    <div class="wrapper">
+-      <HelloWorld msg="You did it!" />
+-
+-      <nav>
+-        <RouterLink to="/">Home</RouterLink>
+-        <RouterLink to="/about">About</RouterLink>
+-      </nav>
+-    </div>
+-  </header>
+-
+   <RouterView />
+ </template>
+ 
+-<style scoped>
+-header {
+-  line-height: 1.5;
+-  max-height: 100vh;
+-}
+-
+-.logo {
+-  display: block;
+-  margin: 0 auto 2rem;
+-}
+-
+-nav {
+-  width: 100%;
+-  font-size: 12px;
+-  text-align: center;
+-  margin-top: 2rem;
+-}
+-
+-nav a.router-link-exact-active {
+-  color: var(--color-text);
+-}
+-
+-nav a.router-link-exact-active:hover {
+-  background-color: transparent;
+-}
+-
+-nav a {
+-  display: inline-block;
+-  padding: 0 1rem;
+-  border-left: 1px solid var(--color-border);
+-}
+-
+-nav a:first-of-type {
+-  border: 0;
+-}
+-
+-@media (min-width: 1024px) {
+-  header {
+-    display: flex;
+-    place-items: center;
+-    padding-right: calc(var(--section-gap) / 2);
+-  }
+-
+-  .logo {
+-    margin: 0 2rem 0 0;
+-  }
+-
+-  header .wrapper {
+-    display: flex;
+-    place-items: flex-start;
+-    flex-wrap: wrap;
+-  }
+-
+-  nav {
+-    text-align: left;
+-    margin-left: -1rem;
+-    font-size: 1rem;
+-
+-    padding: 1rem 0;
+-    margin-top: 1rem;
+-  }
+-}
+-</style>
++<style scoped></style>
+Index: front/package.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\n  \"name\": \"front\",\n  \"version\": \"0.0.0\",\n  \"private\": true,\n  \"type\": \"module\",\n  \"scripts\": {\n    \"dev\": \"vite\",\n    \"build\": \"vite build\",\n    \"preview\": \"vite preview\",\n    \"lint\": \"eslint . --fix\",\n    \"format\": \"prettier --write src/\"\n  },\n  \"dependencies\": {\n    \"pinia\": \"^3.0.3\",\n    \"vue\": \"^3.5.17\",\n    \"vue-router\": \"^4.5.1\"\n  },\n  \"devDependencies\": {\n    \"@eslint/js\": \"^9.29.0\",\n    \"@vitejs/plugin-vue\": \"^6.0.0\",\n    \"@vue/eslint-config-prettier\": \"^10.2.0\",\n    \"autoprefixer\": \"^10.4.21\",\n    \"eslint\": \"^9.29.0\",\n    \"eslint-plugin-vue\": \"~10.2.0\",\n    \"globals\": \"^16.2.0\",\n    \"postcss\": \"^8.5.6\",\n    \"prettier\": \"3.5.3\",\n    \"tailwindcss\": \"^3.4.17\",\n    \"vite\": \"^7.0.0\",\n    \"vite-plugin-vue-devtools\": \"^7.7.7\"\n  }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/front/package.json b/front/package.json
+--- a/front/package.json	(revision e0a6ce5b46225b9c5290c0948f34bd0d9d3bb927)
++++ b/front/package.json	(date 1752113462457)
+@@ -11,7 +11,15 @@
+     "format": "prettier --write src/"
+   },
+   "dependencies": {
++    "@vueuse/core": "^13.5.0",
++    "axios": "^1.10.0",
++    "class-variance-authority": "^0.7.1",
++    "clsx": "^2.1.1",
++    "lucide-vue-next": "^0.525.0",
+     "pinia": "^3.0.3",
++    "reka-ui": "^2.3.2",
++    "tailwind-merge": "^3.3.1",
++    "tailwindcss-animate": "^1.0.7",
+     "vue": "^3.5.17",
+     "vue-router": "^4.5.1"
+   },
+Index: front/src/main.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import './assets/main.css'\n\nimport { createApp } from 'vue'\nimport { createPinia } from 'pinia'\n\nimport App from './App.vue'\nimport router from './router'\n\nconst app = createApp(App)\n\napp.use(createPinia())\napp.use(router)\n\napp.mount('#app')\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/front/src/main.js b/front/src/main.js
+--- a/front/src/main.js	(revision e0a6ce5b46225b9c5290c0948f34bd0d9d3bb927)
++++ b/front/src/main.js	(date 1752113462466)
+@@ -1,4 +1,4 @@
+-import './assets/main.css'
++import './styles/main.css'
+ 
+ import { createApp } from 'vue'
+ import { createPinia } from 'pinia'
+Index: front/tailwind.config.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>/** @type {import('tailwindcss').Config} */\nexport default {\n  content: ['index.html', 'src/**/*.{vue,js,ts,jsx,tsx}'],\n  theme: {\n    extend: {},\n  },\n  plugins: [],\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/front/tailwind.config.js b/front/tailwind.config.js
+--- a/front/tailwind.config.js	(revision e0a6ce5b46225b9c5290c0948f34bd0d9d3bb927)
++++ b/front/tailwind.config.js	(date 1752113462475)
+@@ -1,8 +1,69 @@
+ /** @type {import('tailwindcss').Config} */
+ export default {
++  darkMode: ['class'],
+   content: ['index.html', 'src/**/*.{vue,js,ts,jsx,tsx}'],
+   theme: {
+-    extend: {},
+-  },
+-  plugins: [],
++    extend: {
++      colors: {
++        'main-color': '#6667D0',
++        'placeholder-color': '#6667D07A',
++        'placeholder-pink-color': '#9F7AEA',
++        'content-color': '#4A5568',
++        'error-color': '#EB4335',
++        'focus-color': '#f7f8fd',
++        'border-color': '#e5e7eb',
++        'focus-border-color': '#6366f1',
++        'focus-shadow-color': 'rgba(99, 102, 241, 0.1)',
++        'text-color': '#6d37df',
++
++        // tailwind - 뉴욕 테마
++        background: 'hsl(var(--background))',
++        foreground: 'hsl(var(--foreground))',
++        card: {
++          DEFAULT: 'hsl(var(--card))',
++          foreground: 'hsl(var(--card-foreground))',
++        },
++        popover: {
++          DEFAULT: 'hsl(var(--popover))',
++          foreground: 'hsl(var(--popover-foreground))',
++        },
++        primary: {
++          DEFAULT: 'hsl(var(--primary))',
++          foreground: 'hsl(var(--primary-foreground))',
++        },
++        secondary: {
++          DEFAULT: 'hsl(var(--secondary))',
++          foreground: 'hsl(var(--secondary-foreground))',
++        },
++        muted: {
++          DEFAULT: 'hsl(var(--muted))',
++          foreground: 'hsl(var(--muted-foreground))',
++        },
++        accent: {
++          DEFAULT: 'hsl(var(--accent))',
++          foreground: 'hsl(var(--accent-foreground))',
++        },
++        destructive: {
++          DEFAULT: 'hsl(var(--destructive))',
++          foreground: 'hsl(var(--destructive-foreground))',
++        },
++        border: 'hsl(var(--border))',
++        input: 'hsl(var(--input))',
++        ring: 'hsl(var(--ring))',
++        chart: {
++          1: 'hsl(var(--chart-1))',
++          2: 'hsl(var(--chart-2))',
++          3: 'hsl(var(--chart-3))',
++          4: 'hsl(var(--chart-4))',
++          5: 'hsl(var(--chart-5))',
++        },
++      },
++      borderRadius: {
++        lg: 'var(--radius)',
++        md: 'calc(var(--radius) - 2px)',
++        sm: 'calc(var(--radius) - 4px)',
++      },
++    },
++  },
++  plugins: [require('tailwindcss-animate')],
+ }
