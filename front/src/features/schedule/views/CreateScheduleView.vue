@@ -22,6 +22,9 @@ const onSubmit = async () => {
     alert(`저장에 실패하였습니다.\n${msg}`)
   }
 }
+const onCancel = async () => {
+  goBackOrPath()
+}
 </script>
 
 <template>
@@ -30,6 +33,7 @@ const onSubmit = async () => {
     :errors="errors"
     @inputDatetime="onDateTimeInput"
     @submit="onSubmit"
+    @cancel="onCancel"
     @autoResize="autoResize"
   />
 </template>

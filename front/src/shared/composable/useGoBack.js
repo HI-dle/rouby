@@ -1,6 +1,6 @@
 import { useRouter } from 'vue-router'
 
-export const useGoBack = (path = '/') => {
+export const useGoBack = () => {
   const router = useRouter()
 
   const goBackOrPath = (path = '/') => {
