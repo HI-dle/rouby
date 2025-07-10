@@ -1,0 +1,16 @@
+  # local 환경
+spring:
+  config.activate.on-profile: local
+ai:
+  api:
+    key: ${AI_API_KEY}
+    url: ${AI_API_URL}
+
+---
+# test 환경
+spring:
+  config.activate.on-profile: test
+ai:
+  api:
+    key: ${AI_API_KEY}
+    url: ${AI_API_URL}
