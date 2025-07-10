@@ -76,7 +76,9 @@ public class User extends BaseEntity {
       UserRole role,
       LocalDateTime lastActivatedAt
   ) {
-    if(email == null) throw new IllegalArgumentException("이메일은 null일 수 없습니다.");
+    if (email == null) {
+      throw new IllegalArgumentException("이메일은 null일 수 없습니다.");
+    }
     this.email = email;
     this.password = password;
     this.nickname = nickname;
