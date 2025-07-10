@@ -11,7 +11,6 @@ import com.rouby.auth.dto.UserDetailsImpl;
 import com.rouby.user.application.UserFacade;
 import com.rouby.user.presentation.dto.request.ResetPasswordRequest;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -23,7 +22,7 @@ public class UserController {
 
 	@PatchMapping("/reset-password")
 	public ResponseEntity<Void> resetPassword(
-			@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody @Valid ResetPasswordRequest request) {
+			@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody ResetPasswordRequest request) {
 
 		userFacade.resetPassword(userDetails.getId(), request.toCommand());
 
