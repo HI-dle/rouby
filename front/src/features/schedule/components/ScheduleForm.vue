@@ -4,6 +4,7 @@ import SelectBox from '@/components/common/SelectBox.vue'
 import ToggleSwitch from '@/components/common/ToggleSwitch.vue'
 import { alarmOptions, repeatOptions } from '../constants'
 import { toDate } from '@/shared/utils/formatDate'
+import FieldError from '@/components/common/FieldError.vue'
 
 const props = defineProps({
   form: Object,
@@ -26,7 +27,7 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
           placeholder="제목"
           class="w-full text-base font-semibold border-b px-2 pb-2 mt-4 border-gray-300 focus:outline-none focus:border-black placeholder-gray-400 bg-inherit"
         />
-        <p v-if="errors.title" class="text-sm text-error-color mt-2 mx-2">{{ errors.title }}</p>
+        <FieldError :message="errors.title" />
       </div>
 
       <!-- 메모 -->
@@ -74,7 +75,7 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
           />
         </div>
         <!-- 에러 메시지 -->
-        <p v-if="errors.period" class="text-sm text-error-color mt-2 mx-2">{{ errors.period }}</p>
+        <FieldError :message="errors.period" />
       </div>
       <hr />
 
@@ -125,9 +126,7 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
             class="w-full xxxs:w-[120px] text-base xxs:text-xs text-content-color border rounded-md px-3 py-2 shadow-sm focus:outline-none focus:border-transparent focus:shadow-[0_0_3px_2px_theme(colors.main-color/30%)] transition"
           />
         </div>
-        <p v-if="errors.routineStart" class="text-sm text-error-color mt-2 mx-2">
-          {{ errors.routineStart }}
-        </p>
+        <FieldError :message="errors.routineStart" />
       </div>
 
       <!-- 버튼 -->
