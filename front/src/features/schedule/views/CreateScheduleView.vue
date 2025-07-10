@@ -1,30 +1,31 @@
 <script setup>
 import { useGoBack } from '@/shared/composable/useGoBack'
-import ScheduleForm from '../components/ScheduleForm.vue'
-import { createSchedule } from '../scheduleService'
+import { useAutoResize } from '@/shared/composable/useAutoResize'
 import { useScheduleForm } from '../useScheduleForm'
-import { validateForm } from '../validations'
+import ScheduleForm from '../components/ScheduleForm.vue'
 
 defineOptions({
   name: 'CreateScheduleView',
 })
 
-const { form, errors, onDateTimeInput, autoResize } = useScheduleForm()
+const { form, errors, onDateTimeInput, onSubmit } = useScheduleForm()
 const { goBackOrPath } = useGoBack()
+const { autoResize } = useAutoResize()
 
-const onSubmit = async () => {
-  if (!validateForm(form, errors)) return
-  try {
-    const scheduleId = await createSchedule(form)
-    goBackOrPath(`/schedule/detail/${scheduleId}`)
-  } catch (err) {
-    const msg = err.response?.data?.message || err.message || '저장 실패'
-    alert(`저장에 실패하였습니다.\n${msg}`)
-  }
+const handleSubmit = () => {
+  onSubmit(
+    // 성공 콜백
+    (scheduleId) => {
+      goBackOrPath(`/schedule/detail/${scheduleId}`)
+    },
+    // 에러 콜백
+    (errorMsg) => {
+      alert(`저장에 실패하였습니다.\n${errorMsg}`)
+    },
+  )
 }
-const onCancel = async () => {
-  goBackOrPath()
-}
+
+const onCancel = () => goBackOrPath()
 </script>
 
 <template>
@@ -32,7 +33,7 @@ const onCancel = async () => {
     v-model:form="form"
     :errors="errors"
     @inputDatetime="onDateTimeInput"
-    @submit="onSubmit"
+    @submit="handleSubmit"
     @cancel="onCancel"
     @autoResize="autoResize"
   />
