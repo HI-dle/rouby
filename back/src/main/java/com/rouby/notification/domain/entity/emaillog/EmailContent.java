@@ -5,8 +5,6 @@ import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 import org.springframework.util.StringUtils;
 
 @Getter
@@ -14,8 +12,7 @@ import org.springframework.util.StringUtils;
 @EqualsAndHashCode
 public class EmailContent implements Serializable {
 
-  @JdbcTypeCode(SqlTypes.JSON)
-  @Column(name = "content", columnDefinition = "jsonb", nullable = false)
+  @Column(name = "content", columnDefinition = "TEXT", nullable = false)
   private String value;
 
   public static EmailContent of(String value) {
