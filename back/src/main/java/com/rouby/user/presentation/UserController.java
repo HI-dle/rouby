@@ -20,7 +20,14 @@ public class UserController {
   @PostMapping("/email-verification/request")
   public ResponseEntity<Void> requestEmail(
       @RequestBody @Valid SendEmailVerificationRequest request) {
-    userFacade.sendEmailVerification(request);
+    userFacade.sendEmailVerification(request.toCommand());
+    return ResponseEntity.ok().build();
+  }
+
+  @PostMapping("/email-verification/verify")
+  public ResponseEntity<Void> verifyEmail(
+      @RequestBody @Valid VerifyEmailRequest request) {
+    userFacade.verifyEmail(request.toCommand());
     return ResponseEntity.ok().build();
   }
 }
