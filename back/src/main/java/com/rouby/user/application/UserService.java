@@ -1,5 +1,6 @@
 package com.rouby.user.application;
 
+import com.rouby.user.application.dto.command.ResetPasswordCommand;
 import com.rouby.user.domain.entity.User;
 
 /**
@@ -9,5 +10,7 @@ import com.rouby.user.domain.entity.User;
 
 public interface UserService {
 
-  public User findByEmail(String email);
+  User findByEmail(String email);
+
+  void resetPassword(Long userId, ResetPasswordCommand command);
 }
