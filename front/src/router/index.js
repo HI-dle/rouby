@@ -12,11 +12,11 @@ const router = createRouter({
           component: () => import('@/features/schedule/views/ScheduleLayout.vue'),
           redirect: '/schedule/daily',
           children: [
-            // {
-            //   path: 'create',
-            //   name: 'schedule-create',
-            //   component: () => import('@/features/schedule/views/CreateScheduleView.vue'),
-            // },
+            {
+              path: 'create',
+              name: 'schedule-create',
+              component: () => import('@/features/schedule/views/CreateScheduleView.vue'),
+            },
             {
               path: 'daily',
               name: 'schedule-daily',

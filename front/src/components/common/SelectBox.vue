@@ -23,7 +23,7 @@ const props = defineProps({
         (opt) =>
           opt &&
           typeof opt.label === 'string' &&
-          (typeof opt.value === 'string' || typeof opt.value === 'number'),
+          (typeof opt.value === 'string' || typeof opt.value === 'number' || opt.value === null),
       ),
   },
   placeholder: {
