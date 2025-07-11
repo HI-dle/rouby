@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -40,6 +41,11 @@ const router = createRouter({
           path: 'mypage',
           name: 'mypage',
           component: () => import('@/features/user/views/MypageView.vue'),
+        },
+        {
+          path: '/login',
+          name: 'login',
+          component: () => import('@/features/auth/views/LoginView.vue'),
         },
       ],
     },
