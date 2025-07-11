@@ -17,7 +17,7 @@ public enum UserErrorCode implements ErrorCode {
   INVALID_USER("잘못된 사용자 입니다.", "INVALID_USER", HttpStatus.UNAUTHORIZED),
   INVALID_USER_PASSWORD("잘못된 사용자 입니다", "INVALID_USER", HttpStatus.UNAUTHORIZED),
   USER_NOT_FOUND("존재하지 않는 유저입니다.", "USER_NOT_FOUND", HttpStatus.NOT_FOUND),
-  INVALID_PASSWORD("비밀번호가 일치하지 않습니다.", "INVALID_PASSWORD", HttpStatus.UNAUTHORIZED);
+  INVALID_PASSWORD("비밀번호가 일치하지 않습니다.", "INVALID_PASSWORD", HttpStatus.FORBIDDEN);
 
   private final String message;
   private final String code;
