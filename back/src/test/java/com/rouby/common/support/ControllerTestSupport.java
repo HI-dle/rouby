@@ -64,6 +64,4 @@ public abstract class ControllerTestSupport {
   @MockitoBean
   protected UserFacade userFacade;
 
-  @MockitoBean
-  protected ScheduleFacade scheduleFacade;
 }

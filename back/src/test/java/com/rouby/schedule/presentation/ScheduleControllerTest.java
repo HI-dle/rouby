@@ -17,7 +17,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.rouby.common.security.WithMockCustomUser;
 import com.rouby.common.support.ControllerTestSupport;
-import com.rouby.schedule.application.facade.ScheduleFacade;
 import com.rouby.schedule.presentation.dto.request.CreateScheduleRequest;
 import com.rouby.schedule.presentation.dto.request.CreateScheduleRequest.RecurrenceRuleRequest;
 import java.time.LocalDate;
@@ -29,11 +28,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.ResultActions;
 
 class ScheduleControllerTest extends ControllerTestSupport {
-
 
 
   @BeforeEach
@@ -59,7 +56,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
             .freq("MONTHLY")
             .interval(1)
             .byDay("MO")
-            .until(ZonedDateTime.of(LocalDateTime.of(2025,12,30, 0, 0), UTC))
+            .until(ZonedDateTime.of(LocalDateTime.of(2025, 12, 30, 0, 0), UTC))
             .build())
         .build();
     var content = objectMapper.writeValueAsString(request);
@@ -86,7 +83,8 @@ class ScheduleControllerTest extends ControllerTestSupport {
             requestFields(
                 fieldWithPath("title").description("일정 제목"),
                 fieldWithPath("memo").description("일정 메모"),
-                fieldWithPath("alarmOffsetMinutes").description("일정 전 알림 시간 설정 (5, 10, 15, 30 분 / 1, 2시간 / 1, 2 일 / 1주일 전"),
+                fieldWithPath("alarmOffsetMinutes").description(
+                    "일정 전 알림 시간 설정 (5, 10, 15, 30 분 / 1, 2시간 / 1, 2 일 / 1주일 전"),
                 fieldWithPath("startDate").description("시작 일자 (예: 2025-08-30)"),
                 fieldWithPath("startTime").description("시작 시간 (예: 13:00:00)"),
                 fieldWithPath("endDate").description("종료 일자 (예: 2025-08-30)"),

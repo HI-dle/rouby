@@ -36,7 +36,7 @@ class UserControllerTest extends ControllerTestSupport {
 		doNothing().when(userFacade).resetPassword(eq(userId), any());
 
 		//when
-		ResultActions resultActions = mockMvc.perform(patch("/api/v1/users/reset-password")
+		ResultActions resultActions = mockMvc.perform(patch("/api/v1/users/password/reset")
 				.header("Authorization", "Bearer {ACCESS_TOKEN}")
 				.content(objectMapper.writeValueAsString(request))
 				.contentType(MediaType.APPLICATION_JSON));
@@ -44,7 +44,7 @@ class UserControllerTest extends ControllerTestSupport {
 		// then
 		resultActions.andExpect(status().isOk())
 				.andDo(print())
-				.andDo(document("resetPassword-user-200",
+				.andDo(document("reset-password-user-200",
 						preprocessRequest(prettyPrint()),
 						preprocessResponse(prettyPrint()),
 						requestFields(
