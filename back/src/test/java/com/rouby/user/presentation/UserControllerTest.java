@@ -1,11 +1,10 @@
-package com.rouby.user.application;
+package com.rouby.user.presentation;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -25,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
-class UserServiceImplTest extends ControllerTestSupport {
+class UserControllerTest extends ControllerTestSupport {
 
   @BeforeEach
   void setUp() {
@@ -38,10 +37,11 @@ class UserServiceImplTest extends ControllerTestSupport {
     //given
     FindPasswordRequest request = FindPasswordRequest.builder().email("test@email.com").build();
 
-    doNothing().when(userFacade).findPassword(any());
+    doNothing().when(userFacade).findPassword(argThat(req ->
+        "test@email.com".equals(request.email())));
 
     //when
-    ResultActions resultActions = mockMvc.perform(patch("/api/v1/users/find-password")
+    ResultActions resultActions = mockMvc.perform(post("/api/v1/users/password/find")
         .content(objectMapper.writeValueAsString(request))
         .contentType(MediaType.APPLICATION_JSON));
 
@@ -62,18 +62,22 @@ class UserServiceImplTest extends ControllerTestSupport {
   void resetPasswordByToken() throws Exception {
     //given
     ResetPasswordRequest request = ResetPasswordRequest.builder()
-        .currentPassword("currentPassword")
         .newPassword("newPassword")
+        .token(UUID.randomUUID().toString())
         .build();
 
     String token = UUID.randomUUID().toString();
 
-    doNothing().when(userFacade).resetPasswordByToken(any(),any());
+    doNothing().when(userFacade)
+        .resetPasswordByToken(argThat(req ->
+            "currentPassword".equals(request.newPassword())
+                && "token".equals(request.token())));
 
     //when
-    ResultActions resultActions = mockMvc.perform(patch("/api/v1/users/reset-password-by-token?token=" + token)
-        .content(objectMapper.writeValueAsString(request))
-        .contentType(MediaType.APPLICATION_JSON));
+    ResultActions resultActions = mockMvc.perform(
+        patch("/api/v1/users/password/reset/token?token=" + token)
+            .content(objectMapper.writeValueAsString(request))
+            .contentType(MediaType.APPLICATION_JSON));
 
     // then
     resultActions.andExpect(status().isOk())
@@ -82,7 +86,7 @@ class UserServiceImplTest extends ControllerTestSupport {
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
             requestFields(
-                fieldWithPath("currentPassword").description("현재 비밀번호"),
+                fieldWithPath("token").description("비밀번호 변경 토큰"),
                 fieldWithPath("newPassword").description("새 비밀번호"))
         ));
   }
