@@ -1,11 +1,5 @@
 import axios from 'axios'
-import { getStoredToken } from '@/features/auth/storeToken';
 
-// 앱 시작 시 토큰이 있으면 기본 헤더에 설정
-const token = getStoredToken();
-if (token) {
-  axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-}
 function getAccessToken() {
   return localStorage.getItem('access_token')
 }
