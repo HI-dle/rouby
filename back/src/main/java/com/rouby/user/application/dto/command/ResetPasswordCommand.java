@@ -4,8 +4,8 @@ import lombok.Builder;
 
 @Builder
 public record ResetPasswordCommand(
-    String currentPassword,
-    String newPassword
+    String newPassword,
+    String token
 ) {
 
 }
