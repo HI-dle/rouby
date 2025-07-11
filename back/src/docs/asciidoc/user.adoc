@@ -7,7 +7,7 @@
 operation::find-password-user-200[snippets='http-request,http-response,request-fields,curl-request']
 
 
-[[Find-Password]]
+[[Reset-Password-Token]]
 === 비밀번호 변경 토큰
 
 operation::reset-password-by-token-user-200[snippets='http-request,http-response,request-fields,curl-request']
