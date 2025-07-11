@@ -12,7 +12,7 @@ import org.springframework.util.StringUtils;
 @EqualsAndHashCode
 public class EmailAddress implements Serializable {
 
-  @Column(nullable = false)
+  @Column(name = "b", nullable = false)
   private String value;
 
   public static EmailAddress of(String value) {
