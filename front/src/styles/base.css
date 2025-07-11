@@ -68,7 +68,6 @@
 }
 
 body {
-  min-width: 300px;
   color: var(--color-text);
   background: var(--rouby-bg);
   background-repeat: no-repeat;
