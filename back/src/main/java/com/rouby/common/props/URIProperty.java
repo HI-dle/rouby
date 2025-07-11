@@ -11,5 +11,11 @@ public class URIProperty {
 
   public URIProperty(String baseUrl) {
     this.baseUrl = baseUrl;
+
   }
+
+  public String generateResetPasswordLink(String token) {
+    return baseUrl + "/api/v1/users/password/reset/token?token=" + token;
+  }
+
 }
