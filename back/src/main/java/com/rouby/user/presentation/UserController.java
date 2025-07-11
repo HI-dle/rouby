@@ -19,7 +19,7 @@ public class UserController {
 
   private final UserFacade userFacade;
 
-  @PatchMapping("/reset-password")
+  @PatchMapping("/password/reset")
   public ResponseEntity<Void> resetPassword(
       @AuthenticationPrincipal UserDetailsImpl userDetails,
       @RequestBody @Valid ResetPasswordRequest request) {
