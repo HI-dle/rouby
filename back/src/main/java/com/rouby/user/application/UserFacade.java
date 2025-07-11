@@ -15,7 +15,7 @@ public class UserFacade {
     userService.findPassword(command);
   }
 
-  public void resetPasswordByToken(String token, ResetPasswordCommand command) {
-    userService.resetPasswordByToken(token, command);
+  public void resetPasswordByToken(ResetPasswordCommand command) {
+    userService.resetPasswordByToken(command);
   }
 }

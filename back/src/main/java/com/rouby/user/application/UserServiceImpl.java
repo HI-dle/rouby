@@ -10,7 +10,6 @@ import com.rouby.user.domain.repository.UserRepository;
 import java.time.Duration;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,31 +35,29 @@ public class UserServiceImpl implements UserService {
   }
 
   @Transactional
-  public void resetPasswordByToken(String token, ResetPasswordCommand command) {
-    Long userId = userRepository.getUserIdByToken(token).orElseThrow(() ->
-        new CustomException(UserErrorCode.PASSWORD_TOKEN_EXPIRED));
+  public void resetPasswordByToken(ResetPasswordCommand command) {
+    Long userId = userRepository.getUserIdByToken(command.token())
+        .orElseThrow(() -> CustomException.from(UserErrorCode.PASSWORD_TOKEN_EXPIRED));
 
     User user = userRepository.findById(userId)
-        .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
+        .orElseThrow(() -> CustomException.from(UserErrorCode.USER_NOT_FOUND));
 
     user.updatePassword(passwordEncoder.encode(command.newPassword()));
 
-    userRepository.delete(token);
+    userRepository.delete(command.token());
   }
 
-  @Transactional
   public void findPassword(FindPasswordCommand command) {
     User user = userRepository.findByEmail(command.email())
-        .orElseThrow(() -> new CustomException(UserErrorCode.EMAIL_NOT_FOUND));
+        .orElseThrow(() -> CustomException.from(UserErrorCode.EMAIL_NOT_FOUND));
 
     String token = UUID.randomUUID().toString();
 
-    Duration tokenTtl = Duration.ofMinutes(15);
-    userRepository.storePasswordResetToken(token, user.getId(), tokenTtl);
+    userRepository.storePasswordResetToken(token, user.getId(), Duration.ofMinutes(15));
 
-    String resetPasswordLink = uriProperty.getBaseUrl() + "/reset-password?token=" + token;
+    String resetPasswordLink = uriProperty.generateResetPasswordLink(token);
 
-    //emailService.sendResetPasswordEmail(user.getEmail(), resetPasswordLink);
+    //emailService.sendResetPasswordEmail(user.getEmail(), uriProperty.getResetPasswordLink());
   }
 
 }

@@ -13,7 +13,7 @@ public interface UserService {
 
   User findByEmail(String email);
 
-  void resetPasswordByToken(String token, ResetPasswordCommand command);
+  void resetPasswordByToken(ResetPasswordCommand command);
 
   void findPassword(FindPasswordCommand command);
 }
