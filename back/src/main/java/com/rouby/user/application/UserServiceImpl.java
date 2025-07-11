@@ -4,9 +4,11 @@ import com.rouby.common.exception.CustomException;
 import com.rouby.common.props.URIProperty;
 import com.rouby.user.application.dto.command.FindPasswordCommand;
 import com.rouby.user.application.dto.command.ResetPasswordCommand;
+import com.rouby.user.application.dto.response.ValidateTokenInfo;
 import com.rouby.user.application.exception.UserErrorCode;
 import com.rouby.user.domain.entity.User;
 import com.rouby.user.domain.repository.UserRepository;
+import com.rouby.user.presentation.dto.response.ValidateTokenResponse;
 import java.time.Duration;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -36,15 +38,10 @@ public class UserServiceImpl implements UserService {
 
   @Transactional
   public void resetPasswordByToken(ResetPasswordCommand command) {
-    Long userId = userRepository.getUserIdByToken(command.token())
-        .orElseThrow(() -> CustomException.from(UserErrorCode.PASSWORD_TOKEN_EXPIRED));
-
-    User user = userRepository.findById(userId)
+    User user = userRepository.findById(command.userId())
         .orElseThrow(() -> CustomException.from(UserErrorCode.USER_NOT_FOUND));
 
     user.updatePassword(passwordEncoder.encode(command.newPassword()));
-
-    userRepository.delete(command.token());
   }
 
   public void findPassword(FindPasswordCommand command) {
@@ -60,4 +57,12 @@ public class UserServiceImpl implements UserService {
     //emailService.sendResetPasswordEmail(user.getEmail(), uriProperty.getResetPasswordLink());
   }
 
+  public ValidateTokenInfo validatePasswordToken(String token) {
+    Long userId = userRepository.getUserIdByToken(token)
+        .orElseThrow(() -> CustomException.from(UserErrorCode.PASSWORD_TOKEN_EXPIRED));
+
+    userRepository.delete(token);
+
+    return ValidateTokenInfo.builder().userId(userId).build();
+  }
 }
