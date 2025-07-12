@@ -7,7 +7,7 @@
     body {
       font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
       background-color: #f9f9ff;
-      color: #333;
+      /*color: #333;*/
       padding: 30px;
     }
     .container {
@@ -22,9 +22,7 @@
     .logo {
       font-size: 28px;
       font-weight: bold;
-      background: linear-gradient(90deg, #667EEA 0%, #764BA2 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #6667D0;
     }
     .subtitle {
       font-size: 16px;
@@ -47,6 +45,10 @@
       color: #999;
       margin-top: 30px;
     }
+    p, h2 {
+      color: #1f1f1f;
+    }
+
   </style>
 </head>
 <body>
@@ -54,12 +56,20 @@
   <div class="logo">Rouby</div>
   <div class="subtitle">나만의 루틴 비서, 루비를 만나보세요!</div>
 
-  <h2>이메일 인증 코드</h2>
-  <p>보석처럼 빛나는 당신의 루틴을 위해,<br>아래 인증 코드를 입력해주세요.</p>
-
-  <div class="code-box" th:text="${code}">123456</div>
-
-  <p>인증 코드는 <strong>5분간 유효</strong>합니다.</p>
+  <div class="content">
+    <h2>이메일 인증 코드</h2>
+    <p>
+      보석처럼 빛나는 당신의 루틴을 위해,
+      <br>
+      아래 인증 코드를 입력해주세요.
+    </p>
+    <div class="code-box" th:text="${code}">
+      123456
+    </div>
+    <p>
+      인증 코드는 <strong>5분간 유효</strong>합니다.
+    </p>
+  </div>
 
   <div class="footer">
     본 메일은 발신 전용입니다.<br>
@@ -68,3 +78,4 @@
 </div>
 </body>
 </html>
+

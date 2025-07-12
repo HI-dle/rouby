@@ -13,17 +13,17 @@ import org.springframework.util.StringUtils;
 public class EmailContent implements Serializable {
 
   @Column(name = "content", columnDefinition = "TEXT", nullable = false)
-  private String value;
+  private String content;
 
-  public static EmailContent of(String value) {
-    if (!StringUtils.hasText(value)) {
+  public static EmailContent of(String content) {
+    if (!StringUtils.hasText(content)) {
       throw new IllegalArgumentException("이메일 내용은 비어 있을 수 없습니다.");
     }
-    return new EmailContent(value);
+    return new EmailContent(content);
   }
 
-  private EmailContent(String value) {
-    this.value = value;
+  private EmailContent(String content) {
+    this.content = content;
   }
 
   protected EmailContent() {}

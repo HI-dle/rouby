@@ -13,18 +13,18 @@ import org.springframework.util.StringUtils;
 public class NotificationMessage implements Serializable {
 
   @Column(columnDefinition = "TEXT", name = "message", nullable = false)
-  private String value;
+  private String message;
 
-  public static NotificationMessage of(String value) {
-    if (!StringUtils.hasText(value)) {
+  public static NotificationMessage of(String message) {
+    if (!StringUtils.hasText(message)) {
       throw new IllegalArgumentException("메시지는 비어 있을 수 없습니다.");
     }
-    return new NotificationMessage(value);
+    return new NotificationMessage(message);
   }
 
   protected NotificationMessage() {}
 
-  private NotificationMessage(String value) {
-    this.value = value;
+  private NotificationMessage(String message) {
+    this.message = message;
   }
 }

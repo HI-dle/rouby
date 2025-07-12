@@ -29,7 +29,7 @@ public class EmailLog extends LogBaseEntity {
   private EmailContent content;
 
   @Embedded
-  private EmailAddress emailAddress;
+  private EmailAddress address;
 
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
@@ -42,7 +42,7 @@ public class EmailLog extends LogBaseEntity {
   public static EmailLog sent(EmailContent content, EmailAddress address, EmailType type) {
     return EmailLog.builder()
         .content(content)
-        .emailAddress(address)
+        .address(address)
         .status(SendStatus.SENT)
         .type(type).build();
   }
@@ -50,16 +50,16 @@ public class EmailLog extends LogBaseEntity {
   public static EmailLog failed(EmailContent content, EmailAddress address, EmailType type) {
     return EmailLog.builder()
         .content(content)
-        .emailAddress(address)
+        .address(address)
         .status(SendStatus.FAILED)
         .type(type).build();
   }
 
   @Builder
-  private EmailLog(EmailContent content, EmailAddress emailAddress,
+  private EmailLog(EmailContent content, EmailAddress address,
       SendStatus status, EmailType type) {
     this.content = content;
-    this.emailAddress = emailAddress;
+    this.address = address;
     this.status = status;
     this.type = type;
   }

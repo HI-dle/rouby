@@ -13,17 +13,17 @@ import org.springframework.util.StringUtils;
 public class EmailAddress implements Serializable {
 
   @Column(name = "email_address", nullable = false)
-  private String value;
+  private String emilAddress;
 
-  public static EmailAddress of(String value) {
-    if (!StringUtils.hasText(value)) {
+  public static EmailAddress of(String emilAddress) {
+    if (!StringUtils.hasText(emilAddress)) {
       throw new IllegalArgumentException("이메일 주소는 비어 있을 수 없습니다.");
     }
-    return new EmailAddress(value);
+    return new EmailAddress(emilAddress);
   }
 
-  private EmailAddress(String value) {
-    this.value = value;
+  private EmailAddress(String emilAddress) {
+    this.emilAddress = emilAddress;
   }
 
   protected EmailAddress() {}
