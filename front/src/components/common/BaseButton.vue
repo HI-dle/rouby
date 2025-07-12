@@ -2,7 +2,11 @@
 const props = defineProps({
   type: {
     type: String,
-    default: 'button', // 기본은 'button', 폼 제출용일 경우 'submit'을 명시적으로 전달
+    default: 'button'
+  },
+  disabled: {
+    type: Boolean,
+    default: false
   },
   class: {
     type: String,
@@ -14,12 +18,15 @@ const props = defineProps({
 <template>
   <button
     :type="type"
-    @click="$emit('click')"
+    :disabled="disabled"
+    @click="emit('click', $event)"
     :class="[
-      'w-full py-3 rounded-2xl text-white text-base font-semibold bg-gradient-to-r from-button-from to-button-to hover:from-[#5a63d8] hover:to-[#693f99] transition',
+      'w-full h-12 py-3 rounded-2xl text-white text-base font-semibold',
+      'bg-gradient-to-r from-button-from to-button-to hover:from-[#5a63d8] hover:to-[#693f99] transition',
+      'disabled:opacity-50',
       props.class,
     ]"
   >
-    <slot>로그인</slot>
+    <slot />
   </button>
 </template>
