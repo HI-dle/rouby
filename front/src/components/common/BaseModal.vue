@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils'
 import BaseButton from './BaseButton.vue'
 
 const props = defineProps({
-  modelValue: { type: Boolean, required: true },
+  modelValue: { type: Boolean },
   title: { type: String, default: '' },
   message: { type: String, default: '알림 메세지' },
   class: {
@@ -27,7 +27,9 @@ const close = () => {
     @click.self="close"
   >
     <div
-      :class="[cn('bg-white rounded-xl shadow-lg w-full max-w-sm p-6 text-center', props.class)]"
+      :class="[
+        cn('bg-white rounded-xl shadow-lg w-full max-w-sm w-2/3 p-6 text-center', props.class),
+      ]"
     >
       <h2 class="text-lg font-semibold text-main-color mb-4">{{ title }}</h2>
       <p class="text-sm text-gray-700 mb-6">{{ message }}</p>
