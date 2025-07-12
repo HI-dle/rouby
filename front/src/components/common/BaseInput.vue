@@ -13,30 +13,27 @@ defineProps({
   modelValue: String,
   type: {
     type: String,
-    default: 'text',
+    default: 'text'
   },
   error: String,
   disabled: Boolean,
-  maxlength: String,
+  maxlength: String
 })
+
 </script>
 
 <template>
-  <div class="input-group">
+  <div class="w-full mb-6">
     <label
       v-if="label"
-      class="input-label text-contentColor"
+      class="block mb-2 text-sm text-content-color"
       :class="labelClass"
-    >
-      {{ label }}
-    </label>
+    >{{ label }}</label>
     <input
-      v-bind="$attrs"
+      :value="modelValue"
       :type="type"
       :placeholder="placeholder"
-      :maxlength="maxlength"
-      :disabled="disabled"
-      class="input placeholder-placeholderColor h-12"
+      class="input bg-white w-full p-3 border-border-color border rounded-[16px] placeholder-placeholderColor text-main-color h-12"
       :class="{
         'error-input': error,
       }"
@@ -44,39 +41,18 @@ defineProps({
       @blur="emit('blur', $event)"
       @focus="emit('focus', $event)"
       @keydown="emit('keydown', $event)"
-      :value="modelValue"
     />
   </div>
 </template>
 
 <style scoped>
-.input-group {
-  width: 100%;
-  margin-bottom: 24px;
-}
-
-.input-label {
-  display: block;
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 8px;
-}
-
 .input {
-  width: 100%;
-  padding: 16px;
-  border: 2px solid theme('colors.border-color');
-  border-radius: 16px;
-  font-size: 16px;
-  background: white;
   transition: all 0.2s ease;
-  color: theme('colors.text-color');
 }
 
 .input:focus {
   outline: none;
-  border-color: theme('colors.focus-border-color');
-  box-shadow: 0 0 0 3px theme('colors.focus-shadow-color');
+  box-shadow: 0 0 0 2px theme('colors.focus-shadow-color');
 }
 
 .error-input {

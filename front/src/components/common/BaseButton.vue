@@ -1,7 +1,4 @@
-<!-- src/components/common/BaseButton.vue -->
 <script setup>
-import { defineProps, defineEmits } from 'vue'
-
 const props = defineProps({
   type: {
     type: String,
@@ -11,9 +8,11 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  class: {
+    type: String,
+    default: '',
+  },
 })
-
-const emit = defineEmits(['click'])
 </script>
 
 <template>
@@ -22,14 +21,10 @@ const emit = defineEmits(['click'])
     :disabled="disabled"
     @click="emit('click', $event)"
     :class="[
-      'px-4',
-      'h-12',
-      `bg-gradient-to-r from-[#667EEA] to-[#764BA2]`,
-      'text-white',
-      'rounded-[16px]',
-      'hover:opacity-90',
+      'w-full h-12 py-3 rounded-2xl text-white text-base font-semibold',
+      'bg-gradient-to-r from-button-from to-button-to hover:from-[#5a63d8] hover:to-[#693f99] transition',
       'disabled:opacity-50',
-      'whitespace-nowrap',
+      props.class,
     ]"
   >
     <slot />

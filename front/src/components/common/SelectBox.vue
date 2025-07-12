@@ -58,7 +58,7 @@ watch(
   <Select v-model="selected">
     <SelectTrigger
       :class="[
-        'w-32 h-auto text-base text-content-color focus:outline-none focus:ring-0 focus:border-transparent focus:shadow-[0_0_3px_2px_theme(colors.main-color/30%)] transition',
+        'w-full h-auto text-base text-content-color focus:outline-none focus:ring-0 focus:border-transparent focus:shadow-[0_0_3px_2px_theme(colors.main-color/30%)] transition bg-transparent border border-transparent',
         props.triggerClass,
       ]"
     >
