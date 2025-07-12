@@ -1,4 +1,4 @@
-package com.rouby.notification.domain.entity.notificationlog;
+package com.rouby.notification.notificationlog.domain.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

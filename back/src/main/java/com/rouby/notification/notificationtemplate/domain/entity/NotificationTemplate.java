@@ -1,4 +1,4 @@
-package com.rouby.notificationtemplate.domain.entity;
+package com.rouby.notification.notificationtemplate.domain.entity;
 
 import com.rouby.common.jpa.BaseEntity;
 import jakarta.persistence.Column;

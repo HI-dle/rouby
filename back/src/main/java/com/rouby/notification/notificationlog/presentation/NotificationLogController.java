@@ -1,6 +1,6 @@
-package com.rouby.notification.presentation;
+package com.rouby.notification.notificationlog.presentation;
 
-import com.rouby.notification.application.facade.notificationlog.NotificationLogFacade;
+import com.rouby.notification.notificationlog.application.facade.NotificationLogFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

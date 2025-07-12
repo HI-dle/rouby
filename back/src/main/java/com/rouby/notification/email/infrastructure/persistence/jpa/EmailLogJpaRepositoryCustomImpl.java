@@ -1,10 +1,10 @@
-package com.rouby.notification.infrastructure.persistence.jpa.emaillog;
+package com.rouby.notification.email.infrastructure.persistence.jpa;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class EmailLogJpaRepositoryCustomImpl implements EmailLogJpaRepositoryCustom {
+public class EmailLogJpaRepositoryCustomImpl {
 
   private final JPAQueryFactory jpaQueryFactory;
 

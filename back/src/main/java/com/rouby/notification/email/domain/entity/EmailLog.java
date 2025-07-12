@@ -1,4 +1,4 @@
-package com.rouby.notification.domain.entity.emaillog;
+package com.rouby.notification.email.domain.entity;
 
 import com.rouby.common.jpa.LogBaseEntity;
 import jakarta.persistence.Column;
@@ -35,25 +35,32 @@ public class EmailLog extends LogBaseEntity {
   @Enumerated(EnumType.STRING)
   private SendStatus status;
 
-  public static EmailLog sent(EmailContent content, EmailAddress address) {
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  private EmailType type;
+
+  public static EmailLog sent(EmailContent content, EmailAddress address, EmailType type) {
     return EmailLog.builder()
         .content(content)
         .emailAddress(address)
-        .status(SendStatus.SENT).build();
+        .status(SendStatus.SENT)
+        .type(type).build();
   }
 
-  public static EmailLog failed(EmailContent content, EmailAddress address) {
+  public static EmailLog failed(EmailContent content, EmailAddress address, EmailType type) {
     return EmailLog.builder()
         .content(content)
         .emailAddress(address)
-        .status(SendStatus.FAILED).build();
+        .status(SendStatus.FAILED)
+        .type(type).build();
   }
 
   @Builder
   private EmailLog(EmailContent content, EmailAddress emailAddress,
-      SendStatus status) {
+      SendStatus status, EmailType type) {
     this.content = content;
     this.emailAddress = emailAddress;
     this.status = status;
+    this.type = type;
   }
 }

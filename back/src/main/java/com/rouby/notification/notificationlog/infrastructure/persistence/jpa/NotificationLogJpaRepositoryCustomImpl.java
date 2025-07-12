@@ -1,4 +1,4 @@
-package com.rouby.notification.infrastructure.persistence.jpa.notificationlog;
+package com.rouby.notification.notificationlog.infrastructure.persistence.jpa;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;

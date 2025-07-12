@@ -1,4 +1,4 @@
-package com.rouby.notification.application.facade.notificationlog;
+package com.rouby.notification.notificationlog.application.facade;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

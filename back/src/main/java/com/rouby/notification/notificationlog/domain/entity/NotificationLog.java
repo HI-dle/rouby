@@ -1,4 +1,4 @@
-package com.rouby.notification.domain.entity.notificationlog;
+package com.rouby.notification.notificationlog.domain.entity;
 
 
 import com.rouby.common.jpa.LogBaseEntity;

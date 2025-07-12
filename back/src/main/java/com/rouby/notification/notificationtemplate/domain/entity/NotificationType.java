@@ -1,6 +1,7 @@
-package com.rouby.notification.domain.entity.notificationlog;
+package com.rouby.notification.notificationtemplate.domain.entity;
 
 public enum NotificationType {
+
   SCHEDULE,
   ROUTINE,
   BRIEFING,
