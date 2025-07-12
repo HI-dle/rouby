@@ -9,4 +9,6 @@ public interface VerificationEmailCodeRepository {
 
   Optional<VerificationEmailCode> findByEmail(String email);
 
+  void delete(String email);
+
 }

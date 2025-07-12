@@ -27,6 +27,10 @@ public class RedisVerificationEmailCodeRepository implements VerificationEmailCo
     return Optional.of(code);
   }
 
+  public void delete(String email) {
+    redisTemplate.delete(buildKey(email));
+  }
+
   private String buildKey(String email) {
     return KEY + email;
   }

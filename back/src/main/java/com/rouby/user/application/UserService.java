@@ -16,12 +16,10 @@ public class UserService {
   private final UserRepository userRepository;
   private final VerificationEmailCodeRepository verificationEmailCodeRepository;
 
-  @Transactional
   public boolean alreadyExistsEmail(String email) {
     return userRepository.existsByEmail(email);
   }
 
-  @Transactional
   public void saveVerificationCode(SaveVerificationCodeCommand command) {
     verificationEmailCodeRepository.save(command.email(), command.toEntity());
   }
@@ -38,5 +36,9 @@ public class UserService {
 
     code.verified();
     verificationEmailCodeRepository.save(command.email(), code);
+  }
+
+  public void deleteVerificationCode(String email) {
+    verificationEmailCodeRepository.delete(email);
   }
 }
