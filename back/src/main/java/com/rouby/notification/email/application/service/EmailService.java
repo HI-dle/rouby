@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rouby.notification.email.application.dto.SendEmailCommand;
 import com.rouby.notification.email.application.exception.EmailException;
 import com.rouby.notification.email.application.messaging.EmailSender;
-import com.rouby.notification.email.application.utils.EmailHtmlCreator;
+import com.rouby.notification.email.application.utils.EmailTemplateCreator;
 import com.rouby.notification.email.domain.entity.EmailAddress;
 import com.rouby.notification.email.domain.entity.EmailContent;
 import com.rouby.notification.email.domain.entity.EmailLog;
@@ -28,7 +28,7 @@ public class EmailService {
 
   private final EmailSender emailSender;
   private final EmailLogRepository emailLogRepository;
-  private final EmailHtmlCreator emailHtmlCreator;
+  private final EmailTemplateCreator emailTemplateCreator;
   private final ObjectMapper objectMapper;
 
   @SneakyThrows
@@ -36,8 +36,8 @@ public class EmailService {
   public void send(SendEmailCommand command) {
 
     try {
-       String content = emailHtmlCreator.createHtml(command.emailData(), command.type());
-       emailSender.send(command.to(), command.subject(), content);
+       String content = emailTemplateCreator.createHtml(command.emailData(), command.type());
+       emailSender.send(command.to(), emailTemplateCreator.createTitle(command.type()), content);
        saveSentLog(objectMapper.writeValueAsString(command.emailData()), command.to(),
            command.type());
     } catch (MailException e) {

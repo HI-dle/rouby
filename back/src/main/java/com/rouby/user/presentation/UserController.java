@@ -1,9 +1,11 @@
 package com.rouby.user.presentation;
 
 import com.rouby.user.application.UserFacade;
+import com.rouby.user.presentation.dto.CreateUserRequest;
 import com.rouby.user.presentation.dto.SendEmailVerificationRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,5 +31,11 @@ public class UserController {
       @RequestBody @Valid VerifyEmailRequest request) {
     userFacade.verifyEmail(request.toCommand());
     return ResponseEntity.ok().build();
+  }
+
+  @PostMapping
+  public ResponseEntity<Void> createUser(@RequestBody @Valid CreateUserRequest req) {
+    userFacade.createUser(req.toCommand());
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 }

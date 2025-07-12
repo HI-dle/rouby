@@ -6,7 +6,7 @@ public record SendEmailVerificationCommand(
     String email
 ) {
 
-  public SendVerificationEmailCommand toSendEmailCommand(String to, String subject, String code) {
-    return SendVerificationEmailCommand.of(to, subject, code);
+  public SendVerificationEmailCommand toSendEmailCommand(String to, String code) {
+    return SendVerificationEmailCommand.of(to, code);
   }
 }

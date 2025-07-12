@@ -1,0 +1,3 @@
+[submodule "back/rouby-secret"]
+	path = back/rouby-secret
+	url = https://github.com/HI-dle/rouby-secret.git
