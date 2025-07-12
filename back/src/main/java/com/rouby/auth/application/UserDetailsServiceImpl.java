@@ -1,7 +1,7 @@
 package com.rouby.auth.application;
 
 import com.rouby.auth.dto.UserDetailsImpl;
-import com.rouby.user.application.UserService;
+import com.rouby.user.application.service.UserReadService;
 import com.rouby.user.domain.entity.User;
 import java.util.Collection;
 import java.util.List;
@@ -22,11 +22,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-  private final UserService userService;
+  private final UserReadService userReadService;
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    User user = userService.findByEmail(username);
+    User user = userReadService.findByEmail(username);
 
     Collection<? extends GrantedAuthority> authorities =
         List.of(new SimpleGrantedAuthority(user.getRole().getRoleName()));
