@@ -1,9 +1,9 @@
-import { reactive, ref, watch } from 'vue'
+import { reactive, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useTimer } from '@/utils/timerUtils.js'
-import { buildFieldValidator, buildErrorCleaner } from '@/utils/formUtils.js'
+import { buildErrorCleaner, buildFieldValidator } from '@/utils/formUtils.js'
 
-import { requestEmailVerification, verifyEmailCode, signup } from './authService.js'
+import { requestEmailVerification, signup, verifyEmailCode } from './authService.js'
 
 import {
   validateEmail,
@@ -37,8 +37,6 @@ export function useSignupForm() {
     signup: false,
   })
 
-  const hasRequestedVerification = ref(false)
-
   const {
     timeLeft,
     isAvailable: canResend,
@@ -55,12 +53,11 @@ export function useSignupForm() {
     validateField(validatePasswordConfirm, 'passwordConfirm', form.password, form.passwordConfirm)
 
   const clearErrors = buildErrorCleaner(errors, [
-    { field: 'email',            get: state => state.email },
-    { field: 'verificationCode', get: state => state.verificationCode },
-    { field: 'password',         get: state => state.password },
-    { field: 'passwordConfirm',  get: state => state.passwordConfirm },
+    { field: 'email', get: (state) => state.email },
+    { field: 'verificationCode', get: (state) => state.verificationCode },
+    { field: 'password', get: (state) => state.password },
+    { field: 'passwordConfirm', get: (state) => state.passwordConfirm },
   ])
-
 
   watch(() => form, clearErrors, { deep: true })
 
@@ -72,7 +69,6 @@ export function useSignupForm() {
     loading.emailVerification = true
     try {
       await requestEmailVerification(form.email)
-      hasRequestedVerification.value = true
       form.isVerificationStep = true
       startTimer()
       return true
@@ -144,11 +140,64 @@ export function useSignupForm() {
     await requestVerification()
   }
 
+  window.testSignup = {
+    // 1. 폼 데이터 자동 입력
+    fill: () => {
+      form.email = 'test@test.com'
+      form.password = 'Test123!'
+      form.passwordConfirm = 'Test123!'
+      console.log('테스트 데이터 입력 완료')
+    },
+
+    // 2. 인증 단계로 이동
+    startVerification: () => {
+      form.isVerificationStep = true
+      startTimer()
+      console.log('인증 단계 시작 - 타이머 작동 중')
+    },
+
+    // 3. 인증 완료 처리
+    completeVerification: () => {
+      form.verificationCode = '123456'
+      form.isEmailVerified = true
+      stopTimer()
+      console.log('인증 완료! 가입 버튼 활성화됨')
+    },
+
+    // 4. 에러 표시
+    showError: (field = 'email', message = '테스트 에러') => {
+      errors[field] = message
+      console.log(` ${field} 에러:`, message)
+    },
+
+    // 5. 모든 상태 리셋
+    reset: () => {
+      form.email = ''
+      form.password = ''
+      form.passwordConfirm = ''
+      form.verificationCode = ''
+      form.isEmailVerified = false
+      Object.keys(errors).forEach((key) => delete errors[key])
+      stopTimer()
+      console.log('모든 상태 초기화')
+    },
+
+    // 6. 현재 상태 확인
+    status: () => {
+      console.log('📊 현재 상태:', {
+        email: form.email,
+        isVerificationStep: form.isVerificationStep,
+        isVerified: form.isEmailVerified,
+        timeLeft: timeLeft.value,
+        errors: { ...errors },
+      })
+    },
+  }
+
   return {
     form,
     errors,
     loading,
-    hasRequestedVerification,
     timeLeft,
     isResendAvailable: canResend,
     formatTime,
