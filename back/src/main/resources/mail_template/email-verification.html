@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Rouby 이메일 인증</title>
+  <style>
+    body {
+      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      background-color: #f9f9ff;
+      color: #333;
+      padding: 30px;
+    }
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      padding: 40px 30px;
+      text-align: center;
+    }
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+      background: linear-gradient(90deg, #667EEA 0%, #764BA2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle {
+      font-size: 16px;
+      color: #888;
+      margin-bottom: 30px;
+    }
+    .code-box {
+      display: inline-block;
+      padding: 15px 30px;
+      font-size: 24px;
+      font-weight: bold;
+      background: linear-gradient(90deg, #667EEA 0%, #764BA2 100%);
+      color: white;
+      border-radius: 10px;
+      margin: 20px 0;
+      letter-spacing: 4px;
+    }
+    .footer {
+      font-size: 12px;
+      color: #999;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="logo">Rouby</div>
+  <div class="subtitle">나만의 루틴 비서, 루비를 만나보세요!</div>
+
+  <h2>이메일 인증 코드</h2>
+  <p>보석처럼 빛나는 당신의 루틴을 위해,<br>아래 인증 코드를 입력해주세요.</p>
+
+  <div class="code-box" th:text="${code}">123456</div>
+
+  <p>인증 코드는 <strong>5분간 유효</strong>합니다.</p>
+
+  <div class="footer">
+    본 메일은 발신 전용입니다.<br>
+    문의: support@rouby.app
+  </div>
+</div>
+</body>
+</html>
