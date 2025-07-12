@@ -5,6 +5,10 @@ const emit = defineEmits(['update:modelValue', 'blur', 'focus', 'keydown'])
 
 defineProps({
   label: String,
+  labelClass: {
+    type: String,
+    default: '',
+  },
   placeholder: String,
   modelValue: String,
   type: {
@@ -19,7 +23,13 @@ defineProps({
 
 <template>
   <div class="input-group">
-    <label class="input-label text-contentColor">{{ label }}</label>
+    <label
+      v-if="label"
+      class="input-label text-contentColor"
+      :class="labelClass"
+    >
+      {{ label }}
+    </label>
     <input
       v-bind="$attrs"
       :type="type"
@@ -69,7 +79,6 @@ defineProps({
   box-shadow: 0 0 0 3px theme('colors.focus-shadow-color');
 }
 
-
 .error-input {
   border-color: theme('colors.error-color');
 }
@@ -78,5 +87,4 @@ defineProps({
   border-color: theme('colors.error-color');
   box-shadow: 0 0 0 3px theme('colors.error-color/30%');
 }
-
 </style>

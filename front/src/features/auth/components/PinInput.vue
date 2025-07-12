@@ -1,12 +1,12 @@
 <template>
   <div class="input-group">
-    <!-- 1) 레이블 -->
+    <!-- 레이블 -->
     <label v-if="label" class="block text-sm font-medium text-contentColor mb-1"
     :class="labelClass"
     >
       {{ label }}
     </label>
-    <!-- 2) 도움말 텍스트 -->
+    <!-- 도움말 텍스트 -->
     <p v-if="helpText" class="text-xs text-gray-500 mb-2">
       {{ helpText }}
     </p>
@@ -28,8 +28,8 @@
         @focus="onFocus"
         class="w-12 h-12 text-center text-xl border-2 rounded-lg transition-colors"
         :class="{
-          'border-gray-300 focus:border-blue-500 focus:shadow-blue-100': !errorMessage,
-          'border-red-500 focus:border-red-500 focus:shadow-red-100': !!errorMessage,
+          'border-gray-300 focus:border-focus-border-color focus:shadow-focus-shadow-color': !errorMessage,
+          'border-error-color focus:shadow-error-color': !!errorMessage,
           'bg-gray-100': disabled,
           'rounded-l-2xl': idx === 0,
           'rounded-r-2xl': idx === length - 1,
@@ -41,16 +41,6 @@
     <FieldError :message="errorMessage" />
   </div>
 </template>
-
-<style scoped>
-.focus\:shadow-blue-100:focus {
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-}
-
-.focus\:shadow-red-100:focus {
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
-}
-</style>
 
 <script setup>
 import { ref, watch, nextTick, onMounted } from 'vue'
@@ -77,12 +67,9 @@ const emit = defineEmits([
   'complete'
 ])
 
-// 각 칸의 DOM ref
 const inputs = ref([])
-// 내부 상태: 각 칸에 표시할 숫자
 const digits = ref(Array(props.length).fill(''))
 
-// 부모 modelValue가 바뀌면 digits 동기화
 watch(
   () => props.modelValue,
   val => {
@@ -138,3 +125,13 @@ function onFocus(e) {
   emit('focus', e)
 }
 </script>
+
+<style scoped>
+.focus\:shadow-blue-100:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.focus\:shadow-red-100:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+</style>
