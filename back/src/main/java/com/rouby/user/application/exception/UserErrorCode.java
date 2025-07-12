@@ -13,9 +13,11 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum UserErrorCode implements ErrorCode {
-  //수정은 했는데 맞는 방향인지는 잘 모르겠습니다ㅜ!!
   INVALID_USER("잘못된 사용자 입니다.", "INVALID_USER", HttpStatus.UNAUTHORIZED),
   INVALID_USER_PASSWORD("잘못된 사용자 입니다", "INVALID_USER", HttpStatus.UNAUTHORIZED),
+  DUPLICATE_EMAIL("이미 사용중인 이메일 입니다.", "DUPLICATE_EMAIL", HttpStatus.CONFLICT),
+  INVALID_EMAIL_VERIFICATION("인증번호가 올바르지 않거나 유효시간(5분)이 경과되었습니다. 다시 확인해주세요.",
+      "INVALID_EMAIL_VERIFICATION", HttpStatus.UNAUTHORIZED),
   ;
 
   private final String message;

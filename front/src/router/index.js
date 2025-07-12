@@ -43,6 +43,29 @@ const router = createRouter({
         },
       ],
     },
+    {
+      path: '/auth',
+      component: () => import('@/layouts/AuthLayout.vue'),
+      children: [
+        {
+          path: 'login',
+          name: 'login',
+          component: () => import('@/features/auth/views/LoginView.vue'),
+        },
+      ],
+    },
+    {
+      path: '/auth',
+      component: () => import('@/layouts/AuthLayout.vue'),
+      children: [
+        {
+          path: 'signup',
+          name: 'signup',
+          component: () => import('@/features/auth/views/SignupView.vue'),
+        },
+      ]
+    },
+
   ],
 })
 
