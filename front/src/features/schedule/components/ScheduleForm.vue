@@ -140,5 +140,5 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
       </div>
     </form>
   </div>
-  <BaseModal v-model="errorModal.show" :message="errorModal.msg" />
+  <BaseModal v-model="errorModal.show" :message="errorModal.msg" buttonText="확인" />
 </template>
