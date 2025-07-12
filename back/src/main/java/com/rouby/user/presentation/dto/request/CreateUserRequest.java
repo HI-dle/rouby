@@ -1,4 +1,4 @@
-package com.rouby.user.presentation.dto;
+package com.rouby.user.presentation.dto.request;
 
 import com.rouby.user.application.dto.command.CreateUserCommand;
 import com.rouby.user.presentation.validation.ValidPassword;

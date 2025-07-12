@@ -1,9 +1,9 @@
-package com.rouby.auth.config;
+package com.rouby.common.config;
 
-import com.rouby.auth.filter.JwtAuthenticationFilter;
-import com.rouby.auth.handler.JwtAccessDeniedHandler;
-import com.rouby.auth.handler.JwtAuthenticationEntryPoint;
-import com.rouby.auth.jwt.JwtTokenProvider;
+import com.rouby.user.infrastructure.security.filter.JwtAuthenticationFilter;
+import com.rouby.user.infrastructure.security.handler.JwtAccessDeniedHandler;
+import com.rouby.user.infrastructure.security.handler.JwtAuthenticationEntryPoint;
+import com.rouby.user.infrastructure.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

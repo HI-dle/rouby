@@ -13,12 +13,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rouby.auth.config.SecurityConfig;
+import com.rouby.common.config.SecurityConfig;
 import com.rouby.common.config.WebConfig;
 import com.rouby.common.exception.GlobalExceptionHandler;
 import com.rouby.common.resolver.CustomPageableArgumentResolver;
 import com.rouby.user.application.UserFacade;
-import com.rouby.user.presentation.dto.CreateUserRequest;
+import com.rouby.user.presentation.dto.request.CreateUserRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

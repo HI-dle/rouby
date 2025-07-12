@@ -1,4 +1,4 @@
-package com.rouby.auth.jwt;
+package com.rouby.user.infrastructure.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

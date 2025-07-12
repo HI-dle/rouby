@@ -1,6 +1,6 @@
 package com.rouby.user.presentation;
 
-import com.rouby.user.presentation.dto.CreateUserRequest;
+import com.rouby.user.presentation.dto.request.CreateUserRequest;
 
 public class UserRequestStub {
 

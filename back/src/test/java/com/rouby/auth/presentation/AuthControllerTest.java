@@ -1,6 +1,5 @@
 package com.rouby.auth.presentation;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
@@ -11,9 +10,9 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.rouby.auth.application.dto.request.LoginCommand;
-import com.rouby.auth.application.dto.response.LoginInfo;
-import com.rouby.auth.presentation.dto.request.LoginRequest;
+import com.rouby.user.application.dto.command.LoginCommand;
+import com.rouby.user.application.dto.info.LoginInfo;
+import com.rouby.user.presentation.dto.request.LoginRequest;
 import com.rouby.common.support.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

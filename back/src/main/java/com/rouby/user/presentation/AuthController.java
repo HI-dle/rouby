@@ -1,8 +1,8 @@
-package com.rouby.auth.presentation;
+package com.rouby.user.presentation;
 
-import com.rouby.auth.application.facade.AuthFacade;
-import com.rouby.auth.presentation.dto.request.LoginRequest;
-import com.rouby.auth.presentation.dto.response.LoginResponse;
+import com.rouby.user.application.UserFacade;
+import com.rouby.user.presentation.dto.request.LoginRequest;
+import com.rouby.user.presentation.dto.response.LoginResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,13 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
-  private final AuthFacade authFacade;
+  private final UserFacade userFacade;
 
   @PostMapping("/login")
   public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request) {
     log.info("요청 받았습니다~!");
     log.info(request.email());
-    return ResponseEntity.ok(LoginResponse.from(authFacade.login(request.toApplication())));
+    return ResponseEntity.ok(LoginResponse.from(userFacade.login(request.toApplication())));
   }
 
 }

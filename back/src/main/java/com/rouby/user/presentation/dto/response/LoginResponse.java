@@ -1,6 +1,6 @@
-package com.rouby.auth.presentation.dto.response;
+package com.rouby.user.presentation.dto.response;
 
-import com.rouby.auth.application.dto.response.LoginInfo;
+import com.rouby.user.application.dto.info.LoginInfo;
 import lombok.Builder;
 
 /**

@@ -1,8 +1,8 @@
 package com.rouby.user.presentation;
 
 import com.rouby.user.application.UserFacade;
-import com.rouby.user.presentation.dto.CreateUserRequest;
-import com.rouby.user.presentation.dto.SendEmailVerificationRequest;
+import com.rouby.user.presentation.dto.request.CreateUserRequest;
+import com.rouby.user.presentation.dto.request.SendEmailVerificationRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
