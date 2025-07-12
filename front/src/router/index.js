@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -42,8 +41,14 @@ const router = createRouter({
           name: 'mypage',
           component: () => import('@/features/user/views/MypageView.vue'),
         },
+      ],
+    },
+    {
+      path: '/auth',
+      component: () => import('@/layouts/AuthLayout.vue'),
+      children: [
         {
-          path: '/login',
+          path: 'login',
           name: 'login',
           component: () => import('@/features/auth/views/LoginView.vue'),
         },
@@ -53,13 +58,14 @@ const router = createRouter({
       path: '/auth',
       component: () => import('@/layouts/AuthLayout.vue'),
       children: [
-        // {
-        //   path: 'login',
-        //   name: 'login',
-        //   component: () => import('@/features/login/views/LoginView.vue'),
-        // },
-      ],
+        {
+          path: 'signup',
+          name: 'signup',
+          component: () => import('@/features/auth/views/SignupView.vue'),
+        },
+      ]
     },
+
   ],
 })
 
