@@ -16,7 +16,7 @@ const props = defineProps({
     :type="type"
     @click="$emit('click')"
     :class="[
-      'w-full py-3 rounded-2xl text-white text-base font-semibold bg-gradient-to-r from-button-from to-button-to hover:from-[#546ac9] hover:to-[#6a4093] transition',
+      'w-full py-3 rounded-2xl text-white text-base font-semibold bg-gradient-to-r from-button-from to-button-to hover:from-[#5a63d8] hover:to-[#693f99] transition',
       props.class,
     ]"
   >
