@@ -36,7 +36,7 @@ public class UserWriteService {
 
   private void ensureEmailNotTaken(String email) {
     if (userRepository.existsByEmail(email)) {
-      throw UserException.of(DUPLICATE_EMAIL);
+      throw UserException.from(DUPLICATE_EMAIL);
     }
   }
 
