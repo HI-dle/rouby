@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum AlarmOffsetType {
 
+  AT_TIME(0, "일정 시간"),
   M_5(5, "5분 전"),
   M_10(10, "10분 전"),
   M_15(15, "15분 전"),

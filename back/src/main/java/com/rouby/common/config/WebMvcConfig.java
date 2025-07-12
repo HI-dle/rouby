@@ -19,6 +19,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         .allowedOriginPatterns(corsProperties.getAllowedOriginPatterns())
         .allowedMethods(corsProperties.getAllowedMethods())
         .allowedHeaders(corsProperties.getAllowedHeaders())
+        .exposedHeaders("Location")
         //.exposedHeaders() // , "*"
         .maxAge(corsProperties.getMaxAgeSec());
   }
