@@ -1,6 +1,10 @@
 package com.rouby.user.presentation;
 
+import static com.rouby.notification.email.application.exception.EmailErrorCode.EMAIL_SEND_FAILED;
+import static com.rouby.user.application.exception.UserErrorCode.DUPLICATE_EMAIL;
+import static com.rouby.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
@@ -12,56 +16,17 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rouby.common.config.SecurityConfig;
-import com.rouby.common.config.WebConfig;
-import com.rouby.common.exception.GlobalExceptionHandler;
-import com.rouby.common.resolver.CustomPageableArgumentResolver;
-import com.rouby.user.application.UserFacade;
-import com.rouby.user.presentation.dto.request.CreateUserRequest;
+import com.rouby.common.support.ControllerTestSupport;
+import com.rouby.notification.email.application.exception.EmailException;
+import com.rouby.user.application.exception.UserException;
+import com.rouby.user.presentation.dto.CreateUserRequest;
+import com.rouby.user.presentation.dto.SendEmailVerificationRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.payload.ResponseFieldsSnippet;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-@AutoConfigureRestDocs
-@WebMvcTest(
-    controllers = {UserController.class,},
-    excludeFilters = {
-        @ComponentScan.Filter(
-            type = FilterType.ASSIGNABLE_TYPE,
-            classes = SecurityConfig.class
-        )
-    }
-)
-@AutoConfigureMockMvc(addFilters = false)
-@ActiveProfiles("test")
-@Import({
-    WebConfig.class,
-    CustomPageableArgumentResolver.class,
-    GlobalExceptionHandler.class,
-})
-class UserControllerTest {
-
-  @Autowired
-  protected MockMvc mockMvc;
-
-  @Autowired
-  protected ObjectMapper objectMapper;
-
-  @MockitoBean
-  UserFacade userFacade;
+class UserControllerTest extends ControllerTestSupport {
 
   @Test
   @DisplayName("회원 가입 성공")
@@ -105,19 +70,9 @@ class UserControllerTest {
                 fieldWithPath("email").description("이메일 주소 (형식 오류)"),
                 fieldWithPath("password").description("비밀번호")
             ),
-            getErrorResponseFieldsSnippet()
+            getValidationErrorResponseFieldSnippet()
         ));
   }
-
-  private static ResponseFieldsSnippet getErrorResponseFieldsSnippet() {
-    return responseFields(
-        fieldWithPath("message").description("에러 메시지"),
-        fieldWithPath("code").description("에러 코드"),
-        fieldWithPath("errors[].value").description("유효하지 않은 필드명"),
-        fieldWithPath("errors[].message").description("유효성 검증 실패 메시지")
-    );
-  }
-
 
   @Test
   @DisplayName("회원 가입 실패 - 비밀번호 형식 오류")
@@ -135,7 +90,220 @@ class UserControllerTest {
                 fieldWithPath("email").description("이메일 주소"),
                 fieldWithPath("password").description("비밀번호 (형식 오류)")
             ),
-            getErrorResponseFieldsSnippet()
+            getValidationErrorResponseFieldSnippet()
+        ));
+  }
+
+  @Test
+  @DisplayName("이메일 인증 코드 전송 성공")
+  void requestEmail() throws Exception {
+
+    // given
+    SendEmailVerificationRequest request = UserRequestStub.toSendEmailVerificationRequest();
+    doNothing().when(userFacade).sendEmailVerification(request.toCommand());
+
+    // when
+    ResultActions result = mockMvc.perform(post("/api/v1/users/email-verification/request")
+        .content(objectMapper.writeValueAsString(request))
+        .contentType(MediaType.APPLICATION_JSON));
+
+    // then
+    result.andExpect(status().isOk())
+        .andDo(print())
+        .andDo(document("user-email-verification-request",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestFields(
+                fieldWithPath("email").description("이메일 주소")
+            )
+        ));
+  }
+
+  @Test
+  @DisplayName("이메일 인증 코드 전송 실패 - 유효하지 않은 이메일")
+  void requestEmail_fail_validate_email() throws Exception {
+
+    // given
+    SendEmailVerificationRequest request = UserRequestStub.toSendEmailVerificationRequestInvalidEmail();
+    doNothing().when(userFacade).sendEmailVerification(request.toCommand());
+
+    // when
+    ResultActions result = mockMvc.perform(post("/api/v1/users/email-verification/request")
+        .content(objectMapper.writeValueAsString(request))
+        .contentType(MediaType.APPLICATION_JSON));
+
+    // then
+    result.andExpect(status().isBadRequest())
+        .andDo(print())
+        .andDo(document("user-email-verification-request-invalid-email",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestFields(
+                fieldWithPath("email").description("이메일 주소")
+            ),
+            getValidationErrorResponseFieldSnippet()
+        ));
+  }
+
+  @Test
+  @DisplayName("이메일 인증 코드 전송 실패 - 중복된 이메일")
+  void verifyEmail_fail_duplicate_email() throws Exception {
+
+    // given
+    SendEmailVerificationRequest request = UserRequestStub.toSendEmailVerificationRequest();
+    doThrow(UserException.from(DUPLICATE_EMAIL)).when(userFacade)
+        .sendEmailVerification(request.toCommand());
+
+    // when
+    ResultActions result = mockMvc.perform(post("/api/v1/users/email-verification/request")
+        .content(objectMapper.writeValueAsString(request))
+        .contentType(MediaType.APPLICATION_JSON));
+
+    // then
+    result.andExpect(status().isConflict())
+        .andDo(print())
+        .andDo(document("user-email-verification-request-duplicate-email",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestFields(
+                fieldWithPath("email").description("이메일 주소")
+            ),
+            getErrorResponseFieldSnippet()
+        ));
+  }
+
+  @Test
+  @DisplayName("이메일 인증 코드 전송 실패 - 이메일 sender 전송 실패")
+  void verifyEmail_fail_email_send_failed() throws Exception {
+
+    // given
+    SendEmailVerificationRequest request = UserRequestStub.toSendEmailVerificationRequest();
+    doThrow(EmailException.from(EMAIL_SEND_FAILED)).when(userFacade)
+        .sendEmailVerification(request.toCommand());
+
+    // when
+    ResultActions result = mockMvc.perform(post("/api/v1/users/email-verification/request")
+        .content(objectMapper.writeValueAsString(request))
+        .contentType(MediaType.APPLICATION_JSON));
+
+    // then
+    result.andExpect(status().isServiceUnavailable())
+        .andDo(print())
+        .andDo(document("user-email-verification-request-send-failed",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestFields(
+                fieldWithPath("email").description("이메일 주소")
+            ),
+            getErrorResponseFieldSnippet()
+        ));
+  }
+
+  @Test
+  @DisplayName("이메일 인증 성공")
+  void verifyEmail() throws Exception {
+
+    // given
+    VerifyEmailRequest request = UserRequestStub.toVerifyEmailRequest();
+    doNothing().when(userFacade).verifyEmail(request.toCommand());
+
+    // when
+    ResultActions result = mockMvc.perform(post("/api/v1/users/email-verification/verify")
+        .content(objectMapper.writeValueAsString(request))
+        .contentType(MediaType.APPLICATION_JSON));
+
+    // then
+    result.andExpect(status().isOk())
+        .andDo(print())
+        .andDo(document("user-email-verification-verify",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestFields(
+                fieldWithPath("email").description("이메일 주소"),
+                fieldWithPath("code").description("이메일 인증 코드")
+            )
+        ));
+  }
+
+  @Test
+  @DisplayName("이메일 인증 실패 - 유효하지 않은 이메일")
+  void verifyEmail_fail_validate_email() throws Exception {
+
+    // given
+    VerifyEmailRequest request = UserRequestStub.toVerifyEmailRequestInvalidEmail();
+    doNothing().when(userFacade).verifyEmail(request.toCommand());
+
+    // when
+    ResultActions result = mockMvc.perform(post("/api/v1/users/email-verification/verify")
+        .content(objectMapper.writeValueAsString(request))
+        .contentType(MediaType.APPLICATION_JSON));
+
+    // then
+    result.andExpect(status().isBadRequest())
+        .andDo(print())
+        .andDo(document("user-email-verification-verify-invalid-email",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestFields(
+                fieldWithPath("email").description("이메일 주소"),
+                fieldWithPath("code").description("이메일 인증 코드")
+            ),
+            getValidationErrorResponseFieldSnippet()
+        ));
+  }
+
+  @Test
+  @DisplayName("이메일 인증 실패 - 유효하지 않은 이메일 인증 코드 길이")
+  void verifyEmail_fail_invalid_email_code_size() throws Exception {
+
+    // given
+    VerifyEmailRequest request = UserRequestStub.toVerifyEmailRequestInvalidCode();
+    doNothing().when(userFacade).verifyEmail(request.toCommand());
+
+    // when
+    ResultActions result = mockMvc.perform(post("/api/v1/users/email-verification/verify")
+        .content(objectMapper.writeValueAsString(request))
+        .contentType(MediaType.APPLICATION_JSON));
+
+    // then
+    result.andExpect(status().isBadRequest())
+        .andDo(print())
+        .andDo(document("user-email-verification-verify-invalid-email-code-size",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestFields(
+                fieldWithPath("email").description("이메일 주소"),
+                fieldWithPath("code").description("이메일 인증 코드")
+            ),
+            getValidationErrorResponseFieldSnippet()
+        ));
+  }
+
+  @Test
+  @DisplayName("이메일 인증 실패 - 유효하지 않은 이메일 인증 코드")
+  void verifyEmail_fail_invalid_verification_email_code() throws Exception {
+
+    // given
+    VerifyEmailRequest request = UserRequestStub.toVerifyEmailRequest();
+    doThrow(UserException.from(INVALID_EMAIL_VERIFICATION)).when(userFacade)
+        .verifyEmail(request.toCommand());
+
+    // when
+    ResultActions result = mockMvc.perform(post("/api/v1/users/email-verification/verify")
+        .content(objectMapper.writeValueAsString(request))
+        .contentType(MediaType.APPLICATION_JSON));
+
+    // then
+    result.andExpect(status().isUnauthorized())
+        .andDo(print())
+        .andDo(document("user-email-verification-verify-invalid-verification-email-code",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestFields(
+                fieldWithPath("email").description("이메일 주소"),
+                fieldWithPath("code").description("이메일 인증 코드")
+            ),
+            getErrorResponseFieldSnippet()
         ));
   }
 }

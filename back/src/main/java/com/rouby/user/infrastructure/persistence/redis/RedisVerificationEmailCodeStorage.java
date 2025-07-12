@@ -29,7 +29,7 @@ public class RedisVerificationEmailCodeStorage implements VerificationEmailCodeS
   public Optional<VerificationEmailCode> findByEmail(String email) {
     VerificationEmailCode code = (VerificationEmailCode) redisTemplate.opsForValue()
         .get(buildKey(email));
-    return Optional.of(code);
+    return Optional.ofNullable(code);
   }
 
   public void delete(String email) {
