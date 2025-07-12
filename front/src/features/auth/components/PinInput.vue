@@ -26,7 +26,7 @@
         @keydown="onKeydown($event, idx)"
         @blur="onBlur"
         @focus="onFocus"
-        class="w-12 h-12 text-center text-xl border-2 rounded-lg transition-colors"
+        class="w-12 h-12 text-center text-xl border rounded-lg transition-colors"
         :class="{
           'border-gray-300 focus:border-focus-border-color focus:shadow-focus-shadow-color': !errorMessage,
           'border-error-color focus:shadow-error-color': !!errorMessage,
