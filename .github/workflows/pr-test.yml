@@ -41,6 +41,6 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number,
-              body: "❌Test failed: 코드를 다시 확인해주세요.",
+              body: "🚨🚨🚨Test failed: 코드를 다시 확인해주세요.🚨🚨🚨",
               event: "REQUEST_CHANGES"
             });
