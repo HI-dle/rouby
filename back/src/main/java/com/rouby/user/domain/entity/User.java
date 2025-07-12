@@ -91,4 +91,8 @@ public class User extends BaseEntity {
 
   protected User() {
   }
+
+  public void updatePassword(String newPassword) {
+    this.password = newPassword;
+  }
 }
