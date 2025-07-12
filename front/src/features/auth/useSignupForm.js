@@ -3,19 +3,26 @@ import { useRouter } from 'vue-router'
 import { useTimer } from '@/utils/timerUtils.js'
 import { buildErrorCleaner, buildFieldValidator } from '@/utils/formUtils.js'
 
-import { requestEmailVerification, signup, verifyEmailCode } from './authService.js'
+import {
+  findPassword,
+  requestEmailVerification,
+  resetPassword,
+  signup,
+  verifyEmailCode
+} from './authService.js'
 
 import {
-  validateEmail,
+  validateEmail, validateEmailForm,
   validatePassword,
   validatePasswordConfirm,
-  validateSignupForm,
+  validateSignupForm
 } from './validations.js'
 
 export function useSignupForm() {
   const router = useRouter()
 
   const form = reactive({
+    userId: '',
     email: '',
     verificationCode: '',
     password: '',
@@ -140,6 +147,42 @@ export function useSignupForm() {
     await requestVerification()
   }
 
+  const sendResetPasswordLink = async () => {
+    if (!validateEmailForm(form, errors)) {
+      return
+    }
+    try {
+      const success = await  findPassword(form.email)
+      if (success) {
+        await router.push('/login')
+      }
+    } catch (err) {
+      if (err.fieldErrors) {
+        Object.assign(errors, err.fieldErrors)
+      } else {
+        errors.email = err.message
+      }
+    }
+  }
+
+  const sendResetPassword = async () => {
+    if (!validatePassword(form.password)) {
+      return
+    }
+    try {
+      const success = await  resetPassword(form)
+      if (success) {
+        await router.push('/login')
+      }
+    } catch (err) {
+      if (err.fieldErrors) {
+        Object.assign(errors, err.fieldErrors)
+      } else {
+        errors.email = err.message
+      }
+    }
+  }
+
   window.testSignup = {
     // 1. 폼 데이터 자동 입력
     fill: () => {
@@ -208,5 +251,7 @@ export function useSignupForm() {
     validateEmailField,
     validatePasswordField,
     validatePasswordConfirmField,
+    sendResetPasswordLink,
+    sendResetPassword
   }
 }

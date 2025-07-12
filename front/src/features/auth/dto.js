@@ -17,3 +17,17 @@ export function toVerifyCodePayload(email, code) {
     code: code?.trim()
   };
 }
+
+export function toVerifyPasswordCodePayload(code) {
+  return {
+    code: code?.trim()
+  };
+}
+
+export function toResetPasswordPayload(form) {
+  return {
+    userId: form.userId,
+    password: form.password
+  };
+}
+

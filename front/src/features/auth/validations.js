@@ -1,4 +1,5 @@
 import { errorMessages, passwordRequirements } from './constants.js'
+import axios from '@/api/axios.js'
 
 export function validateEmail(email) {
   if (!email?.trim()) {
@@ -63,6 +64,18 @@ export function validateSignupForm(form, errors) {
   const passwordConfirmError = validatePasswordConfirm(form.password, form.passwordConfirm)
   if (passwordConfirmError) {
     errors.passwordConfirm = passwordConfirmError;
+    isValid = false;
+  }
+
+  return isValid;
+}
+
+export function validateEmailForm(form, errors) {
+  let isValid = true;
+
+  const emailError = validateEmail(form.email)
+  if (emailError) {
+    errors.email = emailError;
     isValid = false;
   }
 
