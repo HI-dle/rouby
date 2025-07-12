@@ -48,10 +48,14 @@ const router = createRouter({
           component: () => import('@/features/auth/views/LoginView.vue'),
         },
         {
-          path: 'reset-password',
-          name: 'reset-password',
+          path: 'password/find',
+          name: 'password-find',
+          component: () => import('@/features/user/views/FindPasswordView.vue'),
+        },
+        {
+          path: 'password/reset',
+          name: 'password-reset',
           component: () => import('@/features/user/views/ResetPasswordView.vue'),
-          props: route => ({ token: route.query.token }), // ?token=... 쿼리에서 token 넘김
         }
       ],
     },
