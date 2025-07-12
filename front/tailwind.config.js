@@ -10,6 +10,10 @@ export default {
         'placeholder-pink-color': '#9F7AEA',
         'content-color': '#4A5568',
         'error-color': '#EB4335',
+        'button-from': '#667EEA',
+        'button-to': '#764BA2',
+
+        // 아래 변경 가능
         'focus-color': '#f7f8fd',
         'border-color': '#e5e7eb',
         'focus-border-color': '#6366f1',
