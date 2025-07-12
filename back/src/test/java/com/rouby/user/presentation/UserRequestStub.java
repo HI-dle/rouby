@@ -1,7 +1,7 @@
 package com.rouby.user.presentation;
 
-import com.rouby.user.presentation.dto.CreateUserRequest;
-import com.rouby.user.presentation.dto.SendEmailVerificationRequest;
+import com.rouby.user.presentation.dto.request.CreateUserRequest;
+import com.rouby.user.presentation.dto.request.SendEmailVerificationRequest;
 
 public class UserRequestStub {
 

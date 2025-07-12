@@ -1,19 +1,18 @@
 package com.rouby.common.support;
 
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rouby.auth.application.facade.AuthFacade;
-import com.rouby.auth.filter.JwtAuthenticationFilter;
-import com.rouby.auth.presentation.AuthController;
 import com.rouby.common.config.WebConfig;
 import com.rouby.common.config.WebMvcConfig;
 import com.rouby.common.exception.GlobalExceptionHandler;
 import com.rouby.common.resolver.CustomPageableArgumentResolver;
-import com.rouby.auth.application.facade.AuthFacade;
-import com.rouby.auth.filter.JwtAuthenticationFilter;
-import com.rouby.auth.presentation.AuthController;
+import com.rouby.user.application.UserFacade;
+import com.rouby.user.infrastructure.security.filter.JwtAuthenticationFilter;
+import com.rouby.user.presentation.AuthController;
 import com.rouby.schedule.application.facade.ScheduleFacade;
 import com.rouby.schedule.presentation.ScheduleController;
-import com.rouby.user.application.UserFacade;
 import com.rouby.user.presentation.UserController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -31,7 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureRestDocs
 @AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(
-    controllers = {ScheduleController.class, AuthController.class},
+    controllers = {ScheduleController.class, AuthController.class, UserController.class},
     excludeFilters = {
         @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebMvcConfig.class),
         @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE) //, classes = JwtAuthenticationFilter.class)
@@ -53,9 +52,6 @@ public abstract class ControllerTestSupport {
 
   @MockitoBean
   protected ScheduleFacade scheduleFacade;
-
-  @MockitoBean
-  protected AuthFacade authFacade;
 
   @MockitoBean
   protected UserFacade userFacade;
