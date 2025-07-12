@@ -15,6 +15,7 @@ export default {
         'focus-border-color': '#6366f1',
         'focus-shadow-color': 'rgba(99, 102, 241, 0.1)',
         'text-color': '#6d37df',
+        'auth-label-color': '#5A67D8',
 
         // tailwind - 뉴욕 테마
         background: 'hsl(var(--background))',
