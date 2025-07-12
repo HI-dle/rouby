@@ -1,0 +1,39 @@
+= 사용자 회원가입 API
+
+== 성공: 회원 가입 요청
+
+=== HTTP 요청
+include::{snippets}/user-create/http-request.adoc[]
+
+=== 요청 필드
+include::{snippets}/user-create/request-fields.adoc[]
+
+=== HTTP 응답 (200 OK)
+include::{snippets}/user-create/http-response.adoc[]
+
+---
+
+== 실패: 유효성 검증 오류
+
+=== 이메일 형식 오류
+
+==== HTTP 요청
+include::{snippets}/user-create-invalid-email/http-request.adoc[]
+
+==== 요청 필드
+include::{snippets}/user-create-invalid-email/request-fields.adoc[]
+
+==== HTTP 응답 (400 Bad Request)
+include::{snippets}/user-create-invalid-email/http-response.adoc[]
+---
+
+=== 비밀번호 형식 오류
+
+==== HTTP 요청
+include::{snippets}/user-create-invalid-password/http-request.adoc[]
+
+==== 요청 필드
+include::{snippets}/user-create-invalid-password/request-fields.adoc[]
+
+==== HTTP 응답 (400 Bad Request)
+include::{snippets}/user-create-invalid-password/http-response.adoc[]

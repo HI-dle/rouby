@@ -1,6 +1,7 @@
 package com.rouby.user.domain.entity;
 
 import com.rouby.common.jpa.BaseEntity;
+import com.rouby.user.domain.service.UserPasswordEncoder;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -13,8 +14,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -57,14 +60,43 @@ public class User extends BaseEntity {
 
   private LocalDateTime lastActivatedAt;
 
-  public void addNotificationSetting(NotificationType type, boolean isEnabled) {
-    NotificationSetting setting = NotificationSetting.builder()
-        .user(this)
-        .notificationType(type)
-        .isEnabled(isEnabled)
-        .build();
+  public static User create(
+      String email, String plainPassword, UserPasswordEncoder passwordEncoder) {
+    validateEmail(email);
+    validatePassword(plainPassword);
 
-    this.notificationSettings.add(setting);
+    return User.builder()
+        .email(email)
+        .password(passwordEncoder.encode(plainPassword))
+        .nickname(email.substring(0, email.indexOf("@")))
+        .role(UserRole.USER)
+        .build();
+  }
+
+  private static void validateEmail(String email) {
+    if (email == null || email.trim().isEmpty()) {
+      throw new IllegalArgumentException("이메일은 필수입니다.");
+    }
+    if (email.length() > 100) {
+      throw new IllegalArgumentException("이메일은 100자를 초과할 수 없습니다.");
+    }
+    if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+      throw new IllegalArgumentException("유효하지 않은 이메일 형식입니다.");
+    }
+  }
+
+  private static void validatePassword(String plainPassword) {
+    if (plainPassword==null || plainPassword.isBlank()) {
+      throw new IllegalArgumentException("비밀번호는 필수입니다.");
+    }
+    if (plainPassword.length() < 8 || plainPassword.length() > 32) {
+      throw new IllegalArgumentException("비밀번호는 8~32자 사이여야 합니다.");
+    }
+    if (!plainPassword.matches(
+        "^(?![A-Za-z]+$)(?!\\d+$)(?![\\W_]+$)[A-Za-z\\d\\W_]{8,32}$")) {
+      throw new IllegalArgumentException(
+          "비밀번호는 영문/숫자/특수문자 중 2가지 이상 조합이어야 합니다.");
+    }
   }
 
   @Builder
@@ -76,19 +108,26 @@ public class User extends BaseEntity {
       UserRole role,
       LocalDateTime lastActivatedAt
   ) {
-    if(email == null) throw new IllegalArgumentException("이메일은 null일 수 없습니다.");
     this.email = email;
     this.password = password;
     this.nickname = nickname;
     this.dailyActiveTime = DailyActiveTime.defaultTime();
     this.interestKeywords = InterestKeywords.empty();
     this.communicationTone = CommunicationTone.empty();
-    this.notificationSettings = new HashSet<>();
+    this.notificationSettings = createDefaultNotificationSettings();
     this.authProvider = authProvider == null ? AuthProvider.DEFAULT : authProvider;
     this.role = role == null ? UserRole.USER : role;
     this.lastActivatedAt = lastActivatedAt;
   }
 
+  private Set<NotificationSetting> createDefaultNotificationSettings() {
+    return Arrays.stream(NotificationType.values())
+        .map(type -> NotificationSetting.createDefault(this, type))
+        .collect(Collectors.toSet());
+  }
+
+
   protected User() {
+    this.notificationSettings = new HashSet<>();
   }
 }
