@@ -53,11 +53,11 @@ const router = createRouter({
           component: () => import('@/features/user/views/FindPasswordView.vue'),
         },
         {
-          path: 'password/reset',
-          name: 'password-reset',
+          path: 'password/reset/token',
+          name: 'password-reset-token',
           component: () => import('@/features/user/views/ResetPasswordView.vue'),
           props: route => ({ token: route.query.token }),
-        }
+        },
       ],
     },
     {
