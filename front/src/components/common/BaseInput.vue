@@ -7,6 +7,10 @@ defineProps({
     type: String,
     default: 'text',
   },
+  errorMessage: {
+    type: String,
+    default: '',
+  },
 })
 
 defineEmits(['update:modelValue'])
@@ -14,15 +18,18 @@ defineEmits(['update:modelValue'])
 
 <template>
   <div class="input-group">
-    <label class="input-label text-contentColor">{{ label }}</label>
+    <label class="input-label text-content-color">{{ label }}</label>
     <input
       :type="type"
       :placeholder="placeholder"
-      class="input placeholder-placeholderColor"
+      class="input placeholder-placeholder-color"
       :value="modelValue"
       @input="$emit('update:modelValue', $event.target.value)"
+      @focus="$emit('focus')"
     />
+    <p v-if="errorMessage" class="text-error-color text-xs mt-1">{{ errorMessage }}</p>
   </div>
+
 </template>
 
 <style scoped>

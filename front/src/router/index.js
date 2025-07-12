@@ -47,6 +47,17 @@ const router = createRouter({
           name: 'login',
           component: () => import('@/features/auth/views/LoginView.vue'),
         },
+        {
+          path: 'password/find',
+          name: 'password-find',
+          component: () => import('@/features/user/views/FindPasswordView.vue'),
+        },
+        {
+          path: 'password/reset/token',
+          name: 'password-reset-token',
+          component: () => import('@/features/user/views/ResetPasswordView.vue'),
+          props: route => ({ token: route.query.token }),
+        },
       ],
     },
     {
