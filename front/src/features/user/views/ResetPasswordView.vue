@@ -1,108 +1,96 @@
 <script setup>
-  import { ref, watch, onMounted } from 'vue'
-  import { useRoute, useRouter } from 'vue-router'
-  import PasswordKeyIcon from '@/assets/password_key.svg'
-  import BaseInput from '@/components/common/BaseInput.vue'
-  import { isValidPassword, validateResetToken } from '@/features/user/validations.js'
-  import { resetPassword } from '@/features/user/password.js'
+import { ref, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import PasswordKeyIcon from '@/assets/password_key.svg'
+import BaseInput from '@/components/common/BaseInput.vue'
+import { isValidPassword, validateResetToken } from '@/features/user/validations.js'
+import { resetPassword } from '@/features/user/password.js'
 
-  const currentPassword = ref('')
-  const password = ref('')
-  const confirmPassword = ref('')
-  const passwordError = ref('')
-  const isLoading = ref(false)
-  const router = useRouter()
-  const route = useRoute()
-  const userId = ref(null)
-  const error = ref(null)
+const router = useRouter()
 
-  const props = defineProps({
-    token: {
-      type: String,
-      required: true,
-    },
-  })
+// Props
+const props = defineProps({
+  token: {
+    type: String,
+    required: true,
+  },
+})
 
-  onMounted(async () => {
-    const { userId: id, error: err } = await validateResetToken(props.token)
+// 상태
+const currentPassword = ref('')
+const password = ref('')
+const confirmPassword = ref('')
+const passwordError = ref('')
+const isLoading = ref(true)
+const userId = ref(null)
+const isTokenValid = ref(false)
 
-    if (err) {
-      error.value = err
-      router.push('/login')
-    } else {
-      userId.value = id
-    }
+// 토큰 검증
+onMounted(async () => {
+  const { userId: id, error: err } = await validateResetToken(props.token)
 
-    isLoading.value = false
-  })
-
-  watch(password, (value) => {
-    if (!value) {
-      passwordError.value = ''
-    } else if (!isValidPassword(value)) {
-      passwordError.value = '영문/숫자/특수문자 중 2가지 이상 조합, 8~32자여야 합니다.'
-    } else {
-      passwordError.value = ''
-    }
-  })
-
-  async function handleSubmit() {
-    if (!password.value) {
-      alert('비밀번호를 입력해주세요.')
-      return
-    }
-
-    if (passwordError.value) {
-      alert(passwordError.value)
-      return
-    }
-
-    if (password.value !== confirmPassword.value) {
-      alert('비밀번호 확인이 일치하지 않습니다.')
-      return
-    }
-
-    isLoading.value = true
-
-    try {
-      const token = route.query.token
-      await resetPassword({ token, newPassword: password.value })
-      alert('비밀번호가 성공적으로 변경되었습니다.')
-      router.push('/login')
-    } catch (error) {
-      console.error('Error:', error)
-      alert('전송 중 오류가 발생했습니다. 다시 시도해주세요.')
-    } finally {
-      isLoading.value = false
-    }
+  if (err) {
+    router.replace('/login')
+  } else {
+    userId.value = id
+    isTokenValid.value = true
   }
 
-function goBack() {
-  router.push('/login')
+  isLoading.value = false
+})
+
+// 비밀번호 유효성 검사
+watch(password, (value) => {
+  if (!value) {
+    passwordError.value = ''
+  } else if (!isValidPassword(value)) {
+    passwordError.value = '영문/숫자/특수문자 중 2가지 이상 조합, 8~32자여야 합니다.'
+  } else {
+    passwordError.value = ''
+  }
+})
+
+// 제출
+async function handleSubmit() {
+  if (!password.value) return alert('비밀번호를 입력해주세요.')
+  if (passwordError.value) return alert(passwordError.value)
+  if (password.value !== confirmPassword.value) return alert('비밀번호 확인이 일치하지 않습니다.')
+
+  isLoading.value = true
+
+  try {
+    await resetPassword({ token: props.token, newPassword: password.value })
+    alert('비밀번호가 성공적으로 변경되었습니다.')
+    router.push('/login')
+  } catch (error) {
+    console.error(error)
+    alert('전송 중 오류가 발생했습니다. 다시 시도해주세요.')
+  } finally {
+    isLoading.value = false
+  }
 }
 </script>
 
 <template>
+  <div v-if="isLoading">
+    <!-- 로딩 상태면 비워두거나 로딩 인디케이터 가능 -->
+  </div>
+
   <div class="main-container">
     <div class="password-reset-container">
-      <!-- Main Content -->
       <div class="main-content">
-        <!-- Lock Icon -->
+        <!-- 아이콘 -->
         <div class="lock-container">
-          <div class="lock-icon">
-            <figure>
-              <img :src="PasswordKeyIcon" alt="패스워드 아이콘" />
-            </figure>
-          </div>
+          <figure class="lock-icon">
+            <img :src="PasswordKeyIcon" alt="패스워드 아이콘" />
+          </figure>
         </div>
 
-        <!-- Title -->
+        <!-- 제목 -->
         <h1 class="title text-main-color">비밀번호 변경</h1>
-
-        <!-- Subtitle -->
         <p class="subtitle">비밀번호를 재설정 해주세요</p>
 
-        <!-- Password BaseInput -->
+        <!-- 입력창 -->
         <BaseInput
           label="기존 비밀번호"
           v-model="currentPassword"
@@ -123,14 +111,15 @@ function goBack() {
           type="password"
         />
 
-        <!-- Submit Button -->
+        <!-- 버튼 -->
         <button @click="handleSubmit" class="submit-button">
-          {{ '비밀번호 수정하기' }}
+          비밀번호 수정하기
         </button>
       </div>
     </div>
   </div>
 </template>
+
 
 <style scoped>
 .password-reset-container {
