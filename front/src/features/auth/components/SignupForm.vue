@@ -1,8 +1,8 @@
 <template>
   <form @submit.prevent="onSubmit" class="p-6 space-y-4">
     <!-- 이메일 필드 -->
-    <div class="space-y-2">
-      <div class="flex items-center gap-2">
+    <div class="space-y-2 gap-8">
+      <div class="flex items-end gap-3">
         <BaseInput
           v-model="form.email"
           label="이메일"
@@ -10,11 +10,13 @@
           placeholder="your@email.com"
           :disabled="form.isVerificationStep"
           :error="errors.email"
-          @input="validateEmailField"
+          @blur="validateEmailField"
           label-class="text-auth-label-color"
+          class="placeholder-placeholder-pink-color"
         />
         <BaseButton
             @click="requestVerification"
+            class="max-w-24"
         >
           {{ loading.emailVerification ? '발송중…' : '인증하기' }}
         </BaseButton>
@@ -57,8 +59,9 @@
         type="password"
         placeholder="비밀번호를 입력하세요"
         :error="errors.password"
-        @input="validatePasswordField"
+        @blur="validatePasswordField"
         label-class="text-auth-label-color"
+        class="placeholder-placeholder-pink-color"
       />
       <p class="text-xs text-gray-500 mt-[-0.5rem](-8px) mx-2">영문 대·소문자/숫자/특수문자 중 2가지 이상 조합, 8자~32자</p>
       <FieldError :message="errors.password" />
@@ -71,8 +74,9 @@
         type="password"
         placeholder="비밀번호를 다시 입력하세요"
         :error="errors.passwordConfirm"
-        @input="validatePasswordConfirmField"
+        @blur="validatePasswordConfirmField"
         label-class="text-auth-label-color"
+        class="placeholder-placeholder-pink-color"
       />
       <FieldError :message="errors.passwordConfirm" />
     </div>
