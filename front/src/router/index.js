@@ -47,6 +47,12 @@ const router = createRouter({
           name: 'login',
           component: () => import('@/features/auth/views/LoginView.vue'),
         },
+        {
+          path: 'reset-password',
+          name: 'reset-password',
+          component: () => import('@/features/user/views/ResetPasswordView.vue'),
+          props: route => ({ token: route.query.token }), // ?token=... 쿼리에서 token 넘김
+        }
       ],
     },
     {
