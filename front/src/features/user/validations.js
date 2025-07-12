@@ -18,9 +18,15 @@ export function isValidPassword(password) {
 
 export async function validateResetToken(token) {
   try {
-    const response = await axios.get(`/v1/users/password/reset/token?token=${token}`)
+    const response = await axios.get(`/v1/users/password/reset/validate?token=${token}`)
     return { userId: response.data.userId, error: null }
   } catch (error) {
+    console.error('Axios error:', {
+      message: error.message,
+      status: error.response?.status,
+      data: error.response?.data,
+    })
+
     const errorMessage = '유효하지 않거나 만료된 링크입니다.'
     console.error(error)
     return { userId: null, error: errorMessage }

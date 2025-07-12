@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import PasswordKeyIcon from '@/assets/password_key.svg'
 import BaseInput from '@/components/common/BaseInput.vue'
 import { isValidPassword, validateResetToken } from '@/features/user/validations.js'
@@ -25,7 +25,7 @@ const isLoading = ref(true)
 const userId = ref(null)
 const isTokenValid = ref(false)
 
-// 토큰 검증
+//토큰 검증
 onMounted(async () => {
   const { userId: id, error: err } = await validateResetToken(props.token)
 
@@ -75,8 +75,8 @@ async function handleSubmit() {
   <div v-if="isLoading">
     <!-- 로딩 상태면 비워두거나 로딩 인디케이터 가능 -->
   </div>
-
-  <div class="main-container">
+<!--  v-else-if="isTokenValid"-->
+  <div v-else-if="isTokenValid" class="main-container">
     <div class="password-reset-container">
       <div class="main-content">
         <!-- 아이콘 -->
