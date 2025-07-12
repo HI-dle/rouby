@@ -1,4 +1,4 @@
-package com.rouby.user.application.entity;
+package com.rouby.user.application.service.verification;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

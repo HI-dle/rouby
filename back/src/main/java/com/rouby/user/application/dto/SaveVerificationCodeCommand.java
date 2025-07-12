@@ -1,6 +1,6 @@
 package com.rouby.user.application.dto;
 
-import com.rouby.user.application.entity.VerificationEmailCode;
+import com.rouby.user.application.service.verification.VerificationEmailCode;
 
 public record SaveVerificationCodeCommand(
     String email,

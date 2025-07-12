@@ -14,7 +14,6 @@ import com.rouby.user.application.service.UserReadService;
 import com.rouby.user.application.service.UserWriteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,9 +41,8 @@ public class UserFacade {
     }
   }
 
-  @Transactional
   public void verifyEmail(VerifyEmailCommand command) {
-    userReadService.verifyEmail(command);
+    userWriteService.verifyEmail(command);
   }
 
   public void createUser(CreateUserCommand command) {
