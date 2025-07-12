@@ -10,6 +10,7 @@ spring:
       - classpath:properties/jpa.yml
       - classpath:properties/redis.yml
       - classpath:properties/jwt.yml
+      - classpath:properties/ai.yml
   profiles:
     group:
       local: local
