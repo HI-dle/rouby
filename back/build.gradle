@@ -106,3 +106,16 @@ tasks.register('copyDocument', Copy) {
 build {
     dependsOn copyDocument
 }
+
+processResources.dependsOn('copyEnv')
+
+tasks.register('copyEnv') {
+    doLast {
+        ['../', './'].each { dest ->
+            copy {
+                from 'rouby-secret/.env'
+                into dest
+            }
+        }
+    }
+}

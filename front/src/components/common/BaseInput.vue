@@ -1,64 +1,72 @@
 <script setup>
-defineProps({
+import { twMerge } from 'tailwind-merge'
+import clsx from 'clsx'
+
+const emit = defineEmits(['update:modelValue', 'blur', 'focus', 'keydown'])
+
+const props = defineProps({
   label: String,
+  labelClass: {
+    type: String,
+    default: '',
+  },
+  class: {
+    type: String,
+    default: '',
+  },
   placeholder: String,
   modelValue: String,
   type: {
     type: String,
     default: 'text',
   },
-  errorMessage: {
-    type: String,
-    default: '',
-  },
+  error: String,
+  disabled: Boolean,
+  maxlength: String,
 })
 
-defineEmits(['update:modelValue'])
+const mergedClass = twMerge(clsx('block mb-2 text-sm text-content-color', props.labelClass))
 </script>
 
 <template>
-  <div class="input-group">
-    <label class="input-label text-content-color">{{ label }}</label>
+  <div class="w-full">
+    <label v-if="label" :class="mergedClass">{{ label }}</label>
     <input
+      :value="modelValue"
       :type="type"
       :placeholder="placeholder"
-      class="input placeholder-placeholder-color"
-      :value="modelValue"
-      @input="$emit('update:modelValue', $event.target.value)"
-      @focus="$emit('focus')"
+      class="input bg-white w-full p-3 border-border-color border rounded-2xl placeholder-placeholder-color text-main-color h-12"
+      :class="[
+        {
+          'error-input': error,
+        },
+        'input bg-white w-full p-3 border-border-color border rounded-2xl placeholder-placeholder-color text-main-color h-12',
+        props.class,
+      ]"
+      @input="emit('update:modelValue', $event.target.value)"
+      @blur="emit('blur', $event)"
+      @focus="emit('focus', $event)"
+      @keydown="emit('keydown', $event)"
     />
-    <p v-if="errorMessage" class="text-error-color text-xs mt-1">{{ errorMessage }}</p>
   </div>
-
 </template>
 
 <style scoped>
-.input-group {
-  width: 100%;
-  margin-bottom: 24px;
-}
-
-.input-label {
-  display: block;
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 8px;
-}
-
 .input {
-  width: 100%;
-  padding: 16px;
-  border: 2px solid theme('colors.border-color');
-  border-radius: 12px;
-  font-size: 16px;
-  background: white;
   transition: all 0.2s ease;
-  color: theme('colors.text-color');
 }
 
 .input:focus {
   outline: none;
-  border-color: theme('colors.focus-border-color');
-  box-shadow: 0 0 0 3px theme('colors.focus-shadow-color');
+  box-shadow: 0 0 0 2px theme('colors.focus-shadow-color');
+}
+
+.error-input {
+  border-color: theme('colors.error-color');
+}
+
+.error-input:focus {
+  border-color: theme('colors.error-color');
+  box-shadow: 0 0 0 3px theme('colors.error-color/30%');
 }
 </style>

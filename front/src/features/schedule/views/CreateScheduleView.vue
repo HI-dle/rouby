@@ -20,7 +20,7 @@ const handleSubmit = () => {
     },
     // 에러 콜백
     (errorMsg) => {
-      alert(`저장에 실패하였습니다.\n${errorMsg}`)
+      alert(`${errorMsg}`)
     },
   )
 }

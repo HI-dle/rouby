@@ -5,6 +5,7 @@ import ToggleSwitch from '@/components/common/ToggleSwitch.vue'
 import { alarmOptions, repeatOptions } from '../constants'
 import { toDate } from '@/shared/utils/formatDate'
 import FieldError from '@/components/common/FieldError.vue'
+import BaseButton from '@/components/common/BaseButton.vue'
 
 const props = defineProps({
   form: Object,
@@ -25,7 +26,7 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
           v-model="form.title"
           type="text"
           placeholder="제목"
-          class="w-full text-base font-semibold border-b px-2 pb-2 mt-4 border-gray-300 focus:outline-none focus:border-black placeholder-gray-400 bg-inherit"
+          class="w-full text-base font-semibold border-b px-2 pb-2 mt-4 border-border-color focus:outline-none focus:border-black placeholder-gray-400 bg-inherit"
         />
         <FieldError :message="errors.title" />
       </div>
@@ -34,7 +35,7 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
       <textarea
         v-model="form.memo"
         placeholder="메모"
-        class="w-full text-base border-b px-2 pb-2 border-gray-300 focus:outline-none focus:border-black placeholder-gray-400 resize-none overflow-auto max-h-[30vh] bg-inherit"
+        class="w-full text-base border-b px-2 pb-2 border-border-color focus:outline-none focus:border-black placeholder-gray-400 resize-none overflow-auto max-h-[30vh] bg-inherit"
         rows="1"
         @input="(e) => emit('autoResize', e)"
       />
@@ -60,7 +61,7 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
             :type="form.allDay ? 'date' : 'datetime-local'"
             :value="form.allDay ? toDate(form.start) : form.start"
             @input="(e) => emit('input-datetime', e, 'start')"
-            class="w-full xxs:w-40 xxxs:w-[123px] text-base xs:text-sm xxs:text-xs text-content-color border rounded-md px-3 xxs:px-[5px] py-2 shadow-sm focus:outline-none focus:border-transparent focus:shadow-[0_0_3px_2px_theme(colors.main-color/30%)] transition"
+            class="w-full xxs:w-40 xxxs:w-[123px] text-base xs:text-sm xxs:text-xs text-content-color border border-transparent rounded-md px-3 xxs:px-[5px] py-2 shadow-sm focus:outline-none focus:border-transparent focus:shadow-[0_0_3px_2px_theme(colors.main-color/30%)] transition"
           />
 
           <!-- 종료 -->
@@ -71,13 +72,13 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
             :type="form.allDay ? 'date' : 'datetime-local'"
             :value="form.allDay ? toDate(form.end) : form.end"
             @input="(e) => emit('inputDatetime', e, 'end')"
-            class="w-full xxs:w-40 xxxs:w-[123px] text-base xs:text-sm xxs:text-xs text-content-color border rounded-md px-3 xxs:px-[5px] py-2 shadow-sm focus:outline-none focus:border-transparent focus:shadow-[0_0_3px_2px_theme(colors.main-color/30%)] transition"
+            class="w-full xxs:w-40 xxxs:w-[123px] text-base xs:text-sm xxs:text-xs text-content-color border border-transparent rounded-md px-3 xxs:px-[5px] py-2 shadow-sm focus:outline-none focus:border-transparent focus:shadow-[0_0_3px_2px_theme(colors.main-color/30%)] transition"
           />
         </div>
         <!-- 에러 메시지 -->
         <FieldError :message="errors.period" />
       </div>
-      <hr />
+      <hr class="bg-border-color" />
 
       <!-- 알림 -->
       <div class="grid grid-cols-[2fr_4fr] gap-4 xxs:grid-cols-[4fr_4fr]">
@@ -91,7 +92,6 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
           v-model="form.alarmOffsetMinutes"
           :options="alarmOptions"
           :placeholder="alarmOptions[0].label"
-          trigger-class="w-full"
         />
       </div>
 
@@ -107,7 +107,6 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
           v-model="form.repeat"
           :options="repeatOptions"
           :placeholder="repeatOptions[0].label"
-          trigger-class="w-full"
         />
       </div>
 
@@ -123,24 +122,19 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
           <input
             type="date"
             v-model="form.routineStart"
-            class="w-full xxxs:w-[120px] text-base xxs:text-xs text-content-color border rounded-md px-3 py-2 shadow-sm focus:outline-none focus:border-transparent focus:shadow-[0_0_3px_2px_theme(colors.main-color/30%)] transition"
+            class="w-full xxxs:w-[120px] text-base xxs:text-xs text-content-color border border-transparent rounded-md px-3 py-2 shadow-sm focus:outline-none focus:border-transparent focus:shadow-[0_0_3px_2px_theme(colors.main-color/30%)] transition"
           />
         </div>
         <FieldError :message="errors.routineStart" />
       </div>
-
       <!-- 버튼 -->
       <div class="flex justify-between pt-10 gap-2">
-        <button
-          type="button"
-          @click="() => emit('cancel')"
-          class="w-full px-4 py-2 rounded-lg bg-gray-100 text-gray-700"
-        >
-          취소
-        </button>
-        <button type="submit" class="w-full px-4 py-2 rounded-lg bg-main-color text-white">
-          저장
-        </button>
+        <BaseButton
+          @click="emit('cancel')"
+          class="bg-none bg-gray-200 !text-content-color hover:bg-gray-300"
+          >취소
+        </BaseButton>
+        <BaseButton type="submit">저장</BaseButton>
       </div>
     </form>
   </div>
