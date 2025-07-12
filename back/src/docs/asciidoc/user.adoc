@@ -1,13 +1,40 @@
-[[USER-API]]
-== User-API
+= 사용자 회원가입 API
 
-[[Find-Password]]
-=== 비밀번호 찾기
+== 성공: 회원 가입 요청
 
-operation::find-password-user-200[snippets='http-request,http-response,request-fields,curl-request']
+=== HTTP 요청
+include::{snippets}/user-create/http-request.adoc[]
 
+=== 요청 필드
+include::{snippets}/user-create/request-fields.adoc[]
 
-[[Reset-Password-Token]]
-=== 비밀번호 변경 토큰
+=== HTTP 응답 (200 OK)
+include::{snippets}/user-create/http-response.adoc[]
 
-operation::reset-password-by-token-user-200[snippets='http-request,http-response,request-fields,curl-request']
+---
+
+== 실패: 유효성 검증 오류
+
+=== 이메일 형식 오류
+
+==== HTTP 요청
+include::{snippets}/user-create-invalid-email/http-request.adoc[]
+
+==== 요청 필드
+include::{snippets}/user-create-invalid-email/request-fields.adoc[]
+
+==== HTTP 응답 (400 Bad Request)
+include::{snippets}/user-create-invalid-email/http-response.adoc[]
+---
+
+=== 비밀번호 형식 오류
+
+==== HTTP 요청
+include::{snippets}/user-create-invalid-password/http-request.adoc[]
+
+==== 요청 필드
+include::{snippets}/user-create-invalid-password/request-fields.adoc[]
+
+==== HTTP 응답 (400 Bad Request)
+include::{snippets}/user-create-invalid-password/http-response.adoc[]
+

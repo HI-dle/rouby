@@ -1,0 +1,9 @@
+# local 환경
+spring:
+  config.activate.on-profile: local
+  thymeleaf:
+    prefix: classpath:/mail_template/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    cache: false
