@@ -1,7 +1,8 @@
 package com.rouby.user.application;
 
 import com.rouby.common.utils.CodeGenerator;
-import com.rouby.notification.application.service.EmailService;
+import com.rouby.notification.email.application.exception.EmailException;
+import com.rouby.notification.email.application.service.EmailService;
 import com.rouby.user.application.dto.SaveVerificationCodeCommand;
 import com.rouby.user.application.dto.SendEmailVerificationCommand;
 import com.rouby.user.application.dto.VerifyEmailCommand;
@@ -16,7 +17,6 @@ public class UserFacade {
   private final EmailService emailService;
   private final UserService userService;
 
-  @Transactional
   public void sendEmailVerification(SendEmailVerificationCommand command) {
     String email = command.email();
 
@@ -25,10 +25,15 @@ public class UserFacade {
     }
 
     String code = CodeGenerator.generateAlphaNumericCode(6);
-
-    emailService.send(command.toSendEmailCommand(email, "[Rouby] 이메일 인증 코드입니다.", code));
-
     userService.saveVerificationCode(SaveVerificationCodeCommand.of(email, code));
+
+    try {
+      emailService.send(command.toSendEmailCommand(email, "[Rouby] 이메일 인증 코드입니다.",
+          code));
+    } catch (EmailException e) {
+      userService.deleteVerificationCode(email);
+      throw e;
+    }
   }
 
   @Transactional
