@@ -12,11 +12,11 @@ const router = createRouter({
           component: () => import('@/features/schedule/views/ScheduleLayout.vue'),
           redirect: '/schedule/daily',
           children: [
-            // {
-            //   path: 'create',
-            //   name: 'schedule-create',
-            //   component: () => import('@/features/schedule/views/CreateScheduleView.vue'),
-            // },
+            {
+              path: 'create',
+              name: 'schedule-create',
+              component: () => import('@/features/schedule/views/CreateScheduleView.vue'),
+            },
             {
               path: 'daily',
               name: 'schedule-daily',
@@ -43,6 +43,29 @@ const router = createRouter({
         },
       ],
     },
+    {
+      path: '/auth',
+      component: () => import('@/layouts/AuthLayout.vue'),
+      children: [
+        {
+          path: 'login',
+          name: 'login',
+          component: () => import('@/features/auth/views/LoginView.vue'),
+        },
+      ],
+    },
+    {
+      path: '/auth',
+      component: () => import('@/layouts/AuthLayout.vue'),
+      children: [
+        {
+          path: 'signup',
+          name: 'signup',
+          component: () => import('@/features/auth/views/SignupView.vue'),
+        },
+      ]
+    },
+
   ],
 })
 

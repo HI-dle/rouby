@@ -1,0 +1,212 @@
+= User API
+
+// --- 회원가입 API
+== 사용자 회원가입 API
+
+=== 성공: 회원 가입 요청
+
+==== HTTP 요청
+include::{snippets}/user-create/http-request.adoc[]
+
+==== 요청 필드
+include::{snippets}/user-create/request-fields.adoc[]
+
+==== HTTP 응답 (200 OK)
+include::{snippets}/user-create/http-response.adoc[]
+
+=== 실패: 유효성 검증 오류
+
+==== 이메일 형식 오류
+
+===== HTTP 요청
+include::{snippets}/user-create-invalid-email/http-request.adoc[]
+
+===== 요청 필드
+include::{snippets}/user-create-invalid-email/request-fields.adoc[]
+
+===== HTTP 응답 (400 Bad Request)
+include::{snippets}/user-create-invalid-email/http-response.adoc[]
+---
+
+==== 비밀번호 형식 오류
+
+===== HTTP 요청
+include::{snippets}/user-create-invalid-password/http-request.adoc[]
+
+===== 요청 필드
+include::{snippets}/user-create-invalid-password/request-fields.adoc[]
+
+===== HTTP 응답 (400 Bad Request)
+include::{snippets}/user-create-invalid-password/http-response.adoc[]
+
+
+=== 실패: 서비스 오류
+
+==== 중복된 이메일
+
+===== HTTP 요청
+include::{snippets}/user-create-duplicate-email/http-request.adoc[]
+
+===== 요청 필드
+include::{snippets}/user-create-duplicate-email/request-fields.adoc[]
+
+===== HTTP 응답 (409 conflict)
+include::{snippets}/user-create-duplicate-email/http-response.adoc[]
+
+==== 인증되지 않은 이메일
+
+===== HTTP 요청
+include::{snippets}/user-create-unverified-email/http-request.adoc[]
+
+===== 요청 필드
+include::{snippets}/user-create-unverified-email/request-fields.adoc[]
+
+===== HTTP 응답 (401 Unauthorized)
+include::{snippets}/user-create-unverified-email/http-response.adoc[]
+
+// --- 이메일 인증 코드 전송 API
+== 이메일 인증 코드 전송 API
+
+=== 성공: 이메일 인증 코드 전송 요청
+
+==== HTTP 요청
+include::{snippets}/user-email-verification-request/http-request.adoc[]
+
+==== 요청 필드
+include::{snippets}/user-email-verification-request/request-fields.adoc[]
+
+==== HTTP 응답 (200 OK)
+include::{snippets}/user-email-verification-request/http-response.adoc[]
+
+---
+
+=== 실패: 유효성 검증 오류
+
+==== 이메일 형식 오류
+
+===== HTTP 요청
+include::{snippets}/user-email-verification-request-invalid-email/http-request.adoc[]
+
+===== 요청 필드
+include::{snippets}/user-email-verification-request-invalid-email/request-fields.adoc[]
+
+===== HTTP 응답 (400 Bad Request)
+include::{snippets}/user-email-verification-request-invalid-email/http-response.adoc[]
+---
+
+=== 실패: 서비스 오류
+
+==== 중복된 이메일
+
+===== HTTP 요청
+include::{snippets}/user-email-verification-request-duplicate-email/http-request.adoc[]
+
+===== 요청 필드
+include::{snippets}/user-email-verification-request-duplicate-email/request-fields.adoc[]
+
+===== HTTP 응답 (409 Conflict)
+include::{snippets}/user-email-verification-request-duplicate-email/http-response.adoc[]
+---
+
+==== 이메일 전송 오류
+
+===== HTTP 요청
+include::{snippets}/user-email-verification-request-send-failed/http-request.adoc[]
+
+===== 요청 필드
+include::{snippets}/user-email-verification-request-send-failed/request-fields.adoc[]
+
+===== HTTP 응답 (503 Service Unavailable)
+include::{snippets}/user-email-verification-request-send-failed/http-response.adoc[]
+---
+
+// --- 이메일 인증 코드 검증 API
+== 이메일 인증 코드 검증 API
+
+=== 성공: 이메일 인증 코드 검증 요청
+
+==== HTTP 요청
+include::{snippets}/user-email-verification-verify/http-request.adoc[]
+
+==== 요청 필드
+include::{snippets}/user-email-verification-verify/request-fields.adoc[]
+
+==== HTTP 응답 (200 OK)
+include::{snippets}/user-email-verification-verify/http-response.adoc[]
+
+---
+
+=== 실패: 유효성 검증 오류
+
+==== 이메일 형식 오류
+
+===== HTTP 요청
+include::{snippets}/user-email-verification-verify-invalid-email/http-request.adoc[]
+
+===== 요청 필드
+include::{snippets}/user-email-verification-verify-invalid-email/request-fields.adoc[]
+
+===== HTTP 응답 (400 Bad Request)
+include::{snippets}/user-email-verification-verify-invalid-email/http-response.adoc[]
+---
+
+==== 이메일 인증 코드 길이 오류
+
+===== HTTP 요청
+include::{snippets}/user-email-verification-verify-invalid-email-code-size/http-request.adoc[]
+
+===== 요청 필드
+include::{snippets}/user-email-verification-verify-invalid-email-code-size/request-fields.adoc[]
+
+===== HTTP 응답 (400 Bad Request)
+include::{snippets}/user-email-verification-verify-invalid-email-code-size/http-response.adoc[]
+---
+
+=== 실패: 서비스 오류
+
+==== 일치하지 않거나 유효시간이 지난 인증 코드
+
+===== HTTP 요청
+include::{snippets}/user-email-verification-verify-invalid-verification-email-code/http-request.adoc[]
+
+===== 요청 필드
+include::{snippets}/user-email-verification-verify-invalid-verification-email-code/request-fields.adoc[]
+
+===== HTTP 응답 (401 Unauthorized)
+include::{snippets}/user-email-verification-verify-invalid-verification-email-code/http-response.adoc[]
+---
+
+== 비밀번호 변경 토큰 사용 API
+
+==== HTTP 요청
+include::{snippets}/reset-password-by-token-204/http-request.adoc[]
+
+==== 요청 필드
+include::{snippets}/reset-password-by-token-204/request-fields.adoc[]
+
+==== HTTP 응답 (204 NoContent)
+include::{snippets}/reset-password-by-token-204/http-response.adoc[]
+
+== 비밀번호 찾기 API
+
+==== HTTP 요청
+include::{snippets}/find-password-204/http-request.adoc[]
+
+==== 요청 필드
+include::{snippets}/find-password-204/request-fields.adoc[]
+
+==== HTTP 응답 (204 NoContent)
+include::{snippets}/find-password-204/http-response.adoc[]
+
+---
+
+== 비밀번호 검증 API
+
+==== HTTP 요청
+include::{snippets}/validate-reset-token-200/http-request.adoc[]
+
+==== 요청 필드
+include::{snippets}/validate-reset-token-200/query-parameters.adoc[]
+
+==== HTTP 응답 (200 Request)
+include::{snippets}/validate-reset-token-200/http-response.adoc[]

@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.5.3'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
+    id 'jacoco'
 }
 
 group = 'com'
@@ -27,8 +28,6 @@ ext {
 
 repositories {
     mavenCentral()
-    maven { url = 'https://repo.spring.io/snapshot' }
-    maven { url = 'https://repo.spring.io/milestone' }
 }
 
 dependencyManagement {
@@ -48,6 +47,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    // thymeleaf
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
     //Querydsl 추가
     implementation 'com.querydsl:querydsl-jpa:5.1.0:jakarta'
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
@@ -66,6 +68,8 @@ dependencies {
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testRuntimeOnly 'com.h2database:h2' // 임시 추가, jsonb 사용 불가
+
     asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 
     //jwt
@@ -78,6 +82,7 @@ dependencies {
 tasks.named('test') {
     outputs.dir snippetsDir
     useJUnitPlatform()
+    finalizedBy 'jacocoTestReport'
 }
 
 tasks.named('asciidoctor') {
@@ -108,4 +113,39 @@ tasks.register('copyDocument', Copy) {
 // build 의 의존작업 명시
 build {
     dependsOn copyDocument
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+            }
+            excludes = []
+        }
+    }
+}
+
+jacocoTestReport {
+    reports {
+        html.required.set(true)
+        csv.required.set(true)
+        xml.required.set(false)
+    }
+    finalizedBy 'jacocoTestCoverageVerification'
+}
+
+processResources.dependsOn('copyEnv')
+
+tasks.register('copyEnv') {
+    doLast {
+        ['../', './'].each { dest ->
+            copy {
+                from 'rouby-secret/.env'
+                into dest
+            }
+        }
+    }
 }
