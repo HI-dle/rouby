@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
@@ -28,6 +29,7 @@ import com.rouby.user.application.exception.UserException;
 import com.rouby.user.presentation.dto.CreateUserRequest;
 import com.rouby.user.presentation.dto.SendEmailVerificationRequest;
 import com.rouby.user.presentation.dto.request.FindPasswordRequest;
+import com.rouby.user.presentation.dto.request.ResetPasswordByTokenRequest;
 import com.rouby.user.presentation.dto.request.ResetPasswordRequest;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -403,7 +405,7 @@ class UserControllerTest extends ControllerTestSupport {
   @Test
   void resetPasswordByToken() throws Exception {
     //given
-    ResetPasswordRequest request = ResetPasswordRequest.builder()
+    ResetPasswordByTokenRequest request = ResetPasswordByTokenRequest.builder()
         .newPassword("newPassword")
         .email("test@email.com")
         .token(UUID.randomUUID().toString())
@@ -467,8 +469,8 @@ class UserControllerTest extends ControllerTestSupport {
 
     //given
     ResetPasswordRequest request = ResetPasswordRequest.builder()
-        .currentPassword("currentPassword")
-        .newPassword("newPassword")
+        .currentPassword("currentPassword!")
+        .newPassword("newPassword!")
         .build();
 
     Long userId = 1L;
@@ -482,9 +484,9 @@ class UserControllerTest extends ControllerTestSupport {
         .contentType(MediaType.APPLICATION_JSON));
 
     // then
-    resultActions.andExpect(status().isOk())
+    resultActions.andExpect(status().isNoContent())
         .andDo(print())
-        .andDo(document("reset-password-user-200",
+        .andDo(document("reset-password-204",
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
             requestFields(
