@@ -8,11 +8,10 @@ import com.rouby.user.application.dto.VerifyEmailCommand;
 import com.rouby.user.application.dto.command.CreateUserCommand;
 import com.rouby.user.application.dto.command.FindPasswordCommand;
 import com.rouby.user.application.dto.command.ResetPasswordCommand;
-import com.rouby.user.application.exception.UserErrorCode;
 import com.rouby.user.application.exception.UserException;
 import com.rouby.user.application.service.verification.VerificationEmailCode;
 import com.rouby.user.application.service.verification.VerificationEmailCodeStorage;
-import com.rouby.user.application.service.verification.VerificationPasswordCodeStorage;
+import com.rouby.user.application.service.verification.VerificationPasswordTokenStorage;
 import com.rouby.user.domain.entity.User;
 import com.rouby.user.domain.repository.UserRepository;
 import com.rouby.user.domain.service.UserPasswordEncoder;
@@ -28,7 +27,7 @@ public class UserWriteService {
   private final UserRepository userRepository;
   private final UserPasswordEncoder passwordEncoder;
   private final VerificationEmailCodeStorage verificationEmailCodeStorage;
-  private final VerificationPasswordCodeStorage verificationPasswordCodeStorage;
+  private final VerificationPasswordTokenStorage verificationPasswordCodeStorage;
 
 
   @Transactional

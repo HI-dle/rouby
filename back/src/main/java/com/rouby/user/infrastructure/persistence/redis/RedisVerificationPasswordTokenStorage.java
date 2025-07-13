@@ -1,6 +1,6 @@
 package com.rouby.user.infrastructure.persistence.redis;
 
-import com.rouby.user.application.service.verification.VerificationPasswordCodeStorage;
+import com.rouby.user.application.service.verification.VerificationPasswordTokenStorage;
 import java.time.Duration;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class RedisVerificationPasswordCodeStorage implements VerificationPasswordCodeStorage {
+public class RedisVerificationPasswordTokenStorage implements VerificationPasswordTokenStorage {
 
   private static final String PREFIX = "reset-password:";
   private static final Duration ttl = Duration.ofMinutes(20);
