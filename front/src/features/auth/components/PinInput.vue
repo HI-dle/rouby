@@ -25,8 +25,8 @@
         @input="onInput($event, idx)"
         @keydown="onKeydown($event, idx)"
         @blur="onBlur"
-        @focus="onFocus"
-        @paste="onPaste"
+        @focus="(e) => onFocus(e, idx)"
+        @paste="(e) => onPaste(e, idx)"
         class="w-12 h-12 text-center text-xl border rounded-lg transition-colors"
         :class="{
           'border-gray-300 focus:border-focus-border-color focus:shadow-focus-shadow-color': !errorMessage,
@@ -34,130 +34,160 @@
           'bg-gray-100': disabled,
           'rounded-l-2xl': idx === 0,
           'rounded-r-2xl': idx === length - 1,
+          'ring-2 ring-blue-400': idx === activeIndex,
+          'text-content-color font-medium': digits[idx],
         }"
       />
     </div>
 
-    <!-- 4) 에러 메시지 -->
     <FieldError :message="errorMessage" />
   </div>
 </template>
 
 <script setup>
-import { ref, watch, nextTick, onMounted } from 'vue'
+import { ref, nextTick, onMounted } from 'vue'
 import FieldError from '@/components/common/FieldError.vue'
 
 const props = defineProps({
   modelValue: { type: String, default: '' },
   length: { type: Number, default: 6 },
   disabled: { type: Boolean, default: false },
-  errorMessage: { type: String, default: '' },   // 에러 텍스트 받기
+  errorMessage: { type: String, default: '' },
   label: { type: String, default: '' },
-  labelClass: {
-    type: String,
-    default: ''
-  },
+  labelClass: { type: String, default: '' },
   helpText: { type: String, default: '' }
 })
 
-const emit = defineEmits([
-  'update:modelValue',
-  'blur',
-  'focus',
-  'keydown',
-  'complete'
-])
+const emit = defineEmits(['update:modelValue', 'blur', 'focus', 'keydown', 'complete'])
 
 const inputs = ref([])
 const digits = ref(Array(props.length).fill(''))
 
-watch(
-  () => props.modelValue,
-  val => {
-    const chars = val.split('')
-    digits.value = Array(props.length)
-    .fill('')
-    .map((_, i) => chars[i] || '')
-  },
-  { immediate: true }
-)
-
 onMounted(() => {
   const chars = props.modelValue.split('')
-  digits.value = Array(props.length)
-  .fill('')
-  .map((_, i) => chars[i] || '')
+  digits.value = digits.value.map((_, i) => chars[i] || '')
 })
 
 function onInput(e, idx) {
-  const ch = e.target.value
-  .replace(/[^A-Za-z0-9]/g, '')
-  .charAt(0) || ''
-  digits.value[idx] = ch
-  const newVal = digits.value.join('')
-  emit('update:modelValue', newVal)
+  const input = e.target
+  const raw = input.value
+  const ch = raw.replace(/[^A-Za-z0-9]/g, '').charAt(0) || ''
 
-  if (ch && idx < props.length - 1) {
+  if (!ch) {
+    return
+  }
+
+  digits.value[idx] = ch
+
+  input.value = ch
+
+  if (idx < props.length - 1) {
     nextTick(() => inputs.value[idx + 1]?.focus())
   }
-  if (newVal.length === props.length) {
+
+  emit('update:modelValue', digits.value.join(''))
+
+  if (digits.value.every(d => d)) {
     emit('complete')
   }
 }
 
 function onKeydown(e, idx) {
-  emit('keydown', e);
+  emit('keydown', e)
+  const isPaste =
+    (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'v'
+  if (isPaste) return
+
+  const isChar = /^[a-zA-Z0-9]$/.test(e.key)
+  if (isChar) {
+    digits.value[idx] = e.key
+    emit('update:modelValue', digits.value.join(''))
+
+    if (idx < props.length - 1) {
+      nextTick(() => inputs.value[idx + 1]?.focus())
+    }
+
+    if (digits.value.every(d => d)) {
+      emit('complete')
+    }
+
+    e.preventDefault()
+    return
+  }
 
   if (e.key === 'Backspace') {
+    e.preventDefault()
+
     if (digits.value[idx]) {
-      digits.value[idx] = '';
-      emit('update:modelValue', digits.value.join(''));
+      digits.value[idx] = ''
+      emit('update:modelValue', digits.value.join(''))
+    } else if (idx > 0) {
+      digits.value[idx - 1] = ''
+      emit('update:modelValue', digits.value.join(''))
+      nextTick(() => inputs.value[idx - 1]?.focus())
     }
-    else if (idx > 0) {
-      digits.value[idx - 1] = '';
-      emit('update:modelValue', digits.value.join(''));
-      nextTick(() => inputs.value[idx - 1]?.focus());
-    }
-    e.preventDefault();
-  } else if (e.key === 'ArrowLeft' && idx > 0) {
-    nextTick(() => inputs.value[idx - 1]?.focus());
-  } else if (e.key === 'ArrowRight' && idx < props.length - 1) {
-    nextTick(() => inputs.value[idx + 1]?.focus());
+    return
+  }
+
+  if (e.key === 'ArrowLeft' && idx > 0) {
+    nextTick(() => inputs.value[idx - 1]?.focus())
+    return
+  }
+
+  if (e.key === 'ArrowRight' && idx < props.length - 1) {
+    nextTick(() => inputs.value[idx + 1]?.focus())
+    return
   }
 }
 
-function onBlur(e) {
-  emit('blur', e)
-}
+function onPaste(e, idx) {
+  const pasted = e.clipboardData.getData('text')
+  .replace(/[^A-Za-z0-9]/g, '')
+  .slice(0, props.length - idx) // 뒤로 남은 칸만큼만
 
-function onFocus(e) {
-  emit('focus', e)
-}
-
-// 이에일 코드 복붙 가능 함수
-function onPaste(e) {
-  const pasted = e.clipboardData.getData('text').trim()
-  if (!pasted) return
-
-  const clean = pasted.replace(/[^A-Za-z0-9]/g, '').slice(0, props.length)
-  clean.split('').forEach((char, idx) => {
-    digits.value[idx] = char
+  pasted.split('').forEach((char, i) => {
+    digits.value[idx + i] = char
   })
 
-  const newVal = digits.value.join('')
-  emit('update:modelValue', newVal)
+  emit('update:modelValue', digits.value.join(''))
 
-  if (newVal.length === props.length) {
+  if (digits.value.every(d => d)) {
     emit('complete')
   }
 
   nextTick(() => {
-    inputs.value[Math.min(clean.length, props.length - 1)]?.focus()
+    inputs.value[Math.min(idx + pasted.length, props.length - 1)]?.focus()
   })
 
   e.preventDefault()
 }
+
+const activeIndex = ref(-1)
+
+function onFocus(e, idx) {
+  activeIndex.value = idx
+
+  nextTick(() => {
+    const el = e.target
+    const len = el.value.length
+    el.setSelectionRange(len, len)
+  })
+
+  emit('focus', e)
+}
+
+
+// function onFocus(e) {
+//   emit('focus', e)
+// }
+
+function onBlur(e) {
+  activeIndex.value = -1
+  emit('blur', e)
+}
+
 </script>
+
 
 <style scoped>
 .focus\:shadow-blue-100:focus {
@@ -167,4 +197,9 @@ function onPaste(e) {
 .focus\:shadow-red-100:focus {
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
 }
+
+input {
+  caret-color: transparent;
+}
+
 </style>
