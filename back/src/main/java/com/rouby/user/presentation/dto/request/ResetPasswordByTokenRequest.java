@@ -15,6 +15,7 @@ public record ResetPasswordByTokenRequest(
   public ResetPasswordByTokenCommand toCommand() {
     return ResetPasswordByTokenCommand.builder()
         .newPassword(newPassword)
+        .email(email)
         .token(token)
         .build();
   }
