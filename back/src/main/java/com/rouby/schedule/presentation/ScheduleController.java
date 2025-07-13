@@ -25,7 +25,8 @@ public class ScheduleController {
   @PreAuthorize("hasAnyRole('USER')")
   @PostMapping
   public ResponseEntity<Void> createSchedule(
-      @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody @Validated CreateScheduleRequest req) {
+      @AuthenticationPrincipal UserDetailsImpl userDetails,
+      @RequestBody @Validated CreateScheduleRequest req) {
 
     Long scheduleId = scheduleFacade.createSchedule(userDetails.getId(), req.toCommand());
     URI location =  ServletUriComponentsBuilder

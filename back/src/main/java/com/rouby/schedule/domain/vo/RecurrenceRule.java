@@ -3,9 +3,10 @@ package com.rouby.schedule.domain.vo;
 
 import com.rouby.schedule.domain.enums.ByDay;
 import com.rouby.schedule.domain.enums.Freq;
+import com.rouby.schedule.domain.support.UntilDateTimeFormatter;
+import io.jsonwebtoken.lang.Assert;
 import jakarta.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -35,11 +36,6 @@ public class RecurrenceRule {
     validate();
   }
 
-  public void validate() {
-    if (this.interval == null || this.freq == null) return;
-    this.freq.validateInterval(this.interval);
-  }
-
   @Override
   public String toString() {
 
@@ -58,15 +54,15 @@ public class RecurrenceRule {
        sb.append(RuleType.INTERVAL).append(equal).append(interval).append(separator);
     }
     if (until != null) {
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmssX");
-      String untilStr = formatter.format(until);
-      sb.append(RuleType.UNTIL).append(equal).append(untilStr).append(separator);
+      String formattedUntilStr = UntilDateTimeFormatter.format(until);
+      sb.append(RuleType.UNTIL).append(equal).append(formattedUntilStr).append(separator);
     }
     return sb.toString();
   }
 
-  // todo. @NotNull 동작 체크하기
   public static RecurrenceRule from(@NotNull String str) {
+
+    Assert.notNull(str, "RecurrenceRule 문자열은 null일 수 없습니다.");
 
     RecurrenceRule rRule = new RecurrenceRule();
     String[] split = str.split(";");
@@ -74,7 +70,7 @@ public class RecurrenceRule {
         .forEach(item -> {
 
           String[] keyVal = item.split("=");
-          if (keyVal.length == 1) return;
+          if (keyVal.length <= 1) return;
           if (keyVal.length > 2) {
             throw new IllegalArgumentException("데이터에 잘못된 RecurrenceRule 형식이 존재합니다.: " + item);
           }
@@ -92,34 +88,48 @@ public class RecurrenceRule {
     return rRule;
   }
 
+  private void validate() {
+    if (this.interval == null || this.freq == null) return;
+    this.freq.validateInterval(this.interval);
+  }
 
   @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
   enum RuleType {
     FREQ(str -> Freq.valueOf(str),
-        (rrule, freq) -> rrule.freq = (Freq) freq),
+        (rrule, freq) -> {
+      if (rrule.freq != null) throw new IllegalArgumentException("FREQ 중복 설정");
+      rrule.freq = (Freq) freq;
+    }),
     BYDAY(str -> Arrays.stream(str.split(","))
         .map(ByDay::valueOf)
         .collect(Collectors.toSet()),
-        (rrule, byDay) -> rrule.byDay = (Set<ByDay>) byDay),
+        (rrule, byDay) -> {
+      if (rrule.byDay != null) throw new IllegalArgumentException("BYDAY 중복 설정");
+      rrule.byDay = (Set<ByDay>) byDay;
+    }),
     INTERVAL(str -> Integer.valueOf(str),
-        (rrule, interval) -> rrule.interval = (Integer) interval),
-    UNTIL(str -> ZonedDateTime.parse(str, DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmssX")),
-        (rrule, until) -> rrule.until = (ZonedDateTime) until),
+        (rrule, interval) -> {
+      if (rrule.interval != null) throw new IllegalArgumentException("INTERVAL 중복 설정");
+      rrule.interval = (Integer) interval;
+    }),
+    UNTIL(str -> UntilDateTimeFormatter.parse(str),
+        (rrule, until) -> {
+      if (rrule.until != null) throw new IllegalArgumentException("UNTIL 중복 설정");
+      rrule.until = (ZonedDateTime) until;
+    }),
     ;
 
     private final Function<String, Object> stringConverter;
     private final BiConsumer<RecurrenceRule, Object> ruleSetter;
 
     public static RuleType parse(String str) {
-      if (str == null || str.isBlank()) return null;
+      if (str == null || str.isBlank()) throw new IllegalArgumentException("RRule 타입 값이 빈 값일 수 없습니다.");
 
-      RuleType ruleType;
       try {
-        ruleType = RuleType.valueOf(str.trim().toUpperCase());
+        return RuleType.valueOf(str.trim().toUpperCase());
       } catch (IllegalArgumentException e) {
         throw new IllegalArgumentException("잘못된 RRule 타입이 확인되었습니다.: " + str, e);
       }
-      return ruleType;
     }
 
     public Object convert(String trim) {

@@ -88,6 +88,9 @@ public class Schedule extends BaseEntity {
       if (!period.isValidRoutineActivateDate(routineActivateDate)) {
         throw new IllegalArgumentException("루틴 활성 일자가 일정보다 나중일 수 없습니다.");
       }
+      if (isRoutineActivateDateOneMoreDayBefore()) {
+        throw new IllegalArgumentException("루틴 활성 일자가 하루 이상 전일 수 없습니다.");
+      }
     }
   }
 
@@ -99,5 +102,9 @@ public class Schedule extends BaseEntity {
   private void appendChildSchedule(Schedule schedule) {
     if (this.children == null) this.children = new ArrayList<>();
     this.children.add(schedule);
+  }
+
+  private boolean isRoutineActivateDateOneMoreDayBefore() {
+    return routineActivateDate.isBefore(LocalDate.now().minusDays(1));
   }
 }
