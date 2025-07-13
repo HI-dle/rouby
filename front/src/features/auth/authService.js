@@ -27,7 +27,19 @@ export const verifyEmailCode = wrapApi(
 )
 
 export const signup = wrapApi(
-  (form) => signupApi(toSignupPayload(form)).then(() => ({ ok: true })),
+  async (form) => {
+    try {
+      const res = await signupApi(toSignupPayload(form))
+
+      return {
+        data: {
+          ok: res.status === 201
+        }
+      }
+    } catch (error) {
+      throw error
+    }
+  },
   {
     fieldMessages: {},
     fallbackMessage: '가입에 실패했습니다.',

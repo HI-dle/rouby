@@ -97,14 +97,19 @@ export function useSignupForm() {
 
   watch(
     () => form.verificationCode,
-    (newCode) => {
+    (newCode, oldCode) => {
+      if (newCode !== oldCode && errors.verificationCode) {
+        delete errors.verificationCode
+      }
+
       if (newCode.length === 6 && !form.isEmailVerified) {
         void verifyCode()
       }
-    },
+    }
   )
 
   const onSubmit = async () => {
+    console.log('🔄 가입 시도 시작')
     if (!validateSignupForm(form, errors)) {
       return
     }
@@ -115,9 +120,12 @@ export function useSignupForm() {
 
     loading.signup = true
     try {
-      const success = await signup(form)
-      if (success) {
-        await router.push('/login')
+      const res = await signup(form)
+      console.log('➡️ signup 결과 res', res)
+      console.log('➡️ signup 결과 res ok', res.ok)
+      if (res?.ok) {
+        console.log('➡️ 로그인 페이지로 이동 시도')
+        await router.push('/auth/login')
       }
     } catch (err) {
       if (err.fieldErrors) {

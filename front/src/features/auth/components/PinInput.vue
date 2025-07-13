@@ -26,6 +26,7 @@
         @keydown="onKeydown($event, idx)"
         @blur="onBlur"
         @focus="onFocus"
+        @paste="onPaste"
         class="w-12 h-12 text-center text-xl border rounded-lg transition-colors"
         :class="{
           'border-gray-300 focus:border-focus-border-color focus:shadow-focus-shadow-color': !errorMessage,
@@ -105,15 +106,23 @@ function onInput(e, idx) {
 }
 
 function onKeydown(e, idx) {
-  emit('keydown', e)
+  emit('keydown', e);
 
   if (e.key === 'Backspace') {
-    if (!digits.value[idx] && idx > 0) {
-      nextTick(() => inputs.value[idx - 1]?.focus())
-    } else {
-      digits.value[idx] = ''
-      emit('update:modelValue', digits.value.join(''))
+    if (digits.value[idx]) {
+      digits.value[idx] = '';
+      emit('update:modelValue', digits.value.join(''));
     }
+    else if (idx > 0) {
+      digits.value[idx - 1] = '';
+      emit('update:modelValue', digits.value.join(''));
+      nextTick(() => inputs.value[idx - 1]?.focus());
+    }
+    e.preventDefault();
+  } else if (e.key === 'ArrowLeft' && idx > 0) {
+    nextTick(() => inputs.value[idx - 1]?.focus());
+  } else if (e.key === 'ArrowRight' && idx < props.length - 1) {
+    nextTick(() => inputs.value[idx + 1]?.focus());
   }
 }
 
@@ -123,6 +132,30 @@ function onBlur(e) {
 
 function onFocus(e) {
   emit('focus', e)
+}
+
+// 이에일 코드 복붙 가능 함수
+function onPaste(e) {
+  const pasted = e.clipboardData.getData('text').trim()
+  if (!pasted) return
+
+  const clean = pasted.replace(/[^A-Za-z0-9]/g, '').slice(0, props.length)
+  clean.split('').forEach((char, idx) => {
+    digits.value[idx] = char
+  })
+
+  const newVal = digits.value.join('')
+  emit('update:modelValue', newVal)
+
+  if (newVal.length === props.length) {
+    emit('complete')
+  }
+
+  nextTick(() => {
+    inputs.value[Math.min(clean.length, props.length - 1)]?.focus()
+  })
+
+  e.preventDefault()
 }
 </script>
 

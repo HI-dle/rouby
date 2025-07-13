@@ -13,7 +13,7 @@ export function createApiError(err, {
     if (fieldMessages) {
       const fieldErrors = {};
       list.forEach(({ value, message }) => {
-        fieldErrors[value] = fieldMessages[value] || message;
+        fieldErrors[value] = fieldMessages?.[value] ?? message;
       });
       const e = new Error(dataMsg || fallbackMessage);
       e.fieldErrors = fieldErrors;
