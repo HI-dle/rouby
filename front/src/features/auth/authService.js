@@ -3,11 +3,12 @@ import {
   requestEmailVerification as requestEmailVerificationApi,
   verifyEmail as verifyEmailApi,
   signup as signupApi,
+  myPageResetPassword as myPageResetPasswordApi
 } from './api.js'
 import {
   toSignupPayload,
   toEmailVerificationPayload,
-  toVerifyCodePayload
+  toVerifyCodePayload, toMyPageResetPasswordPayload
 } from './dto.js'
 
 export const requestEmailVerification = wrapApi(
@@ -31,5 +32,13 @@ export const signup = wrapApi(
   {
     fieldMessages: {},
     fallbackMessage: '가입에 실패했습니다.',
+  },
+)
+
+export const myPageResetPassword = wrapApi(
+  (form) => myPageResetPasswordApi(toMyPageResetPasswordPayload(form)).then(() => ({ ok: true })),
+  {
+    fieldMessages: {},
+    fallbackMessage: '비밀번호 변경에 실패했습니다.',
   },
 )
