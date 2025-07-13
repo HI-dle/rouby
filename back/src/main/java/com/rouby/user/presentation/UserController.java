@@ -5,6 +5,7 @@ import com.rouby.user.application.UserFacade;
 import com.rouby.user.presentation.dto.CreateUserRequest;
 import com.rouby.user.presentation.dto.SendEmailVerificationRequest;
 import com.rouby.user.presentation.dto.request.FindPasswordRequest;
+import com.rouby.user.presentation.dto.request.ResetPasswordByTokenRequest;
 import com.rouby.user.presentation.dto.request.ResetPasswordRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +49,7 @@ public class UserController {
 
   @PatchMapping("/password/reset/token")
   public ResponseEntity<Void> resetPasswordByToken(
-      @RequestBody ResetPasswordRequest request) {
+      @RequestBody ResetPasswordByTokenRequest request) {
 
     userFacade.resetPasswordByToken(request.toCommand());
 
@@ -80,6 +81,6 @@ public class UserController {
 
     userFacade.resetPassword(userDetails.getId(), request.toCommand());
 
-    return ResponseEntity.ok().build();
+    return ResponseEntity.noContent().build();
   }
 }

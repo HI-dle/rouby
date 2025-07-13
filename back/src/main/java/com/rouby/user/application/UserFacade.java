@@ -12,11 +12,11 @@ import com.rouby.user.application.dto.SendEmailVerificationCommand;
 import com.rouby.user.application.dto.VerifyEmailCommand;
 import com.rouby.user.application.dto.command.CreateUserCommand;
 import com.rouby.user.application.dto.command.FindPasswordCommand;
+import com.rouby.user.application.dto.command.ResetPasswordByTokenCommand;
 import com.rouby.user.application.dto.command.ResetPasswordCommand;
 import com.rouby.user.application.exception.UserException;
 import com.rouby.user.application.service.UserReadService;
 import com.rouby.user.application.service.UserWriteService;
-import com.rouby.user.application.dto.command.ResetPasswordCommand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -69,7 +69,7 @@ public class UserFacade {
     }
   }
 
-  public void resetPasswordByToken(ResetPasswordCommand command) {
+  public void resetPasswordByToken(ResetPasswordByTokenCommand command) {
     userWriteService.resetPasswordByToken(command);
   }
 
@@ -78,7 +78,7 @@ public class UserFacade {
   }
 
   public void resetPassword(Long userId, ResetPasswordCommand command) {
-    userService.resetPassword(userId, command);
+    userWriteService.resetPassword(userId, command);
   }
 
 }
