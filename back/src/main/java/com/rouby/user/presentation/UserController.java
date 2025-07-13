@@ -1,20 +1,16 @@
 package com.rouby.user.presentation;
 
 import com.rouby.user.application.UserFacade;
-import com.rouby.user.presentation.dto.requset.FindPasswordRequest;
-import com.rouby.user.presentation.dto.requset.ResetPasswordRequest;
-import com.rouby.user.presentation.dto.response.ValidateTokenResponse;
 import com.rouby.user.presentation.dto.CreateUserRequest;
 import com.rouby.user.presentation.dto.SendEmailVerificationRequest;
+import com.rouby.user.presentation.dto.requset.FindPasswordRequest;
+import com.rouby.user.presentation.dto.requset.ResetPasswordRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,10 +54,12 @@ public class UserController {
   }
 
   @GetMapping("/password/reset/validate")
-  public ResponseEntity<ValidateTokenResponse> validateResetToken(@RequestParam String token) {
+  public ResponseEntity<Void> validateResetToken(@RequestParam String email,
+      @RequestParam String token) {
 
-    return ResponseEntity.ok(ValidateTokenResponse
-        .from(userFacade.validatePasswordToken(token)));
+    userFacade.validatePasswordToken(email, token);
+
+    return ResponseEntity.ok().build();
   }
 
   @PostMapping("/password/find")

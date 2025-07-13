@@ -14,8 +14,8 @@ public class URIProperty {
 
   }
 
-  public String generateResetPasswordLink(String token) {
-    return baseUrl + "/api/v1/users/password/reset/token?token=" + token;
+  public String generateResetPasswordLink(String email, String token) {
+    return baseUrl + "/api/v1/users/password/reset/token?email="+ email +"&token=" + token;
   }
 
 }

@@ -12,11 +12,6 @@ public interface UserRepository {
 
   User save(User user);
 
-  Optional<Long> getUserIdByToken(String token);
-
   Optional<User> findById(Long userId);
 
-  void delete(String token);
-
-  void storePasswordResetToken(String token, Long id, Duration tokenTtl);
 }
