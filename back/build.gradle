@@ -21,14 +21,19 @@ configurations {
     }
     asciidoctorExt
 }
+ext {
+    set('snippetsDir', file("build/generated-snippets"))
+    set('springAiVersion', "1.0.0-M6")
+}
 
 repositories {
     mavenCentral()
 }
 
-ext {
-    set('snippetsDir', file("build/generated-snippets"))
-    set('springAiVersion', "1.0.0")
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+    }
 }
 
 dependencies {
@@ -69,12 +74,9 @@ dependencies {
 
     //jwt
     implementation 'io.jsonwebtoken:jjwt:0.12.6'
-}
 
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
-    }
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.ai:spring-ai-openai-spring-boot-starter'
 }
 
 tasks.named('test') {

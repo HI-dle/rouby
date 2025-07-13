@@ -1,8 +1,7 @@
 package com.rouby.schedule.presentation;
 
-import static java.time.ZoneOffset.UTC;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
@@ -17,52 +16,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.rouby.common.security.WithMockCustomUser;
 import com.rouby.common.support.ControllerTestSupport;
-import com.rouby.schedule.presentation.dto.request.CreateScheduleRequest;
-import com.rouby.schedule.presentation.dto.request.CreateScheduleRequest.RecurrenceRuleRequest;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZonedDateTime;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 class ScheduleControllerTest extends ControllerTestSupport {
-
-
-  @BeforeEach
-  void setUp() {
-  }
-
   @WithMockCustomUser
-  @DisplayName("스케쥴 생성 API")
+  @DisplayName("스케쥴 생성 API - 성공 201")
   @Test
   void createSchedule() throws Exception {
 
-    // given
-    var request = CreateScheduleRequest.builder()
-        .title("하이들 모임!")
-        .memo("뭉티기 먹을 것!")
-        .alarmOffsetMinutes(1440)
-        .startDate(LocalDate.now().plusDays(14))
-        .startTime(LocalTime.of(10, 30))
-        .endDate(LocalDate.now().plusDays(14))
-        .endTime(LocalTime.of(22, 30))
-        .routineActivateDate(LocalDate.now())
-        .recurrenceRule(RecurrenceRuleRequest.builder()
-            .freq("MONTHLY")
-            .interval(1)
-            .byDay("MO")
-            .until(ZonedDateTime.of(LocalDateTime.of(2025, 12, 30, 0, 0), UTC))
-            .build())
-        .build();
+    var request = CreateScheduleRequestFixture.getSuccessRequest();
     var content = objectMapper.writeValueAsString(request);
 
     var scheduleId = 1L;
-    when(scheduleFacade.createSchedule(any(Long.class), eq(request.toCommand())))
+    when(scheduleFacade.createSchedule(any(Long.class), any()))
         .thenReturn(scheduleId);
 
     // when
@@ -96,6 +66,35 @@ class ScheduleControllerTest extends ControllerTestSupport {
                 fieldWithPath("recurrenceRule.interval").description("반복 간격"),
                 fieldWithPath("recurrenceRule.until").description("반복 종료일 (예: 2025-12-30T00:00:00)")
             )
+        ));
+  }
+
+  @WithMockCustomUser
+  @DisplayName("스케쥴 생성 API - 알람 설정 시간 검증 실패 400")
+  @Test
+  void createSchedule_failed_alarm_offset_validation() throws Exception {
+
+    // given
+    var request = CreateScheduleRequestFixture.getAlarmOffsetFailedRequest();
+    var content = objectMapper.writeValueAsString(request);
+
+    doThrow(new IllegalArgumentException("지원되지 않는 알림 설정 시간(분) 정보입니다."))
+        .when(scheduleFacade).createSchedule(any(Long.class), any());
+
+    // when
+    ResultActions resultActions = mockMvc.perform(post("/api/v1/schedules")
+        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+        .content(content)
+        .contentType(MediaType.APPLICATION_JSON)
+    );
+
+    // then
+    resultActions.andExpect(status().isBadRequest())
+        .andDo(print())
+        .andDo(document("create-schedule-invalid-alarm-offset-400",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            getErrorResponseFieldSnippet()
         ));
   }
 }
