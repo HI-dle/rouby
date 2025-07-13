@@ -1,4 +1,4 @@
-import { wrapApi } from '@/utils/errorUtils.js'
+import { wrapApi } from '@/shared/utils/errorUtils.js'
 import {
   requestEmailVerification as requestEmailVerificationApi,
   verifyEmail as verifyEmailApi,
