@@ -2,7 +2,7 @@ package com.rouby.user.application.service;
 
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_USER;
 
-import com.rouby.common.exception.CustomException;
+import com.rouby.user.application.exception.UserException;
 import com.rouby.user.domain.entity.User;
 import com.rouby.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class UserReadService {
   @Transactional(readOnly = true)
   public User findByEmail(String email) {
     return userRepository.findByEmail(email)
-        .orElseThrow(() -> CustomException.from(INVALID_USER));
+        .orElseThrow(() -> UserException.from(INVALID_USER));
   }
 
   public boolean alreadyExistsEmail(String email) {

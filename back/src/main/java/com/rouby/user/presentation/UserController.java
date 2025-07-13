@@ -3,13 +3,18 @@ package com.rouby.user.presentation;
 import com.rouby.user.application.UserFacade;
 import com.rouby.user.presentation.dto.CreateUserRequest;
 import com.rouby.user.presentation.dto.SendEmailVerificationRequest;
+import com.rouby.user.presentation.dto.request.FindPasswordRequest;
+import com.rouby.user.presentation.dto.request.ResetPasswordRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -38,4 +43,32 @@ public class UserController {
     userFacade.createUser(req.toCommand());
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
+
+  @PatchMapping("/password/reset/token")
+  public ResponseEntity<Void> resetPasswordByToken(
+      @RequestBody ResetPasswordRequest request) {
+
+    userFacade.resetPasswordByToken(request.toCommand());
+
+    return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/password/reset/validate")
+  public ResponseEntity<Void> validateResetToken(@RequestParam String email,
+      @RequestParam String token) {
+
+    userFacade.validatePasswordToken(email, token);
+
+    return ResponseEntity.ok().build();
+  }
+
+  @PostMapping("/password/find")
+  public ResponseEntity<Void> findPassword(
+      @RequestBody FindPasswordRequest request) {
+
+    userFacade.findPassword(request.toCommand());
+    return ResponseEntity.noContent().build();
+  }
+
+
 }
