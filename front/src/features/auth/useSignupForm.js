@@ -1,5 +1,5 @@
-import { reactive, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { reactive, watch, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useTimer } from '@/utils/timerUtils.js'
 import { buildErrorCleaner, buildFieldValidator } from '@/utils/formUtils.js'
 
@@ -7,7 +7,7 @@ import {
   findPassword,
   requestEmailVerification,
   resetPassword,
-  signup,
+  signup, verificationPasswordCode,
   verifyEmailCode
 } from './authService.js'
 
@@ -20,10 +20,11 @@ import {
 
 export function useSignupForm() {
   const router = useRouter()
+  const route = useRoute()
 
   const form = reactive({
-    userId: '',
     email: '',
+    token: '',
     verificationCode: '',
     password: '',
     passwordConfirm: '',
@@ -42,6 +43,7 @@ export function useSignupForm() {
     emailVerification: false,
     codeVerification: false,
     signup: false,
+    passwordTokenVerification: false,
   })
 
   const {
@@ -166,9 +168,6 @@ export function useSignupForm() {
   }
 
   const sendResetPassword = async () => {
-    if (!validatePassword(form.password)) {
-      return
-    }
     try {
       const success = await  resetPassword(form)
       if (success) {
@@ -182,6 +181,32 @@ export function useSignupForm() {
       }
     }
   }
+
+  onMounted(async () => {
+    form.email = route.query.email || ''
+    form.token = route.query.token || ''
+
+    if (!form.email || !form.token) {
+      errors.verificationCode = '잘못된 접근입니다.'
+      return
+    }
+
+    loading.passwordTokenVerification = true
+    try {
+      const success = await  verificationPasswordCode(form)
+      if (success) {
+        await router.push('/password/reset')
+      }
+    } catch (err) {
+      if (err.fieldErrors) {
+        Object.assign(errors, err.fieldErrors)
+      } else {
+        errors.verificationCode = err.message
+      }
+    }finally {
+      loading.passwordTokenVerification = false
+    }
+  })
 
   window.testSignup = {
     // 1. 폼 데이터 자동 입력

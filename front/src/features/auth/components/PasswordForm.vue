@@ -1,5 +1,15 @@
 <template>
-  <form @submit.prevent="sendResetPassword" class="p-6 space-y-4">
+  <!-- 검증 중 -->
+  <div v-if="loading.passwordTokenVerification" class="text-gray-500 text-center">
+    🔄 링크 검증 중입니다...
+  </div>
+
+  <!-- 검증 실패 -->
+  <div v-else-if="errors.verificationCode" class="text-red-500 text-center">
+    {{ errors.verificationCode }}
+  </div>
+
+  <form v-else @submit.prevent="sendResetPassword" class="p-6 space-y-4">
     <!-- 비밀번호 필드 -->
     <div class="space-y-2">
       <BaseInput
@@ -48,6 +58,7 @@ import BaseButton from '@/components/common/BaseButton.vue'
 const {
   form,
   errors,
+  loading,
   sendResetPassword,
   validatePasswordField,
   validatePasswordConfirmField,

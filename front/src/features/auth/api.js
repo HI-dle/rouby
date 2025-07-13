@@ -17,9 +17,14 @@ export const findPassword = (payload) => {
 }
 
 export const resetPassword = (payload) => {
-  return axios.patch('/v1/users/password/reset/code', payload)
+  return axios.patch('/v1/users/password/reset/token', payload)
 }
 
 export const verificationPasswordCode = (payload) => {
-  return axios.get('/v1/users/password/reset/verify', payload)
+  return axios.get('/v1/users/password/reset/validate', {
+    params: {
+      email: payload.email,
+      token: payload.token
+    }
+  })
 }

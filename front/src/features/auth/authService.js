@@ -56,7 +56,7 @@ export const resetPassword = wrapApi(
 )
 
 export const verificationPasswordCode = wrapApi(
-  (code) => verificationPasswordCodeApi(toVerifyPasswordCodePayload(code)).then(() => ({ ok: true })),
+  (form) => verificationPasswordCodeApi(toVerifyPasswordCodePayload(form)).then(() => ({ ok: true })),
   {
     targetField: 'code',
     fallbackMessage: '인증 코드 검증에 실패했습니다.',
