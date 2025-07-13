@@ -1,9 +1,9 @@
-package com.rouby.routine.domain;
+package com.rouby.routine.routine_task.domain;
 
 import com.rouby.common.jpa.BaseEntity;
-import com.rouby.routine.domain.enums.TaskType;
-import com.rouby.routine.domain.enums.AlarmOffsetType;
-import com.rouby.routine.domain.enums.OverrideType;
+import com.rouby.routine.routine_task.domain.enums.TaskType;
+import com.rouby.routine.routine_task.domain.enums.AlarmOffsetType;
+import com.rouby.routine.routine_task.domain.enums.OverrideType;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,4 +1,4 @@
-package com.rouby.routine.domain;
+package com.rouby.routine.routine_task.domain;
 
 import com.rouby.common.jpa.BaseEntity;
 import jakarta.persistence.Column;

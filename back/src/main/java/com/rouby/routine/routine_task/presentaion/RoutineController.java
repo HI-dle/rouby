@@ -1,6 +1,6 @@
-package com.rouby.routine.presentaion;
+package com.rouby.routine.routine_task.presentaion;
 
-import com.rouby.routine.application.facade.RoutineFacade;
+import com.rouby.routine.routine_task.application.facade.RoutineFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

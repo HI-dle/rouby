@@ -1,4 +1,4 @@
-package com.rouby.routine.domain;
+package com.rouby.routine.routine_task.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
