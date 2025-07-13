@@ -150,3 +150,38 @@ include::{snippets}/user-email-verification-verify-invalid-verification-email-co
 ===== HTTP 응답 (401 Unauthorized)
 include::{snippets}/user-email-verification-verify-invalid-verification-email-code/http-response.adoc[]
 ---
+
+== 비밀번호 변경 토큰 사용 API
+
+==== HTTP 요청
+include::{snippets}/reset-password-by-token-204/http-request.adoc[]
+
+==== 요청 필드
+include::{snippets}/reset-password-by-token-204/request-fields.adoc[]
+
+==== HTTP 응답 (204 NoContent)
+include::{snippets}/reset-password-by-token-204/http-response.adoc[]
+
+== 비밀번호 찾기 API
+
+==== HTTP 요청
+include::{snippets}/find-password-204/http-request.adoc[]
+
+==== 요청 필드
+include::{snippets}/find-password-204/request-fields.adoc[]
+
+==== HTTP 응답 (204 NoContent)
+include::{snippets}/find-password-204/http-response.adoc[]
+
+---
+
+== 비밀번호 검증 API
+
+==== HTTP 요청
+include::{snippets}/validate-reset-token-200/http-request.adoc[]
+
+==== 요청 필드
+include::{snippets}/validate-reset-token-200/query-parameters.adoc[]
+
+==== HTTP 응답 (200 Request)
+include::{snippets}/validate-reset-token-200/http-response.adoc[]

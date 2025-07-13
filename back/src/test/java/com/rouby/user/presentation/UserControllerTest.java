@@ -3,23 +3,32 @@ package com.rouby.user.presentation;
 import static com.rouby.notification.email.application.exception.EmailErrorCode.EMAIL_SEND_FAILED;
 import static com.rouby.user.application.exception.UserErrorCode.DUPLICATE_EMAIL;
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.rouby.common.security.WithMockCustomUser;
 import com.rouby.common.support.ControllerTestSupport;
 import com.rouby.notification.email.application.exception.EmailException;
 import com.rouby.user.application.exception.UserException;
 import com.rouby.user.presentation.dto.CreateUserRequest;
 import com.rouby.user.presentation.dto.SendEmailVerificationRequest;
+import com.rouby.user.presentation.dto.request.FindPasswordRequest;
+import com.rouby.user.presentation.dto.request.ResetPasswordRequest;
+import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -303,6 +312,94 @@ class UserControllerTest extends ControllerTestSupport {
                 fieldWithPath("code").description("이메일 인증 코드")
             ),
             getErrorResponseFieldSnippet()
+        ));
+  }
+
+  @WithMockCustomUser
+  @DisplayName("비밀번호 찾기 API")
+  @Test
+  void findPassword() throws Exception {
+    //given
+    FindPasswordRequest request = FindPasswordRequest.builder().email("test@email.com").build();
+
+    doNothing().when(userFacade).findPassword(argThat(req ->
+        "test@email.com".equals(request.email())));
+
+    //when
+    ResultActions resultActions = mockMvc.perform(post("/api/v1/users/password/find")
+        .content(objectMapper.writeValueAsString(request))
+        .contentType(MediaType.APPLICATION_JSON));
+
+    // then
+    resultActions.andExpect(status().isNoContent())
+        .andDo(print())
+        .andDo(document("find-password-204",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestFields(
+                fieldWithPath("email").description("유저 이메일"))
+        ));
+  }
+
+  @WithMockCustomUser
+  @DisplayName("비밀번호 변경 토큰 사용 API")
+  @Test
+  void resetPasswordByToken() throws Exception {
+    //given
+    ResetPasswordRequest request = ResetPasswordRequest.builder()
+        .newPassword("newPassword")
+        .email("test@email.com")
+        .token(UUID.randomUUID().toString())
+        .build();
+
+    String token = UUID.randomUUID().toString();
+
+    doNothing().when(userFacade).resetPasswordByToken(request.toCommand());
+
+    //when
+    ResultActions resultActions = mockMvc.perform(
+        patch("/api/v1/users/password/reset/token")
+            .content(objectMapper.writeValueAsString(request))
+            .contentType(MediaType.APPLICATION_JSON));
+
+    // then
+    resultActions.andExpect(status().isNoContent())
+        .andDo(print())
+        .andDo(document("reset-password-by-token-204",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestFields(
+                fieldWithPath("token").description("비밀번호 변경 토큰"),
+                fieldWithPath("email").description("사용자 이메일"),
+                fieldWithPath("newPassword").description("새 비밀번호"))
+        ));
+  }
+
+  @WithMockCustomUser
+  @DisplayName("비밀번호 토큰 검증 API")
+  @Test
+  void validateResetToken() throws Exception {
+    String email = "test@email.com";
+    String token = UUID.randomUUID().toString();
+
+    doNothing().when(userFacade).validatePasswordToken(email, token);
+
+    //when
+    ResultActions resultActions = mockMvc.perform(
+        get("/api/v1/users/password/reset/validate")
+            .param("email", email)
+            .param("token", token)
+    );
+
+    // then
+    resultActions.andExpect(status().isOk())
+        .andDo(print())
+        .andDo(document("validate-reset-token-200",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            queryParameters(
+                parameterWithName("email").description("사용자 이메일"),
+                parameterWithName("token").description("비밀번호 검증 토큰"))
         ));
   }
 }

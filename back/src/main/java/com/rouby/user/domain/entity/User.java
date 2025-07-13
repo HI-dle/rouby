@@ -130,4 +130,9 @@ public class User extends BaseEntity {
   protected User() {
     this.notificationSettings = new HashSet<>();
   }
+
+  public void updatePassword(UserPasswordEncoder passwordEncoder, String newPassword) {
+    validatePassword(newPassword);
+    this.password = passwordEncoder.encode(newPassword);
+  }
 }

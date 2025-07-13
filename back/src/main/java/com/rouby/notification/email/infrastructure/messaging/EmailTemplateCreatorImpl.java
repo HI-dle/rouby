@@ -39,7 +39,7 @@ public class EmailTemplateCreatorImpl implements EmailTemplateCreator {
   enum TemplateType {
 
     VERIFICATION("[Rouby] 이메일 인증 코드입니다.", "email-verification"),
-    RESET_PASSWORD("[Rouby] 비밀번호 변경 링크 메일입니다.", "reset-password"),
+    RESET_PASSWORD("[Rouby] 비밀번호 변경 링크 메일입니다.", "reset-password-email-verification"),
     ;
 
     private final String subject;
