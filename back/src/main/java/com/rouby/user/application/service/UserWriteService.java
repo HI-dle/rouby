@@ -1,7 +1,9 @@
 package com.rouby.user.application.service;
 
-import static com.rouby.user.application.exception.UserErrorCode.*;
+import static com.rouby.user.application.exception.UserErrorCode.DUPLICATE_EMAIL;
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION;
+import static com.rouby.user.application.exception.UserErrorCode.PASSWORD_TOKEN_EXPIRED;
+import static com.rouby.user.application.exception.UserErrorCode.USER_NOT_FOUND;
 
 import com.rouby.user.application.dto.SaveVerificationCodeCommand;
 import com.rouby.user.application.dto.VerifyEmailCommand;
@@ -29,17 +31,29 @@ public class UserWriteService {
   private final VerificationEmailCodeStorage verificationEmailCodeStorage;
   private final VerificationPasswordTokenStorage verificationPasswordCodeStorage;
 
-
   @Transactional
   public void create(CreateUserCommand command) {
-    //Todo. command.email() 인증 여부 확인
-
-    if (userRepository.existsByEmail(command.email())) {
-      throw UserException.of(DUPLICATE_EMAIL);
-    }
+    ensureEmailNotTaken(command.email());
+    ensureEmailVerified(command.email());
 
     User user = User.create(command.email(), command.password(), passwordEncoder);
     userRepository.save(user);
+    verificationEmailCodeStorage.delete(command.email());
+  }
+
+  private void ensureEmailNotTaken(String email) {
+    if (userRepository.existsByEmail(email)) {
+      throw UserException.from(DUPLICATE_EMAIL);
+    }
+  }
+
+  private void ensureEmailVerified(String email) {
+    VerificationEmailCode code = verificationEmailCodeStorage.findByEmail(email)
+            .orElseThrow(() -> UserException.from(INVALID_EMAIL_VERIFICATION));
+
+    if(!code.isVerified()) {
+      throw UserException.from(INVALID_EMAIL_VERIFICATION);
+    }
   }
 
   public void saveVerificationCode(SaveVerificationCodeCommand command) {

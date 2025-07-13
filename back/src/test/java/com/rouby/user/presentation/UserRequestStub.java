@@ -12,15 +12,15 @@ public class UserRequestStub {
   static final String VALID_EMAIL_CODE = "VERIFY";
   static final String INVALID_EMAIL_CODE = "INVALID_CODE";
 
-  public static CreateUserRequest valid() {
+  public static CreateUserRequest toCreateRequest() {
     return new CreateUserRequest(VALID_EMAIL, VALID_PASSWORD);
   }
 
-  public static CreateUserRequest withInvalidEmail() {
+  public static CreateUserRequest toCreateRequestInvalidEmail() {
     return new CreateUserRequest(INVALID_EMAIL, VALID_PASSWORD);
   }
 
-  public static CreateUserRequest withInvalidPassword() {
+  public static CreateUserRequest toCreateRequestInvalidPassword() {
     return new CreateUserRequest(VALID_EMAIL, INVALID_PASSWORD);
   }
 

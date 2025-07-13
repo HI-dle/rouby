@@ -1,7 +1,5 @@
 package com.rouby.common.props;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

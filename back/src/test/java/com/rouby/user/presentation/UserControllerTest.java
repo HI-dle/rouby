@@ -41,16 +41,14 @@ class UserControllerTest extends ControllerTestSupport {
   void createUser() throws Exception {
 
     // given
-    CreateUserRequest request = UserRequestStub.valid();
+    CreateUserRequest request = UserRequestStub.toCreateRequest();
     doNothing().when(userFacade).createUser(request.toCommand());
 
-    // when
-    ResultActions result = mockMvc.perform(post("/api/v1/users")
-        .content(objectMapper.writeValueAsString(request))
-        .contentType(MediaType.APPLICATION_JSON));
-
-    // then
-    result.andExpect(status().isCreated())
+    // when and then
+    mockMvc.perform(post("/api/v1/users")
+            .content(objectMapper.writeValueAsString(request))
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isCreated())
         .andDo(print())
         .andDo(document("user-create",
             preprocessRequest(prettyPrint()),
@@ -63,10 +61,64 @@ class UserControllerTest extends ControllerTestSupport {
   }
 
   @Test
-  @DisplayName("회원 가입 실패 - 이메일 형식 오류")
-  void createUser_invalidEmail() throws Exception {
-    CreateUserRequest request = UserRequestStub.withInvalidEmail();
+  @DisplayName("회원 가입 실패 - 중복된 이메일")
+  void createUser_duplicate_email() throws Exception {
 
+    //given
+    CreateUserRequest request = UserRequestStub.toCreateRequest();
+    doThrow(UserException.from(DUPLICATE_EMAIL))
+        .when(userFacade).createUser(request.toCommand());
+
+    //when and then
+    mockMvc.perform(post("/api/v1/users")
+            .content(objectMapper.writeValueAsString(request))
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isConflict())
+        .andDo(print())
+        .andDo(document("user-create-duplicate-email",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestFields(
+                fieldWithPath("email").description("중복된 이메일"),
+                fieldWithPath("password").description("비밀번호 (8~32자, 2종류 이상 조합)")
+            ),
+            getErrorResponseFieldSnippet()
+        ));
+  }
+
+  @Test
+  @DisplayName("회원 가입 실패 - 인증되지 않은 이메일")
+  void createUser_unverified_email() throws Exception {
+
+    //given
+    CreateUserRequest request = UserRequestStub.toCreateRequest();
+    doThrow(UserException.from(INVALID_EMAIL_VERIFICATION))
+        .when(userFacade).createUser(request.toCommand());
+
+    //when and then
+    mockMvc.perform(post("/api/v1/users")
+            .content(objectMapper.writeValueAsString(request))
+            .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isUnauthorized())
+        .andDo(document("user-create-unverified-email",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestFields(
+                fieldWithPath("email").description("이메일 주소 (인증 필요)"),
+                fieldWithPath("password").description("비밀번호")
+            ),
+            getErrorResponseFieldSnippet()
+        ));
+  }
+
+  @Test
+  @DisplayName("회원 가입 실패 - 이메일 형식 오류")
+  void createUser_invalid_email() throws Exception {
+
+    //given
+    CreateUserRequest request = UserRequestStub.toCreateRequestInvalidEmail();
+
+    //when and then
     mockMvc.perform(post("/api/v1/users")
             .content(objectMapper.writeValueAsString(request))
             .contentType(MediaType.APPLICATION_JSON))
@@ -84,9 +136,12 @@ class UserControllerTest extends ControllerTestSupport {
 
   @Test
   @DisplayName("회원 가입 실패 - 비밀번호 형식 오류")
-  void createUser_invalidPassword() throws Exception {
-    CreateUserRequest request = UserRequestStub.withInvalidPassword();
+  void createUser_invalid_password() throws Exception {
 
+    //given
+    CreateUserRequest request = UserRequestStub.toCreateRequestInvalidPassword();
+
+    //when and then
     mockMvc.perform(post("/api/v1/users")
             .content(objectMapper.writeValueAsString(request))
             .contentType(MediaType.APPLICATION_JSON))
@@ -132,7 +187,8 @@ class UserControllerTest extends ControllerTestSupport {
   void requestEmail_fail_validate_email() throws Exception {
 
     // given
-    SendEmailVerificationRequest request = UserRequestStub.toSendEmailVerificationRequestInvalidEmail();
+    SendEmailVerificationRequest request =
+        UserRequestStub.toSendEmailVerificationRequestInvalidEmail();
     doNothing().when(userFacade).sendEmailVerification(request.toCommand());
 
     // when
