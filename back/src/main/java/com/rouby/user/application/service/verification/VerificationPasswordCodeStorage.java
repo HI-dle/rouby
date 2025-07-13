@@ -8,5 +8,5 @@ public interface VerificationPasswordCodeStorage {
 
   Optional<String> getTokenByEmail(String email);
 
-  void delete(String token);
+  void deleteByEmail(String email);
 }

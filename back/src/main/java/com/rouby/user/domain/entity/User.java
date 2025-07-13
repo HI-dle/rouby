@@ -131,7 +131,8 @@ public class User extends BaseEntity {
     this.notificationSettings = new HashSet<>();
   }
 
-  public void updatePassword(String newPassword) {
-    this.password = newPassword;
+  public void updatePassword(UserPasswordEncoder passwordEncoder, String newPassword) {
+    validatePassword(newPassword);
+    this.password = passwordEncoder.encode(newPassword);
   }
 }

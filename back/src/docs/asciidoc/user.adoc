@@ -159,7 +159,7 @@ include::{snippets}/reset-password-by-token-204/http-request.adoc[]
 ==== 요청 필드
 include::{snippets}/reset-password-by-token-204/request-fields.adoc[]
 
-==== HTTP 응답 (204 Request)
+==== HTTP 응답 (204 NoContent)
 include::{snippets}/reset-password-by-token-204/http-response.adoc[]
 
 == 비밀번호 찾기 API
@@ -170,7 +170,7 @@ include::{snippets}/find-password-204/http-request.adoc[]
 ==== 요청 필드
 include::{snippets}/find-password-204/request-fields.adoc[]
 
-==== HTTP 응답 (204 Request)
+==== HTTP 응답 (204 NoContent)
 include::{snippets}/find-password-204/http-response.adoc[]
 
 ---
@@ -183,5 +183,5 @@ include::{snippets}/validate-reset-token-200/http-request.adoc[]
 ==== 요청 필드
 include::{snippets}/validate-reset-token-200/query-parameters.adoc[]
 
-==== HTTP 응답 (204 NoContent)
+==== HTTP 응답 (200 Request)
 include::{snippets}/validate-reset-token-200/http-response.adoc[]

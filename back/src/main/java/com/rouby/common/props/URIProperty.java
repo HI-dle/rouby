@@ -1,5 +1,7 @@
 package com.rouby.common.props;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -15,7 +17,7 @@ public class URIProperty {
   }
 
   public String generateResetPasswordLink(String email, String token) {
-    return baseUrl + "/api/v1/users/password/reset/token?email="+ email +"&token=" + token;
+   return baseUrl + "/api/v1/users/password/reset/token?email=" + email + "&token=" + token;
   }
 
 }

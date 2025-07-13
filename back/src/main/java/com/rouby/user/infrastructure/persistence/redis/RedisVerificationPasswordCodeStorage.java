@@ -28,7 +28,7 @@ public class RedisVerificationPasswordCodeStorage implements VerificationPasswor
   }
 
   @Override
-  public void delete(String email) {
+  public void deleteByEmail(String email) {
     redisTemplate.delete(PREFIX + email);
   }
 }

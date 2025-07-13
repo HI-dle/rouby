@@ -57,10 +57,10 @@ public class UserFacade {
 
     String token = userWriteService.getResetPasswordLink(command);
 
-    uriProperty.generateResetPasswordLink(command.email(), token);
+    String resetPasswordLink = uriProperty.generateResetPasswordLink(command.email(), token);
 
     try {
-      emailService.send(command.toSendEmailCommand(command.email(), token));
+      emailService.send(command.toSendEmailCommand(command.email(), resetPasswordLink));
     } catch (EmailException e) {
       userWriteService.deletePasswordLinkCode(command.email());
       throw e;
