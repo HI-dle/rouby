@@ -10,6 +10,9 @@ spring:
       - classpath:properties/jpa.yml
       - classpath:properties/redis.yml
       - classpath:properties/jwt.yml
+      - classpath:properties/ai.yml
+      - classpath:properties/mail.yml
+      - classpath:properties/thymeleaf.yml
   profiles:
     group:
       local: local

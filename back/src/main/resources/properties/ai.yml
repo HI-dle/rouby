@@ -1,0 +1,27 @@
+  # local 환경
+spring:
+  config.activate.on-profile: local
+  ai:
+    openai:
+      api-key: ${AI_API_KEY}
+      chat:
+        base-url: ${AI_API_URL}
+        options:
+          model: "gemini-2.0-flash-lite"
+          temperature: 0.0
+        completions-path: "/chat/completions"
+
+
+---
+# test 환경
+spring:
+  config.activate.on-profile: test
+  ai:
+    openai:
+      api-key: ${AI_API_KEY}
+      chat:
+        base-url: ${AI_API_URL}
+        options:
+          model: "gemini-2.0-flash-lite"
+          temperature: 0.0
+        completions-path: "/chat/completions"

@@ -6,6 +6,8 @@ const route = useRoute()
 
 // 현재 경로와 일치하는지 확인하는 함수
 const isActive = (path) => route.path.startsWith(path)
+const createOrModify = ['create', 'modify']
+const isNotCreateOrModify = () => !createOrModify.some((p) => route.path.includes(p))
 </script>
 
 <template>
@@ -47,8 +49,9 @@ const isActive = (path) => route.path.startsWith(path)
 
     <!-- ... 버튼 -->
     <div
+      v-if="isNotCreateOrModify()"
       class="absolute -top-16 right-6 bg-main-color text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center"
-      aria-label="새 항목 추가"
+      aria-label="추가 선택지"
     >
       <MoreHorizontal class="w-6 h-6" />
     </div>

@@ -1,4 +1,6 @@
 <script setup>
+import { cn } from '@/lib/utils'
+
 const props = defineProps({
   modelValue: Boolean,
   wrapperClass: { type: String, default: '' },
@@ -19,14 +21,18 @@ defineEmits(['update:modelValue'])
     />
     <div
       :class="[
-        'w-11 h-6 rounded-full bg-gray-300 peer peer-checked:bg-main-color transition-all',
-        props.trackClass,
+        cn(
+          'w-11 h-6 rounded-full bg-gray-300 peer peer-checked:bg-main-color transition-all',
+          props.trackClass,
+        ),
       ]"
     ></div>
     <div
       :class="[
-        'absolute ml-1 top-[4px] w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-full',
-        props.thumbClass,
+        cn(
+          'absolute ml-1 top-[4px] w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-full',
+          props.thumbClass,
+        ),
       ]"
     ></div>
   </label>
