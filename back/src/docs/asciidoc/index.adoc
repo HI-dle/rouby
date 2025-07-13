@@ -12,3 +12,4 @@ ROUBY의 API Docs 입니다.
 
 include::schedule.adoc[]
 include::user.adoc[]
+include::auth.adoc[]
