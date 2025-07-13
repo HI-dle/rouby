@@ -1,0 +1,1 @@
+GET http://localhost:8080/test/?year=2025&month=7&day=12&content= 안녕? 10글자 이내로 대답해줘
