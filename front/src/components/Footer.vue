@@ -6,11 +6,14 @@ const route = useRoute()
 
 // 현재 경로와 일치하는지 확인하는 함수
 const isActive = (path) => route.path.startsWith(path)
+const createOrModify = ['create', 'modify']
+const isNotCreateOrModify = () => !createOrModify.some((p) => route.path.includes(p))
 </script>
 
 <template>
-  <div
-    class="max-w-md fixed mx-auto bottom-0 left-0 right-0 bg-white border-t shadow-md flex justify-between items-center px-4 sm:px-6 py-3 z-50 rounded-t-3xl safe-area-inset-bottom"
+  <footer
+    role="contentinfo"
+    class="w-full lg:max-w-screen-md fixed mx-auto bottom-0 left-0 right-0 bg-white border-t shadow-md flex justify-between items-center px-4 sm:px-6 py-3 z-50 rounded-t-3xl safe-area-inset-bottom"
   >
     <RouterLink
       to="/schedule"
@@ -46,8 +49,9 @@ const isActive = (path) => route.path.startsWith(path)
 
     <!-- ... 버튼 -->
     <div
+      v-if="isNotCreateOrModify()"
       class="absolute -top-16 right-6 bg-main-color text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center"
-      aria-label="새 항목 추가"
+      aria-label="추가 선택지"
     >
       <MoreHorizontal class="w-6 h-6" />
     </div>
@@ -60,5 +64,5 @@ const isActive = (path) => route.path.startsWith(path)
       <Plus class="w-6 h-6" />
     </RouterLink>
      -->
-  </div>
+  </footer>
 </template>
