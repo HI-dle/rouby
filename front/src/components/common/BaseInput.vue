@@ -1,9 +1,7 @@
 <script setup>
-import { twMerge } from 'tailwind-merge'
-import clsx from 'clsx'
+import { cn } from '@/lib/utils'
 
 const emit = defineEmits(['update:modelValue', 'blur', 'focus', 'keydown'])
-
 const props = defineProps({
   label: String,
   labelClass: {
@@ -24,24 +22,25 @@ const props = defineProps({
   disabled: Boolean,
   maxlength: String,
 })
-
-const mergedClass = twMerge(clsx('block mb-2 text-sm text-content-color', props.labelClass))
 </script>
 
 <template>
   <div class="w-full">
-    <label v-if="label" :class="mergedClass">{{ label }}</label>
+    <label v-if="label" :class="[cn('block mb-2 text-sm text-content-color', props.labelClass)]">{{
+      label
+    }}</label>
     <input
       :value="modelValue"
       :type="type"
       :placeholder="placeholder"
-      class="input bg-white w-full p-3 border-border-color border rounded-2xl placeholder-placeholder-color text-main-color h-12"
       :class="[
         {
           'error-input': error,
         },
-        'input bg-white w-full p-3 border-border-color border rounded-2xl placeholder-placeholder-color text-main-color h-12',
-        props.class,
+        cn(
+          'input bg-white w-full p-3 border-border-color border rounded-2xl placeholder-placeholder-color text-main-color h-12',
+          props.class,
+        ),
       ]"
       @input="emit('update:modelValue', $event.target.value)"
       @blur="emit('blur', $event)"
