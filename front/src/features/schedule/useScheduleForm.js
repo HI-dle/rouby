@@ -5,6 +5,7 @@ import { createSchedule } from './scheduleService'
 
 export const useScheduleForm = () => {
   const errors = reactive({})
+  const errorModal = reactive({})
 
   const createInitialForm = () => {
     const now = new Date()
@@ -59,6 +60,7 @@ export const useScheduleForm = () => {
   return {
     form,
     errors,
+    errorModal,
     onDateTimeInput,
     onSubmit,
   }

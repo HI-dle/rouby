@@ -32,8 +32,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(
     controllers = {ScheduleController.class, AuthController.class, UserController.class},
     excludeFilters = {
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebMvcConfig.class),
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE) //, classes = JwtAuthenticationFilter.class)
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebMvcConfig.class)
     }
 )
 @Import({

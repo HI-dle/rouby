@@ -6,10 +6,12 @@ import { alarmOptions, repeatOptions } from '../constants'
 import { toDate } from '@/shared/utils/formatDate'
 import FieldError from '@/components/common/FieldError.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
+import BaseModal from '@/components/common/BaseModal.vue'
 
 const props = defineProps({
   form: Object,
   errors: Object,
+  errorModal: Object,
 })
 const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
 </script>
@@ -138,4 +140,5 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
       </div>
     </form>
   </div>
+  <BaseModal v-model="errorModal.show" :message="errorModal.msg" buttonText="확인" />
 </template>
