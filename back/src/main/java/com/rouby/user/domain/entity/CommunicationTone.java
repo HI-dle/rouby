@@ -17,18 +17,14 @@ public class CommunicationTone implements Serializable {
   @Column(columnDefinition = "jsonb")
   private Set<String> roubyCommunicationTone;
 
-  protected CommunicationTone() {
+  public static CommunicationTone empty(){
+    return new CommunicationTone(new LinkedHashSet<>());
   }
 
   private CommunicationTone(Set<String> communicationTone) {
     this.roubyCommunicationTone = new LinkedHashSet<>(communicationTone);
   }
 
-  public static CommunicationTone empty(){
-    return new CommunicationTone(new LinkedHashSet<>());
-  }
-
-  public static CommunicationTone of(Set<String> communicationTone) {
-    return new CommunicationTone(communicationTone);
+  protected CommunicationTone() {
   }
 }

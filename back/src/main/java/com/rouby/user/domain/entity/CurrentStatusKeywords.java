@@ -21,10 +21,6 @@ public class CurrentStatusKeywords implements Serializable {
     return new CurrentStatusKeywords(new LinkedHashSet<>());
   }
 
-  public static CurrentStatusKeywords of(Set<String> keywords) {
-    return new CurrentStatusKeywords(keywords);
-  }
-
   private CurrentStatusKeywords(Set<String> currentStatusKeywords) {
     this.currentStatusKeywords = new LinkedHashSet<>(currentStatusKeywords);
   }

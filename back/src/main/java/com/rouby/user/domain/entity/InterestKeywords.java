@@ -21,10 +21,6 @@ public class InterestKeywords implements Serializable {
     return new InterestKeywords(new LinkedHashSet<>());
   }
 
-  public static InterestKeywords of(Set<String> keywords) {
-    return new InterestKeywords(keywords);
-  }
-
   private InterestKeywords(Set<String> interestKeywords) {
     this.interestKeywords = new LinkedHashSet<>(interestKeywords);
   }

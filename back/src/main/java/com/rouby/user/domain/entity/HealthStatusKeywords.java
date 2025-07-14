@@ -21,10 +21,6 @@ public class HealthStatusKeywords implements Serializable {
     return new HealthStatusKeywords(new LinkedHashSet<>());
   }
 
-  public static HealthStatusKeywords of(Set<String> keywords) {
-    return new HealthStatusKeywords(keywords);
-  }
-
   private HealthStatusKeywords(Set<String> healthStatusKeywords) {
     this.healthStatusKeywords = new LinkedHashSet<>(healthStatusKeywords);
   }
