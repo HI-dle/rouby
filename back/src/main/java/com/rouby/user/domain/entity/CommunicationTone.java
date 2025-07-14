@@ -3,7 +3,7 @@ package com.rouby.user.domain.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import lombok.Getter;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -21,11 +21,11 @@ public class CommunicationTone implements Serializable {
   }
 
   private CommunicationTone(Set<String> communicationTone) {
-    this.roubyCommunicationTone = new HashSet<>(communicationTone);
+    this.roubyCommunicationTone = new LinkedHashSet<>(communicationTone);
   }
 
   public static CommunicationTone empty(){
-    return new CommunicationTone(new HashSet<>());
+    return new CommunicationTone(new LinkedHashSet<>());
   }
 
   public static CommunicationTone of(Set<String> communicationTone) {

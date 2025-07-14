@@ -3,7 +3,7 @@ package com.rouby.user.domain.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import lombok.Getter;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -18,7 +18,7 @@ public class CurrentStatusKeywords implements Serializable {
   private Set<String> currentStatusKeywords;
 
   public static CurrentStatusKeywords empty(){
-    return new CurrentStatusKeywords(new HashSet<>());
+    return new CurrentStatusKeywords(new LinkedHashSet<>());
   }
 
   public static CurrentStatusKeywords of(Set<String> keywords) {
@@ -26,7 +26,7 @@ public class CurrentStatusKeywords implements Serializable {
   }
 
   private CurrentStatusKeywords(Set<String> currentStatusKeywords) {
-    this.currentStatusKeywords = new HashSet<>(currentStatusKeywords);
+    this.currentStatusKeywords = new LinkedHashSet<>(currentStatusKeywords);
   }
 
   protected CurrentStatusKeywords() {

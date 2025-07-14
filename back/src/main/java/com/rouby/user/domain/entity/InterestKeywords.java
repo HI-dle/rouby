@@ -3,7 +3,7 @@ package com.rouby.user.domain.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import lombok.Getter;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -18,7 +18,7 @@ public class InterestKeywords implements Serializable {
   private Set<String> interestKeywords;
 
   public static InterestKeywords empty(){
-    return new InterestKeywords(new HashSet<>());
+    return new InterestKeywords(new LinkedHashSet<>());
   }
 
   public static InterestKeywords of(Set<String> keywords) {
@@ -26,7 +26,7 @@ public class InterestKeywords implements Serializable {
   }
 
   private InterestKeywords(Set<String> interestKeywords) {
-    this.interestKeywords = new HashSet<>(interestKeywords);
+    this.interestKeywords = new LinkedHashSet<>(interestKeywords);
   }
 
   protected InterestKeywords() {

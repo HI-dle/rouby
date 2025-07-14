@@ -3,7 +3,7 @@ package com.rouby.user.domain.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import lombok.Getter;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -18,7 +18,7 @@ public class HealthStatusKeywords implements Serializable {
   private Set<String> healthStatusKeywords;
 
   public static HealthStatusKeywords empty(){
-    return new HealthStatusKeywords(new HashSet<>());
+    return new HealthStatusKeywords(new LinkedHashSet<>());
   }
 
   public static HealthStatusKeywords of(Set<String> keywords) {
@@ -26,7 +26,7 @@ public class HealthStatusKeywords implements Serializable {
   }
 
   private HealthStatusKeywords(Set<String> healthStatusKeywords) {
-    this.healthStatusKeywords = new HashSet<>(healthStatusKeywords);
+    this.healthStatusKeywords = new LinkedHashSet<>(healthStatusKeywords);
   }
 
   protected HealthStatusKeywords() {

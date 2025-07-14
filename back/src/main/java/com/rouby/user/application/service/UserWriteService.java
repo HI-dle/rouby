@@ -34,8 +34,8 @@ public class UserWriteService {
 
   @Transactional
   public void create(CreateUserCommand command) {
-//    ensureEmailNotTaken(command.email());
-//    ensureEmailVerified(command.email());
+    ensureEmailNotTaken(command.email());
+    ensureEmailVerified(command.email());
 
     User user = User.create(command.email(), command.password(), passwordEncoder);
     userRepository.save(user);
