@@ -1,8 +1,8 @@
 <script setup>
 import Header from '@/components/Header.vue'
-import { useActivaPath } from '@/shared/composable/useActivePath'
+import { useActivePath } from '@/shared/composable/useActivePath'
 
-const { isActive } = useActivaPath()
+const { isActive } = useActivePath()
 </script>
 
 <template>

@@ -1,10 +1,10 @@
 <script setup>
 import { Calendar, ClipboardList, Clock3, User, MoreHorizontal, Plus } from 'lucide-vue-next'
-import { useActivaPath } from '@/shared/composable/useActivePath'
+import { useActivePath } from '@/shared/composable/useActivePath'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
-const { isActive } = useActivaPath()
+const { isActive } = useActivePath()
 
 const createOrModify = ['create', 'modify']
 const isNotCreateOrModify = () => !createOrModify.some((p) => route.path.includes(p))

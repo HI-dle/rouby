@@ -1,6 +1,6 @@
 import { useRoute } from 'vue-router'
 
-export const useActivaPath = () => {
+export const useActivePath = () => {
   const route = useRoute()
 
   const isActive = (path) => route.path.startsWith(path)

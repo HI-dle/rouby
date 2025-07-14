@@ -46,9 +46,9 @@
 
     <!-- 구분선 -->
     <div class="flex items-center w-full text-sm text-gray-500">
-      <div class="flex-grow border-t border-gray-200"></div>
+      <hr class="flex-grow border-t border-gray-200" />
       <span class="px-3 text-main-color">또는</span>
-      <div class="flex-grow border-t border-gray-200"></div>
+      <hr class="flex-grow border-t border-gray-200" />
     </div>
 
     <div class="flex justify-between gap-4 mb-6">
