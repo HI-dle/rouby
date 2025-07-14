@@ -1,13 +1,13 @@
 <template>
   <div class="main-container">
-    <div class="sub-main-container !pb-8 justify-between">
-      <div class="text-center">
+    <div class="sub-main-container !pb-8 justify-items-center">
+      <div class="text-center mb-6">
         <h1 class="text-2xl font-bold text-main-color mb-2">회원가입</h1>
       </div>
       <!-- 회원가입 폼 -->
-      <SignupForm />
+      <SignupForm class="mb-8"/>
       <!-- 약관 텍스트 -->
-      <div class="px-6">
+      <div class="px-6 mt-auto mb-8">
         <p class="text-xs text-gray-500 text-center leading-relaxed">
           해당 계정은
           <a href="/privacy" class="text-main-color underline">개인정보처리방침</a>으로 Rouby에서

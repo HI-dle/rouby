@@ -99,7 +99,7 @@ export function useSignupForm() {
     () => form.verificationCode,
     (newCode, oldCode) => {
       if (newCode !== oldCode && errors.verificationCode) {
-        delete errors.verificationCode
+        errors.verificationCode = ''
       }
 
       if (newCode.length === 6 && !form.isEmailVerified) {
