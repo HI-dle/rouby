@@ -1,9 +1,9 @@
 package com.rouby.common.config;
 
+import com.rouby.user.application.service.TokenProvider;
 import com.rouby.user.infrastructure.security.filter.JwtAuthenticationFilter;
 import com.rouby.user.infrastructure.security.handler.JwtAccessDeniedHandler;
 import com.rouby.user.infrastructure.security.handler.JwtAuthenticationEntryPoint;
-import com.rouby.user.infrastructure.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +25,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final TokenProvider tokenProvider;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -39,7 +39,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtTokenProvider);
+        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(
+            tokenProvider);
 
         http
             .csrf(csrf -> csrf.disable())

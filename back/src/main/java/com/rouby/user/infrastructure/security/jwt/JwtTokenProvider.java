@@ -1,5 +1,6 @@
 package com.rouby.user.infrastructure.security.jwt;
 
+import com.rouby.user.application.service.TokenProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-public class JwtTokenProvider {
+public class JwtTokenProvider implements TokenProvider {
   public static final String BEARER_PREFIX = "Bearer ";
   private static final String CLAIM_ROLE_KEY = "role";
   private static final String CLAIM_EMAIL_KEY = "email";
@@ -36,22 +37,29 @@ public class JwtTokenProvider {
     this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
   }
 
+  @Override
   public String createAccessToken(String userId, String role, String email) {
     String token = createToken(userId, role, email, tokenTime);
     return addBearerPrefix(token);
   }
 
-  private String createToken(String userId, String role, String email, long expiration) {
-    return Jwts.builder()
-        .subject(userId)
-        .claim(CLAIM_ROLE_KEY, role)
-        .claim(CLAIM_EMAIL_KEY, email)
-        .issuedAt(new Date())
-        .expiration(new Date(System.currentTimeMillis() + expiration))
-        .signWith(key)
-        .compact();
+  @Override
+  public String removeBearerPrefix(String token) {
+    if (token != null && token.startsWith(BEARER_PREFIX)) {
+      return token.substring(BEARER_PREFIX.length());
+    }
+    return token;
+  }
+  @Override
+  public String resolveToken(HttpServletRequest request) {
+    String bearerToken = request.getHeader("Authorization");
+    if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
+      return bearerToken;
+    }
+    return null;
   }
 
+  @Override
   public boolean validateToken(String token) {
     try {
       Jwts.parser()
@@ -68,18 +76,31 @@ public class JwtTokenProvider {
     }
   }
 
+  @Override
   public Long getUserId(String token) {
     return Long.parseLong(getClaimFromToken(token, Claims::getSubject));
   }
 
+  @Override
   public String getEmail(String token) {
     return getClaimFromToken(token, claims -> claims.get(CLAIM_EMAIL_KEY, String.class));
   }
 
+  @Override
   public String getRole(String token) {
     return getClaimFromToken(token, claims -> claims.get(CLAIM_ROLE_KEY, String.class));
   }
 
+  private String createToken(String userId, String role, String email, long expiration) {
+    return Jwts.builder()
+        .subject(userId)
+        .claim(CLAIM_ROLE_KEY, role)
+        .claim(CLAIM_EMAIL_KEY, email)
+        .issuedAt(new Date())
+        .expiration(new Date(System.currentTimeMillis() + expiration))
+        .signWith(key)
+        .compact();
+  }
 
   private <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
     Claims claims = Jwts.parser()
@@ -93,21 +114,5 @@ public class JwtTokenProvider {
   private String addBearerPrefix(String token) {
     return BEARER_PREFIX + token;
   }
-
-  public String removeBearerPrefix(String token) {
-    if (token != null && token.startsWith(BEARER_PREFIX)) {
-      return token.substring(BEARER_PREFIX.length());
-    }
-    return token;
-  }
-  public String resolveToken(HttpServletRequest request) {
-    String bearerToken = request.getHeader("Authorization");
-    if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
-      return bearerToken;
-    }
-    return null;
-  }
-
-
 
 }

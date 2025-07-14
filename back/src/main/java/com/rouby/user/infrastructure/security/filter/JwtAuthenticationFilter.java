@@ -1,9 +1,9 @@
 package com.rouby.user.infrastructure.security.filter;
 
 import com.rouby.common.exception.type.ApiErrorCode;
+import com.rouby.user.application.service.TokenProvider;
 import com.rouby.user.domain.entity.UserRole;
 import com.rouby.user.infrastructure.security.dto.SecurityUser;
-import com.rouby.user.infrastructure.security.jwt.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,7 +27,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-  private final JwtTokenProvider jwtTokenProvider;
+  private final TokenProvider tokenProvider;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -35,13 +35,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
 
     try {
-      String token = jwtTokenProvider.resolveToken(request);
+      String token = tokenProvider.resolveToken(request);
 
-      if (token != null && jwtTokenProvider.validateToken(token)) {
+      if (token != null && tokenProvider.validateToken(token)) {
 
-        Long userId = jwtTokenProvider.getUserId(token);
-        String email = jwtTokenProvider.getEmail(token);
-        String role = jwtTokenProvider.getRole(token);
+        Long userId = tokenProvider.getUserId(token);
+        String email = tokenProvider.getEmail(token);
+        String role = tokenProvider.getRole(token);
 
         SecurityUser userDetails = SecurityUser.builder()
             .id(userId)

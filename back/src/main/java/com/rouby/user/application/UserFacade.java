@@ -17,10 +17,10 @@ import com.rouby.user.application.dto.command.SendEmailVerificationCommand;
 import com.rouby.user.application.dto.command.VerifyEmailCommand;
 import com.rouby.user.application.dto.info.LoginInfo;
 import com.rouby.user.application.exception.UserException;
+import com.rouby.user.application.service.TokenProvider;
 import com.rouby.user.application.service.UserReadService;
 import com.rouby.user.application.service.UserWriteService;
 import com.rouby.user.domain.entity.User;
-import com.rouby.user.infrastructure.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +32,7 @@ public class UserFacade {
   private final UserReadService userReadService;
   private final UserWriteService userWriteService;
   private final EmailService emailService;
-  private final JwtTokenProvider jwtTokenProvider;
+  private final TokenProvider tokenProvider;
   private final URIProperty uriProperty;
 
   public void sendEmailVerification(SendEmailVerificationCommand command) {
@@ -92,7 +92,7 @@ public class UserFacade {
   public LoginInfo login(LoginCommand command){
     User user = userReadService.validUser(command);
 
-    return new LoginInfo(jwtTokenProvider.createAccessToken(
+    return new LoginInfo(tokenProvider.createAccessToken(
         user.getId().toString(),
         user.getRole().toString(),
         user.getEmail()));
