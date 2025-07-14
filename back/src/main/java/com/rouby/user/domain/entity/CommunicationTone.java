@@ -3,8 +3,8 @@ package com.rouby.user.domain.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.Getter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -15,20 +15,20 @@ public class CommunicationTone implements Serializable {
 
   @JdbcTypeCode(SqlTypes.JSON)
   @Column(columnDefinition = "jsonb")
-  private List<String> roubyCommunicationTone;
+  private Set<String> roubyCommunicationTone;
 
   protected CommunicationTone() {
   }
 
-  private CommunicationTone(List<String> communicationTone) {
-    this.roubyCommunicationTone = new ArrayList<>(communicationTone);
+  private CommunicationTone(Set<String> communicationTone) {
+    this.roubyCommunicationTone = new HashSet<>(communicationTone);
   }
 
   public static CommunicationTone empty(){
-    return new CommunicationTone(new ArrayList<>());
+    return new CommunicationTone(new HashSet<>());
   }
 
-  public static CommunicationTone of(List<String> communicationTone) {
+  public static CommunicationTone of(Set<String> communicationTone) {
     return new CommunicationTone(communicationTone);
   }
 }
