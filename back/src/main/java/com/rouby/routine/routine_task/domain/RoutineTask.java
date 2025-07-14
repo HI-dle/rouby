@@ -4,8 +4,12 @@ import com.rouby.common.jpa.BaseEntity;
 import com.rouby.routine.routine_task.domain.enums.TaskType;
 import com.rouby.routine.routine_task.domain.enums.AlarmOffsetType;
 import com.rouby.routine.routine_task.domain.enums.OverrideType;
+import com.rouby.routine.routine_task.domain.enums.Weekday;
 import jakarta.persistence.*;
+import java.util.List;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "routine_tasks")
@@ -36,8 +40,8 @@ public class RoutineTask extends BaseEntity {
   @Column(name = "alarm_offset_type", length = 10)
   private AlarmOffsetType alarmOffsetType;
 
-  @Column(name = "recurrence_rule", length = 1000)
-  private String recurrenceRule;
+  @Convert(converter = RRuleConverter.class)
+  private RecurrenceRule recurrenceRule;
 
   @Embedded
   private RoutineTimeInfo routineTimeInfo;
@@ -50,5 +54,7 @@ public class RoutineTask extends BaseEntity {
   @JoinColumn(name = "parent_routine_task_id")
   private RoutineTask parentRoutineTask;
 
-
+  @JdbcTypeCode(SqlTypes.JSON)
+  @Column(name = "weekdays", columnDefinition = "jsonb", nullable = false)
+  private List<Weekday> weekdays;
 }

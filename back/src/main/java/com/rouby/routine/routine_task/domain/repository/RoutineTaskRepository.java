@@ -1,5 +1,7 @@
 package com.rouby.routine.routine_task.domain.repository;
 
-public interface RoutineTaskRepository {
+import com.rouby.routine.routine_task.domain.RoutineTask;
 
+public interface RoutineTaskRepository {
+  <S extends RoutineTask> S save(S entity);
 }
