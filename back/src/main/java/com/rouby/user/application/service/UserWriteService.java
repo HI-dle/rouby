@@ -1,6 +1,7 @@
 package com.rouby.user.application.service;
 
 import static com.rouby.user.application.exception.UserErrorCode.DUPLICATE_EMAIL;
+import static com.rouby.user.application.exception.UserErrorCode.EMAIL_NOT_VERIFIED;
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION;
 import static com.rouby.user.application.exception.UserErrorCode.PASSWORD_TOKEN_EXPIRED;
 import static com.rouby.user.application.exception.UserErrorCode.USER_NOT_FOUND;
@@ -52,10 +53,10 @@ public class UserWriteService {
 
   private void ensureEmailVerified(String email) {
     VerificationEmailCode code = verificationEmailCodeStorage.findByEmail(email)
-            .orElseThrow(() -> UserException.from(INVALID_EMAIL_VERIFICATION));
+            .orElseThrow(() -> UserException.from(EMAIL_NOT_VERIFIED));
 
     if(!code.isVerified()) {
-      throw UserException.from(INVALID_EMAIL_VERIFICATION);
+      throw UserException.from(EMAIL_NOT_VERIFIED);
     }
   }
 

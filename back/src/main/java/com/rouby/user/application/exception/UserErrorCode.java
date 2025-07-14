@@ -21,7 +21,9 @@ public enum UserErrorCode implements ErrorCode {
   INVALID_PASSWORD("비밀번호가 일치하지 않습니다.", "INVALID_PASSWORD", HttpStatus.UNAUTHORIZED),
   USER_NOT_FOUND("존재하지 않는 유저입니다.", "USER_NOT_FOUND", HttpStatus.NOT_FOUND),
   PASSWORD_TOKEN_EXPIRED("비밀번호 재설정 토큰이 만료되었습니다.", "PASSWORD_TOKEN_EXPIRED",
-      HttpStatus.UNAUTHORIZED);
+      HttpStatus.UNAUTHORIZED),
+  EMAIL_NOT_VERIFIED("이메일 인증이 필요합니다. 인증 후 이용해주세요.", "EMAIL_NOT_VERIFIED", HttpStatus.UNAUTHORIZED),
+  ;
 
   private final String message;
   private final String code;

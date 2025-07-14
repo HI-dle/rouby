@@ -11,20 +11,20 @@ import org.hibernate.type.SqlTypes;
 
 @Getter
 @Embeddable
-public class CommunicationTone implements Serializable {
+public class HealthStatusKeywords implements Serializable {
 
   @JdbcTypeCode(SqlTypes.JSON)
   @Column(columnDefinition = "jsonb")
-  private Set<String> roubyCommunicationTone;
+  private Set<String> healthStatusKeywords;
 
-  public static CommunicationTone empty(){
-    return new CommunicationTone(new LinkedHashSet<>());
+  public static HealthStatusKeywords empty(){
+    return new HealthStatusKeywords(new LinkedHashSet<>());
   }
 
-  private CommunicationTone(Set<String> communicationTone) {
-    this.roubyCommunicationTone = new LinkedHashSet<>(communicationTone);
+  private HealthStatusKeywords(Set<String> healthStatusKeywords) {
+    this.healthStatusKeywords = new LinkedHashSet<>(healthStatusKeywords);
   }
 
-  protected CommunicationTone() {
+  protected HealthStatusKeywords() {
   }
 }

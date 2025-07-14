@@ -2,6 +2,7 @@ package com.rouby.user.presentation;
 
 import static com.rouby.notification.email.application.exception.EmailErrorCode.EMAIL_SEND_FAILED;
 import static com.rouby.user.application.exception.UserErrorCode.DUPLICATE_EMAIL;
+import static com.rouby.user.application.exception.UserErrorCode.EMAIL_NOT_VERIFIED;
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -95,7 +96,7 @@ class UserControllerTest extends ControllerTestSupport {
 
     //given
     CreateUserRequest request = UserRequestStub.toCreateRequest();
-    doThrow(UserException.from(INVALID_EMAIL_VERIFICATION))
+    doThrow(UserException.from(EMAIL_NOT_VERIFIED))
         .when(userFacade).createUser(request.toCommand());
 
     //when and then
