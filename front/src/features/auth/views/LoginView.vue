@@ -1,8 +1,8 @@
 <template>
   <div class="main-container">
-    <div class="sub-main-container !pb-8">
+    <div class="sub-main-container !pb-8 justify-center">
       <!-- 로고 -->
-      <div class="text-center my-6">
+      <div class="text-center mb-6">
         <img :src="HeaderIcon" alt="Rouby Logo" class="mx-auto h-10 w-auto" />
         <p class="text-sm text-violet-500 mt-1">나만의 루틴 비서, 루비를 만나보세요!</p>
       </div>
