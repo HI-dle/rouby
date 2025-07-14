@@ -98,16 +98,15 @@
       </BaseButton>
     </div>
 
-    <!-- 약관 텍스트 -->
-    <div class="mt-4">
-      <p class="text-xs text-gray-500 text-center leading-relaxed">
-        해당 계정은
-        <a href="/privacy" class="text-main-color underline">개인정보처리방침</a>으로 Rouby에서
-        제공하는 서비스를 모두 이용하실 수 있습니다. 가입 시, 계정 및 서비스 이용약관,
-        <a href="/privacy" class="text-main-color underline">개인정보처리방침</a>에 동의하는 것으로
-        간주합니다.
+    <div class="text-center">
+      <p class="text-sm text-gray-600 mt-6">
+        이미 계정이 있으신가요?
+        <RouterLink to="/auth/login" class="text-main-color font-medium hover:underline">
+          로그인하기
+        </RouterLink>
       </p>
     </div>
+
   </form>
 </template>
 
