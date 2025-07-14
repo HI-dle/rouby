@@ -1,8 +1,8 @@
 <template>
   <div class="main-container">
-    <div class="sub-main-container">
+    <div class="sub-main-container !pb-8 justify-between">
       <!-- 로고 -->
-      <div class="text-center mb-6">
+      <div class="text-center my-6">
         <img :src="HeaderIcon" alt="Rouby Logo" class="mx-auto h-10 w-auto" />
         <p class="text-sm text-violet-500 mt-1">나만의 루틴 비서, 루비를 만나보세요!</p>
       </div>
@@ -20,7 +20,7 @@
 
       <!-- 하단 링크 -->
       <div class="text-center text-xs space-x-2 mt-8">
-        <a href="#"  class="text-main-color hover:underline " >비밀번호 찾기</a>
+        <a href="#" class="text-main-color hover:underline">비밀번호 찾기</a>
         <span>|</span>
         <a href="#" class="text-main-color hover:underline">아이디 찾기</a>
         <span>|</span>

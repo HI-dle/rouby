@@ -37,7 +37,7 @@ export function toCreateSchedulePayload(form) {
     startTime: form.allDay ? MIDNIGHT : toTime(form.start),
     endDate: form.allDay ? toDate(getNxtDate(form.end)) : toDate(form.end),
     endTime: form.allDay ? MIDNIGHT : toTime(form.end),
-    recurrenceRule: !form.reapet
+    recurrenceRule: !form.repeat
       ? null
       : {
           freq: form.repeat !== BIWEEKLY ? form.reapet : WEEKELY,
