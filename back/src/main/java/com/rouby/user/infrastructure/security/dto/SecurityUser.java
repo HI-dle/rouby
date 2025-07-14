@@ -1,4 +1,4 @@
-package com.rouby.auth.dto;
+package com.rouby.user.infrastructure.security.dto;
 
 import com.rouby.user.domain.entity.UserRole;
 import java.util.Collection;
@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 @Builder
 @AllArgsConstructor
-public class UserDetailsImpl implements UserDetails {
+public class SecurityUser implements UserDetails {
 
     private final Long id;
     private final String email;

@@ -1,7 +1,7 @@
 package com.rouby.common.security;
 
 
-import com.rouby.auth.dto.UserDetailsImpl;
+import com.rouby.user.infrastructure.security.dto.SecurityUser;
 import java.util.Collections;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,7 +16,7 @@ public class WithMockCustomUserSecurityContextFactory implements WithSecurityCon
     public SecurityContext createSecurityContext(WithMockCustomUser customUserPrincipal) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
 
-        UserDetailsImpl principal = UserDetailsImpl.builder()
+        SecurityUser principal = SecurityUser.builder()
                 .id(customUserPrincipal.id())
                 .email(customUserPrincipal.email())
                 .build();

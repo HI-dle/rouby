@@ -7,12 +7,12 @@ import static com.rouby.user.application.exception.UserErrorCode.PASSWORD_TOKEN_
 import static com.rouby.user.application.exception.UserErrorCode.USER_NOT_FOUND;
 
 import com.rouby.common.exception.CustomException;
-import com.rouby.user.application.dto.SaveVerificationCodeCommand;
-import com.rouby.user.application.dto.VerifyEmailCommand;
 import com.rouby.user.application.dto.command.CreateUserCommand;
 import com.rouby.user.application.dto.command.FindPasswordCommand;
 import com.rouby.user.application.dto.command.ResetPasswordByTokenCommand;
 import com.rouby.user.application.dto.command.ResetPasswordCommand;
+import com.rouby.user.application.dto.command.SaveVerificationCodeCommand;
+import com.rouby.user.application.dto.command.VerifyEmailCommand;
 import com.rouby.user.application.exception.UserErrorCode;
 import com.rouby.user.application.exception.UserException;
 import com.rouby.user.application.service.verification.VerificationEmailCode;

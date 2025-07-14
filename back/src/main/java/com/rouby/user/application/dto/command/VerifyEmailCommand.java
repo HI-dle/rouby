@@ -1,4 +1,4 @@
-package com.rouby.user.application.dto;
+package com.rouby.user.application.dto.command;
 
 public record VerifyEmailCommand(
     String email,

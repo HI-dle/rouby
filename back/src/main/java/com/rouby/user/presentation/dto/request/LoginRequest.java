@@ -1,6 +1,6 @@
-package com.rouby.auth.presentation.dto.request;
+package com.rouby.user.presentation.dto.request;
 
-import com.rouby.auth.application.dto.request.LoginCommand;
+import com.rouby.user.application.dto.command.LoginCommand;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;

@@ -1,6 +1,6 @@
 package com.rouby.schedule.presentation;
 
-import com.rouby.auth.dto.UserDetailsImpl;
+import com.rouby.user.infrastructure.security.dto.SecurityUser;
 import com.rouby.schedule.application.facade.ScheduleFacade;
 import com.rouby.schedule.presentation.dto.request.CreateScheduleRequest;
 import java.net.URI;
@@ -25,8 +25,7 @@ public class ScheduleController {
   @PreAuthorize("hasAnyRole('USER')")
   @PostMapping
   public ResponseEntity<Void> createSchedule(
-      @AuthenticationPrincipal UserDetailsImpl userDetails,
-      @RequestBody @Validated CreateScheduleRequest req) {
+      @AuthenticationPrincipal SecurityUser userDetails, @RequestBody @Validated CreateScheduleRequest req) {
 
     Long scheduleId = scheduleFacade.createSchedule(userDetails.getId(), req.toCommand());
     URI location =  ServletUriComponentsBuilder

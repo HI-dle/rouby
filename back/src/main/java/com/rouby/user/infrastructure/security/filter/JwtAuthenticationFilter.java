@@ -1,11 +1,9 @@
-package com.rouby.auth.filter;
+package com.rouby.user.infrastructure.security.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rouby.auth.dto.UserDetailsImpl;
-import com.rouby.auth.jwt.JwtTokenProvider;
-import com.rouby.auth.presentation.dto.request.LoginRequest;
 import com.rouby.common.exception.type.ApiErrorCode;
+import com.rouby.user.application.service.TokenProvider;
 import com.rouby.user.domain.entity.UserRole;
+import com.rouby.user.infrastructure.security.dto.SecurityUser;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,15 +12,10 @@ import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
@@ -34,7 +27,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-  private final JwtTokenProvider jwtTokenProvider;
+  private final TokenProvider tokenProvider;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -42,15 +35,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
 
     try {
-      String token = jwtTokenProvider.resolveToken(request);
+      String token = tokenProvider.resolveToken(request);
 
-      if (token != null && jwtTokenProvider.validateToken(token)) {
+      if (token != null && tokenProvider.validateToken(token)) {
 
-        Long userId = jwtTokenProvider.getUserId(token);
-        String email = jwtTokenProvider.getEmail(token);
-        String role = jwtTokenProvider.getRole(token);
+        Long userId = tokenProvider.getUserId(token);
+        String email = tokenProvider.getEmail(token);
+        String role = tokenProvider.getRole(token);
 
-        UserDetailsImpl userDetails = UserDetailsImpl.builder()
+        SecurityUser userDetails = SecurityUser.builder()
             .id(userId)
             .email(email)
             .password(null)

@@ -1,4 +1,4 @@
-package com.rouby.auth.application.dto.request;
+package com.rouby.user.application.dto.command;
 
 /**
  * @Date : 2025. 07. 08.

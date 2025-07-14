@@ -1,6 +1,6 @@
-package com.rouby.user.presentation.dto;
+package com.rouby.user.presentation.dto.request;
 
-import com.rouby.user.application.dto.SendEmailVerificationCommand;
+import com.rouby.user.application.dto.command.SendEmailVerificationCommand;
 import jakarta.validation.constraints.Email;
 
 public record SendEmailVerificationRequest(
