@@ -6,6 +6,7 @@ const router = createRouter({
     {
       path: '/',
       component: () => import('@/layouts/DefaultLayout.vue'),
+      redirect: '/routine/daily',
       children: [
         {
           path: 'schedule',
@@ -63,9 +64,8 @@ const router = createRouter({
           name: 'signup',
           component: () => import('@/features/auth/views/SignupView.vue'),
         },
-      ]
+      ],
     },
-
   ],
 })
 
