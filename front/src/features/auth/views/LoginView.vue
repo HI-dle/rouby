@@ -1,6 +1,6 @@
 <template>
   <div class="main-container">
-    <div class="sub-main-container !pb-8 justify-between">
+    <div class="sub-main-container !pb-8">
       <!-- 로고 -->
       <div class="text-center my-6">
         <img :src="HeaderIcon" alt="Rouby Logo" class="mx-auto h-10 w-auto" />
