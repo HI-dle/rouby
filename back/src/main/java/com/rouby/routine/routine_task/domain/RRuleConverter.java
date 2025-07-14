@@ -15,7 +15,7 @@ public class RRuleConverter implements AttributeConverter<RecurrenceRule, String
   @Override
   public RecurrenceRule convertToEntityAttribute(String dbData) {
     if (dbData == null || dbData.isBlank()) return null;
-    return RecurrenceRule.fromRRule(dbData); // 문자열 → 객체
+    return RecurrenceRule.from(dbData); // 문자열 → 객체
   }
 }
 

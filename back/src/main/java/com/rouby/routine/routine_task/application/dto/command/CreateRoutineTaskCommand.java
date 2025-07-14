@@ -1,5 +1,6 @@
 package com.rouby.routine.routine_task.application.dto.command;
 
+import com.rouby.routine.routine_task.domain.RecurrenceRule;
 import com.rouby.routine.routine_task.domain.RoutineTask;
 import com.rouby.routine.routine_task.domain.RoutineTimeInfo;
 import com.rouby.routine.routine_task.domain.enums.AlarmOffsetType;
@@ -29,13 +30,18 @@ public record CreateRoutineTaskCommand(
         .userId(writerId)
         .title(title)
         .taskType(TaskType.valueOf(taskType.name()))
+        .targetValue(targetValue)
         .alarmOffsetType(AlarmOffsetType.parse(alarmOffsetMinutes))
+        .recurrenceRule(RecurrenceRule.builder()
+            .byDays(byDays.stream().map(x -> Weekday.valueOf(x.name())).toList())
+            .until(until)
+            .build())
         .routineTimeInfo(RoutineTimeInfo.builder()
             .startDate(startDate)
             .endDate(until.toLocalDate())
             .time(time)
+            .weekdays(byDays.stream().map(x -> Weekday.valueOf(x.name())).toList())
             .build())
-        .weekdays(byDays.stream().map(x -> Weekday.valueOf(x.name())).toList())
         .build();
   }
 

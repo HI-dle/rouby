@@ -3,6 +3,7 @@ package com.rouby.routine.routine_task.presentaion;
 import com.rouby.auth.dto.UserDetailsImpl;
 import com.rouby.routine.routine_task.application.facade.RoutineTaskFacade;
 import com.rouby.routine.routine_task.presentaion.dto.request.CreateRoutineTaskRequest;
+import com.rouby.user.infrastructure.security.dto.SecurityUser;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class RoutineTaskController {
   @PreAuthorize("hasAnyRole('USER')")
   @PostMapping
   public ResponseEntity<Void> createRoutineTask(
-      @AuthenticationPrincipal UserDetailsImpl userDetails,
+      @AuthenticationPrincipal SecurityUser userDetails,
       @RequestBody @Validated CreateRoutineTaskRequest req) {
     Long routineTaskId = routineTaskFacade.createRoutineTask(req.toCommand(userDetails.getId()));
     URI location = ServletUriComponentsBuilder

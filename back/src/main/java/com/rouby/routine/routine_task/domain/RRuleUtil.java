@@ -34,8 +34,8 @@ public class RRuleUtil {
             .collect(Collectors.toList());
       } else if (part.startsWith("UNTIL=")) {
         String untilStr = part.substring("UNTIL=".length());
-        LocalDateTime ldt = LocalDateTime.parse(untilStr, DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'X'"));
-        until = ZonedDateTime.ofInstant(ldt.toInstant(ZoneOffset.UTC), ZoneOffset.UTC);
+        OffsetDateTime odt = OffsetDateTime.parse(untilStr, DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmssX"));
+        until = odt.toZonedDateTime();
       }
     }
 
