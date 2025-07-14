@@ -39,6 +39,31 @@ include::{snippets}/user-create-invalid-password/request-fields.adoc[]
 ===== HTTP 응답 (400 Bad Request)
 include::{snippets}/user-create-invalid-password/http-response.adoc[]
 
+
+=== 실패: 서비스 오류
+
+==== 중복된 이메일
+
+===== HTTP 요청
+include::{snippets}/user-create-duplicate-email/http-request.adoc[]
+
+===== 요청 필드
+include::{snippets}/user-create-duplicate-email/request-fields.adoc[]
+
+===== HTTP 응답 (409 conflict)
+include::{snippets}/user-create-duplicate-email/http-response.adoc[]
+
+==== 인증되지 않은 이메일
+
+===== HTTP 요청
+include::{snippets}/user-create-unverified-email/http-request.adoc[]
+
+===== 요청 필드
+include::{snippets}/user-create-unverified-email/request-fields.adoc[]
+
+===== HTTP 응답 (401 Unauthorized)
+include::{snippets}/user-create-unverified-email/http-response.adoc[]
+
 // --- 이메일 인증 코드 전송 API
 == 이메일 인증 코드 전송 API
 
@@ -96,7 +121,7 @@ include::{snippets}/user-email-verification-request-send-failed/http-response.ad
 ---
 
 // --- 이메일 인증 코드 검증 API
-== 이메일 인증 코드 전송 API
+== 이메일 인증 코드 검증 API
 
 === 성공: 이메일 인증 코드 검증 요청
 
@@ -185,3 +210,14 @@ include::{snippets}/validate-reset-token-200/query-parameters.adoc[]
 
 ==== HTTP 응답 (200 Request)
 include::{snippets}/validate-reset-token-200/http-response.adoc[]
+
+== 비밀번호 변경 API
+
+==== HTTP 요청
+include::{snippets}/reset-password-204/http-request.adoc[]
+
+==== 요청 필드
+include::{snippets}/reset-password-204/request-fields.adoc[]
+
+==== HTTP 응답 (204 NoContent)
+include::{snippets}/reset-password-204/http-response.adoc[]

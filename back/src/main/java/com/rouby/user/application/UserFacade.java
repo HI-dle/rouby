@@ -1,30 +1,38 @@
 package com.rouby.user.application;
 
 
-import com.rouby.common.props.URIProperty;
-import com.rouby.user.application.dto.SaveVerificationCodeCommand;
-import com.rouby.user.application.dto.SendEmailVerificationCommand;
-import com.rouby.user.application.dto.VerifyEmailCommand;
-import com.rouby.user.application.dto.command.FindPasswordCommand;
-import com.rouby.user.application.dto.command.ResetPasswordCommand;
 import static com.rouby.user.application.exception.UserErrorCode.DUPLICATE_EMAIL;
 
-import com.rouby.user.application.dto.command.CreateUserCommand;
+import com.rouby.common.props.URIProperty;
 import com.rouby.common.utils.CodeGenerator;
 import com.rouby.notification.email.application.exception.EmailException;
 import com.rouby.notification.email.application.service.EmailService;
+import com.rouby.user.application.dto.command.CreateUserCommand;
+import com.rouby.user.application.dto.command.FindPasswordCommand;
+import com.rouby.user.application.dto.command.LoginCommand;
+import com.rouby.user.application.dto.command.ResetPasswordByTokenCommand;
+import com.rouby.user.application.dto.command.ResetPasswordCommand;
+import com.rouby.user.application.dto.command.SaveVerificationCodeCommand;
+import com.rouby.user.application.dto.command.SendEmailVerificationCommand;
+import com.rouby.user.application.dto.command.VerifyEmailCommand;
+import com.rouby.user.application.dto.info.LoginInfo;
 import com.rouby.user.application.exception.UserException;
+import com.rouby.user.application.service.TokenProvider;
 import com.rouby.user.application.service.UserReadService;
 import com.rouby.user.application.service.UserWriteService;
+import com.rouby.user.domain.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class UserFacade {
+
   private final UserReadService userReadService;
   private final UserWriteService userWriteService;
   private final EmailService emailService;
+  private final TokenProvider tokenProvider;
   private final URIProperty uriProperty;
 
   public void sendEmailVerification(SendEmailVerificationCommand command) {
@@ -67,11 +75,28 @@ public class UserFacade {
     }
   }
 
-  public void resetPasswordByToken(ResetPasswordCommand command) {
+  public void resetPasswordByToken(ResetPasswordByTokenCommand command) {
     userWriteService.resetPasswordByToken(command);
   }
 
   public void validatePasswordToken(String email, String token) {
     userWriteService.validatePasswordToken(email, token);
   }
+
+  public void resetPassword(Long userId, ResetPasswordCommand command) {
+    userWriteService.resetPassword(userId, command);
+  }
+
+
+  @Transactional(readOnly = true)
+  public LoginInfo login(LoginCommand command){
+    User user = userReadService.validUser(command);
+
+    return new LoginInfo(tokenProvider.createAccessToken(
+        user.getId().toString(),
+        user.getRole().toString(),
+        user.getEmail()));
+  }
+
+
 }

@@ -8,14 +8,13 @@ import org.hibernate.validator.constraints.Length;
 
 @Builder
 public record ResetPasswordRequest(
-    @NotBlank @Length(min = 8, max = 32) @ValidPassword String newPassword,
-    @NotBlank String token,
-    @NotBlank String email) {
-
+    @NotBlank @Length(min = 8, max = 32) @ValidPassword String currentPassword,
+    @NotBlank @Length(min = 8, max = 32) @ValidPassword String newPassword
+) {
   public ResetPasswordCommand toCommand() {
     return ResetPasswordCommand.builder()
+        .currentPassword(currentPassword)
         .newPassword(newPassword)
-        .token(token)
         .build();
   }
 }
