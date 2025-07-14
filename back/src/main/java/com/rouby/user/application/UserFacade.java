@@ -1,18 +1,19 @@
 package com.rouby.user.application;
 
 
-import com.rouby.common.props.URIProperty;
-import com.rouby.user.application.dto.SaveVerificationCodeCommand;
-import com.rouby.user.application.dto.SendEmailVerificationCommand;
-import com.rouby.user.application.dto.VerifyEmailCommand;
-import com.rouby.user.application.dto.command.FindPasswordCommand;
-import com.rouby.user.application.dto.command.ResetPasswordCommand;
 import static com.rouby.user.application.exception.UserErrorCode.DUPLICATE_EMAIL;
 
-import com.rouby.user.application.dto.command.CreateUserCommand;
+import com.rouby.common.props.URIProperty;
 import com.rouby.common.utils.CodeGenerator;
 import com.rouby.notification.email.application.exception.EmailException;
 import com.rouby.notification.email.application.service.EmailService;
+import com.rouby.user.application.dto.SaveVerificationCodeCommand;
+import com.rouby.user.application.dto.SendEmailVerificationCommand;
+import com.rouby.user.application.dto.VerifyEmailCommand;
+import com.rouby.user.application.dto.command.CreateUserCommand;
+import com.rouby.user.application.dto.command.FindPasswordCommand;
+import com.rouby.user.application.dto.command.ResetPasswordByTokenCommand;
+import com.rouby.user.application.dto.command.ResetPasswordCommand;
 import com.rouby.user.application.exception.UserException;
 import com.rouby.user.application.service.UserReadService;
 import com.rouby.user.application.service.UserWriteService;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UserFacade {
+
   private final UserReadService userReadService;
   private final UserWriteService userWriteService;
   private final EmailService emailService;
@@ -67,11 +69,16 @@ public class UserFacade {
     }
   }
 
-  public void resetPasswordByToken(ResetPasswordCommand command) {
+  public void resetPasswordByToken(ResetPasswordByTokenCommand command) {
     userWriteService.resetPasswordByToken(command);
   }
 
   public void validatePasswordToken(String email, String token) {
     userWriteService.validatePasswordToken(email, token);
   }
+
+  public void resetPassword(Long userId, ResetPasswordCommand command) {
+    userWriteService.resetPassword(userId, command);
+  }
+
 }

@@ -23,13 +23,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 class ScheduleControllerTest extends ControllerTestSupport {
-
   @WithMockCustomUser
   @DisplayName("스케쥴 생성 API - 성공 201")
   @Test
   void createSchedule() throws Exception {
 
-    // given
     var request = CreateScheduleRequestFixture.getSuccessRequest();
     var content = objectMapper.writeValueAsString(request);
 
@@ -55,7 +53,8 @@ class ScheduleControllerTest extends ControllerTestSupport {
             requestFields(
                 fieldWithPath("title").description("일정 제목"),
                 fieldWithPath("memo").description("일정 메모"),
-                fieldWithPath("alarmOffsetMinutes").description("일정 전 알림 시간 설정 (5, 10, 15, 30 분 / 1, 2시간 / 1, 2 일 / 1주일 전"),
+                fieldWithPath("alarmOffsetMinutes").description(
+                    "일정 전 알림 시간 설정 (5, 10, 15, 30 분 / 1, 2시간 / 1, 2 일 / 1주일 전"),
                 fieldWithPath("startDate").description("시작 일자 (예: 2025-08-30)"),
                 fieldWithPath("startTime").description("시작 시간 (예: 13:00:00)"),
                 fieldWithPath("endDate").description("종료 일자 (예: 2025-08-30)"),

@@ -6,9 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 /**
- * @Date : 2025. 07. 08.
- *
  * @author : hanjihoon
+ * @Date : 2025. 07. 08.
  */
 @Getter
 @RequiredArgsConstructor

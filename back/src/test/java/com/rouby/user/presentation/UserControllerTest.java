@@ -3,7 +3,9 @@ package com.rouby.user.presentation;
 import static com.rouby.notification.email.application.exception.EmailErrorCode.EMAIL_SEND_FAILED;
 import static com.rouby.user.application.exception.UserErrorCode.DUPLICATE_EMAIL;
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -27,6 +29,7 @@ import com.rouby.user.application.exception.UserException;
 import com.rouby.user.presentation.dto.CreateUserRequest;
 import com.rouby.user.presentation.dto.SendEmailVerificationRequest;
 import com.rouby.user.presentation.dto.request.FindPasswordRequest;
+import com.rouby.user.presentation.dto.request.ResetPasswordByTokenRequest;
 import com.rouby.user.presentation.dto.request.ResetPasswordRequest;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -402,7 +405,7 @@ class UserControllerTest extends ControllerTestSupport {
   @Test
   void resetPasswordByToken() throws Exception {
     //given
-    ResetPasswordRequest request = ResetPasswordRequest.builder()
+    ResetPasswordByTokenRequest request = ResetPasswordByTokenRequest.builder()
         .newPassword("newPassword")
         .email("test@email.com")
         .token(UUID.randomUUID().toString())
@@ -456,6 +459,39 @@ class UserControllerTest extends ControllerTestSupport {
             queryParameters(
                 parameterWithName("email").description("사용자 이메일"),
                 parameterWithName("token").description("비밀번호 검증 토큰"))
+        ));
+  }
+
+  @WithMockCustomUser
+  @DisplayName("비밀번호 변경 API")
+  @Test
+  void resetPassword() throws Exception {
+
+    //given
+    ResetPasswordRequest request = ResetPasswordRequest.builder()
+        .currentPassword("currentPassword!")
+        .newPassword("newPassword!")
+        .build();
+
+    Long userId = 1L;
+
+    doNothing().when(userFacade).resetPassword(eq(userId), any());
+
+    //when
+    ResultActions resultActions = mockMvc.perform(patch("/api/v1/users/password/reset")
+        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+        .content(objectMapper.writeValueAsString(request))
+        .contentType(MediaType.APPLICATION_JSON));
+
+    // then
+    resultActions.andExpect(status().isNoContent())
+        .andDo(print())
+        .andDo(document("reset-password-204",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestFields(
+                fieldWithPath("currentPassword").description("현재 비밀번호"),
+                fieldWithPath("newPassword").description("새 비밀번호"))
         ));
   }
 }

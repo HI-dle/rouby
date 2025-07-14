@@ -7,15 +7,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "app")
 public class URIProperty {
 
-  private final String baseUrl;
+  private final String frontUrl;
 
-  public URIProperty(String baseUrl) {
-    this.baseUrl = baseUrl;
+  public URIProperty(String frontUrl) {
+    this.frontUrl = frontUrl;
 
   }
 
   public String generateResetPasswordLink(String email, String token) {
-   return baseUrl + "/api/v1/users/password/reset/token?email=" + email + "&token=" + token;
+   return frontUrl + "/auth/password/reset/token?email=" + email + "&token=" + token;
   }
 
 }
