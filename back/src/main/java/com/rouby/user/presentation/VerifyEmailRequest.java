@@ -1,6 +1,6 @@
 package com.rouby.user.presentation;
 
-import com.rouby.user.application.dto.VerifyEmailCommand;
+import com.rouby.user.application.dto.command.VerifyEmailCommand;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 

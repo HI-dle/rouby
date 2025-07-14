@@ -1,14 +1,17 @@
 package com.rouby.user.presentation;
 
 import com.rouby.user.application.UserFacade;
-import com.rouby.user.presentation.dto.CreateUserRequest;
-import com.rouby.user.presentation.dto.SendEmailVerificationRequest;
+import com.rouby.user.infrastructure.security.dto.SecurityUser;
+import com.rouby.user.presentation.dto.request.CreateUserRequest;
 import com.rouby.user.presentation.dto.request.FindPasswordRequest;
+import com.rouby.user.presentation.dto.request.ResetPasswordByTokenRequest;
 import com.rouby.user.presentation.dto.request.ResetPasswordRequest;
+import com.rouby.user.presentation.dto.request.SendEmailVerificationRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,7 +49,7 @@ public class UserController {
 
   @PatchMapping("/password/reset/token")
   public ResponseEntity<Void> resetPasswordByToken(
-      @RequestBody ResetPasswordRequest request) {
+      @RequestBody ResetPasswordByTokenRequest request) {
 
     userFacade.resetPasswordByToken(request.toCommand());
 
@@ -71,4 +74,13 @@ public class UserController {
   }
 
 
+  @PatchMapping("/password/reset")
+  public ResponseEntity<Void> resetPassword(
+      @AuthenticationPrincipal SecurityUser securityUser,
+      @RequestBody @Valid ResetPasswordRequest request) {
+
+    userFacade.resetPassword(securityUser.getId(), request.toCommand());
+
+    return ResponseEntity.noContent().build();
+  }
 }

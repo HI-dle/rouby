@@ -1,15 +1,19 @@
 package com.rouby.user.application.service;
 
 import static com.rouby.user.application.exception.UserErrorCode.DUPLICATE_EMAIL;
+import static com.rouby.user.application.exception.UserErrorCode.EMAIL_NOT_VERIFIED;
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION;
 import static com.rouby.user.application.exception.UserErrorCode.PASSWORD_TOKEN_EXPIRED;
 import static com.rouby.user.application.exception.UserErrorCode.USER_NOT_FOUND;
 
-import com.rouby.user.application.dto.SaveVerificationCodeCommand;
-import com.rouby.user.application.dto.VerifyEmailCommand;
+import com.rouby.common.exception.CustomException;
 import com.rouby.user.application.dto.command.CreateUserCommand;
 import com.rouby.user.application.dto.command.FindPasswordCommand;
+import com.rouby.user.application.dto.command.ResetPasswordByTokenCommand;
 import com.rouby.user.application.dto.command.ResetPasswordCommand;
+import com.rouby.user.application.dto.command.SaveVerificationCodeCommand;
+import com.rouby.user.application.dto.command.VerifyEmailCommand;
+import com.rouby.user.application.exception.UserErrorCode;
 import com.rouby.user.application.exception.UserException;
 import com.rouby.user.application.service.verification.VerificationEmailCode;
 import com.rouby.user.application.service.verification.VerificationEmailCodeStorage;
@@ -49,10 +53,10 @@ public class UserWriteService {
 
   private void ensureEmailVerified(String email) {
     VerificationEmailCode code = verificationEmailCodeStorage.findByEmail(email)
-            .orElseThrow(() -> UserException.from(INVALID_EMAIL_VERIFICATION));
+            .orElseThrow(() -> UserException.from(EMAIL_NOT_VERIFIED));
 
     if(!code.isVerified()) {
-      throw UserException.from(INVALID_EMAIL_VERIFICATION);
+      throw UserException.from(EMAIL_NOT_VERIFIED);
     }
   }
 
@@ -82,7 +86,19 @@ public class UserWriteService {
   }
 
   @Transactional
-  public void resetPasswordByToken(ResetPasswordCommand command) {
+  public void resetPassword(Long userId, ResetPasswordCommand command) {
+    User user = userRepository.findById(userId).orElseThrow(() ->
+        new CustomException(UserErrorCode.USER_NOT_FOUND));
+
+    if (!passwordEncoder.matches(command.currentPassword(), user.getPassword())) {
+      throw new CustomException(UserErrorCode.INVALID_PASSWORD);
+    }
+
+    user.updatePassword(passwordEncoder, command.newPassword());
+  }
+
+  @Transactional
+  public void resetPasswordByToken(ResetPasswordByTokenCommand command) {
     User user = userRepository.findByEmail(command.email())
         .orElseThrow(() -> UserException.from(USER_NOT_FOUND));
 

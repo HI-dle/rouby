@@ -1,6 +1,6 @@
 package com.rouby.common.jpa;
 
-import com.rouby.auth.dto.UserDetailsImpl;
+import com.rouby.user.infrastructure.security.dto.SecurityUser;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,7 +17,7 @@ public class AuditorAwareImpl implements AuditorAware<Long> {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null
                 && authentication.isAuthenticated()
-                && authentication.getPrincipal() instanceof UserDetailsImpl userDetails) {
+                && authentication.getPrincipal() instanceof SecurityUser userDetails) {
             return Optional.of(userDetails.getId());
         }
         return Optional.empty();

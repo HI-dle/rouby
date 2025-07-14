@@ -76,7 +76,7 @@ public class Schedule extends BaseEntity {
     this.memo = memo;
     this.period = period;
     this.routineActivateDate = routineActivateDate;
-    this.alarmOffsetType = AlarmOffsetType.parse(alarmOffsetMinutes);
+    this.alarmOffsetType = alarmOffsetMinutes != null ? AlarmOffsetType.parse(alarmOffsetMinutes) : null;
     this.recurrenceRule = recurrenceRule;
 
     validate();
@@ -87,6 +87,9 @@ public class Schedule extends BaseEntity {
     if (routineActivateDate != null) {
       if (!period.isValidRoutineActivateDate(routineActivateDate)) {
         throw new IllegalArgumentException("루틴 활성 일자가 일정보다 나중일 수 없습니다.");
+      }
+      if (isRoutineActivateDateOneMoreDayBefore()) {
+        throw new IllegalArgumentException("루틴 활성 일자가 하루 이상 전일 수 없습니다.");
       }
     }
   }
@@ -99,5 +102,9 @@ public class Schedule extends BaseEntity {
   private void appendChildSchedule(Schedule schedule) {
     if (this.children == null) this.children = new ArrayList<>();
     this.children.add(schedule);
+  }
+
+  private boolean isRoutineActivateDateOneMoreDayBefore() {
+    return routineActivateDate.isBefore(LocalDate.now().minusDays(1));
   }
 }
