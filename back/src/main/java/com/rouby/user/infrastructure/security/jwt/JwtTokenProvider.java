@@ -39,8 +39,7 @@ public class JwtTokenProvider implements TokenProvider {
 
   @Override
   public String createAccessToken(String userId, String role, String email) {
-    String token = createToken(userId, role, email, tokenTime);
-    return addBearerPrefix(token);
+    return createToken(userId, role, email, tokenTime);
   }
 
   @Override
@@ -109,10 +108,6 @@ public class JwtTokenProvider implements TokenProvider {
         .parseSignedClaims(removeBearerPrefix(token))
         .getPayload();
     return claimsResolver.apply(claims);
-  }
-
-  private String addBearerPrefix(String token) {
-    return BEARER_PREFIX + token;
   }
 
 }
