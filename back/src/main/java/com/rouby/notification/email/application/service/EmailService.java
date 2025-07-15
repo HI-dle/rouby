@@ -1,11 +1,14 @@
 package com.rouby.notification.email.application.service;
 
+import static com.rouby.notification.email.application.exception.EmailErrorCode.*;
 import static com.rouby.notification.email.application.exception.EmailErrorCode.EMAIL_LOG_SAVE_FAILED;
 import static com.rouby.notification.email.application.exception.EmailErrorCode.EMAIL_SEND_FAILED;
+import static com.rouby.notification.email.domain.entity.EmailType.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rouby.notification.email.application.dto.SendEmailCommand;
+import com.rouby.notification.email.application.exception.EmailErrorCode;
 import com.rouby.notification.email.application.exception.EmailException;
 import com.rouby.notification.email.application.messaging.EmailSender;
 import com.rouby.notification.email.application.utils.EmailTemplateCreator;
@@ -16,6 +19,7 @@ import com.rouby.notification.email.domain.entity.EmailType;
 import com.rouby.notification.email.domain.repository.EmailLogRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -30,6 +34,9 @@ public class EmailService {
   private final EmailLogRepository emailLogRepository;
   private final EmailTemplateCreator emailTemplateCreator;
   private final ObjectMapper objectMapper;
+
+  @Value("${email.send-limit}")
+  private long sendLimit;
 
   @Transactional(propagation = Propagation.NOT_SUPPORTED)
   public void send(SendEmailCommand command) {
@@ -50,20 +57,26 @@ public class EmailService {
       }
       throw EmailException.from(EMAIL_SEND_FAILED);
 
-
     } catch (Exception e) {
       log.error("이메일 로그 저장에 실패하였습니다: {}", e.getMessage());
       throw EmailException.from(EMAIL_LOG_SAVE_FAILED);
     }
   }
 
+  public void checkSendLimit(String email, EmailType type) {
+    long todaySentCount = emailLogRepository.countSentEmailIsToday(email, type);
+    if (todaySentCount >= sendLimit) {
+      throw EmailException.from(EMAIL_LIMIT_EXCEEDED);
+    }
+  }
+
   private void saveSentLog(String text, String email, String type) {
     emailLogRepository.save(EmailLog.sent(
-        EmailContent.of(text), EmailAddress.of(email), EmailType.of(type)));
+        EmailContent.of(text), EmailAddress.of(email), of(type)));
   }
 
   private void saveFailedLog(String text, String email, String type) {
     emailLogRepository.save(EmailLog.failed(
-        EmailContent.of(text), EmailAddress.of(email), EmailType.of(type)));
+        EmailContent.of(text), EmailAddress.of(email), of(type)));
   }
 }
