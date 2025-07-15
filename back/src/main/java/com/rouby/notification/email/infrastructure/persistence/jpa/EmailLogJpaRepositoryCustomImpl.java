@@ -27,7 +27,7 @@ public class EmailLogJpaRepositoryCustomImpl implements EmailLogJpaRepositoryCus
         .select(emailLog.count())
         .from(emailLog)
         .where(
-            emailLog.address.emilAddress.eq(email),
+            emailLog.address.emailAddress.eq(email),
             emailLog.type.eq(emailType),
             emailLog.status.eq(SENT),
             emailLog.createdAt.goe(startOfDay),

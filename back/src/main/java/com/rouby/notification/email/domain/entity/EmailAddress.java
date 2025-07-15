@@ -13,7 +13,7 @@ import org.springframework.util.StringUtils;
 public class EmailAddress implements Serializable {
 
   @Column(name = "email_address", nullable = false)
-  private String emilAddress;
+  private String emailAddress;
 
   public static EmailAddress of(String emilAddress) {
     if (!StringUtils.hasText(emilAddress)) {
@@ -22,8 +22,8 @@ public class EmailAddress implements Serializable {
     return new EmailAddress(emilAddress);
   }
 
-  private EmailAddress(String emilAddress) {
-    this.emilAddress = emilAddress;
+  private EmailAddress(String emailAddress) {
+    this.emailAddress = emailAddress;
   }
 
   protected EmailAddress() {}
