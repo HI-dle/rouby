@@ -1,5 +1,6 @@
 package com.rouby.user.presentation;
 
+import static com.rouby.notification.email.application.exception.EmailErrorCode.EMAIL_LIMIT_EXCEEDED;
 import static com.rouby.notification.email.application.exception.EmailErrorCode.EMAIL_SEND_FAILED;
 import static com.rouby.user.application.exception.UserErrorCode.DUPLICATE_EMAIL;
 import static com.rouby.user.application.exception.UserErrorCode.EMAIL_NOT_VERIFIED;
@@ -25,7 +26,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.rouby.common.security.WithMockCustomUser;
 import com.rouby.common.support.ControllerTestSupport;
+import com.rouby.notification.email.application.exception.EmailErrorCode;
 import com.rouby.notification.email.application.exception.EmailException;
+import com.rouby.notification.email.domain.entity.EmailType;
 import com.rouby.user.application.exception.UserException;
 import com.rouby.user.presentation.dto.request.CreateUserRequest;
 import com.rouby.user.presentation.dto.request.FindPasswordRequest;
@@ -378,7 +381,7 @@ class UserControllerTest extends ControllerTestSupport {
   @WithMockCustomUser
   @DisplayName("비밀번호 찾기 API")
   @Test
-  void findPassword() throws Exception {
+  void findPassword_EmailSendLimitExceeded() throws Exception {
     //given
     FindPasswordRequest request = FindPasswordRequest.builder().email("test@email.com").build();
 
@@ -394,6 +397,31 @@ class UserControllerTest extends ControllerTestSupport {
     resultActions.andExpect(status().isNoContent())
         .andDo(print())
         .andDo(document("find-password-204",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestFields(
+                fieldWithPath("email").description("유저 이메일"))
+        ));
+  }
+
+  @WithMockCustomUser
+  @DisplayName("비밀번호 찾기 이메일 전송 제한 실패 API")
+  @Test
+  void findPassword() throws Exception {
+    //given
+    FindPasswordRequest request = FindPasswordRequest.builder().email("test@email.com").build();
+
+    doThrow(EmailException.from(EMAIL_LIMIT_EXCEEDED)).when(userFacade).findPassword(request.toCommand());
+
+    //when
+    ResultActions resultActions = mockMvc.perform(post("/api/v1/users/password/find")
+        .content(objectMapper.writeValueAsString(request))
+        .contentType(MediaType.APPLICATION_JSON));
+
+    // then
+    resultActions.andExpect(status().isTooManyRequests())
+        .andDo(print())
+        .andDo(document("find-password-email-send-limit-fail",
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
             requestFields(
