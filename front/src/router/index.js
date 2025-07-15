@@ -70,7 +70,7 @@ const router = createRouter({
       component: () => import('@/layouts/DefaultLayout.vue'),
       children: [
         {
-          path: '/password/reset',
+          path: 'password/reset',
           name: 'password-reset',
           component: () => import('@/features/user/views/MyPageResetPasswordView.vue'),
         },
