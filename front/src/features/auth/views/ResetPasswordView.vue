@@ -11,12 +11,12 @@
         </figure>
       </div>
       <!-- 비밀번호 변경 폼 -->
-      <PasswordForm />
+      <ResetPasswordForm />
     </div>
   </div>
 </template>
 
 <script setup>
-import PasswordForm from '@/features/auth/components/PasswordForm.vue'
+import ResetPasswordForm from '@/features/auth/components/ResetPasswordForm.vue'
 import PasswordLockIcon from '@/assets/password_lock.svg'
 </script>
