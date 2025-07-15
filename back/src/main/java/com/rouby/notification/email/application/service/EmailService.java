@@ -8,7 +8,6 @@ import static com.rouby.notification.email.domain.entity.EmailType.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rouby.notification.email.application.dto.SendEmailCommand;
-import com.rouby.notification.email.application.exception.EmailErrorCode;
 import com.rouby.notification.email.application.exception.EmailException;
 import com.rouby.notification.email.application.messaging.EmailSender;
 import com.rouby.notification.email.application.utils.EmailTemplateCreator;
