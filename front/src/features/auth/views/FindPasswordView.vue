@@ -1,6 +1,6 @@
 <template>
   <div class="main-container">
-    <div class="sub-main-container">
+    <div class="sub-main-container !pb-8">
       <div class="text-center">
         <h1 class="text-2xl font-bold text-main-color mb-2">비밀번호 찾기</h1>
       </div>
