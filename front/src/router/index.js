@@ -6,6 +6,7 @@ const router = createRouter({
     {
       path: '/',
       component: () => import('@/layouts/DefaultLayout.vue'),
+      redirect: '/routine/daily',
       children: [
         {
           path: 'schedule',
@@ -63,7 +64,7 @@ const router = createRouter({
           name: 'signup',
           component: () => import('@/features/auth/views/SignupView.vue'),
         },
-      ]
+      ],
     },
     {
       path: '/onboarding',
@@ -77,6 +78,17 @@ const router = createRouter({
       ],
     },
 
+    {
+      path: '/user',
+      component: () => import('@/layouts/DefaultLayout.vue'),
+      children: [
+        {
+          path: 'password/reset',
+          name: 'password-reset',
+          component: () => import('@/features/user/views/MyPageResetPasswordView.vue'),
+        },
+      ],
+    },
   ],
 })
 

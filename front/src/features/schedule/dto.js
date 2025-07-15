@@ -37,12 +37,12 @@ export function toCreateSchedulePayload(form) {
     startTime: form.allDay ? MIDNIGHT : toTime(form.start),
     endDate: form.allDay ? toDate(getNxtDate(form.end)) : toDate(form.end),
     endTime: form.allDay ? MIDNIGHT : toTime(form.end),
-    recurrenceRule: !form.reapet
+    recurrenceRule: !form.repeat
       ? null
       : {
-          freq: form.repeat !== BIWEEKLY ? form.reapet : WEEKELY,
+          freq: form.repeat !== BIWEEKLY ? form.repeat : WEEKELY,
           byDay: weekdays.length < 1 ? null : weekdays.map((d) => d).join(','),
-          interval: !form.reapet ? null : form.repeat !== BIWEEKLY ? 1 : 2,
+          interval: !form.repeat ? null : form.repeat !== BIWEEKLY ? 1 : 2,
           until: '2100-01-01T00:00Z', // null로 하거나, 현재 화면으로 선택 불가
         },
   }

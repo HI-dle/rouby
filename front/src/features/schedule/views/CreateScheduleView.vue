@@ -8,7 +8,7 @@ defineOptions({
   name: 'CreateScheduleView',
 })
 
-const { form, errors, errorModal, onDateTimeInput, onSubmit } = useScheduleForm()
+const { form, errors, inputRefs, errorModal, onDateTimeInput, onSubmit } = useScheduleForm()
 const { goBackOrPath } = useGoBack()
 const { autoResize } = useAutoResize()
 
@@ -33,6 +33,7 @@ const onCancel = () => goBackOrPath()
   <ScheduleForm
     v-model:form="form"
     :errors="errors"
+    :inputRefs="inputRefs"
     :errorModal="errorModal"
     @inputDatetime="onDateTimeInput"
     @submit="handleSubmit"
