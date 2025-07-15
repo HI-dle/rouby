@@ -73,7 +73,7 @@ const router = createRouter({
         {
           path: 'health-check',
           name: 'health-check',
-          component: () => import('@/features/onBoard/views/OnboardHealthCheckView.vue'),
+          component: () => import('@/features/onboard/views/OnboardHealthCheckView.vue'),
         },
       ],
     },
