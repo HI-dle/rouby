@@ -27,7 +27,7 @@
         @blur="onBlur"
         @focus="(e) => onFocus(e, idx)"
         @paste="(e) => onPaste(e, idx)"
-        class="w-12 h-12 text-center text-xl border rounded-lg transition-colors"
+        class="aspect-square w-[clamp(2.5rem,10vw,3rem)] text-center text-xl border rounded-lg transition-colors"
         :class="{
           'border-gray-300 focus:border-focus-border-color focus:shadow-focus-shadow-color': !errorMessage,
           'border-error-color focus:shadow-error-color': !!errorMessage,
