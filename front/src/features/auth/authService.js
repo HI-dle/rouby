@@ -4,11 +4,7 @@ import {
   verifyEmail as verifyEmailApi,
   signup as signupApi,
 } from './api.js'
-import {
-  toSignupPayload,
-  toEmailVerificationPayload,
-  toVerifyCodePayload
-} from './dto.js'
+import { toSignupPayload, toEmailVerificationPayload, toVerifyCodePayload } from './dto.js'
 
 export const requestEmailVerification = wrapApi(
   (email) => requestEmailVerificationApi(toEmailVerificationPayload(email)),
@@ -28,20 +24,15 @@ export const verifyEmailCode = wrapApi(
 
 export const signup = wrapApi(
   async (form) => {
-    try {
-      const res = await signupApi(toSignupPayload(form))
+    const res = await signupApi(toSignupPayload(form))
 
-      return {
-        data: {
-          ok: res.status === 201
-        }
-      }
-    } catch (error) {
-      throw error
+    return {
+      data: {
+        ok: res.status === 201,
+      },
     }
   },
   {
-    fieldMessages: {},
     fallbackMessage: '가입에 실패했습니다.',
   },
 )

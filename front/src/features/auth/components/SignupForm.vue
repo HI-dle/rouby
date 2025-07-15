@@ -18,6 +18,7 @@
           <BaseButton
             @click="requestVerification"
             class="max-w-24"
+            :disabled="!isVerificationButtonEnabled"
           >
             {{ loading.emailVerification ? '발송중…' : '인증하기' }}
           </BaseButton>
@@ -131,5 +132,6 @@ const {
   validatePasswordField,
   validatePasswordConfirmField,
   formatTime,
+  isVerificationButtonEnabled,
 } = useSignupForm()
 </script>
