@@ -3,10 +3,12 @@
     <div class="sub-main-container">
       <!-- 키워드 입력 폼 -->
 
+      <div class="mt-32">
       <PersonalStateForm
         :user-name="userName"
         :selected-health="selectedHealth"
       />
+      </div>
 
       <!-- 다음 단계 이동 -->
       <div class="w-full mt-10 pt-10 text-center">

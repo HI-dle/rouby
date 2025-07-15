@@ -27,7 +27,7 @@
         @focus="isFocused = true"
         @blur="isFocused = false"
       />
-      라고 불러줘
+      (이)라고 불러줘
     </div>
 
     <FieldError v-if="nicknameError" :message="nicknameError" class="mt-2" />

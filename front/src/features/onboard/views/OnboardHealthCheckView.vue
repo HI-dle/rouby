@@ -2,7 +2,9 @@
 <template>
   <div class="main-container">
     <div class="sub-main-container">
+      <div class="mt-32">
       <HealthCheckForm ref="healthFormRef" :user-name="userName" />
+      </div>
 
       <div class="w-full mt-10 pt-10 text-center">
         <RouterLink
