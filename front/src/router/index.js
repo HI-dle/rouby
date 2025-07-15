@@ -75,6 +75,11 @@ const router = createRouter({
           name: 'health-check',
           component: () => import('@/features/onboard/views/OnboardHealthCheckView.vue'),
         },
+        {
+          path: 'nickname-setting',
+          name: 'nickname-setting',
+          component: () => import('@/features/onboard/views/OnboardNicknameSettingView.vue'),
+        },
       ],
     },
 
