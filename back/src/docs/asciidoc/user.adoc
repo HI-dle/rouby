@@ -224,7 +224,7 @@ include::{snippets}/reset-password-204/http-request.adoc[]
 include::{snippets}/reset-password-204/request-fields.adoc[]
 
 ==== HTTP 응답 (204 NoContent)
-include::{snippets}/reset-password-204/http-response.adoc[
+include::{snippets}/reset-password-204/http-response.adoc[]
 
 ---
 
