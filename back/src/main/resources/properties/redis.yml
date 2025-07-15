@@ -13,6 +13,6 @@ spring:
   config.activate.on-profile: test
   data:
     redis:
-      host:
-      port:
-      username:
+      host: localhost
+      port: 6379
+      username: default

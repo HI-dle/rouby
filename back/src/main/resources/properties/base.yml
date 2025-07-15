@@ -7,6 +7,9 @@ spring:
 server:
   port: 8080
 
+app:
+  front-url: 'http://localhost:5173'
+
 ---
 # test 환경
 spring:

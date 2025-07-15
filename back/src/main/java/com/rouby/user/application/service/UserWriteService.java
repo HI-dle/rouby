@@ -1,18 +1,28 @@
 package com.rouby.user.application.service;
 
+import static com.rouby.user.application.exception.UserErrorCode.DUPLICATE_EMAIL;
+import static com.rouby.user.application.exception.UserErrorCode.EMAIL_NOT_VERIFIED;
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION;
+import static com.rouby.user.application.exception.UserErrorCode.PASSWORD_TOKEN_EXPIRED;
+import static com.rouby.user.application.exception.UserErrorCode.USER_NOT_FOUND;
 
-import com.rouby.user.application.dto.SaveVerificationCodeCommand;
-import com.rouby.user.application.dto.VerifyEmailCommand;
+import com.rouby.common.exception.CustomException;
 import com.rouby.user.application.dto.command.CreateUserCommand;
+import com.rouby.user.application.dto.command.FindPasswordCommand;
+import com.rouby.user.application.dto.command.ResetPasswordByTokenCommand;
+import com.rouby.user.application.dto.command.ResetPasswordCommand;
+import com.rouby.user.application.dto.command.SaveVerificationCodeCommand;
+import com.rouby.user.application.dto.command.VerifyEmailCommand;
 import com.rouby.user.application.exception.UserErrorCode;
 import com.rouby.user.application.exception.UserException;
-import com.rouby.user.domain.entity.User;
 import com.rouby.user.application.service.verification.VerificationEmailCode;
-import com.rouby.user.domain.repository.UserRepository;
 import com.rouby.user.application.service.verification.VerificationEmailCodeStorage;
+import com.rouby.user.application.service.verification.VerificationPasswordTokenStorage;
+import com.rouby.user.domain.entity.User;
+import com.rouby.user.domain.repository.UserRepository;
 import com.rouby.user.domain.service.UserPasswordEncoder;
 import jakarta.transaction.Transactional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,17 +33,31 @@ public class UserWriteService {
   private final UserRepository userRepository;
   private final UserPasswordEncoder passwordEncoder;
   private final VerificationEmailCodeStorage verificationEmailCodeStorage;
+  private final VerificationPasswordTokenStorage verificationPasswordCodeStorage;
 
   @Transactional
   public void create(CreateUserCommand command) {
-    //Todo. command.email() 인증 여부 확인
-
-    if (userRepository.existsByEmail(command.email())) {
-      throw UserException.of(UserErrorCode.DUPLICATE_EMAIL);
-    }
+    ensureEmailNotTaken(command.email());
+    ensureEmailVerified(command.email());
 
     User user = User.create(command.email(), command.password(), passwordEncoder);
     userRepository.save(user);
+    verificationEmailCodeStorage.delete(command.email());
+  }
+
+  private void ensureEmailNotTaken(String email) {
+    if (userRepository.existsByEmail(email)) {
+      throw UserException.from(DUPLICATE_EMAIL);
+    }
+  }
+
+  private void ensureEmailVerified(String email) {
+    VerificationEmailCode code = verificationEmailCodeStorage.findByEmail(email)
+            .orElseThrow(() -> UserException.from(EMAIL_NOT_VERIFIED));
+
+    if(!code.isVerified()) {
+      throw UserException.from(EMAIL_NOT_VERIFIED);
+    }
   }
 
   public void saveVerificationCode(SaveVerificationCodeCommand command) {
@@ -42,6 +66,10 @@ public class UserWriteService {
 
   public void deleteVerificationCode(String email) {
     verificationEmailCodeStorage.delete(email);
+  }
+
+  public void deletePasswordLinkCode(String email) {
+    verificationPasswordCodeStorage.deleteByEmail(email);
   }
 
   public void verifyEmail(VerifyEmailCommand command) {
@@ -55,5 +83,50 @@ public class UserWriteService {
 
     code.verified();
     verificationEmailCodeStorage.verified(command.email(), code);
+  }
+
+  @Transactional
+  public void resetPassword(Long userId, ResetPasswordCommand command) {
+    User user = userRepository.findById(userId).orElseThrow(() ->
+        new CustomException(UserErrorCode.USER_NOT_FOUND));
+
+    if (!passwordEncoder.matches(command.currentPassword(), user.getPassword())) {
+      throw new CustomException(UserErrorCode.INVALID_PASSWORD);
+    }
+
+    user.updatePassword(passwordEncoder, command.newPassword());
+  }
+
+  @Transactional
+  public void resetPasswordByToken(ResetPasswordByTokenCommand command) {
+    User user = userRepository.findByEmail(command.email())
+        .orElseThrow(() -> UserException.from(USER_NOT_FOUND));
+
+    validatePasswordToken(command.email(), command.token());
+
+    user.updatePassword( passwordEncoder, command.newPassword());
+
+    verificationPasswordCodeStorage.deleteByEmail(command.email());
+  }
+
+  public String getResetPasswordLink(FindPasswordCommand command) {
+    if(!userRepository.existsByEmail(command.email())) {
+      throw UserException.from(USER_NOT_FOUND);
+    }
+
+    String code = UUID.randomUUID().toString();
+
+    verificationPasswordCodeStorage.storePasswordResetToken(command.email(), code);
+
+    return code;
+  }
+
+  public void validatePasswordToken(String email, String token) {
+    String savedToken = verificationPasswordCodeStorage.getTokenByEmail(email)
+        .orElseThrow(() -> UserException.from(PASSWORD_TOKEN_EXPIRED));
+
+    if (!token.equals(savedToken)) {
+      throw UserException.from(PASSWORD_TOKEN_EXPIRED);
+    }
   }
 }

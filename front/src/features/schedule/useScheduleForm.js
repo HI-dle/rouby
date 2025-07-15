@@ -1,10 +1,12 @@
-import { reactive, watch } from 'vue'
+import { nextTick, reactive, watch } from 'vue'
 import { formatDateTime, toDateTime } from '@/shared/utils/formatDate'
 import { validateForm } from './validations'
 import { createSchedule } from './scheduleService'
 
 export const useScheduleForm = () => {
   const errors = reactive({})
+  const errorModal = reactive({})
+  const inputRefs = {}
 
   const createInitialForm = () => {
     const now = new Date()
@@ -28,8 +30,21 @@ export const useScheduleForm = () => {
     form[key] = form.allDay ? toDateTime(val, 0) : val
   }
 
+  const focusFirstInvalidInput = async () => {
+    for (const key in errors) {
+      if (errors[key]) {
+        await nextTick()
+        inputRefs[key]?.focus()
+        break
+      }
+    }
+  }
+
   const onSubmit = async (onSuccess, onError) => {
-    if (!validateForm(form, errors)) return false
+    if (!validateForm(form, errors)) {
+      focusFirstInvalidInput()
+      return false
+    }
 
     try {
       const scheduleId = await createSchedule(form)
@@ -59,6 +74,8 @@ export const useScheduleForm = () => {
   return {
     form,
     errors,
+    inputRefs,
+    errorModal,
     onDateTimeInput,
     onSubmit,
   }

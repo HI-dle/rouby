@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.5.3'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
+    id 'jacoco'
 }
 
 group = 'com'
@@ -20,15 +21,19 @@ configurations {
     }
     asciidoctorExt
 }
+ext {
+    set('snippetsDir', file("build/generated-snippets"))
+    set('springAiVersion', "1.0.0-M6")
+}
 
 repositories {
     mavenCentral()
-    maven { url = 'https://repo.spring.io/snapshot' }
 }
 
-ext {
-    set('snippetsDir', file("build/generated-snippets"))
-    set('springAiVersion', "1.0.0")
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+    }
 }
 
 dependencies {
@@ -63,21 +68,21 @@ dependencies {
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testRuntimeOnly 'com.h2database:h2' // 임시 추가, jsonb 사용 불가
+
     asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 
     //jwt
     implementation 'io.jsonwebtoken:jjwt:0.12.6'
-}
 
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
-    }
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.ai:spring-ai-openai-spring-boot-starter'
 }
 
 tasks.named('test') {
     outputs.dir snippetsDir
     useJUnitPlatform()
+    finalizedBy 'jacocoTestReport'
 }
 
 tasks.named('asciidoctor') {
@@ -108,6 +113,28 @@ tasks.register('copyDocument', Copy) {
 // build 의 의존작업 명시
 build {
     dependsOn copyDocument
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+            }
+            excludes = []
+        }
+    }
+}
+
+jacocoTestReport {
+    reports {
+        html.required.set(true)
+        csv.required.set(true)
+        xml.required.set(false)
+    }
+    finalizedBy 'jacocoTestCoverageVerification'
 }
 
 processResources.dependsOn('copyEnv')

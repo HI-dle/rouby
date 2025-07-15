@@ -1,0 +1,15 @@
+### 루틴 테스크 생성
+POST {{url}}/api/v1/routine-task
+Content-Type: application/json
+Authorization: {{access_token}}
+
+{
+  "title": "운동하기",
+  "taskType": "COUNT",
+  "targetValue": 10,
+  "alarmOffsetMinutes": 10,
+  "startDate": "2025-07-15",
+  "time": "07:30",
+  "byDays": ["MO", "WE", "FR"],
+  "until": "2025-08-16T07:30:00+09:00"
+}

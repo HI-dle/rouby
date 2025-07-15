@@ -1,7 +1,30 @@
 [[SCHEDULE-API]]
-== Schedule-API
+= Schedule-API
 
 [[Create-Schedule]]
-=== Schedule 등록
+== 일정 생성 API
 
-operation::create-schedule-201[snippets='http-request,http-response,request-fields,curl-request']
+=== 성공: 일정 생성 요청
+
+==== HTTP 요청
+include::{snippets}/create-schedule-201/http-request.adoc[]
+
+==== 요청 필드
+include::{snippets}/create-schedule-201/request-fields.adoc[]
+
+==== HTTP 응답 (200 OK)
+include::{snippets}/create-schedule-201/http-response.adoc[]
+
+=== 실패: 유효성 검증 오류
+
+==== 알람 설정 시간 오류
+
+===== HTTP 요청
+include::{snippets}/create-schedule-invalid-alarm-offset-400/http-request.adoc[]
+
+===== 요청 필드
+include::{snippets}/create-schedule-invalid-alarm-offset-400/request-fields.adoc[]
+
+===== HTTP 응답 (400 Bad Request)
+include::{snippets}/create-schedule-invalid-alarm-offset-400/http-response.adoc[]
+---

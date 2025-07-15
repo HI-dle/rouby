@@ -13,7 +13,7 @@ import {
   validateEmail,
   validatePassword,
   validatePasswordConfirm,
-  validateSignupForm
+  validateSignupForm,
 } from './validations.js'
 
 export function useSignupForm() {
@@ -40,7 +40,6 @@ export function useSignupForm() {
     emailVerification: false,
     codeVerification: false,
     signup: false,
-    passwordTokenVerification: false,
   })
 
   const {

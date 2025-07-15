@@ -42,6 +42,12 @@ public class User extends BaseEntity {
   private DailyActiveTime dailyActiveTime;
 
   @Embedded
+  private CurrentStatusKeywords currentStatusKeywords;
+
+  @Embedded
+  private HealthStatusKeywords healthStatusKeywords;
+
+  @Embedded
   private InterestKeywords interestKeywords;
 
   @Embedded
@@ -112,6 +118,8 @@ public class User extends BaseEntity {
     this.password = password;
     this.nickname = nickname;
     this.dailyActiveTime = DailyActiveTime.defaultTime();
+    this.currentStatusKeywords = CurrentStatusKeywords.empty();
+    this.healthStatusKeywords = HealthStatusKeywords.empty();
     this.interestKeywords = InterestKeywords.empty();
     this.communicationTone = CommunicationTone.empty();
     this.notificationSettings = createDefaultNotificationSettings();
@@ -129,5 +137,10 @@ public class User extends BaseEntity {
 
   protected User() {
     this.notificationSettings = new HashSet<>();
+  }
+
+  public void updatePassword(UserPasswordEncoder passwordEncoder, String newPassword) {
+    validatePassword(newPassword);
+    this.password = passwordEncoder.encode(newPassword);
   }
 }
