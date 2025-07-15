@@ -1,4 +1,4 @@
-package com.rouby.routine.domain.enums;
+package com.rouby.routine.routine_task.domain.enums;
 
 import lombok.Getter;
 
