@@ -3,7 +3,6 @@ package com.rouby.schedule.presentation.dto.request;
 import com.rouby.schedule.application.dto.command.CreateScheduleCommand;
 import com.rouby.schedule.application.dto.command.CreateScheduleCommand.RecurrenceRuleCommand;
 import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -22,7 +21,7 @@ public record CreateScheduleRequest (
   @NotBlank @Size(max = 500) String title,
   @Size(max = 10_000) String memo,
   @PositiveOrZero @Max(10080) Integer alarmOffsetMinutes,
-  @FutureOrPresent LocalDate routineActivateDate,
+  LocalDate routineActivateDate,
   @NotNull LocalDate startDate,
   @NotNull LocalTime startTime,
   @NotNull LocalDate endDate,

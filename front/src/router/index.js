@@ -6,17 +6,18 @@ const router = createRouter({
     {
       path: '/',
       component: () => import('@/layouts/DefaultLayout.vue'),
+      redirect: '/routine/daily',
       children: [
         {
           path: 'schedule',
           component: () => import('@/features/schedule/views/ScheduleLayout.vue'),
           redirect: '/schedule/daily',
           children: [
-            // {
-            //   path: 'create',
-            //   name: 'schedule-create',
-            //   component: () => import('@/features/schedule/views/CreateScheduleView.vue'),
-            // },
+            {
+              path: 'create',
+              name: 'schedule-create',
+              component: () => import('@/features/schedule/views/CreateScheduleView.vue'),
+            },
             {
               path: 'daily',
               name: 'schedule-daily',
@@ -52,6 +53,51 @@ const router = createRouter({
           path: 'mypage',
           name: 'mypage',
           component: () => import('@/features/user/views/MypageView.vue'),
+        },
+      ],
+    },
+    {
+      path: '/auth',
+      component: () => import('@/layouts/HeaderOnlyLayout.vue'),
+      children: [
+        {
+          path: 'login',
+          name: 'login',
+          component: () => import('@/features/auth/views/LoginView.vue'),
+        },
+      ],
+    },
+    {
+      path: '/auth',
+      component: () => import('@/layouts/HeaderOnlyLayout.vue'),
+      children: [
+        {
+          path: 'signup',
+          name: 'signup',
+          component: () => import('@/features/auth/views/SignupView.vue'),
+        },
+      ],
+    },
+    {
+      path: '/onboarding',
+      component: () => import('@/layouts/HeaderOnlyLayout.vue'),
+      children: [
+        {
+          path: 'health-check',
+          name: 'health-check',
+          component: () => import('@/features/onBoard/views/OnboardHealthCheckView.vue'),
+        },
+      ],
+    },
+
+    {
+      path: '/user',
+      component: () => import('@/layouts/DefaultLayout.vue'),
+      children: [
+        {
+          path: 'password/reset',
+          name: 'password-reset',
+          component: () => import('@/features/user/views/MyPageResetPasswordView.vue'),
         },
       ],
     },

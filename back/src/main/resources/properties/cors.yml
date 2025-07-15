@@ -1,0 +1,22 @@
+spring:
+  config.activate.on-profile: local
+cors:
+  allowed-origin-patterns:
+    - 'http://localhost:5173'
+    - 'http://localhost:3000'
+    - 'http://localhost:3001'
+  allowed-methods: GET,POST,PUT,PATCH,DELETE,OPTIONS
+  allowed-headers: '*'
+  max-age-sec: 3600
+
+---
+spring:
+  config.activate.on-profile: test
+cors:
+  allowed-origin-patterns:
+    - 'http://localhost:5173'
+    - 'http://localhost:3000'
+    - 'http://localhost:3001'
+  allowed-methods: GET,POST,PUT,PATCH,DELETE,OPTIONS
+  allowed-headers: '*'
+  max-age-sec: 3600

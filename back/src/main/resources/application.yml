@@ -5,10 +5,14 @@ spring:
     import:
       - optional:file:.env[.properties]
       - classpath:properties/base.yml
+      - classpath:properties/cors.yml
       - classpath:properties/datasource.yml
       - classpath:properties/jpa.yml
       - classpath:properties/redis.yml
       - classpath:properties/jwt.yml
+      - classpath:properties/ai.yml
+      - classpath:properties/mail.yml
+      - classpath:properties/thymeleaf.yml
   profiles:
     group:
       local: local

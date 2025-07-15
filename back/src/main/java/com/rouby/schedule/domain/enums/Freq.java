@@ -30,7 +30,7 @@ public enum Freq {
 
   public void validateInterval(Integer interval) {
     if (interval == null || !intervalValidator.test(interval)) {
-      throw new IllegalArgumentException(interval + "은(는) " + this.name() +"반복에 부적절한 인터벌 값입니다.");
+      throw new IllegalArgumentException(interval + "은(는) " + this.name() +" 반복에 부적절한 인터벌 값입니다.");
     }
   }
 }

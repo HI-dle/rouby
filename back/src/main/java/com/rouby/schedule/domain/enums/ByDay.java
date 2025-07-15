@@ -19,7 +19,7 @@ public enum ByDay {
 
     Set<ByDay> byDaySet = Collections.emptySet();
 
-    if (byDayStr != null && !byDayStr.trim().isEmpty()) {
+    if (byDayStr != null && !byDayStr.isBlank()) {
       try {
         byDaySet = Arrays.stream(byDayStr.split(","))
             .map(String::trim)

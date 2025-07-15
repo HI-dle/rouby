@@ -7,14 +7,19 @@ export default {
       colors: {
         'main-color': '#6667D0',
         'placeholder-color': '#6667D07A',
-        'placeholder-pink-color': '#9F7AEA',
+        'placeholder-pink-color': '#9F7AEA99',
         'content-color': '#4A5568',
         'error-color': '#EB4335',
+        'button-from': '#667EEA',
+        'button-to': '#764BA2',
+
+        // 아래 변경 가능
         'focus-color': '#f7f8fd',
         'border-color': '#e5e7eb',
         'focus-border-color': '#6366f1',
         'focus-shadow-color': 'rgba(99, 102, 241, 0.1)',
         'text-color': '#6d37df',
+        'auth-label-color': '#5A67D8',
 
         // tailwind - 뉴욕 테마
         background: 'hsl(var(--background))',
@@ -62,6 +67,11 @@ export default {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+      },
+      screens: {
+        xs: { max: '475px' },
+        xxs: { max: '400px' },
+        xxxs: { max: '340px' },
       },
     },
   },
