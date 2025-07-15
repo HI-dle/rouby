@@ -2,7 +2,9 @@
   <div class="main-container">
     <div class="sub-main-container">
 
-      <NicknameSettingForm v-model="nickname" />
+      <div class="mt-32">
+        <NicknameSettingForm v-model="nickname" />
+      </div>
 
       <!-- 다음 단계 이동 -->
       <div class="w-full mt-10 pt-10 text-center">
