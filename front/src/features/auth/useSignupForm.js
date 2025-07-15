@@ -3,7 +3,12 @@ import { useRouter } from 'vue-router'
 import { useTimer } from '@/utils/timerUtils.js'
 import { buildErrorCleaner, buildFieldValidator } from '@/utils/formUtils.js'
 
-import { requestEmailVerification, signup, verifyEmailCode } from './authService.js'
+import {
+  myPageResetPassword,
+  requestEmailVerification,
+  signup,
+  verifyEmailCode
+} from './authService.js'
 
 import {
   validateEmail,
@@ -20,6 +25,7 @@ export function useSignupForm() {
     verificationCode: '',
     password: '',
     passwordConfirm: '',
+    newPassword: '',
     isEmailVerified: false,
     isVerificationStep: false,
   })
@@ -29,6 +35,7 @@ export function useSignupForm() {
     verificationCode: '',
     password: '',
     passwordConfirm: '',
+    apiResult: '',
   })
 
   const loading = reactive({
@@ -51,6 +58,9 @@ export function useSignupForm() {
   const validatePasswordField = () => validateField(validatePassword, 'password', form.password)
   const validatePasswordConfirmField = () =>
     validateField(validatePasswordConfirm, 'passwordConfirm', form.password, form.passwordConfirm)
+
+  const validateNewPasswordConfirmField = () =>
+    validateField(validatePasswordConfirm, 'passwordConfirm', form.newPassword, form.passwordConfirm)
 
   const clearErrors = buildErrorCleaner(errors, [
     { field: 'email', get: (state) => state.email },
@@ -140,6 +150,23 @@ export function useSignupForm() {
     await requestVerification()
   }
 
+  const sendMyPageResetPassword  = async () => {
+    validatePasswordField(form)
+    validateNewPasswordConfirmField(form)
+    try {
+      const success = await myPageResetPassword(form)
+      if (success) {
+        //변경완료
+        await router.push('/auth/login')
+      }
+    } catch (err) {
+      if (err.fieldErrors) {
+        Object.assign(errors, err.fieldErrors)
+      } else {
+        errors.apiResult = '비밀번호 변경에 실패했습니다.'
+      }
+    }
+  }
   window.testSignup = {
     // 1. 폼 데이터 자동 입력
     fill: () => {
@@ -208,5 +235,7 @@ export function useSignupForm() {
     validateEmailField,
     validatePasswordField,
     validatePasswordConfirmField,
+    validateNewPasswordConfirmField,
+    sendMyPageResetPassword,
   }
 }
