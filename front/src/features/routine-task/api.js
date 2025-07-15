@@ -1,5 +1,5 @@
 import axios from '@/api/axios'
 
-export const createSchedule = (payload) => {
+export const createRoutineTask = (payload) => {
   return axios.post('/v1/routine-task', payload)
 }
