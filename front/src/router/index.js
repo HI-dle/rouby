@@ -71,14 +71,19 @@ const router = createRouter({
       component: () => import('@/layouts/HeaderOnlyLayout.vue'),
       children: [
         {
+          path: 'nickname-setting',
+          name: 'nickname-setting',
+          component: () => import('@/features/onboard/views/OnboardNicknameSettingView.vue'),
+        },
+        {
           path: 'health-check',
           name: 'health-check',
           component: () => import('@/features/onboard/views/OnboardHealthCheckView.vue'),
         },
         {
-          path: 'nickname-setting',
-          name: 'nickname-setting',
-          component: () => import('@/features/onboard/views/OnboardNicknameSettingView.vue'),
+          path: 'personal-state',
+          name: 'personal-state',
+          component: () => import('@/features/onboard/views/OnboardPersonalStateView.vue'),
         },
       ],
     },

@@ -1,8 +1,8 @@
-// composable/useHealthKeywordForm.js
+
 import { ref } from 'vue'
 import { isValidKeyword } from '@/components/composable/useKeywordValidator.js'
 
-export function useHealthKeywordForm() {
+export function useKeywordForm() {
   const keyword = ref('')
   const keywordError = ref('')
   const keywords = ref([])

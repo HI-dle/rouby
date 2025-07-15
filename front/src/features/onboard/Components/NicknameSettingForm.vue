@@ -24,8 +24,8 @@
         class="inline-block text-center mx-2 px-3 py-1 rounded-full bg-white border text-main-color placeholder:text-placeholder-color text-base outline-none focus:ring-2 transition shadow-sm"
         :class="nicknameError ? 'border-error-color focus:ring-error-color' : 'border-border-color focus:ring-[#B6A6FF]'"
         @input="validateNickname"
-        @focus="isFocused.value = true"
-        @blur="isFocused.value = false"
+        @focus="isFocused = true"
+        @blur="isFocused = false"
       />
       라고 불러줘
     </div>
@@ -35,14 +35,41 @@
 </template>
 
 <script setup>
+import { computed, watch } from 'vue'
 import FieldError from '@/components/common/FieldError.vue'
 import { useNicknameForm } from '@/features/onboard/useNicknameForm.js'
+import { useOnboardStore } from '@/features/onboard/store/useOnboardStore'
 
+// 부모 컴포넌트에서 v-model로 넘겨받는 값 처리
+const props = defineProps({
+  modelValue: String,
+})
+const emit = defineEmits(['update:modelValue'])
+
+// 내부 상태 관리 훅 (유효성 검사 등)
 const {
-  nickname,
+  nickname: internalNickname,
   nicknameError,
   isFocused,
   validateNickname,
 } = useNicknameForm()
+
+// computed로 부모 props와 내부 상태 동기화
+const nickname = computed({
+  get() {
+    return props.modelValue
+  },
+  set(val) {
+    emit('update:modelValue', val)
+  },
+})
+
+// store에 값 반영
+const store = useOnboardStore()
+watch(nickname, val => {
+  store.userName = val
+})
 </script>
+
+
 
