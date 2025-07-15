@@ -46,17 +46,34 @@ const router = createRouter({
     },
     {
       path: '/auth',
-      component: () => import('@/layouts/AuthLayout.vue'),
+      component: () => import('@/layouts/HeaderOnlyLayout.vue'),
       children: [
         {
           path: 'login',
           name: 'login',
           component: () => import('@/features/auth/views/LoginView.vue'),
         },
+      ],
+    },
+    {
+      path: '/auth',
+      component: () => import('@/layouts/HeaderOnlyLayout.vue'),
+      children: [
         {
           path: 'signup',
           name: 'signup',
           component: () => import('@/features/auth/views/SignupView.vue'),
+        },
+      ],
+    },
+    {
+      path: '/onboarding',
+      component: () => import('@/layouts/HeaderOnlyLayout.vue'),
+      children: [
+        {
+          path: 'health-check',
+          name: 'health-check',
+          component: () => import('@/features/onBoard/views/OnboardHealthCheckView.vue'),
         },
       ],
     },
