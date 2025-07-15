@@ -23,15 +23,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 class ScheduleControllerTest extends ControllerTestSupport {
-
   @WithMockCustomUser
   @DisplayName("스케쥴 생성 API - 성공 201")
   @Test
   void createSchedule() throws Exception {
 
-    // given
     var request = CreateScheduleRequestFixture.getSuccessRequest();
     var content = objectMapper.writeValueAsString(request);
+
 
     var scheduleId = 1L;
     when(scheduleFacade.createSchedule(any(Long.class), any()))
@@ -55,7 +54,8 @@ class ScheduleControllerTest extends ControllerTestSupport {
             requestFields(
                 fieldWithPath("title").description("일정 제목"),
                 fieldWithPath("memo").description("일정 메모"),
-                fieldWithPath("alarmOffsetMinutes").description("일정 전 알림 시간 설정 (5, 10, 15, 30 분 / 1, 2시간 / 1, 2 일 / 1주일 전"),
+                fieldWithPath("alarmOffsetMinutes").description(
+                    "일정 전 알림 시간 설정 (5, 10, 15, 30 분 / 1, 2시간 / 1, 2 일 / 1주일 전"),
                 fieldWithPath("startDate").description("시작 일자 (예: 2025-08-30)"),
                 fieldWithPath("startTime").description("시작 시간 (예: 13:00:00)"),
                 fieldWithPath("endDate").description("종료 일자 (예: 2025-08-30)"),
@@ -95,6 +95,22 @@ class ScheduleControllerTest extends ControllerTestSupport {
         .andDo(document("create-schedule-invalid-alarm-offset-400",
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
+            requestFields(
+                fieldWithPath("title").description("일정 제목"),
+                fieldWithPath("memo").description("일정 메모"),
+                fieldWithPath("alarmOffsetMinutes").description(
+                    "일정 전 알림 시간 설정 (5, 10, 15, 30 분 / 1, 2시간 / 1, 2 일 / 1주일 전"),
+                fieldWithPath("startDate").description("시작 일자 (예: 2025-08-30)"),
+                fieldWithPath("startTime").description("시작 시간 (예: 13:00:00)"),
+                fieldWithPath("endDate").description("종료 일자 (예: 2025-08-30)"),
+                fieldWithPath("endTime").description("종료 시간 (예: 15:00:00)"),
+                fieldWithPath("routineActivateDate").description("루틴 활성 시점 (예: 2025-08-10)"),
+                fieldWithPath("recurrenceRule").description("반복 규칙"),
+                fieldWithPath("recurrenceRule.freq").description("반복 주기 (예: MONTHLY)"),
+                fieldWithPath("recurrenceRule.byDay").description("반복 요일 (예: MO)"),
+                fieldWithPath("recurrenceRule.interval").description("반복 간격"),
+                fieldWithPath("recurrenceRule.until").description("반복 종료일 (예: 2025-12-30T00:00:00)")
+            ),
             getErrorResponseFieldSnippet()
         ));
   }

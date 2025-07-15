@@ -2,8 +2,11 @@ package com.rouby.user.presentation;
 
 import static com.rouby.notification.email.application.exception.EmailErrorCode.EMAIL_SEND_FAILED;
 import static com.rouby.user.application.exception.UserErrorCode.DUPLICATE_EMAIL;
+import static com.rouby.user.application.exception.UserErrorCode.EMAIL_NOT_VERIFIED;
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -24,10 +27,11 @@ import com.rouby.common.security.WithMockCustomUser;
 import com.rouby.common.support.ControllerTestSupport;
 import com.rouby.notification.email.application.exception.EmailException;
 import com.rouby.user.application.exception.UserException;
-import com.rouby.user.presentation.dto.CreateUserRequest;
-import com.rouby.user.presentation.dto.SendEmailVerificationRequest;
+import com.rouby.user.presentation.dto.request.CreateUserRequest;
 import com.rouby.user.presentation.dto.request.FindPasswordRequest;
+import com.rouby.user.presentation.dto.request.ResetPasswordByTokenRequest;
 import com.rouby.user.presentation.dto.request.ResetPasswordRequest;
+import com.rouby.user.presentation.dto.request.SendEmailVerificationRequest;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,7 +45,7 @@ class UserControllerTest extends ControllerTestSupport {
   void createUser() throws Exception {
 
     // given
-    CreateUserRequest request = UserRequestStub.toCreateRequest();
+    CreateUserRequest request = UserRequestFixture.toCreateRequest();
     doNothing().when(userFacade).createUser(request.toCommand());
 
     // when and then
@@ -65,7 +69,7 @@ class UserControllerTest extends ControllerTestSupport {
   void createUser_duplicate_email() throws Exception {
 
     //given
-    CreateUserRequest request = UserRequestStub.toCreateRequest();
+    CreateUserRequest request = UserRequestFixture.toCreateRequest();
     doThrow(UserException.from(DUPLICATE_EMAIL))
         .when(userFacade).createUser(request.toCommand());
 
@@ -91,8 +95,8 @@ class UserControllerTest extends ControllerTestSupport {
   void createUser_unverified_email() throws Exception {
 
     //given
-    CreateUserRequest request = UserRequestStub.toCreateRequest();
-    doThrow(UserException.from(INVALID_EMAIL_VERIFICATION))
+    CreateUserRequest request = UserRequestFixture.toCreateRequest();
+    doThrow(UserException.from(EMAIL_NOT_VERIFIED))
         .when(userFacade).createUser(request.toCommand());
 
     //when and then
@@ -116,7 +120,7 @@ class UserControllerTest extends ControllerTestSupport {
   void createUser_invalid_email() throws Exception {
 
     //given
-    CreateUserRequest request = UserRequestStub.toCreateRequestInvalidEmail();
+    CreateUserRequest request = UserRequestFixture.toCreateRequestInvalidEmail();
 
     //when and then
     mockMvc.perform(post("/api/v1/users")
@@ -139,7 +143,7 @@ class UserControllerTest extends ControllerTestSupport {
   void createUser_invalid_password() throws Exception {
 
     //given
-    CreateUserRequest request = UserRequestStub.toCreateRequestInvalidPassword();
+    CreateUserRequest request = UserRequestFixture.toCreateRequestInvalidPassword();
 
     //when and then
     mockMvc.perform(post("/api/v1/users")
@@ -162,7 +166,7 @@ class UserControllerTest extends ControllerTestSupport {
   void requestEmail() throws Exception {
 
     // given
-    SendEmailVerificationRequest request = UserRequestStub.toSendEmailVerificationRequest();
+    SendEmailVerificationRequest request = UserRequestFixture.toSendEmailVerificationRequest();
     doNothing().when(userFacade).sendEmailVerification(request.toCommand());
 
     // when
@@ -188,7 +192,7 @@ class UserControllerTest extends ControllerTestSupport {
 
     // given
     SendEmailVerificationRequest request =
-        UserRequestStub.toSendEmailVerificationRequestInvalidEmail();
+        UserRequestFixture.toSendEmailVerificationRequestInvalidEmail();
     doNothing().when(userFacade).sendEmailVerification(request.toCommand());
 
     // when
@@ -214,7 +218,7 @@ class UserControllerTest extends ControllerTestSupport {
   void verifyEmail_fail_duplicate_email() throws Exception {
 
     // given
-    SendEmailVerificationRequest request = UserRequestStub.toSendEmailVerificationRequest();
+    SendEmailVerificationRequest request = UserRequestFixture.toSendEmailVerificationRequest();
     doThrow(UserException.from(DUPLICATE_EMAIL)).when(userFacade)
         .sendEmailVerification(request.toCommand());
 
@@ -241,7 +245,7 @@ class UserControllerTest extends ControllerTestSupport {
   void verifyEmail_fail_email_send_failed() throws Exception {
 
     // given
-    SendEmailVerificationRequest request = UserRequestStub.toSendEmailVerificationRequest();
+    SendEmailVerificationRequest request = UserRequestFixture.toSendEmailVerificationRequest();
     doThrow(EmailException.from(EMAIL_SEND_FAILED)).when(userFacade)
         .sendEmailVerification(request.toCommand());
 
@@ -268,7 +272,7 @@ class UserControllerTest extends ControllerTestSupport {
   void verifyEmail() throws Exception {
 
     // given
-    VerifyEmailRequest request = UserRequestStub.toVerifyEmailRequest();
+    VerifyEmailRequest request = UserRequestFixture.toVerifyEmailRequest();
     doNothing().when(userFacade).verifyEmail(request.toCommand());
 
     // when
@@ -294,7 +298,7 @@ class UserControllerTest extends ControllerTestSupport {
   void verifyEmail_fail_validate_email() throws Exception {
 
     // given
-    VerifyEmailRequest request = UserRequestStub.toVerifyEmailRequestInvalidEmail();
+    VerifyEmailRequest request = UserRequestFixture.toVerifyEmailRequestInvalidEmail();
     doNothing().when(userFacade).verifyEmail(request.toCommand());
 
     // when
@@ -321,7 +325,7 @@ class UserControllerTest extends ControllerTestSupport {
   void verifyEmail_fail_invalid_email_code_size() throws Exception {
 
     // given
-    VerifyEmailRequest request = UserRequestStub.toVerifyEmailRequestInvalidCode();
+    VerifyEmailRequest request = UserRequestFixture.toVerifyEmailRequestInvalidCode();
     doNothing().when(userFacade).verifyEmail(request.toCommand());
 
     // when
@@ -348,7 +352,7 @@ class UserControllerTest extends ControllerTestSupport {
   void verifyEmail_fail_invalid_verification_email_code() throws Exception {
 
     // given
-    VerifyEmailRequest request = UserRequestStub.toVerifyEmailRequest();
+    VerifyEmailRequest request = UserRequestFixture.toVerifyEmailRequest();
     doThrow(UserException.from(INVALID_EMAIL_VERIFICATION)).when(userFacade)
         .verifyEmail(request.toCommand());
 
@@ -402,7 +406,7 @@ class UserControllerTest extends ControllerTestSupport {
   @Test
   void resetPasswordByToken() throws Exception {
     //given
-    ResetPasswordRequest request = ResetPasswordRequest.builder()
+    ResetPasswordByTokenRequest request = ResetPasswordByTokenRequest.builder()
         .newPassword("newPassword")
         .email("test@email.com")
         .token(UUID.randomUUID().toString())
@@ -456,6 +460,39 @@ class UserControllerTest extends ControllerTestSupport {
             queryParameters(
                 parameterWithName("email").description("사용자 이메일"),
                 parameterWithName("token").description("비밀번호 검증 토큰"))
+        ));
+  }
+
+  @WithMockCustomUser
+  @DisplayName("비밀번호 변경 API")
+  @Test
+  void resetPassword() throws Exception {
+
+    //given
+    ResetPasswordRequest request = ResetPasswordRequest.builder()
+        .currentPassword("currentPassword!")
+        .newPassword("newPassword!")
+        .build();
+
+    Long userId = 1L;
+
+    doNothing().when(userFacade).resetPassword(eq(userId), any());
+
+    //when
+    ResultActions resultActions = mockMvc.perform(patch("/api/v1/users/password/reset")
+        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+        .content(objectMapper.writeValueAsString(request))
+        .contentType(MediaType.APPLICATION_JSON));
+
+    // then
+    resultActions.andExpect(status().isNoContent())
+        .andDo(print())
+        .andDo(document("reset-password-204",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestFields(
+                fieldWithPath("currentPassword").description("현재 비밀번호"),
+                fieldWithPath("newPassword").description("새 비밀번호"))
         ));
   }
 }

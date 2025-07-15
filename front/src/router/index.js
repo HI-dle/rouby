@@ -66,6 +66,18 @@ const router = createRouter({
         },
       ],
     },
+
+    {
+      path: '/user',
+      component: () => import('@/layouts/DefaultLayout.vue'),
+      children: [
+        {
+          path: 'password/reset',
+          name: 'password-reset',
+          component: () => import('@/features/user/views/MyPageResetPasswordView.vue'),
+        },
+      ],
+    },
   ],
 })
 
