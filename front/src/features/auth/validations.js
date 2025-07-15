@@ -1,5 +1,4 @@
 import { errorMessages, passwordRequirements } from './constants.js'
-import axios from '@/api/axios.js'
 
 export function validateEmail(email) {
   if (!email?.trim()) {

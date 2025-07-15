@@ -19,25 +19,17 @@
     </div>
 
     <!-- 재설정 링크 전송 버튼 -->
-    <BaseButton
-      type="submit"
-      class="w-full font-medium transition-colors"
-    >
-     재설정 링크 전송
+    <BaseButton type="submit" class="w-full font-medium transition-colors">
+      재설정 링크 전송
     </BaseButton>
   </form>
 </template>
 
 <script setup>
-import { useSignupForm } from '../useSignupForm.js'
+import { usePasswordForm } from '@/features/auth/usePasswordForm.js'
 import BaseInput from '@/components/common/BaseInput.vue'
 import FieldError from '@/components/common/FieldError.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 
-const {
-  form,
-  errors,
-  sendResetPasswordLink,
-  validateEmailField,
-} = useSignupForm()
+const { form, errors, validateEmailField, sendResetPasswordLink } = usePasswordForm()
 </script>

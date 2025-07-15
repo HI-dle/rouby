@@ -1,18 +1,16 @@
-import { reactive, watch, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { reactive, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { useTimer } from '@/utils/timerUtils.js'
 import { buildErrorCleaner, buildFieldValidator } from '@/utils/formUtils.js'
 
 import {
-  findPassword,
   requestEmailVerification,
-  resetPassword,
-  signup, verificationPasswordCode,
+  signup,
   verifyEmailCode
 } from './authService.js'
 
 import {
-  validateEmail, validateEmailForm,
+  validateEmail,
   validatePassword,
   validatePasswordConfirm,
   validateSignupForm
@@ -20,7 +18,6 @@ import {
 
 export function useSignupForm() {
   const router = useRouter()
-  const route = useRoute()
 
   const form = reactive({
     email: '',
@@ -149,65 +146,6 @@ export function useSignupForm() {
     await requestVerification()
   }
 
-  const sendResetPasswordLink = async () => {
-    if (!validateEmailForm(form, errors)) {
-      return
-    }
-    try {
-      const success = await  findPassword(form.email)
-      if (success) {
-        await router.push('/login')
-      }
-    } catch (err) {
-      if (err.fieldErrors) {
-        Object.assign(errors, err.fieldErrors)
-      } else {
-        errors.email = err.message
-      }
-    }
-  }
-
-  const sendResetPassword = async () => {
-    try {
-      const success = await  resetPassword(form)
-      if (success) {
-        await router.push('/login')
-      }
-    } catch (err) {
-      if (err.fieldErrors) {
-        Object.assign(errors, err.fieldErrors)
-      } else {
-        errors.email = err.message
-      }
-    }
-  }
-
-  onMounted(async () => {
-    form.email = route.query.email || ''
-    form.token = route.query.token || ''
-
-    if (!form.email || !form.token) {
-      errors.verificationCode = '잘못된 접근입니다.'
-      return
-    }
-
-    loading.passwordTokenVerification = true
-    try {
-      const success = await  verificationPasswordCode(form)
-      if (success) {
-        await router.push('/password/reset')
-      }
-    } catch (err) {
-      if (err.fieldErrors) {
-        Object.assign(errors, err.fieldErrors)
-      } else {
-        errors.verificationCode = err.message
-      }
-    }finally {
-      loading.passwordTokenVerification = false
-    }
-  })
-
   window.testSignup = {
     // 1. 폼 데이터 자동 입력
     fill: () => {
@@ -276,7 +214,5 @@ export function useSignupForm() {
     validateEmailField,
     validatePasswordField,
     validatePasswordConfirmField,
-    sendResetPasswordLink,
-    sendResetPassword
   }
 }
