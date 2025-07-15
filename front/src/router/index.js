@@ -71,8 +71,8 @@ const router = createRouter({
       component: () => import('@/layouts/HeaderOnlyLayout.vue'),
       children: [
         {
-          path: 'healthCheck',
-          name: 'healthCheck',
+          path: 'health-check',
+          name: 'health-check',
           component: () => import('@/features/onBoard/views/OnboardHealthCheckView.vue'),
         },
       ],
