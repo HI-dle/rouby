@@ -15,11 +15,11 @@ public class EmailAddress implements Serializable {
   @Column(name = "email_address", nullable = false)
   private String emailAddress;
 
-  public static EmailAddress of(String emilAddress) {
-    if (!StringUtils.hasText(emilAddress)) {
+  public static EmailAddress of(String emailAddress) {
+    if (!StringUtils.hasText(emailAddress)) {
       throw new IllegalArgumentException("이메일 주소는 비어 있을 수 없습니다.");
     }
-    return new EmailAddress(emilAddress);
+    return new EmailAddress(emailAddress);
   }
 
   private EmailAddress(String emailAddress) {
