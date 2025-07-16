@@ -1,20 +1,19 @@
 <template>
   <div class="main-container">
     <div class="sub-main-container">
-      <!-- 키워드 입력 폼 -->
 
       <div class="mt-32">
-      <PersonalStateForm
-        ref="personalRef"
-        :user-name="userName"
-        :selected-health="selectedHealth"
-      />
+        <DateSettingForm
+          ref="dateSettingFormRef"
+          :user-name="userName"
+          :personal-keyword="personalKeyword"
+        />
       </div>
 
       <!-- 다음 단계 이동 -->
       <div class="w-full mt-10 pt-10 text-center">
         <RouterLink
-          to="date-setting"
+          to="다음은 어디일까"
           class="text-indigo-400 underline hover:text-#6667D07A"
           @click.prevent="onNextLinkClick"
         >
@@ -25,26 +24,27 @@
   </div>
 </template>
 
+
 <script setup>
 import { computed, ref } from 'vue'
-import PersonalStateForm from '@/features/onboard/Components/PersonalStateForm.vue'
+import DateSettingForm from '@/features/onboard/Components/DateSettingForm.vue'
 import { useOnboardStore } from '@/features/onboard/store/useOnboardStore'
 import { useRouter } from 'vue-router'
 
 const store = useOnboardStore()
-const selectedHealth = computed(() => store.selectedHealth)
+const personalKeyword = computed(() => store.personalKeyword)
 const userName = computed(() => store.userName)
-const exampleKeywords = ref([]) // 유동적으로 받아오기 가능
 const router = useRouter()
 
-const personalRef = ref(null)
+const dateSettingFormRef = ref(null)
 
 const onNextLinkClick = () => {
-  if (!personalRef.value) return
+  if (!dateSettingFormRef.value) return
 
-  const success = personalRef.value.onNextClick()
+  const success = dateSettingFormRef.value.onNextClick()
   if (success) {
-    router.push('/onboarding/date-setting')
+    router.push('/다음페이지로')
   }
 }
+
 </script>

@@ -5,12 +5,14 @@ import { ref } from 'vue'
 export const useOnboardStore = defineStore('onboard', () => {
   const userName = ref('')
   const selectedHealth = ref('')
-  const personalKeywords = ref('')
+  const personalKeyword = ref('')
+  const startOfDayTime = ref('')
 
   return {
     userName,
     selectedHealth,
-    personalKeywords,
+    personalKeyword,
+    startOfDayTime,
   }
 },{
   persist: true,

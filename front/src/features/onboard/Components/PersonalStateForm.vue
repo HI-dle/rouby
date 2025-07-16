@@ -40,6 +40,9 @@ import KeywordTag from '@/components/common/KeywordTag.vue'
 import UserSettingInput from '@/components/common/UserSettingInput.vue'
 import FieldError from '@/components/common/FieldError.vue'
 import { computed } from 'vue'
+import { useOnboardStore } from '@/features/onboard/store/useOnboardStore.js'
+
+const store = useOnboardStore()
 
 const props = defineProps({
   userName: String,
@@ -62,6 +65,23 @@ const selectedHealth = computed(() =>
     ? props.selectedHealth.value
     : props.selectedHealth
 )
+
+const onNextClick = () => {
+  if (keywords.value.length === 0) {
+    alert('키워드를 최소 1개 이상 입력해주세요.')
+    return false
+  }
+
+  store.keywords = [...keywords.value]
+  store.personalKeyword = store.keywords[0]
+
+  console.log('저장된 키워드:', store.keywords)
+  console.log('선택된 개인 상태:', store.personalKeyword)
+
+  return true
+}
+
+defineExpose({ onNextClick })
 
 const {
   keyword,

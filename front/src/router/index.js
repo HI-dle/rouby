@@ -85,6 +85,11 @@ const router = createRouter({
           name: 'personal-state',
           component: () => import('@/features/onboard/views/OnboardPersonalStateView.vue'),
         },
+        {
+          path: 'date-setting',
+          name: 'date-setting',
+          component: () => import('@/features/onboard/views/OnboardDateSettingView.vue'),
+        },
       ],
     },
 
