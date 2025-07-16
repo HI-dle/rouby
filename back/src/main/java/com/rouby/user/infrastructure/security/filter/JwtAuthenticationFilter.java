@@ -36,7 +36,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     try {
       String token = tokenProvider.resolveToken(request);
-      token = tokenProvider.createAccessToken("1", UserRole.USER.toString(), "test@example.com");
 
      if (token != null && tokenProvider.validateToken(token)) {
 
