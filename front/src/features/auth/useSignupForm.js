@@ -1,10 +1,8 @@
-import { reactive, watch } from 'vue'
+import { computed, reactive, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useTimer } from '@/utils/timerUtils.js'
-import { buildErrorCleaner, buildFieldValidator } from '@/utils/formUtils.js'
-
+import { useTimer } from '@/shared/utils/timerUtils.js'
+import { buildErrorCleaner, buildFieldValidator } from '@/shared/utils/formUtils.js'
 import { requestEmailVerification, signup, verifyEmailCode } from './authService.js'
-
 import {
   validateEmail,
   validatePassword,
@@ -22,6 +20,7 @@ export function useSignupForm() {
     passwordConfirm: '',
     isEmailVerified: false,
     isVerificationStep: false,
+    lastVerifiedEmail: '',
   })
 
   const errors = reactive({
@@ -61,21 +60,58 @@ export function useSignupForm() {
 
   watch(() => form, clearErrors, { deep: true })
 
+  const isVerificationButtonEnabled = computed(() => {
+    const trimmedEmail = (form.email || '').trim()
+
+    if (!trimmedEmail || loading.emailVerification || !canResend.value) {
+      return false
+    }
+
+    return !(form.isVerificationStep && trimmedEmail
+      === form.lastVerifiedEmail);
+  })
+
   const requestVerification = async () => {
     if (!validateEmailField()) {
       return false
     }
 
+    errors.email = ''
     loading.emailVerification = true
+
     try {
       await requestEmailVerification(form.email)
+      form.lastVerifiedEmail = form.email
       form.isVerificationStep = true
       startTimer()
       return true
+    } catch (error) {
+
+      if (error.fieldErrors) {
+        Object.assign(errors, error.fieldErrors)
+      } else {
+        errors.email = error.message
+      }
+
+      return false
     } finally {
       loading.emailVerification = false
     }
   }
+
+  watch(
+    () => form.email,
+    (newEmail, oldEmail) => {
+      if (newEmail !== oldEmail && form.isVerificationStep) {
+        if (newEmail !== form.lastVerifiedEmail) {
+          form.isEmailVerified = false
+          form.verificationCode = ''
+          errors.verificationCode = ''
+        }
+      }
+    }
+  )
+
 
   const verifyCode = async () => {
     if (form.verificationCode.length !== 6) {
@@ -99,11 +135,15 @@ export function useSignupForm() {
 
   watch(
     () => form.verificationCode,
-    (newCode) => {
+    (newCode, oldCode) => {
+      if (newCode !== oldCode && errors.verificationCode) {
+        errors.verificationCode = ''
+      }
+
       if (newCode.length === 6 && !form.isEmailVerified) {
         void verifyCode()
       }
-    },
+    }
   )
 
   const onSubmit = async () => {
@@ -117,9 +157,9 @@ export function useSignupForm() {
 
     loading.signup = true
     try {
-      const success = await signup(form)
-      if (success) {
-        await router.push('/login')
+      const res = await signup(form)
+      if (res?.ok) {
+        await router.push('/auth/login')
       }
     } catch (err) {
       if (err.fieldErrors) {
@@ -140,6 +180,7 @@ export function useSignupForm() {
     await requestVerification()
   }
 
+  // 콘솔 테스트용
   window.testSignup = {
     // 1. 폼 데이터 자동 입력
     fill: () => {
@@ -208,5 +249,6 @@ export function useSignupForm() {
     validateEmailField,
     validatePasswordField,
     validatePasswordConfirmField,
+    isVerificationButtonEnabled,
   }
 }
