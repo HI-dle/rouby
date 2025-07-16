@@ -1,6 +1,7 @@
 <script setup>
 import SelectBox from "@/components/common/SelectBox.vue";
 import BaseButton from '@/components/common/BaseButton.vue'
+import { days, typeOptions, alarmOptions } from '../constants'
 
 const props = defineProps({
   form: Object,
@@ -9,10 +10,7 @@ const props = defineProps({
   errorModal: Object,
 })
 
-
 const emit = defineEmits(['submit', 'cancel', 'autoResize', 'inputDatetime'])
-
-const days = ['월', '화', '수', '목', '금', '토', '일']
 
 const toggleDay = (index) => {
   const exists = props.form.byDays.includes(index)
@@ -22,25 +20,6 @@ const toggleDay = (index) => {
     props.form.byDays.push(index)
   }
 }
-
-const typeOptions = [
-  { value: 'CHECK', label: '체크 박스' },
-  { value: 'MINUTES', label: '시간' },
-  { value: 'COUNT', label: '횟수' },
-]
-
-const alarmOptions = [
-  { value: 'NONE', label: '없음' },
-  { value: 5, label: '5분 전' },
-  { value: 10, label: '10분 전' },
-  { value: 15, label: '15분 전' },
-  { value: 30, label: '30분 전' },
-  { value: 60, label: '1시간 전' },
-  { value: 120, label: '2시간 전' },
-  { value: 1440, label: '1일 전' },
-  { value: 2880, label: '2일 전' },
-  { value: 10080, label: '1주 전' },
-]
 
 </script>
 
