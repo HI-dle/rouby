@@ -27,15 +27,16 @@ const selectedDate = useDatePickerSelectedDate(props, emit, datePickStore)
 const baseDate = ref(selectedDate.value)
 
 const { currentMonthLabel } = useDatePickerDates(baseDate, selectedDate, today)
-const { selectDate, syncStoreOnWeeklyModeSwitch, handleBaseDateWatch } = useDatePickerState({
-  baseDate,
-  selectedDate,
-  isMonthly,
-  datePickStore,
-})
+const { selectDate, syncStoreOnWeeklyModeSwitch, handleBaseDateWatch } =
+  useDatePickerState({
+    baseDate,
+    selectedDate,
+    isMonthly,
+    datePickStore,
+  })
 
 watch(isMonthly, syncStoreOnWeeklyModeSwitch)
-watch(baseDate, handleBaseDateWatch, { immediate: false })
+watch(baseDate, handleBaseDateWatch, { immediate: true })
 
 const prevWeek = () => (baseDate.value = subWeeks(baseDate.value, 1))
 const nextWeek = () => (baseDate.value = addWeeks(baseDate.value, 1))
@@ -63,7 +64,9 @@ const { onTouchStart, onTouchEnd } = useDatePickerGestures({
         <CalendarArrowUp v-if="isMonthly" class="h-4 w-4" />
         <CalendarArrowDown v-else class="h-4 w-4" />
       </BaseButton>
-      <h2 class="text-lg sm:text-xl font-semibold text-center w-full sm:w-auto text-content-color">
+      <h2
+        class="text-lg sm:text-xl font-semibold text-center w-full sm:w-auto text-content-color"
+      >
         {{ currentMonthLabel }}
       </h2>
     </div>
