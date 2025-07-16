@@ -1,4 +1,4 @@
-import { wrapApi } from '@/utils/errorUtils.js'
+import { wrapApi } from '@/shared/utils/errorUtils.js'
 import {
   requestEmailVerification as requestEmailVerificationApi,
   verifyEmail as verifyEmailApi,
@@ -32,9 +32,16 @@ export const verifyEmailCode = wrapApi(
 )
 
 export const signup = wrapApi(
-  (form) => signupApi(toSignupPayload(form)).then(() => ({ ok: true })),
+  async (form) => {
+    const res = await signupApi(toSignupPayload(form))
+
+    return {
+      data: {
+        ok: res.status === 201,
+      },
+    }
+  },
   {
-    fieldMessages: {},
     fallbackMessage: '가입에 실패했습니다.',
   },
 )
