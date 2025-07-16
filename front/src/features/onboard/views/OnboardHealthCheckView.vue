@@ -1,4 +1,3 @@
-<!-- OnboardingHealthCheckPage.vue -->
 <template>
   <div class="main-container">
     <div class="sub-main-container">
@@ -19,24 +18,24 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref,computed } from 'vue'
 import HealthCheckForm from '@/features/onboard/Components/HealthCheckForm.vue'
 import { useOnboardStore } from '@/features/onboard/store/useOnboardStore'
 import { useRouter } from 'vue-router'
 
 const store = useOnboardStore()
-const userName = store.userName
+const userName = computed(() => store.userName)
 
 const router = useRouter()
 
 const healthFormRef = ref(null)
 
-const onNextLinkClick = () => {
+const onNextLinkClick = async () => {
   if (!healthFormRef.value) return
 
-  const success = healthFormRef.value.onNextClick()
+  const success = await healthFormRef.value.onNextClick()
   if (success) {
-    router.push('/onboarding/personal-state')
+    await router.push('/onboarding/personal-state')
   }
 }
 </script>

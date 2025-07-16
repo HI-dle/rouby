@@ -24,13 +24,11 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useOnboardStore } from '@/features/onboard/store/useOnboardStore'
 import NicknameSettingForm from '@/features/onboard/Components/NicknameSettingForm.vue'
 
 const nickname = ref('')
 const nicknameFormRef = ref(null)
 const router = useRouter()
-const store = useOnboardStore()
 
 const goNext = () => {
   // 닉네임 유효성 검사 실패 시 이동 막기

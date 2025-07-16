@@ -45,26 +45,23 @@ import { useOnboardStore } from '@/features/onboard/store/useOnboardStore.js'
 const store = useOnboardStore()
 
 const props = defineProps({
-  userName: String,
-  selectedHealth: String,
+  userName: {
+    type: String,
+    required: true
+  },
+  selectedHealth: {
+    type: String,
+    required: true
+  },
   exampleKeywords: {
     type: Array,
     default: () => ['백엔드 개발자', '취준', '시험', '승진'],
   },
 })
 
-// selectedHealth가 ref로 올 수도 있어서 처리
-const userName = computed(() =>
-  typeof props.userName === 'object' && 'value' in props.userName
-    ? props.userName.value
-    : props.userName
-)
-
-const selectedHealth = computed(() =>
-  typeof props.selectedHealth === 'object' && 'value' in props.selectedHealth
-    ? props.selectedHealth.value
-    : props.selectedHealth
-)
+// props는 항상 string 타입으로 통일
+const userName = computed(() => props.userName || '')
+const selectedHealth = computed(() => props.selectedHealth || '')
 
 const onNextClick = () => {
   if (keywords.value.length === 0) {

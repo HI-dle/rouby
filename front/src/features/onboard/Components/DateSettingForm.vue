@@ -30,12 +30,13 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import SelectBox from '@/components/common/SelectBox.vue'
 import { useDateSettingForm } from '@/features/onboard/useDateSettingForm.js'
 import { useOnboardStore } from '@/features/onboard/store/useOnboardStore.js'
 
 const store = useOnboardStore()
+const timeError = ref('')
 
 const props = defineProps({
   userName: String,
@@ -61,15 +62,16 @@ const personalKeyword = computed(() =>
     : props.personalKeyword
 )
 const onNextClick = () => {
+  timeError.value = ''
+
   if (!form.value.hour || !form.value.period) {
-    alert('시간을 선택해주세요!')
+    timeError.value = '시간을 선택해주세요!'
     return false
   }
 
   // 시간 저장
   store.startOfDayTime = selectedTime.value
 
-  console.log('✅ 저장된 시간:', store.startOfDayTime)
   return true
 }
 

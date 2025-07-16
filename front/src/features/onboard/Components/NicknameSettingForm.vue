@@ -59,22 +59,25 @@ const nickname = computed({
   },
   set(val) {
     emit('update:modelValue', val)
-    internalNickname.value = val // 내부 값도 동기화
+    watch(() => props.modelValue, (newVal) => {
+        if (newVal !== internalNickname.value) {
+            internalNickname.value = newVal
+            }
+      },
+      { immediate: true })
   },
 })
 
-// store에 반영 (중복될 수 있지만 안전하게 유지)
+// store에 반영
 const store = useOnboardStore()
-watch(nickname, val => {
-  store.userName = val
-})
+  watch(nickname, (val, oldVal) => {
+    if (val !== oldVal) {
+      store.userName = val
+    }
+  })
 
 // 부모가 호출할 수 있도록 expose
-const validate = () => {
-  return validateNickname()
-}
-
-defineExpose({ validate })
+defineExpose({ validate: validateNickname })
 </script>
 
 

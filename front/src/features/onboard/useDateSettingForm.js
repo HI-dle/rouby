@@ -32,8 +32,8 @@ export function useDateSettingForm() {
       return false
     }
 
-    store.startTime = selectedTime.value
-    console.log('✅ 저장된 시간:', store.startTime)
+    store.startOfDayTime = selectedTime.value
+    console.log('저장된 시간:', store.startOfDayTime)
     return true
   }
 
@@ -42,5 +42,6 @@ export function useDateSettingForm() {
     periodOptions,
     hourOptions,
     selectedTime,
+    onNextClick,
   }
 }
