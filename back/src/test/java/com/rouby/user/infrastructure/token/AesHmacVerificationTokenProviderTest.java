@@ -9,11 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
-@ExtendWith(MockitoExtension.class)
 class AesHmacVerificationTokenProviderTest {
 
   private AesHmacVerificationTokenProvider tokenProvider;
@@ -27,7 +24,7 @@ class AesHmacVerificationTokenProviderTest {
     tokenProvider = new AesHmacVerificationTokenProvider();
 
     ReflectionTestUtils.setField(tokenProvider, "aesKeyRaw", VALID_AES_KEY);
-    ReflectionTestUtils.setField(tokenProvider, "hmacKey", VALID_HMAC_KEY);
+    ReflectionTestUtils.setField(tokenProvider, "hmacKeyRaw", VALID_HMAC_KEY);
     ReflectionTestUtils.setField(tokenProvider, "expirationMillis", DEFAULT_EXPIRATION);
 
     ReflectionTestUtils.invokeMethod(tokenProvider, "initKey");
@@ -43,6 +40,7 @@ class AesHmacVerificationTokenProviderTest {
       // given
       AesHmacVerificationTokenProvider provider = new AesHmacVerificationTokenProvider();
       ReflectionTestUtils.setField(provider, "aesKeyRaw", "valid-16byte-key");
+      ReflectionTestUtils.setField(provider, "hmacKeyRaw", "valid-16byte-key");
 
       // when & then
       assertDoesNotThrow(() -> ReflectionTestUtils.invokeMethod(provider, "initKey"));
@@ -70,6 +68,7 @@ class AesHmacVerificationTokenProviderTest {
       AesHmacVerificationTokenProvider provider = new AesHmacVerificationTokenProvider();
       String longKey = "this-is-a-very-long-key-more-than-16-bytes";
       ReflectionTestUtils.setField(provider, "aesKeyRaw", longKey);
+      ReflectionTestUtils.setField(provider, "hmacKeyRaw", longKey);
 
       // when
       ReflectionTestUtils.invokeMethod(provider, "initKey");
@@ -97,7 +96,7 @@ class AesHmacVerificationTokenProviderTest {
       assertThat(token).contains(".");
 
       // 토큰 형식 검증
-      String[] parts = token.split("\\.");
+      String[] parts = token.substring("EmailVerification ".length()).split("\\.");
       assertThat(parts).hasSize(2);
       assertDoesNotThrow(() -> Base64.getDecoder().decode(parts[0]));
       assertDoesNotThrow(() -> Base64.getDecoder().decode(parts[1]));
@@ -156,7 +155,7 @@ class AesHmacVerificationTokenProviderTest {
       // given
       AesHmacVerificationTokenProvider shortExpirationProvider = new AesHmacVerificationTokenProvider();
       ReflectionTestUtils.setField(shortExpirationProvider, "aesKeyRaw", VALID_AES_KEY);
-      ReflectionTestUtils.setField(shortExpirationProvider, "hmacKey", VALID_HMAC_KEY);
+      ReflectionTestUtils.setField(shortExpirationProvider, "hmacKeyRaw", VALID_HMAC_KEY);
       ReflectionTestUtils.setField(shortExpirationProvider, "expirationMillis", 1L);
       ReflectionTestUtils.invokeMethod(shortExpirationProvider, "initKey");
 
@@ -320,7 +319,7 @@ class AesHmacVerificationTokenProviderTest {
       // given - 다른 HMAC 키를 가진 provider
       AesHmacVerificationTokenProvider otherProvider = new AesHmacVerificationTokenProvider();
       ReflectionTestUtils.setField(otherProvider, "aesKeyRaw", VALID_AES_KEY);
-      ReflectionTestUtils.setField(otherProvider, "hmacKey", "different-hmac-key");
+      ReflectionTestUtils.setField(otherProvider, "hmacKeyRaw", "different-hmac-key");
       ReflectionTestUtils.setField(otherProvider, "expirationMillis", DEFAULT_EXPIRATION);
       ReflectionTestUtils.invokeMethod(otherProvider, "initKey");
 
@@ -340,7 +339,7 @@ class AesHmacVerificationTokenProviderTest {
       // given
       AesHmacVerificationTokenProvider otherProvider = new AesHmacVerificationTokenProvider();
       ReflectionTestUtils.setField(otherProvider, "aesKeyRaw", "different-aes-key-123");
-      ReflectionTestUtils.setField(otherProvider, "hmacKey", VALID_HMAC_KEY);
+      ReflectionTestUtils.setField(otherProvider, "hmacKeyRaw", VALID_HMAC_KEY);
       ReflectionTestUtils.setField(otherProvider, "expirationMillis", DEFAULT_EXPIRATION);
       ReflectionTestUtils.invokeMethod(otherProvider, "initKey");
 
