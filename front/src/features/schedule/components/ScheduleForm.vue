@@ -3,18 +3,20 @@ import { CalendarClock, Calendar, Bell, RefreshCw } from 'lucide-vue-next'
 import SelectBox from '@/components/common/SelectBox.vue'
 import ToggleSwitch from '@/components/common/ToggleSwitch.vue'
 import { alarmOptions, repeatOptions } from '../constants'
-import { toDate } from '@/shared/utils/formatDate'
 import FieldError from '@/components/common/FieldError.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import BaseModal from '@/components/common/BaseModal.vue'
+import { dateTimeUtil } from '@/shared/utils/dateTimeUtil'
 
 const props = defineProps({
   form: Object,
+  isSubmitting: Boolean,
   errors: Object,
   inputRefs: Object,
   errorModal: Object,
 })
 const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
+const { extractDate } = dateTimeUtil()
 </script>
 
 <template>
@@ -51,7 +53,9 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
             <div class="flex items-center gap-2 mx-2 h-9">
               <CalendarClock class="w-4 h-4 text-content-color" />
             </div>
-            <label class="ml-2 text-base font-semibold text-content-color">하루종일</label>
+            <label class="ml-2 text-base font-semibold text-content-color"
+              >하루종일</label
+            >
           </div>
           <div class="flex items-center justify-end mx-2">
             <ToggleSwitch v-model="form.allDay" />
@@ -59,23 +63,27 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
 
           <!-- 시작 -->
           <div class="flex items-center mx-2">
-            <label class="ml-8 text-base font-semibold text-content-color">시작</label>
+            <label class="ml-8 text-base font-semibold text-content-color"
+              >시작</label
+            >
           </div>
           <input
             :ref="(el) => (inputRefs.period = el)"
             :type="form.allDay ? 'date' : 'datetime-local'"
-            :value="form.allDay ? toDate(form.start) : form.start"
+            :value="form.allDay ? extractDate(form.start) : form.start"
             @input="(e) => emit('inputDatetime', e, 'start')"
             class="w-full xxs:w-40 xxxs:w-[123px] text-base xs:text-sm xxs:text-xs text-content-color border border-transparent rounded-md px-3 xxs:px-[5px] py-2 shadow-sm focus:outline-none focus:border-transparent focus:shadow-[0_0_3px_2px_theme(colors.main-color/30%)] transition"
           />
 
           <!-- 종료 -->
           <div class="flex items-center mx-2">
-            <label class="ml-8 text-base font-semibold text-content-color">종료</label>
+            <label class="ml-8 text-base font-semibold text-content-color"
+              >종료</label
+            >
           </div>
           <input
             :type="form.allDay ? 'date' : 'datetime-local'"
-            :value="form.allDay ? toDate(form.end) : form.end"
+            :value="form.allDay ? extractDate(form.end) : form.end"
             @input="(e) => emit('inputDatetime', e, 'end')"
             class="w-full xxs:w-40 xxxs:w-[123px] text-base xs:text-sm xxs:text-xs text-content-color border border-transparent rounded-md px-3 xxs:px-[5px] py-2 shadow-sm focus:outline-none focus:border-transparent focus:shadow-[0_0_3px_2px_theme(colors.main-color/30%)] transition"
           />
@@ -91,7 +99,9 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
           <div class="mx-2 h-9 flex items-center justify-center">
             <Bell class="w-4 h-4 text-content-color" />
           </div>
-          <label class="ml-2 text-base font-semibold text-content-color">알림</label>
+          <label class="ml-2 text-base font-semibold text-content-color"
+            >알림</label
+          >
         </div>
         <SelectBox
           v-model="form.alarmOffsetMinutes"
@@ -106,7 +116,9 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
           <div class="mx-2 h-9 flex items-center justify-center">
             <RefreshCw class="w-4 h-4 text-content-color" />
           </div>
-          <label class="ml-2 text-base font-semibold text-content-color">반복</label>
+          <label class="ml-2 text-base font-semibold text-content-color"
+            >반복</label
+          >
         </div>
         <SelectBox
           v-model="form.repeat"
@@ -122,7 +134,9 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
             <div class="mx-2 h-9 flex items-center justify-center">
               <Calendar class="w-4 h-4 text-content-color" />
             </div>
-            <label class="ml-2 text-base font-semibold text-content-color">루틴 시작</label>
+            <label class="ml-2 text-base font-semibold text-content-color"
+              >루틴 시작</label
+            >
           </div>
           <input
             :ref="(el) => (inputRefs.routineStart = el)"
@@ -140,9 +154,13 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
           class="bg-none bg-gray-200 !text-content-color hover:bg-gray-300"
           >취소
         </BaseButton>
-        <BaseButton type="submit">저장</BaseButton>
+        <BaseButton type="submit" :disabled="isSubmitting">저장</BaseButton>
       </div>
     </form>
   </div>
-  <BaseModal v-model="errorModal.show" :message="errorModal.msg" buttonText="확인" />
+  <BaseModal
+    v-model="errorModal.show"
+    :message="errorModal.msg"
+    buttonText="확인"
+  />
 </template>
