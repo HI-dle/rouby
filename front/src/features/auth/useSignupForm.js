@@ -124,7 +124,6 @@ export function useSignupForm() {
     try {
       const response= await verifyEmailCode(form.email, form.verificationCode)
       form.verificationToken = response.data.token
-      console.log(form.verificationToken);
       form.isEmailVerified = true
       stopTimer()
       return true
@@ -163,7 +162,7 @@ export function useSignupForm() {
     try {
       const res = await signup(form)
       if (res?.data.ok) {
-        router.push('/auth/login')
+        await router.push('/auth/login')
       }
     } catch (err) {
       if (err.fieldErrors) {
