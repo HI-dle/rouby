@@ -33,8 +33,7 @@ export function createApiError(err, {
 export function wrapApi(apiFn, options) {
   return async (...args) => {
     try {
-      const res = await apiFn(...args);
-      return res.data;
+      return await apiFn(...args);
     } catch (err) {
       throw createApiError(err, options);
     }
