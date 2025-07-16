@@ -113,6 +113,17 @@ public class GlobalExceptionHandler {
             errorFields));
   }
 
+  @ExceptionHandler(MissingRequestHeaderException.class)
+  public ResponseEntity<ErrorResponse> handleMissingRequestHeaderException(MissingRequestHeaderException e,
+      HttpServletRequest request){
+
+    log(e, request, UNAUTHORIZED);
+    return ResponseEntity
+        .badRequest()
+        .body(ErrorResponse.of(ApiErrorCode.UNAUTHORIZED.getMessage(),
+            ApiErrorCode.UNAUTHORIZED.getCode()));
+  }
+
   @ExceptionHandler(IllegalArgumentException.class)
   public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e,
       HttpServletRequest request){
