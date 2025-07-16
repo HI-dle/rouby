@@ -24,7 +24,7 @@ const isNotCreateOrModify = () => !createOrModify.some((p) => route.path.include
     </RouterLink>
 
     <RouterLink
-      to="/routine"
+      to="/routine-task"
       class="flex justify-center items-center"
       :class="isActive('/routine-task') ? 'text-main-color' : 'text-gray-400'"
     >
@@ -32,7 +32,7 @@ const isNotCreateOrModify = () => !createOrModify.some((p) => route.path.include
     </RouterLink>
 
     <RouterLink
-      to="/history"
+      to="/alarm"
       class="flex justify-center items-center"
       :class="isActive('/alarm') ? 'text-main-color' : 'text-gray-400'"
     >

@@ -10,7 +10,7 @@ const router = createRouter({
       children: [
         {
           path: '/user',
-          component: () => import('@/layouts/DefaultLayout.vue'),
+          component: () => import('@/features/user/views/UserLayout.vue'),
           children: [
             {
               path: 'password/reset',
@@ -60,6 +60,11 @@ const router = createRouter({
       component: () => import('@/layouts/HeaderOnlyLayout.vue'),
       children: [
         {
+          path: 'signup',
+          name: 'signup',
+          component: () => import('@/features/auth/views/SignupView.vue'),
+        },
+        {
           path: 'login',
           name: 'login',
           component: () => import('@/features/auth/views/LoginView.vue'),
@@ -74,17 +79,6 @@ const router = createRouter({
           name: 'password-reset-token',
           component: () => import('@/features/auth/views/ResetPasswordView.vue'),
           // props: route => ({ token: route.query.token }),
-        },
-      ],
-    },
-    {
-      path: '/auth',
-      component: () => import('@/layouts/HeaderOnlyLayout.vue'),
-      children: [
-        {
-          path: 'signup',
-          name: 'signup',
-          component: () => import('@/features/auth/views/SignupView.vue'),
         },
       ],
     },

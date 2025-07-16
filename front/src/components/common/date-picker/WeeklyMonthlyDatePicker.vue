@@ -10,30 +10,32 @@ import { useDatePickStore } from '@/stores/useDatePickStore'
 import { useDatePickerState } from '@/shared/composable/useDatePickerState'
 import { useDatePickerGestures } from '@/shared/composable/useDatePickerGestures'
 import { useDatePickerSelectedDate } from '@/shared/composable/useDatePickerSelectedDate'
+import { useDatePickerDates } from '@/shared/composable/useDatePickerDates'
 
 const today = new Date()
-const baseDate = ref(today)
 const isMonthly = ref(false)
 
 const props = defineProps({
-  modelValue: Date,
+  modelValue: {
+    type: Date,
+  },
 })
 const emit = defineEmits(['update:modelValue'])
+
 const datePickStore = useDatePickStore()
-
 const selectedDate = useDatePickerSelectedDate(props, emit, datePickStore)
+const baseDate = ref(selectedDate.value)
 
-const { selectDate, syncStoreOnModeSwitch, handleBaseDateWatch } = useDatePickerState({
+const { currentMonthLabel } = useDatePickerDates(baseDate, selectedDate, today)
+const { selectDate, syncStoreOnWeeklyModeSwitch, handleBaseDateWatch } = useDatePickerState({
   baseDate,
   selectedDate,
   isMonthly,
   datePickStore,
 })
 
-watch(isMonthly, syncStoreOnModeSwitch)
-watch(baseDate, handleBaseDateWatch, { immediate: true })
-
-const currentMonthLabel = computed(() => format(selectedDate.value, 'MMMM yyyy', { locale: ko }))
+watch(isMonthly, syncStoreOnWeeklyModeSwitch)
+watch(baseDate, handleBaseDateWatch, { immediate: false })
 
 const prevWeek = () => (baseDate.value = subWeeks(baseDate.value, 1))
 const nextWeek = () => (baseDate.value = addWeeks(baseDate.value, 1))
@@ -55,6 +57,8 @@ const { onTouchStart, onTouchEnd } = useDatePickerGestures({
       <BaseButton
         @click="() => (isMonthly = !isMonthly)"
         class="hidden md:flex w-6 h-6 justify-center items-center bg-none text-base text-main-color"
+        :aria-label="isMonthly ? '주간 보기로 전환' : '월간 보기로 전환'"
+        :title="isMonthly ? '주간 보기로 전환' : '월간 보기로 전환'"
       >
         <CalendarArrowUp v-if="isMonthly" class="h-4 w-4" />
         <CalendarArrowDown v-else class="h-4 w-4" />

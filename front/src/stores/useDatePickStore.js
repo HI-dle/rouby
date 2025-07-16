@@ -8,9 +8,17 @@ export const useDatePickStore = defineStore('date-pick', {
     selectedDate: null,
   }),
 
+  persist: {
+    storage: JSON.parse(localStorage.getItem('alwaysLogin') || 'false')
+      ? localStorage
+      : sessionStorage,
+  },
+
   actions: {
     setSelectedDate(baseDate, date, isMonthly = false) {
-      const key = isMonthly ? format(date, 'yyyy-MM') : format(startOfWeek(baseDate), 'yyyy-MM-dd')
+      const key = isMonthly
+        ? format(date, 'yyyy-MM')
+        : format(startOfWeek(baseDate), 'yyyy-MM-dd')
 
       const value = format(date, 'yyyy-MM-dd')
 
@@ -19,7 +27,9 @@ export const useDatePickStore = defineStore('date-pick', {
       } else {
         this.weeklySelected[key] = value
       }
+
       this.selectedDate = value
+      console.log(this.selectedDate)
     },
 
     getSelectedDate(baseDate, isMonthly = false) {
@@ -30,13 +40,13 @@ export const useDatePickStore = defineStore('date-pick', {
       return isMonthly ? this.monthlySelected[key] : this.weeklySelected[key]
     },
 
-    setFinalSelectedDate(date) {
+    setCurrentSelectedDate(date) {
       this.selectedDate = format(date, 'yyyy-MM-dd')
     },
   },
 
   getters: {
-    finalSelectedDate: (state) => {
+    lastSelectedDate: (state) => {
       return state.selectedDate ?? format(new Date(), 'yyyy-MM-dd')
     },
   },

@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import WeeklyMonthlyDatePicker from '@/components/common/date-picker/WeeklyMonthlyDatePicker.vue'
 
-const selectedDate = ref(new Date())
+const selectedDate = ref(null)
 </script>
 
 <template>

@@ -1,7 +1,12 @@
 import { ref, watch } from 'vue'
 
 export function useDatePickerSelectedDate(props, emit, datePickStore) {
-  const selectedDate = ref(props.modelValue ?? new Date(datePickStore.finalSelectedDate))
+  const selectedDate = ref(
+    props.modelValue ??
+      (datePickStore.lastSelectedDate
+        ? new Date(datePickStore.lastSelectedDate)
+        : new Date()),
+  )
 
   watch(
     () => props.modelValue,
@@ -12,7 +17,7 @@ export function useDatePickerSelectedDate(props, emit, datePickStore) {
 
   watch(selectedDate, (val) => {
     emit('update:modelValue', val)
-    datePickStore.setFinalSelectedDate(val)
+    datePickStore.setCurrentSelectedDate(val)
   })
 
   return selectedDate
