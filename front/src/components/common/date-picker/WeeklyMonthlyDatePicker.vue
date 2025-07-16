@@ -53,7 +53,7 @@ const { onTouchStart, onTouchEnd } = useDatePickerGestures({
 </script>
 
 <template>
-  <div @touchstart="onTouchStart" @touchend="onTouchEnd">
+  <div @touchstart.passive="onTouchStart" @touchend.passive="onTouchEnd">
     <div class="flex justify-center items-center gap-2 mb-2">
       <BaseButton
         @click="() => (isMonthly = !isMonthly)"
