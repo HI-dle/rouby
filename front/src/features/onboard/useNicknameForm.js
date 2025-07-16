@@ -1,4 +1,3 @@
-// useNicknameForm.js 수정 (store 반영)
 import { ref, watch } from 'vue'
 import { useOnboardStore } from '@/features/onboard/store/useOnboardStore'
 
@@ -15,11 +14,18 @@ export function useNicknameForm() {
   })
 
   const validateNickname = () => {
-    if (nickname.value.length > 20) {
+    if (nickname.value.trim().length > 20) {
       nicknameError.value = '닉네임은 20자 이하여야 합니다.'
-    } else {
-      nicknameError.value = ''
+      return false
     }
+
+    if (!nickname.value.trim()) {
+      nicknameError.value = '닉네임을 입력해주세요.'
+      return false
+    }
+
+    nicknameError.value = ''
+    return true
   }
 
   return {

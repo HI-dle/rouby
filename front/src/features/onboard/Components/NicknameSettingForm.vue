@@ -40,13 +40,11 @@ import FieldError from '@/components/common/FieldError.vue'
 import { useNicknameForm } from '@/features/onboard/useNicknameForm.js'
 import { useOnboardStore } from '@/features/onboard/store/useOnboardStore'
 
-// 부모 컴포넌트에서 v-model로 넘겨받는 값 처리
 const props = defineProps({
   modelValue: String,
 })
 const emit = defineEmits(['update:modelValue'])
 
-// 내부 상태 관리 훅 (유효성 검사 등)
 const {
   nickname: internalNickname,
   nicknameError,
@@ -54,22 +52,31 @@ const {
   validateNickname,
 } = useNicknameForm()
 
-// computed로 부모 props와 내부 상태 동기화
+// 💡 computed로 양방향 바인딩 연결
 const nickname = computed({
   get() {
     return props.modelValue
   },
   set(val) {
     emit('update:modelValue', val)
+    internalNickname.value = val // 내부 값도 동기화
   },
 })
 
-// store에 값 반영
+// store에 반영 (중복될 수 있지만 안전하게 유지)
 const store = useOnboardStore()
 watch(nickname, val => {
   store.userName = val
 })
+
+// 부모가 호출할 수 있도록 expose
+const validate = () => {
+  return validateNickname()
+}
+
+defineExpose({ validate })
 </script>
+
 
 
 
