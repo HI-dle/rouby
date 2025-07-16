@@ -1,4 +1,4 @@
-package com.rouby.user.presentation;
+package com.rouby.user.presentation.dto.request;
 
 import com.rouby.user.application.dto.command.VerifyEmailCommand;
 import jakarta.validation.constraints.Email;
