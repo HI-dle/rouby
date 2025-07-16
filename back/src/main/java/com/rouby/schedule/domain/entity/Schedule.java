@@ -54,7 +54,6 @@ public class Schedule extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private AlarmOffsetType alarmOffsetType;
 
-  //@Type(JsonType.class)
   @JdbcTypeCode(SqlTypes.JSON)
   @Column(columnDefinition = "jsonb")
   private RecurrenceRule recurrenceRule;
