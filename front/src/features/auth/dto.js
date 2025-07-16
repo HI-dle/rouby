@@ -18,4 +18,19 @@ export function toVerifyCodePayload(email, code) {
   };
 }
 
+export function toVerifyPasswordCodePayload(form) {
+  console.log('dto', form)
+  return {
+    email: form.email?.trim(),
+    token: form.token?.trim()
+  };
+}
+
+export function toResetPasswordPayload(form) {
+  return {
+    email: form.email,
+    newPassword: form.password,
+    token: form.token?.trim()
+  };
+}
 

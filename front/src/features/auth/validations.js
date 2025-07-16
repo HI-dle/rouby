@@ -68,3 +68,15 @@ export function validateSignupForm(form, errors) {
 
   return isValid;
 }
+
+export function validateEmailForm(form, errors) {
+  let isValid = true;
+
+  const emailError = validateEmail(form.email)
+  if (emailError) {
+    errors.email = emailError;
+    isValid = false;
+  }
+
+  return isValid;
+}
