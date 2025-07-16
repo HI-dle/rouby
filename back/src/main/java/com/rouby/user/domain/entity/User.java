@@ -1,6 +1,7 @@
 package com.rouby.user.domain.entity;
 
 import com.rouby.common.jpa.BaseEntity;
+import com.rouby.user.application.dto.command.UpdateUserRoubySettingCommand.NotificationSettingCommand;
 import com.rouby.user.domain.service.UserPasswordEncoder;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -134,7 +135,6 @@ public class User extends BaseEntity {
         .collect(Collectors.toSet());
   }
 
-
   protected User() {
     this.notificationSettings = new HashSet<>();
   }
@@ -142,5 +142,13 @@ public class User extends BaseEntity {
   public void updatePassword(UserPasswordEncoder passwordEncoder, String newPassword) {
     validatePassword(newPassword);
     this.password = passwordEncoder.encode(newPassword);
+  }
+
+  public void updateRoubySettings(
+      CommunicationTone communicationTone,
+      Set<NotificationSetting> notificationSettings) {
+    this.communicationTone = communicationTone;
+    this.notificationSettings.clear();
+    this.notificationSettings.addAll(notificationSettings);
   }
 }

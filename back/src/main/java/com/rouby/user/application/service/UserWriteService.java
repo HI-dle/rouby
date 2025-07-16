@@ -12,17 +12,22 @@ import com.rouby.user.application.dto.command.FindPasswordCommand;
 import com.rouby.user.application.dto.command.ResetPasswordByTokenCommand;
 import com.rouby.user.application.dto.command.ResetPasswordCommand;
 import com.rouby.user.application.dto.command.SaveVerificationCodeCommand;
+import com.rouby.user.application.dto.command.UpdateUserRoubySettingCommand;
 import com.rouby.user.application.dto.command.VerifyEmailCommand;
+import com.rouby.user.application.dto.info.RoubySettingInfo;
 import com.rouby.user.application.exception.UserErrorCode;
 import com.rouby.user.application.exception.UserException;
 import com.rouby.user.application.service.verification.VerificationEmailCode;
 import com.rouby.user.application.service.verification.VerificationEmailCodeStorage;
 import com.rouby.user.application.service.verification.VerificationPasswordTokenStorage;
+import com.rouby.user.domain.entity.CommunicationTone;
+import com.rouby.user.domain.entity.NotificationSetting;
 import com.rouby.user.domain.entity.User;
 import com.rouby.user.domain.repository.UserRepository;
 import com.rouby.user.domain.service.UserPasswordEncoder;
 import jakarta.transaction.Transactional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -109,13 +114,19 @@ public class UserWriteService {
     verificationPasswordCodeStorage.deleteByEmail(command.email());
   }
 
+  @Transactional
+  public void updateRoubySettings(Long userId, UpdateUserRoubySettingCommand command) {
+    User user = userRepository.findById(userId).orElseThrow(() ->
+        new CustomException(USER_NOT_FOUND));;
+    user.updateRoubySettings(command.toCommunicationTone(), command.toNotificationSettings(user));
+  }
+
   public String getResetPasswordLink(FindPasswordCommand command) {
     if(!userRepository.existsByEmail(command.email())) {
       throw UserException.from(USER_NOT_FOUND);
     }
 
     String code = UUID.randomUUID().toString();
-
     verificationPasswordCodeStorage.storePasswordResetToken(command.email(), code);
 
     return code;

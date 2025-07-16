@@ -7,6 +7,8 @@ import com.rouby.user.presentation.dto.request.FindPasswordRequest;
 import com.rouby.user.presentation.dto.request.ResetPasswordByTokenRequest;
 import com.rouby.user.presentation.dto.request.ResetPasswordRequest;
 import com.rouby.user.presentation.dto.request.SendEmailVerificationRequest;
+import com.rouby.user.presentation.dto.request.UpdateRoubySettingRequest;
+import com.rouby.user.presentation.dto.response.RoubySettingResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -50,37 +53,45 @@ public class UserController {
   @PatchMapping("/password/reset/token")
   public ResponseEntity<Void> resetPasswordByToken(
       @RequestBody ResetPasswordByTokenRequest request) {
-
     userFacade.resetPasswordByToken(request.toCommand());
-
     return ResponseEntity.noContent().build();
   }
 
   @GetMapping("/password/reset/validate")
   public ResponseEntity<Void> validateResetToken(@RequestParam String email,
       @RequestParam String token) {
-
     userFacade.validatePasswordToken(email, token);
-
     return ResponseEntity.ok().build();
   }
 
   @PostMapping("/password/find")
   public ResponseEntity<Void> findPassword(
       @RequestBody FindPasswordRequest request) {
-
     userFacade.findPassword(request.toCommand());
     return ResponseEntity.noContent().build();
   }
-
 
   @PatchMapping("/password/reset")
   public ResponseEntity<Void> resetPassword(
       @AuthenticationPrincipal SecurityUser securityUser,
       @RequestBody @Valid ResetPasswordRequest request) {
-
     userFacade.resetPassword(securityUser.getId(), request.toCommand());
-
     return ResponseEntity.noContent().build();
   }
+
+  @GetMapping("/rouby-setting")
+  public ResponseEntity<RoubySettingResponse> getRoubySetting(
+      @AuthenticationPrincipal SecurityUser securityUser) {
+    return ResponseEntity.ok(RoubySettingResponse.from(
+        userFacade.getRoubySettingInfo(securityUser.getId())));
+  }
+
+  @PutMapping("/rouby-setting")
+  public ResponseEntity<Void> updateRoubySetting(
+      @AuthenticationPrincipal SecurityUser securityUser,
+      @RequestBody @Valid UpdateRoubySettingRequest request){
+    userFacade.updateRoubySettings(securityUser.getId(), request.toCommand());
+    return ResponseEntity.noContent().build();
+  }
+
 }
