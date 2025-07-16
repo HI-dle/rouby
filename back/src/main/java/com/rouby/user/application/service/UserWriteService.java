@@ -14,20 +14,16 @@ import com.rouby.user.application.dto.command.ResetPasswordCommand;
 import com.rouby.user.application.dto.command.SaveVerificationCodeCommand;
 import com.rouby.user.application.dto.command.UpdateUserRoubySettingCommand;
 import com.rouby.user.application.dto.command.VerifyEmailCommand;
-import com.rouby.user.application.dto.info.RoubySettingInfo;
 import com.rouby.user.application.exception.UserErrorCode;
 import com.rouby.user.application.exception.UserException;
 import com.rouby.user.application.service.verification.VerificationEmailCode;
 import com.rouby.user.application.service.verification.VerificationEmailCodeStorage;
 import com.rouby.user.application.service.verification.VerificationPasswordTokenStorage;
-import com.rouby.user.domain.entity.CommunicationTone;
-import com.rouby.user.domain.entity.NotificationSetting;
 import com.rouby.user.domain.entity.User;
 import com.rouby.user.domain.repository.UserRepository;
 import com.rouby.user.domain.service.UserPasswordEncoder;
 import jakarta.transaction.Transactional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -58,9 +54,9 @@ public class UserWriteService {
 
   private void ensureEmailVerified(String email) {
     VerificationEmailCode code = verificationEmailCodeStorage.findByEmail(email)
-            .orElseThrow(() -> UserException.from(EMAIL_NOT_VERIFIED));
+        .orElseThrow(() -> UserException.from(EMAIL_NOT_VERIFIED));
 
-    if(!code.isVerified()) {
+    if (!code.isVerified()) {
       throw UserException.from(EMAIL_NOT_VERIFIED);
     }
   }
@@ -109,7 +105,7 @@ public class UserWriteService {
 
     validatePasswordToken(command.email(), command.token());
 
-    user.updatePassword( passwordEncoder, command.newPassword());
+    user.updatePassword(passwordEncoder, command.newPassword());
 
     verificationPasswordCodeStorage.deleteByEmail(command.email());
   }
@@ -117,12 +113,13 @@ public class UserWriteService {
   @Transactional
   public void updateRoubySettings(Long userId, UpdateUserRoubySettingCommand command) {
     User user = userRepository.findById(userId).orElseThrow(() ->
-        new CustomException(USER_NOT_FOUND));;
+        new CustomException(USER_NOT_FOUND));
+
     user.updateRoubySettings(command.toCommunicationTone(), command.toNotificationSettings(user));
   }
 
   public String getResetPasswordLink(FindPasswordCommand command) {
-    if(!userRepository.existsByEmail(command.email())) {
+    if (!userRepository.existsByEmail(command.email())) {
       throw UserException.from(USER_NOT_FOUND);
     }
 

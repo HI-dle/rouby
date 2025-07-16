@@ -6,12 +6,10 @@ import static com.rouby.user.application.exception.UserErrorCode.USER_NOT_FOUND;
 
 import com.rouby.user.application.dto.command.LoginCommand;
 import com.rouby.user.application.dto.info.RoubySettingInfo;
-import com.rouby.user.application.dto.info.RoubySettingInfo.NotificationSettingInfo;
 import com.rouby.user.application.exception.UserException;
 import com.rouby.user.domain.entity.User;
 import com.rouby.user.domain.repository.UserRepository;
 import com.rouby.user.domain.service.UserPasswordEncoder;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

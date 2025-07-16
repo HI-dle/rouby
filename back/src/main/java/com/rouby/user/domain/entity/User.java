@@ -1,7 +1,6 @@
 package com.rouby.user.domain.entity;
 
 import com.rouby.common.jpa.BaseEntity;
-import com.rouby.user.application.dto.command.UpdateUserRoubySettingCommand.NotificationSettingCommand;
 import com.rouby.user.domain.service.UserPasswordEncoder;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -93,7 +92,7 @@ public class User extends BaseEntity {
   }
 
   private static void validatePassword(String plainPassword) {
-    if (plainPassword==null || plainPassword.isBlank()) {
+    if (plainPassword == null || plainPassword.isBlank()) {
       throw new IllegalArgumentException("비밀번호는 필수입니다.");
     }
     if (plainPassword.length() < 8 || plainPassword.length() > 32) {

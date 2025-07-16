@@ -35,8 +35,6 @@ import com.rouby.notification.email.application.exception.EmailException;
 import com.rouby.user.application.dto.info.RoubySettingInfo;
 import com.rouby.user.application.dto.info.RoubySettingInfo.NotificationSettingInfo;
 import com.rouby.user.application.exception.UserException;
-import com.rouby.user.domain.entity.NotificationSetting;
-import com.rouby.user.domain.entity.NotificationType;
 import com.rouby.user.presentation.dto.request.CreateUserRequest;
 import com.rouby.user.presentation.dto.request.FindPasswordRequest;
 import com.rouby.user.presentation.dto.request.ResetPasswordByTokenRequest;
@@ -425,8 +423,6 @@ class UserControllerTest extends ControllerTestSupport {
         .token(UUID.randomUUID().toString())
         .build();
 
-    String token = UUID.randomUUID().toString();
-
     doNothing().when(userFacade).resetPasswordByToken(request.toCommand());
 
     //when
@@ -540,7 +536,8 @@ class UserControllerTest extends ControllerTestSupport {
                 fieldWithPath("communicationTone").description("루비 커뮤니케이션 톤 목록 "),
                 fieldWithPath("notificationSettings").description("알림 설정 목록"),
                 fieldWithPath("notificationSettings[].notificationType").description("알림 유형"),
-                fieldWithPath("notificationSettings[].enabled").description("알림 사용 여부 (true: 사용, false: 사용 안 함)")
+                fieldWithPath("notificationSettings[].enabled").description(
+                    "알림 사용 여부 (true: 사용, false: 사용 안 함)")
             )
 
         ));
@@ -578,7 +575,8 @@ class UserControllerTest extends ControllerTestSupport {
                 fieldWithPath("communicationTone").description("변경할 루비 커뮤니케이션 톤 목록"),
                 fieldWithPath("notificationSettings").description("변경할 알림 설정 목록"),
                 fieldWithPath("notificationSettings[].notificationType").description("알림 유형"),
-                fieldWithPath("notificationSettings[].enabled").description("알림 사용 여부 (true: 사용, false: 사용 안 함)")
+                fieldWithPath("notificationSettings[].enabled").description(
+                    "알림 사용 여부 (true: 사용, false: 사용 안 함)")
             )
         ));
   }
