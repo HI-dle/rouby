@@ -2,8 +2,8 @@
 <template>
   <div class="text-center mt-12 space-y-6 w-full text-main-color">
     <div>
-      <p class="text-base font-semibold">만나서 반가워요!</p>
-      <p class="text-base font-semibold">제가 뭐라고 부르면 될까요?</p>
+      <p class="text-base">만나서 반가워요!</p>
+      <p class="text-base">제가 뭐라고 부르면 될까요?</p>
       <p class="text-sm text-#6667D07A mt-2">루비와 함께할 분의 이름을 알고싶어요!</p>
     </div>
 
