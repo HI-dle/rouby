@@ -1,4 +1,4 @@
-import { startOfMonth, startOfWeek } from 'date-fns'
+import { isSameMonth, startOfMonth, startOfWeek } from 'date-fns'
 
 const getMidnightDate = (dateStr) =>
   new Date(new Date(dateStr).setHours(0, 0, 0, 0))

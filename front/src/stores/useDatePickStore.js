@@ -29,7 +29,6 @@ export const useDatePickStore = defineStore('date-pick', {
       }
 
       this.selectedDate = value
-      console.log(this.selectedDate)
     },
 
     getSelectedDate(baseDate, isMonthly = false) {
