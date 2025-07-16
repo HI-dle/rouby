@@ -13,13 +13,12 @@
 
       <!-- 다음 단계 이동 -->
       <div class="w-full mt-10 pt-10 text-center">
-        <RouterLink
-          to="date-setting"
+        <button
+          @click="onNextLinkClick"
           class="text-indigo-400 underline hover:text-#6667D07A"
-          @click.prevent="onNextLinkClick"
         >
           다음 단계로
-        </RouterLink>
+        </button>
       </div>
     </div>
   </div>

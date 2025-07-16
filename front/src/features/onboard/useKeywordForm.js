@@ -1,43 +1,47 @@
-
 import { ref } from 'vue'
-import { isValidKeyword } from '@/components/composable/useKeywordValidator.js'
+import { isValidKeyword } from '@/components/composable/useKeywordValidator'
 
 export function useKeywordForm() {
   const keyword = ref('')
-  const keywordError = ref('')
   const keywords = ref([])
+  const keywordError = ref('')
 
-  const addKeyword = () => {
-    const input = keyword.value.trim()
-    const { valid, message } = isValidKeyword(input)
+  const handleSubmit = () => {
+    const value = keyword.value.trim()
 
+    // 최대 20개 제한
+    if (keywords.value.length >= 20) {
+      keywordError.value = '태그는 최대 20개까지 입력할 수 있어요.'
+      return
+    }
+
+    // 유효성 검사 (글자수 등)
+    const { valid, message } = isValidKeyword(value)
     if (!valid) {
       keywordError.value = message
       return
     }
 
-    if (keywords.value.includes(input)) {
-      keywordError.value = '이미 추가된 태그입니다.'
+    // 중복 방지
+    if (keywords.value.includes(value)) {
+      keywordError.value = '이미 추가된 키워드예요.'
       return
     }
 
-    keywords.value.push(input)
+    // 정상 추가
+    keywords.value.push(value)
     keyword.value = ''
     keywordError.value = ''
   }
 
-  const removeKeyword = (target) => {
-    keywords.value = keywords.value.filter((k) => k !== target)
-  }
-
-  const handleSubmit = () => {
-    addKeyword()
+  const removeKeyword = (k) => {
+    keywords.value = keywords.value.filter((v) => v !== k)
   }
 
   return {
     keyword,
-    keywordError,
     keywords,
+    keywordError,
     handleSubmit,
     removeKeyword,
   }

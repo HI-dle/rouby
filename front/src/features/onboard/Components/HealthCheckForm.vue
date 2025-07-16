@@ -60,16 +60,14 @@ const {
 
 const onNextClick = () => {
   if (keywords.value.length === 0) {
-    alert('키워드를 최소 1개 이상 입력해주세요.')
+    alert('건강 상태를 최소 1개 이상 입력해주세요!')
     return false
   }
 
   store.keywords = [...keywords.value]
   store.selectedHealth = store.keywords[0]
 
-  console.log('저장된 키워드:', store.keywords)
-  console.log('선택된 건강 상태:', store.selectedHealth)
-
+  console.log('키워드 저장 후 true 반환')
   return true
 }
 
