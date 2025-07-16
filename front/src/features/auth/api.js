@@ -11,3 +11,20 @@ export const verifyEmail = (payload) => {
 export const signup = (payload) => {
   return axios.post('/api/v1/users', payload)
 }
+
+export const findPassword = (payload) => {
+  return axios.post('/v1/users/password/find', payload)
+}
+
+export const resetPassword = (payload) => {
+  return axios.patch('/v1/users/password/reset/token', payload)
+}
+
+export const verificationPasswordCode = (payload) => {
+  return axios.get('/v1/users/password/reset/validate', {
+    params: {
+      email: payload.email,
+      token: payload.token
+    }
+  })
+}
