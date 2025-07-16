@@ -64,6 +64,10 @@ public class User extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private UserRole role;
 
+  @Column(nullable = false)
+  @Enumerated
+  private OnboardingState onboardingState;
+
   private LocalDateTime lastActivatedAt;
 
   public static User create(
@@ -76,6 +80,7 @@ public class User extends BaseEntity {
         .password(passwordEncoder.encode(plainPassword))
         .nickname(email.substring(0, email.indexOf("@")))
         .role(UserRole.USER)
+        .onboardingState(OnboardingState.USER_INFO_SETTING_BEFORE)
         .build();
   }
 
@@ -112,7 +117,8 @@ public class User extends BaseEntity {
       String nickname,
       AuthProvider authProvider,
       UserRole role,
-      LocalDateTime lastActivatedAt
+      LocalDateTime lastActivatedAt,
+      OnboardingState onboardingState
   ) {
     this.email = email;
     this.password = password;
@@ -126,6 +132,7 @@ public class User extends BaseEntity {
     this.authProvider = authProvider == null ? AuthProvider.DEFAULT : authProvider;
     this.role = role == null ? UserRole.USER : role;
     this.lastActivatedAt = lastActivatedAt;
+    this.onboardingState = onboardingState;
   }
 
   private Set<NotificationSetting> createDefaultNotificationSettings() {

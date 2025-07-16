@@ -7,10 +7,12 @@ import com.rouby.user.presentation.dto.request.FindPasswordRequest;
 import com.rouby.user.presentation.dto.request.ResetPasswordByTokenRequest;
 import com.rouby.user.presentation.dto.request.ResetPasswordRequest;
 import com.rouby.user.presentation.dto.request.SendEmailVerificationRequest;
+import com.rouby.user.presentation.dto.response.UserCheckResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -82,5 +84,13 @@ public class UserController {
     userFacade.resetPassword(securityUser.getId(), request.toCommand());
 
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping
+  @PreAuthorize("hasAnyRole('USER')")
+  public ResponseEntity<UserCheckResponse> userInfoCheck(
+      @AuthenticationPrincipal SecurityUser securityUser) {
+    return ResponseEntity.ok(
+        UserCheckResponse.from(userFacade.userInfoCheck(securityUser.getId())));
   }
 }
