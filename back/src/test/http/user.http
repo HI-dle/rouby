@@ -1,9 +1,10 @@
 ### 회원가입 API
 POST {{url}}/api/v1/users
 content-type: application/json
+Authorization: EmailVerification {{verificationToken}}
 
 {
-  "email": "valid@hidle.com",
+  "email": "{{yourEmail}}",
   "password": "aaaaaa11!"
 }
 
@@ -12,9 +13,31 @@ POST {{url}}/api/v1/users
 content-type: application/json
 
 {
-  "email": "invalid@hidle.com",
+  "email": "{{yourEmail}}",
   "password": "qwe3"
 }
+
+### 이메일 인증 API
+POST {{url}}/api/v1/users/email-verification/request
+content-type: application/json
+
+{
+  "email": "{{yourEmail}}"
+}
+
+### 인증코드 검증 API
+POST {{url}}/api/v1/users/email-verification/verify
+content-type: application/json
+
+{
+  "email": "{{yourEmail}}",
+  "code": "Nx5oxT"
+}
+
+> {%
+  client.global.set("verificationToken", response.body.token);
+%}
+
 
 ### 로그인
 POST {{url}}/api/v1/auth/login
