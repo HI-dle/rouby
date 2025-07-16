@@ -47,6 +47,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    // todo jsonb 역직렬화에 필요할 수 있어서 일단 추가하였으나 사용 없으면 제거 예정
+    //implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.9.10'
+
     // thymeleaf
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 

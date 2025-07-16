@@ -10,7 +10,7 @@
 == 소개
 ROUBY의 API Docs 입니다.
 
-include::auth.adoc[]
-include::user.adoc[]
-include::schedule.adoc[]
-include::routine.adoc[]
+include::src/docs/asciidoc/auth.adoc[]
+include::src/docs/asciidoc/user.adoc[]
+include::src/docs/asciidoc/schedule.adoc[]
+include::src/docs/asciidoc/routine.adoc[]
