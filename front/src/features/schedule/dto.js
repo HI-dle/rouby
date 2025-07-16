@@ -1,7 +1,6 @@
-import { dateTimeUtil } from '@/shared/utils/dateTimeUtil'
+import { convertDateToDateTime, extractDate, formatDateTime } from '@/shared/utils/dateTimeUtil'
 import { BIWEEKLY, BYDAY, WEEKELY } from './constants'
 
-const { formatDateTime, extractDate, convertDateToDateTime } = dateTimeUtil()
 const getWeekdays = (from, end) => {
   const startDate = new Date(from)
   const endDate = new Date(end)

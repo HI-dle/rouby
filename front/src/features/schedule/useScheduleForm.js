@@ -1,11 +1,9 @@
 import { nextTick, reactive, ref, watch } from 'vue'
-import { dateTimeUtil } from '@/shared/utils/dateTimeUtil'
+import { convertDateToDateTime, formatDateTime } from '@/shared/utils/dateTimeUtil'
 import { validateForm } from './validations'
 import { createSchedule } from './scheduleService'
 
 export const useScheduleForm = () => {
-  const { formatDateTime, convertDateToDateTime } = dateTimeUtil()
-
   const createInitialForm = () => {
     const now = new Date()
     const oneHourLater = new Date(now.getTime() + 3600000)
@@ -56,6 +54,7 @@ export const useScheduleForm = () => {
       onSuccess?.(scheduleId)
       return scheduleId
     } catch (err) {
+      const msg = err.response?.data?.message || err.message || '저장 실패'
       onError?.(msg)
       return null
     } finally {
