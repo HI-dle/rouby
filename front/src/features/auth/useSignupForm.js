@@ -21,6 +21,7 @@ export function useSignupForm() {
     isEmailVerified: false,
     isVerificationStep: false,
     lastVerifiedEmail: '',
+    verificationToken: ''
   })
 
   const errors = reactive({
@@ -121,7 +122,9 @@ export function useSignupForm() {
 
     loading.codeVerification = true
     try {
-      await verifyEmailCode(form.email, form.verificationCode)
+      const response= await verifyEmailCode(form.email, form.verificationCode)
+      form.verificationToken = response.data.token
+      console.log(form.verificationToken);
       form.isEmailVerified = true
       stopTimer()
       return true
@@ -156,10 +159,11 @@ export function useSignupForm() {
     }
 
     loading.signup = true
+
     try {
       const res = await signup(form)
-      if (res?.ok) {
-        await router.push('/auth/login')
+      if (res?.data.ok) {
+        router.push('/auth/login')
       }
     } catch (err) {
       if (err.fieldErrors) {
