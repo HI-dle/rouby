@@ -1,12 +1,12 @@
 import { reactive, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useTimer } from '@/utils/timerUtils.js'
-import { buildErrorCleaner, buildFieldValidator } from '@/utils/formUtils.js'
+import { useTimer } from '@/shared/utils/timerUtils.js'
+import { buildErrorCleaner, buildFieldValidator } from '@/shared/utils/formUtils.js'
 
 import {
   requestEmailVerification,
   signup,
-  verifyEmailCode
+  verifyEmailCode,
 } from './authService.js'
 
 import {

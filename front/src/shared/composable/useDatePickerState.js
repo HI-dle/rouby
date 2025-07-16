@@ -1,4 +1,7 @@
-import { isSameMonth, startOfMonth, startOfWeek } from 'date-fns'
+import { startOfMonth, startOfWeek } from 'date-fns'
+
+const getMidnightDate = (dateStr) =>
+  new Date(new Date(dateStr).setHours(0, 0, 0, 0))
 
 export function useDatePickerState({
   baseDate,
@@ -34,26 +37,23 @@ export function useDatePickerState({
     const saved = datePickStore.getSelectedDate(baseDate.value, isMonthly.value)
 
     if (saved) {
-      const parsedDate = new Date(saved)
-      if (isNaN(parsedDate.getTime())) {
-        console.warn('Invalid saved date format:', saved)
+      const parsedDate = getMidnightDate(saved)
 
-        selectedDate.value = isMonthly.value
-          ? startOfMonth(baseDate.value)
-          : startOfWeek(baseDate.value, { weekStartsOn: 0 })
-      } else {
+      if (!isNaN(parsedDate.getTime())) {
         selectedDate.value = parsedDate
+        return
       }
-    } else {
-      selectedDate.value = isMonthly.value
-        ? startOfMonth(baseDate.value)
-        : startOfWeek(baseDate.value, { weekStartsOn: 0 })
-      datePickStore.setSelectedDate(
-        baseDate.value,
-        selectedDate.value,
-        isMonthly.value,
-      )
     }
+
+    selectedDate.value = isMonthly.value
+      ? getMidnightDate(startOfMonth(baseDate.value))
+      : getMidnightDate(startOfWeek(baseDate.value, { weekStartsOn: 0 }))
+
+    datePickStore.setSelectedDate(
+      baseDate.value,
+      selectedDate.value,
+      isMonthly.value,
+    )
   }
 
   return {
