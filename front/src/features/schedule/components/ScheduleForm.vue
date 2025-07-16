@@ -3,13 +3,14 @@ import { CalendarClock, Calendar, Bell, RefreshCw } from 'lucide-vue-next'
 import SelectBox from '@/components/common/SelectBox.vue'
 import ToggleSwitch from '@/components/common/ToggleSwitch.vue'
 import { alarmOptions, repeatOptions } from '../constants'
-import { toDate } from '@/shared/utils/formatDate'
 import FieldError from '@/components/common/FieldError.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import BaseModal from '@/components/common/BaseModal.vue'
+import { toDate } from '@/shared/utils/formatDate'
 
 const props = defineProps({
   form: Object,
+  isSubmitting: Boolean,
   errors: Object,
   inputRefs: Object,
   errorModal: Object,
@@ -140,7 +141,7 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
           class="bg-none bg-gray-200 !text-content-color hover:bg-gray-300"
           >취소
         </BaseButton>
-        <BaseButton type="submit">저장</BaseButton>
+        <BaseButton type="submit" :disabled="isSubmitting">저장</BaseButton>
       </div>
     </form>
   </div>

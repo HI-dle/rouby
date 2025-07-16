@@ -13,13 +13,12 @@
       <X class="w-3 h-3" />
     </button>
   </div>
-
 </template>
 
 <script setup>
 import { X } from 'lucide-vue-next'
 import { computed } from 'vue'
-import { isValidKeyword } from '@/components/composable/useKeywordValidator'
+import { isValidKeyword } from '@/shared/composable/useKeywordValidator'
 
 const props = defineProps({
   label: {
