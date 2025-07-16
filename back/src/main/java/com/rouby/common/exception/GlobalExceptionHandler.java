@@ -121,7 +121,7 @@ public class GlobalExceptionHandler {
 
     log(e, request, UNAUTHORIZED);
     return ResponseEntity
-        .badRequest()
+        .status(UNAUTHORIZED)
         .body(ErrorResponse.of(ApiErrorCode.UNAUTHORIZED.getMessage(),
             ApiErrorCode.UNAUTHORIZED.getCode()));
   }

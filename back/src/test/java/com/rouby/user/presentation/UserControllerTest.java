@@ -309,7 +309,7 @@ class UserControllerTest extends ControllerTestSupport {
 
     // given
     VerifyEmailRequest request = UserRequestFixture.toVerifyEmailRequest();
-    String token = UserRequestFixture.CREATED_EMAIL_TOKEN;
+    String token = UserRequestFixture.VALID_EMAIL_TOKEN;
     when(userFacade.verifyEmail(request.toCommand())).thenReturn(token);
 
 

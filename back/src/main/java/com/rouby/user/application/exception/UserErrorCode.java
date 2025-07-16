@@ -25,8 +25,8 @@ public enum UserErrorCode implements ErrorCode {
   EMAIL_NOT_VERIFIED("이메일 인증이 필요합니다. 인증 후 이용해주세요.", "EMAIL_NOT_VERIFIED", HttpStatus.UNAUTHORIZED),
   INVALID_EMAIL_VERIFICATION_TOKEN("유효하지 않은 이메일 토큰 입니다.", "INVALID_EMAIL_VERIFICATION_TOKEN",
       HttpStatus.UNAUTHORIZED),
-  EMAIL_VERIFICATION_TOKEN_MISMATCH("요청한 이메일과 토큰 정보가 일치하지 않습니다.",
-      "EMAIL_VERIFICATION_TOKEN_MISMATCH", HttpStatus.FORBIDDEN),
+  EMAIL_VERIFICATION_TOKEN_MISMATCH("유효하지 않은 이메일 토큰 입니다.",
+      "INVALID_EMAIL_VERIFICATION_TOKEN", HttpStatus.UNAUTHORIZED),
   ;
 
   private final String message;

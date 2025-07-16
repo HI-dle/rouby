@@ -38,9 +38,10 @@ public class UserController {
   }
 
   @PostMapping("/email-verification/verify")
-  public VerifyEmailTokenResponse verifyEmail(
+  public ResponseEntity<VerifyEmailTokenResponse> verifyEmail(
       @RequestBody @Valid VerifyEmailRequest request) {
-    return VerifyEmailTokenResponse.of(userFacade.verifyEmail(request.toCommand()));
+    return ResponseEntity.ok(
+        VerifyEmailTokenResponse.of(userFacade.verifyEmail(request.toCommand())));
   }
 
   @PostMapping

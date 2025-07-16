@@ -15,7 +15,6 @@ public class UserRequestFixture {
   static final String VALID_EMAIL_TOKEN = "EmailVerification "
       + "KZubXI78rtW5PUIlFUHEl/S2obaHKQ5SG4qYT7lbQX5Oy7/Rr4x3jXUhkhnm2qcP"
       + ".7vGGCif9isavID1Upp9siCuYh4o2gz6XEoN7y0LB4kY=";
-  static final String CREATED_EMAIL_TOKEN = VALID_EMAIL_TOKEN.split(" ", 2)[1];
   static final String INVALID_EMAIL_TOKEN = "invalid-token";
 
   public static CreateUserRequest toCreateRequest() {
