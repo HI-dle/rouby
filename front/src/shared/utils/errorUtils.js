@@ -13,7 +13,7 @@ export function createApiError(err, {
     if (fieldMessages) {
       const fieldErrors = {};
       list.forEach(({ value, message }) => {
-        fieldErrors[value] = fieldMessages[value] || message;
+        fieldErrors[value] = fieldMessages?.[value] ?? message;
       });
       const e = new Error(dataMsg || fallbackMessage);
       e.fieldErrors = fieldErrors;
@@ -33,7 +33,7 @@ export function createApiError(err, {
 export function wrapApi(apiFn, options) {
   return async (...args) => {
     try {
-      return await apiFn(...args)
+      return await apiFn(...args);
     } catch (err) {
       throw createApiError(err, options);
     }
