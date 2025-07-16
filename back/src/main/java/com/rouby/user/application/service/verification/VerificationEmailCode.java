@@ -18,7 +18,9 @@ public class VerificationEmailCode {
     verified = false;
   }
 
-  public void verified() {
+  public VerificationEmailCode verified() {
+    if(this.verified) throw new IllegalStateException("이미 인증되었습니다.");
     this.verified = true;
+    return this;
   }
 }
