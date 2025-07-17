@@ -5,6 +5,7 @@ import lombok.Builder;
 @Builder
 public record CreateUserCommand(
     String email,
-    String password
+    String password,
+    String token
 ) {
 }

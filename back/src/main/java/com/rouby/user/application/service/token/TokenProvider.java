@@ -1,4 +1,4 @@
-package com.rouby.user.application.service;
+package com.rouby.user.application.service.token;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -10,7 +10,7 @@ public interface TokenProvider {
 
   String createAccessToken(String userId, String role, String email);
 
-  boolean validateToken(String token);
+  boolean validateAccessToken(String token);
 
   Long getUserId(String token);
 
@@ -18,9 +18,11 @@ public interface TokenProvider {
 
   String getRole(String token);
 
-  String removeBearerPrefix(String token);
+  String resolveAccessToken(HttpServletRequest request);
 
-  String resolveToken(HttpServletRequest request);
+  String createVerificationToken(String email);
 
+  boolean validateVerificationToken(String token);
 
+  String extractEmail(String token);
 }

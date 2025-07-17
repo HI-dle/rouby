@@ -24,17 +24,17 @@ const isNotCreateOrModify = () => !createOrModify.some((p) => route.path.include
     </RouterLink>
 
     <RouterLink
-      to="/routine"
+      to="/routine-task"
       class="flex justify-center items-center"
-      :class="isActive('/routine') ? 'text-main-color' : 'text-gray-400'"
+      :class="isActive('/routine-task') ? 'text-main-color' : 'text-gray-400'"
     >
       <ClipboardList class="w-6 h-6" />
     </RouterLink>
 
     <RouterLink
-      to="/history"
+      to="/alarm"
       class="flex justify-center items-center"
-      :class="isActive('/history') ? 'text-main-color' : 'text-gray-400'"
+      :class="isActive('/alarm') ? 'text-main-color' : 'text-gray-400'"
     >
       <Clock3 class="w-6 h-6" />
     </RouterLink>

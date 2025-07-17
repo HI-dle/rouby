@@ -2,7 +2,7 @@ export function toSignupPayload(form) {
   return {
     email: form.email?.trim(),
     password: form.password
-  };
+  }
 }
 
 export function toEmailVerificationPayload(email) {

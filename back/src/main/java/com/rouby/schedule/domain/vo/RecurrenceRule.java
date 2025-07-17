@@ -14,9 +14,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RecurrenceRule {
 
@@ -36,8 +38,8 @@ public class RecurrenceRule {
     validate();
   }
 
-  @Override
-  public String toString() {
+
+  public String toRruleString() {
 
     String separator = ";";
     String equal = "=";

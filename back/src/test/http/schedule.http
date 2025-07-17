@@ -1,14 +1,12 @@
-POST http://localhost:8080/api/v1/schedules
+POST {{url}}/api/v1/schedules
 content-type: application/json
 
 {
   "title": "하이들 모임!",
   "memo": "뭉티기 먹을 것!",
   "alarmOffsetMinutes": 1440,
-  "startDate": "2026-07-25",
-  "startTime": "10:30",
-  "endDate": "2026-07-25",
-  "endTime": "22:30",
+  "startAt": "2026-07-25T10:30",
+  "endAt": "2026-07-25T22:30",
   "routineActivateDate": "2026-07-11",
   "recurrenceRule": {
     "freq": "MONTHLY",
