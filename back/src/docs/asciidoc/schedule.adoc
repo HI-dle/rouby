@@ -22,9 +22,6 @@ include::{snippets}/create-schedule-201/http-response.adoc[]
 ===== HTTP 요청
 include::{snippets}/create-schedule-invalid-alarm-offset-400/http-request.adoc[]
 
-===== 요청 필드
-include::{snippets}/create-schedule-invalid-alarm-offset-400/request-fields.adoc[]
-
 ===== HTTP 응답 (400 Bad Request)
 include::{snippets}/create-schedule-invalid-alarm-offset-400/http-response.adoc[]
 ---

@@ -11,10 +11,11 @@ public record CreateUserRequest(
     @NotBlank @Length(min=8, max=32) @ValidPassword String password
 ) {
 
-  public CreateUserCommand toCommand() {
+  public CreateUserCommand toCommand(String token) {
     return CreateUserCommand.builder()
         .email(email)
         .password(password)
+        .token(token)
         .build();
   }
 }

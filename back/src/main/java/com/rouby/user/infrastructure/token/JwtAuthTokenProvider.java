@@ -1,6 +1,5 @@
-package com.rouby.user.infrastructure.security.jwt;
+package com.rouby.user.infrastructure.token;
 
-import com.rouby.user.application.service.TokenProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -21,36 +20,27 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-public class JwtTokenProvider implements TokenProvider {
+public class JwtAuthTokenProvider {
   public static final String BEARER_PREFIX = "Bearer ";
   private static final String CLAIM_ROLE_KEY = "role";
   private static final String CLAIM_EMAIL_KEY = "email";
 
-
   private final SecretKey key;
   private final long tokenTime;
 
-  public JwtTokenProvider(
+  public JwtAuthTokenProvider(
       @Value("${jwt.secret}") String secretKey,
       @Value("${jwt.expiration}") long tokenTime) {
     this.tokenTime = tokenTime;
     this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
   }
 
-  @Override
   public String createAccessToken(String userId, String role, String email) {
     return createToken(userId, role, email, tokenTime);
   }
 
-  @Override
-  public String removeBearerPrefix(String token) {
-    if (token != null && token.startsWith(BEARER_PREFIX)) {
-      return token.substring(BEARER_PREFIX.length());
-    }
-    return token;
-  }
-  @Override
-  public String resolveToken(HttpServletRequest request) {
+
+  public String resolveAccessToken(HttpServletRequest request) {
     String bearerToken = request.getHeader("Authorization");
     if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
       return bearerToken;
@@ -58,8 +48,8 @@ public class JwtTokenProvider implements TokenProvider {
     return null;
   }
 
-  @Override
-  public boolean validateToken(String token) {
+
+  public boolean validateAccessToken(String token) {
     try {
       Jwts.parser()
           .verifyWith(key)
@@ -75,17 +65,17 @@ public class JwtTokenProvider implements TokenProvider {
     }
   }
 
-  @Override
+
   public Long getUserId(String token) {
     return Long.parseLong(getClaimFromToken(token, Claims::getSubject));
   }
 
-  @Override
+
   public String getEmail(String token) {
     return getClaimFromToken(token, claims -> claims.get(CLAIM_EMAIL_KEY, String.class));
   }
 
-  @Override
+
   public String getRole(String token) {
     return getClaimFromToken(token, claims -> claims.get(CLAIM_ROLE_KEY, String.class));
   }
@@ -110,4 +100,10 @@ public class JwtTokenProvider implements TokenProvider {
     return claimsResolver.apply(claims);
   }
 
+  private String removeBearerPrefix(String token) {
+    if (token != null && token.startsWith(BEARER_PREFIX)) {
+      return token.substring(BEARER_PREFIX.length());
+    }
+    return token;
+  }
 }

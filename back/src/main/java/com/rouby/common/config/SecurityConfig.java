@@ -1,6 +1,6 @@
 package com.rouby.common.config;
 
-import com.rouby.user.application.service.TokenProvider;
+import com.rouby.user.application.service.token.TokenProvider;
 import com.rouby.user.infrastructure.security.filter.JwtAuthenticationFilter;
 import com.rouby.user.infrastructure.security.handler.JwtAccessDeniedHandler;
 import com.rouby.user.infrastructure.security.handler.JwtAuthenticationEntryPoint;
