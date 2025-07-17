@@ -38,7 +38,7 @@ public record CreateRoutineTaskCommand(
             .build())
         .routineTimeInfo(RoutineTimeInfo.builder()
             .startDate(startDate)
-            .endDate(until.toLocalDate())
+            .until(until.toLocalDate())
             .time(time)
             .weekdays(byDays.stream().map(x -> Weekday.valueOf(x.name())).toList())
             .build())
@@ -52,6 +52,6 @@ public record CreateRoutineTaskCommand(
   }
 
   public enum CommandWeekday {
-    SU, MO, TU, WE, TH, FR, SA;
+    MO, TU, WE, TH, FR, SA, SU;
   }
 }
