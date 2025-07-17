@@ -1,18 +1,18 @@
-import { wrapApi } from '@/shared/utils/errorUtils.js'
+import {wrapApi} from '@/shared/utils/errorUtils.js'
 import {
-  requestEmailVerification as requestEmailVerificationApi,
-  verifyEmail as verifyEmailApi,
-  signup as signupApi,
   findPassword as findPasswordApi,
+  requestEmailVerification as requestEmailVerificationApi,
   resetPassword as resetPasswordApi,
+  signup as signupApi,
   verificationPasswordCode as verificationPasswordCodeApi,
+  verifyEmail as verifyEmailApi,
 } from './api.js'
 import {
-  toSignupPayload,
   toEmailVerificationPayload,
-  toVerifyCodePayload,
-  toVerifyPasswordCodePayload,
   toResetPasswordPayload,
+  toSignupPayload,
+  toVerifyCodePayload,
+  toVerifyPasswordCodePayload
 } from './dto.js'
 
 export const requestEmailVerification = wrapApi(
@@ -24,7 +24,9 @@ export const requestEmailVerification = wrapApi(
 )
 
 export const verifyEmailCode = wrapApi(
-  (email, code) => verifyEmailApi(toVerifyCodePayload(email, code)),
+  (email, code) => {
+    return verifyEmailApi(toVerifyCodePayload(email, code))
+  },
   {
     targetField: 'code',
     fallbackMessage: '인증 코드 검증에 실패했습니다.',
@@ -33,8 +35,7 @@ export const verifyEmailCode = wrapApi(
 
 export const signup = wrapApi(
   async (form) => {
-    const res = await signupApi(toSignupPayload(form))
-
+    const res = await signupApi(toSignupPayload(form), form.verificationToken)
     return {
       data: {
         ok: res.status === 201,
