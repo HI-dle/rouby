@@ -65,7 +65,7 @@ public class User extends BaseEntity {
   private UserRole role;
 
   @Column(nullable = false)
-  @Enumerated
+  @Enumerated(EnumType.STRING)
   private OnboardingState onboardingState;
 
   private LocalDateTime lastActivatedAt;

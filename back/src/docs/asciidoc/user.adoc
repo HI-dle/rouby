@@ -227,5 +227,5 @@ include::{snippets}/reset-password-204/http-response.adoc[]
 ==== HTTP 요청
 include::{snippets}/user-info-onboarding-check-200/http-request.adoc[]
 
-==== HTTP 응답 (204 NoContent)
+==== HTTP 응답 (200 OK)
 include::{snippets}/user-info-onboarding-check-200/http-response.adoc[]

@@ -7,7 +7,7 @@ package com.rouby.user.domain.entity;
 public enum OnboardingState {
 
 
-  RUBY_SETTING_SETTING_BEFORE("/onboarding/루비세팅첫경로"),
+  ROUBY_SETTING_BEFORE("/onboarding/루비세팅첫경로"),
 
   USER_INFO_SETTING_BEFORE("/onboarding/nickname-setting"),
 
