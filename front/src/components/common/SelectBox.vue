@@ -35,6 +35,19 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  contentClass: {
+    type: String,
+    default: '',
+  },
+  itemClass: {
+    type: String,
+    default: '',
+  },
+  showCheck: {
+    type: Boolean,
+    required: false,
+    default: true,
+  },
 })
 const emit = defineEmits(['update:modelValue'])
 const selected = ref(props.modelValue)
@@ -67,14 +80,24 @@ watch(
     >
       <SelectValue :placeholder="props.placeholder" />
     </SelectTrigger>
-    <SelectContent>
+    <SelectContent
+      :class="[
+        cn(
+          props.contentClass,
+        ),
+      ]">
       <SelectGroup>
         <SelectItem
           v-for="opt in options"
           :key="opt.value"
           :value="opt.value"
-          class="group cursor-pointer px-3 py-2 text-base text-content-color rounded-md transition-colors focus:bg-focus-color data-[state=checked]:bg-focus-color"
-        >
+          :show-check="props.showCheck"
+          :class="[
+            cn(
+              'group cursor-pointer px-3 py-2 text-base text-content-color rounded-md transition-colors focus:bg-focus-color data-[state=checked]:bg-focus-color',
+              props.itemClass,
+        ),
+      ]">
           {{ opt.label }}
         </SelectItem>
       </SelectGroup>

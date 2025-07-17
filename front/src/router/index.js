@@ -86,11 +86,38 @@ const router = createRouter({
       path: '/onboarding',
       component: () => import('@/layouts/HeaderOnlyLayout.vue'),
       children: [
-        // {
-        //   path: 'health-check',
-        //   name: 'health-check',
-        //   component: () => import('@/features/onBoard/views/OnboardHealthCheckView.vue'),
-        // },
+        {
+          path: 'nickname-setting',
+          name: 'nickname-setting',
+          component: () => import('@/features/onboard/views/OnboardNicknameSettingView.vue'),
+        },
+        {
+          path: 'health-check',
+          name: 'health-check',
+          component: () => import('@/features/onboard/views/OnboardHealthCheckView.vue'),
+        },
+        {
+          path: 'profile-setting',
+          name: 'profile-setting',
+          component: () => import('@/features/onboard/views/OnboardProfileSettingView.vue'),
+        },
+        {
+          path: 'date-setting',
+          name: 'date-setting',
+          component: () => import('@/features/onboard/views/OnboardDateSettingView.vue'),
+        },
+      ],
+    },
+
+    {
+      path: '/user',
+      component: () => import('@/layouts/DefaultLayout.vue'),
+      children: [
+        {
+          path: 'password/reset',
+          name: 'password-reset',
+          component: () => import('@/features/user/views/MyPageResetPasswordView.vue'),
+        },
       ],
     },
   ],
