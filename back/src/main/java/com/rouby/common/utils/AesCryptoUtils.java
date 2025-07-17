@@ -22,7 +22,7 @@ public class AesCryptoUtils {
           "AES 키는 최소 %d 바이트 이상이어야 합니다.", KEY_LENGTH
       ));
     }
-    this.aesKey = Arrays.copyOf(keyBytes, IV_LENGTH);
+    this.aesKey = Arrays.copyOf(keyBytes, KEY_LENGTH);
   }
 
 
