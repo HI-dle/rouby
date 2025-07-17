@@ -1,13 +1,9 @@
-import { nextTick, reactive, watch } from 'vue'
+import { nextTick, reactive, ref, watch } from 'vue'
 import { formatDateTime, toDateTime } from '@/shared/utils/formatDate'
 import { validateForm } from './validations'
 import { createSchedule } from './scheduleService'
 
 export const useScheduleForm = () => {
-  const errors = reactive({})
-  const errorModal = reactive({})
-  const inputRefs = {}
-
   const createInitialForm = () => {
     const now = new Date()
     const oneHourLater = new Date(now.getTime() + 3600000)
@@ -24,6 +20,10 @@ export const useScheduleForm = () => {
     })
   }
   const form = createInitialForm()
+  const isSubmitting = ref(false)
+  const errors = reactive({})
+  const errorModal = reactive({})
+  const inputRefs = {}
 
   const onDateTimeInput = (e, key) => {
     const val = e.target.value
@@ -41,11 +41,14 @@ export const useScheduleForm = () => {
   }
 
   const onSubmit = async (onSuccess, onError) => {
+    if (isSubmitting.value) return
+
     if (!validateForm(form, errors)) {
       focusFirstInvalidInput()
       return false
     }
 
+    isSubmitting.value = true
     try {
       const scheduleId = await createSchedule(form)
       onSuccess?.(scheduleId)
@@ -54,6 +57,8 @@ export const useScheduleForm = () => {
       const msg = err.response?.data?.message || err.message || '저장 실패'
       onError?.(msg)
       return null
+    } finally {
+      isSubmitting.value = false
     }
   }
 
@@ -73,6 +78,7 @@ export const useScheduleForm = () => {
 
   return {
     form,
+    isSubmitting,
     errors,
     inputRefs,
     errorModal,

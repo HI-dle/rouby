@@ -9,6 +9,17 @@ const router = createRouter({
       redirect: '/routine/daily',
       children: [
         {
+          path: '/user',
+          component: () => import('@/features/user/views/UserLayout.vue'),
+          children: [
+            {
+              path: 'password/reset',
+              name: 'password-reset',
+              component: () => import('@/features/user/views/MyPageResetPasswordView.vue'),
+            },
+          ],
+        },
+        {
           path: 'schedule',
           component: () => import('@/features/schedule/views/ScheduleLayout.vue'),
           redirect: '/schedule/daily',
@@ -49,6 +60,11 @@ const router = createRouter({
       component: () => import('@/layouts/HeaderOnlyLayout.vue'),
       children: [
         {
+          path: 'signup',
+          name: 'signup',
+          component: () => import('@/features/auth/views/SignupView.vue'),
+        },
+        {
           path: 'login',
           name: 'login',
           component: () => import('@/features/auth/views/LoginView.vue'),
@@ -67,37 +83,14 @@ const router = createRouter({
       ],
     },
     {
-      path: '/auth',
-      component: () => import('@/layouts/HeaderOnlyLayout.vue'),
-      children: [
-        {
-          path: 'signup',
-          name: 'signup',
-          component: () => import('@/features/auth/views/SignupView.vue'),
-        },
-      ],
-    },
-    {
       path: '/onboarding',
       component: () => import('@/layouts/HeaderOnlyLayout.vue'),
       children: [
-        {
-          path: 'health-check',
-          name: 'health-check',
-          component: () => import('@/features/onBoard/views/OnboardHealthCheckView.vue'),
-        },
-      ],
-    },
-
-    {
-      path: '/user',
-      component: () => import('@/layouts/DefaultLayout.vue'),
-      children: [
-        {
-          path: 'password/reset',
-          name: 'password-reset',
-          component: () => import('@/features/user/views/MyPageResetPasswordView.vue'),
-        },
+        // {
+        //   path: 'health-check',
+        //   name: 'health-check',
+        //   component: () => import('@/features/onBoard/views/OnboardHealthCheckView.vue'),
+        // },
       ],
     },
   ],

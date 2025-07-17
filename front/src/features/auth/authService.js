@@ -56,7 +56,8 @@ export const findPassword = wrapApi(
 )
 
 export const resetPassword = wrapApi(
-  (form) => resetPasswordApi(toResetPasswordPayload(form)).then(() => ({ ok: true })),
+  (form) =>
+    resetPasswordApi(toResetPasswordPayload(form)).then(() => ({ ok: true })),
   {
     fieldMessages: {},
     fallbackMessage: '비밀번호 변경에 실패했습니다.',
@@ -64,7 +65,10 @@ export const resetPassword = wrapApi(
 )
 
 export const verificationPasswordCode = wrapApi(
-  (form) => verificationPasswordCodeApi(toVerifyPasswordCodePayload(form)).then(() => ({ ok: true })),
+  (form) =>
+    verificationPasswordCodeApi(toVerifyPasswordCodePayload(form)).then(() => ({
+      ok: true,
+    })),
   {
     targetField: 'code',
     fallbackMessage: '인증 코드 검증에 실패했습니다.',
