@@ -58,7 +58,6 @@ public class UserController {
   @PatchMapping("/password/reset/token")
   public ResponseEntity<Void> resetPasswordByToken(
       @RequestBody ResetPasswordByTokenRequest request) {
-
     userFacade.resetPasswordByToken(request.toCommand());
     return ResponseEntity.noContent().build();
   }
@@ -66,16 +65,13 @@ public class UserController {
   @GetMapping("/password/reset/validate")
   public ResponseEntity<Void> validateResetToken(@RequestParam String email,
       @RequestParam String token) {
-
     userFacade.validatePasswordToken(email, token);
-
     return ResponseEntity.ok().build();
   }
 
   @PostMapping("/password/find")
   public ResponseEntity<Void> findPassword(
       @RequestBody FindPasswordRequest request) {
-
     userFacade.findPassword(request.toCommand());
     return ResponseEntity.noContent().build();
   }
@@ -85,9 +81,7 @@ public class UserController {
   public ResponseEntity<Void> resetPassword(
       @AuthenticationPrincipal SecurityUser securityUser,
       @RequestBody @Valid ResetPasswordRequest request) {
-
     userFacade.resetPassword(securityUser.getId(), request.toCommand());
-
     return ResponseEntity.noContent().build();
   }
 }
