@@ -1,0 +1,15 @@
+spring:
+  config.activate.on-profile: local
+
+verification-token:
+  aes-secret: ${EMAIL_TOKEN_AES_SECRET}
+  hmac-secret: ${EMAIL_TOKEN_HMAC_SECRET}
+  expiration: ${EMAIL_TOKEN_EXPIRATION}
+---
+spring:
+  config.activate.on-profile: test
+
+verification-token:
+  aes-secret: ${EMAIL_TOKEN_AES_SECRET}
+  hmac-secret: ${EMAIL_TOKEN_HMAC_SECRET}
+  expiration: ${EMAIL_TOKEN_EXPIRATION}

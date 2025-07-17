@@ -1,10 +1,33 @@
+### 이메일 인증 요청
+POST {{url}}/api/v1/users/email-verification/request
+Content-Type: application/json
+
+{
+  "email": "{{valid-email}}"
+}
+
+### 이메일 인증 코드 확인
+POST {{url}}/api/v1/users/email-verification/verify
+Content-Type: application/json
+
+{
+  "email": "{{valid-email}}",
+  "code": "{{valid-email-verification-code}}"
+}
+
+> {%
+  client.global.set("verificationToken", response.body.token);
+%}
+
+
 ### 회원가입 API
 POST {{url}}/api/v1/users
 content-type: application/json
+Authorization: EmailVerification {{verificationToken}}
 
 {
-  "email": "valid@hidle.com",
-  "password": "aaaaaa11!"
+  "email": "{{valid-email}}",
+  "password": "{{valid-password}}"
 }
 
 ### 회원가입 API (실패 - 비밀번호 검증 오류)
@@ -21,6 +44,6 @@ POST {{url}}/api/v1/auth/login
 content-type: application/json
 
 {
-  "email": "valid@hidle.com",
-  "password": "aaaaaa11!"
+  "email": "{{valid-email}}",
+  "password": "{{valid-password}}"
 }

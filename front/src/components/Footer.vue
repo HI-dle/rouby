@@ -1,11 +1,11 @@
 <script setup>
-import { useRoute } from 'vue-router'
 import { Calendar, ClipboardList, Clock3, User, MoreHorizontal, Plus } from 'lucide-vue-next'
+import { useActivePath } from '@/shared/composable/useActivePath'
+import { useRoute } from 'vue-router'
 
 const route = useRoute()
+const { isActive } = useActivePath()
 
-// 현재 경로와 일치하는지 확인하는 함수
-const isActive = (path) => route.path.startsWith(path)
 const createOrModify = ['create', 'modify']
 const isNotCreateOrModify = () => !createOrModify.some((p) => route.path.includes(p))
 </script>
@@ -24,17 +24,17 @@ const isNotCreateOrModify = () => !createOrModify.some((p) => route.path.include
     </RouterLink>
 
     <RouterLink
-      to="/routine"
+      to="/routine-task"
       class="flex justify-center items-center"
-      :class="isActive('/routine') ? 'text-main-color' : 'text-gray-400'"
+      :class="isActive('/routine-task') ? 'text-main-color' : 'text-gray-400'"
     >
       <ClipboardList class="w-6 h-6" />
     </RouterLink>
 
     <RouterLink
-      to="/history"
+      to="/alarm"
       class="flex justify-center items-center"
-      :class="isActive('/history') ? 'text-main-color' : 'text-gray-400'"
+      :class="isActive('/alarm') ? 'text-main-color' : 'text-gray-400'"
     >
       <Clock3 class="w-6 h-6" />
     </RouterLink>
