@@ -12,9 +12,8 @@ import lombok.Builder;
 public record UserCheckResponse(Long id,
                                 String email,
                                 String nickname,
-                                Set<String> currentStatusKeywords,
                                 Set<String> healthStatusKeywords,
-                                Set<String> interestKeywords,
+                                Set<String> profileKeywords,
                                 Set<String> communicationTone,
                                 String onboardingStatePath) {
 
@@ -24,9 +23,8 @@ public record UserCheckResponse(Long id,
         .id(userCheckInfo.id())
         .email(userCheckInfo.email())
         .nickname(userCheckInfo.nickname())
-        .currentStatusKeywords(userCheckInfo.currentStatusKeywords())
         .healthStatusKeywords(userCheckInfo.healthStatusKeywords())
-        .interestKeywords(userCheckInfo.interestKeywords())
+        .profileKeywords(userCheckInfo.profileKeywords())
         .communicationTone(userCheckInfo.communicationTone())
         .onboardingStatePath(userCheckInfo.onboardingState().getRedirectPath())
         .build();

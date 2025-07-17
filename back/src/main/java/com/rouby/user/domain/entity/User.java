@@ -41,14 +41,12 @@ public class User extends BaseEntity {
   @Embedded
   private DailyActiveTime dailyActiveTime;
 
-  @Embedded
-  private CurrentStatusKeywords currentStatusKeywords;
 
   @Embedded
   private HealthStatusKeywords healthStatusKeywords;
 
   @Embedded
-  private InterestKeywords interestKeywords;
+  private ProfileKeywords profileKeywords;
 
   @Embedded
   private CommunicationTone communicationTone;
@@ -124,9 +122,8 @@ public class User extends BaseEntity {
     this.password = password;
     this.nickname = nickname;
     this.dailyActiveTime = DailyActiveTime.defaultTime();
-    this.currentStatusKeywords = CurrentStatusKeywords.empty();
     this.healthStatusKeywords = HealthStatusKeywords.empty();
-    this.interestKeywords = InterestKeywords.empty();
+    this.profileKeywords = ProfileKeywords.empty();
     this.communicationTone = CommunicationTone.empty();
     this.notificationSettings = createDefaultNotificationSettings();
     this.authProvider = authProvider == null ? AuthProvider.DEFAULT : authProvider;

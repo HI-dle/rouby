@@ -13,9 +13,8 @@ import lombok.Builder;
 public record UserCheckInfo(Long id,
                             String email,
                             String nickname,
-                            Set<String> currentStatusKeywords,
                             Set<String> healthStatusKeywords,
-                            Set<String> interestKeywords,
+                            Set<String> profileKeywords,
                             Set<String> communicationTone,
                             OnboardingState onboardingState
 ) {
@@ -24,9 +23,8 @@ public record UserCheckInfo(Long id,
         user.getId(),
         user.getEmail(),
         user.getNickname(),
-        user.getCurrentStatusKeywords().getCurrentStatusKeywords(),
         user.getHealthStatusKeywords().getHealthStatusKeywords(),
-        user.getInterestKeywords().getInterestKeywords(),
+        user.getProfileKeywords().getProfileKeywords(),
         user.getCommunicationTone().getRoubyCommunicationTone(),
         user.getOnboardingState()
     );
