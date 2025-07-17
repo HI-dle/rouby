@@ -15,9 +15,15 @@ Content-Type: application/json
   "code": "{{valid-email-verification-code}}"
 }
 
+> {%
+  client.global.set("verificationToken", response.body.token);
+%}
+
+
 ### 회원가입 API
 POST {{url}}/api/v1/users
 content-type: application/json
+Authorization: EmailVerification {{verificationToken}}
 
 {
   "email": "{{valid-email}}",

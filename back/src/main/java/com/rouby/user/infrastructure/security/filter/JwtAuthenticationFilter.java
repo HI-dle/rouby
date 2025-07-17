@@ -1,7 +1,7 @@
 package com.rouby.user.infrastructure.security.filter;
 
 import com.rouby.common.exception.type.ApiErrorCode;
-import com.rouby.user.application.service.TokenProvider;
+import com.rouby.user.application.service.token.TokenProvider;
 import com.rouby.user.domain.entity.UserRole;
 import com.rouby.user.infrastructure.security.dto.SecurityUser;
 import jakarta.servlet.FilterChain;
@@ -35,9 +35,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
 
     try {
-      String token = tokenProvider.resolveToken(request);
+      String token = tokenProvider.resolveAccessToken(request);
 
-     if (token != null && tokenProvider.validateToken(token)) {
+      if (token != null && tokenProvider.validateAccessToken(token)) {
 
         Long userId = tokenProvider.getUserId(token);
         String email = tokenProvider.getEmail(token);

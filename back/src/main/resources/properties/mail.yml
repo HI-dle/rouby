@@ -9,3 +9,6 @@ spring:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
     default-encoding: UTF-8
+
+email:
+  send-limit: 2
