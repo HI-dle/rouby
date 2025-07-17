@@ -1,6 +1,8 @@
 package com.rouby.user.application;
 
 
+import static com.rouby.notification.email.domain.entity.EmailType.RESET_PASSWORD;
+import static com.rouby.notification.email.domain.entity.EmailType.VERIFICATION;
 import static com.rouby.user.application.exception.UserErrorCode.DUPLICATE_EMAIL;
 
 import com.rouby.common.props.URIProperty;
@@ -38,6 +40,8 @@ public class UserFacade {
   public void sendEmailVerification(SendEmailVerificationCommand command) {
     String email = command.email();
 
+    emailService.checkSendLimit(email, VERIFICATION);
+
     if (userReadService.alreadyExistsEmail(email)) {
       throw UserException.from(DUPLICATE_EMAIL);
     }
@@ -62,10 +66,9 @@ public class UserFacade {
   }
 
   public void findPassword(FindPasswordCommand command) {
-
     String token = userWriteService.getResetPasswordLink(command);
-
     String resetPasswordLink = uriProperty.generateResetPasswordLink(command.email(), token);
+    emailService.checkSendLimit(command.email(), RESET_PASSWORD);
 
     try {
       emailService.send(command.toSendEmailCommand(command.email(), resetPasswordLink));
@@ -97,6 +100,4 @@ public class UserFacade {
         user.getRole().toString(),
         user.getEmail()));
   }
-
-
 }
