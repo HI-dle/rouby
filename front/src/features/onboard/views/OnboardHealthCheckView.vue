@@ -35,7 +35,7 @@ const onNextLinkClick = async () => {
 
   const success = await healthFormRef.value.onNextClick()
   if (success) {
-    await router.push('/onboarding/personal-state')
+    await router.push('/onboarding/profile-setting')
   }
 }
 </script>

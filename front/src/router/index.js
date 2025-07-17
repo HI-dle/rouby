@@ -92,9 +92,9 @@ const router = createRouter({
           component: () => import('@/features/onboard/views/OnboardHealthCheckView.vue'),
         },
         {
-          path: 'personal-state',
-          name: 'personal-state',
-          component: () => import('@/features/onboard/views/OnboardPersonalStateView.vue'),
+          path: 'profile-setting',
+          name: 'profile-setting',
+          component: () => import('@/features/onboard/views/OnboardProfileSettingView.vue'),
         },
         {
           path: 'date-setting',

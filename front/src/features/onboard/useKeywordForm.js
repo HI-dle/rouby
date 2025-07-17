@@ -10,8 +10,8 @@ export function useKeywordForm() {
     const value = keyword.value.trim()
 
     // 최대 20개 제한
-    if (keywords.value.length >= 20) {
-      keywordError.value = '태그는 최대 20개까지 입력할 수 있어요.'
+    if (keywords.value.length >= 10) {
+      keywordError.value = '태그는 최대 10개까지 입력할 수 있어요.'
       return
     }
 

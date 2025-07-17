@@ -4,7 +4,7 @@
     <div>
       <p class="text-base">{{ userName }}님은 {{ selectedHealth }}(이)가 있으시군요!</p>
       <p class="text-base">루비를 시작하기 전,</p>
-      <p class="text-base">{{ userName }}님의 현재 상황에 대해 알고싶어요!</p>
+      <p class="text-base">{{ userName }}님의 직업이나 현재 관심사에 대해 알고싶어요!</p>
       <p class="text-sm text-#6667D07A mt-2">여러 키워드를 추가할 수 있어요!</p>
     </div>
 

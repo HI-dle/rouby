@@ -26,7 +26,7 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import PersonalStateForm from '@/features/onboard/Components/PersonalStateForm.vue'
+import PersonalStateForm from '@/features/onboard/Components/ProfileSettingForm.vue'
 import { useOnboardStore } from '@/features/onboard/store/useOnboardStore'
 import { useRouter } from 'vue-router'
 
