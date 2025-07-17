@@ -7,6 +7,7 @@ import static com.rouby.user.application.exception.UserErrorCode.PASSWORD_TOKEN_
 import static com.rouby.user.application.exception.UserErrorCode.USER_NOT_FOUND;
 
 import com.rouby.common.exception.CustomException;
+import com.rouby.common.props.SettingProperties;
 import com.rouby.user.application.dto.command.CreateUserCommand;
 import com.rouby.user.application.dto.command.FindPasswordCommand;
 import com.rouby.user.application.dto.command.ResetPasswordByTokenCommand;
@@ -35,6 +36,8 @@ public class UserWriteService {
   private final UserPasswordEncoder passwordEncoder;
   private final VerificationEmailCodeStorage verificationEmailCodeStorage;
   private final VerificationPasswordTokenStorage verificationPasswordCodeStorage;
+  private final SettingProperties settingProperties;
+
 
   @Transactional
   public void create(CreateUserCommand command) {
@@ -113,9 +116,11 @@ public class UserWriteService {
   @Transactional
   public void updateRoubySettings(Long userId, UpdateUserRoubySettingCommand command) {
     User user = userRepository.findById(userId).orElseThrow(() ->
-        new CustomException(USER_NOT_FOUND));
+        UserException.from(USER_NOT_FOUND));
 
-    user.updateRoubySettings(command.toCommunicationTone(), command.toNotificationSettings(user));
+    user.updateRoubySettings(command.toCommunicationTone(
+            settingProperties.getCommunicationToneProperties().getMaxSize()),
+        command.toNotificationSettings(user));
   }
 
   public String getResetPasswordLink(FindPasswordCommand command) {

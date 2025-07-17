@@ -11,8 +11,8 @@ public record UpdateUserRoubySettingCommand(
     Set<String> communicationTone,
     Set<NotificationSettingCommand> notificationSettings
 ) {
-  public CommunicationTone toCommunicationTone() {
-    return CommunicationTone.of(communicationTone);
+  public CommunicationTone toCommunicationTone(long masSize) {
+    return CommunicationTone.of(communicationTone, masSize);
   }
 
   public Set<NotificationSetting> toNotificationSettings(User user) {
