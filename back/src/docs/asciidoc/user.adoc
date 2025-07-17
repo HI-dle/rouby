@@ -8,6 +8,9 @@
 ==== HTTP 요청
 include::{snippets}/user-create/http-request.adoc[]
 
+==== 요청 헤더
+include::{snippets}/user-create/request-headers.adoc[]
+
 ==== 요청 필드
 include::{snippets}/user-create/request-fields.adoc[]
 
@@ -26,6 +29,7 @@ include::{snippets}/user-create-invalid-email/request-fields.adoc[]
 
 ===== HTTP 응답 (400 Bad Request)
 include::{snippets}/user-create-invalid-email/http-response.adoc[]
+
 ---
 
 ==== 비밀번호 형식 오류
@@ -133,6 +137,9 @@ include::{snippets}/user-email-verification-verify/request-fields.adoc[]
 
 ==== HTTP 응답 (200 OK)
 include::{snippets}/user-email-verification-verify/http-response.adoc[]
+
+==== 응답 필드
+include::{snippets}/user-email-verification-verify/response-fields.adoc[]
 
 ---
 

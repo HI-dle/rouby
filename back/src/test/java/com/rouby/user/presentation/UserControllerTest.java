@@ -9,6 +9,9 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
@@ -18,6 +21,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -32,9 +36,11 @@ import com.rouby.user.presentation.dto.request.FindPasswordRequest;
 import com.rouby.user.presentation.dto.request.ResetPasswordByTokenRequest;
 import com.rouby.user.presentation.dto.request.ResetPasswordRequest;
 import com.rouby.user.presentation.dto.request.SendEmailVerificationRequest;
+import com.rouby.user.presentation.dto.request.VerifyEmailRequest;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -46,17 +52,23 @@ class UserControllerTest extends ControllerTestSupport {
 
     // given
     CreateUserRequest request = UserRequestFixture.toCreateRequest();
-    doNothing().when(userFacade).createUser(request.toCommand());
+    String token = UserRequestFixture.VALID_EMAIL_TOKEN;
+    doNothing().when(userFacade).createUser(request.toCommand(token));
 
     // when and then
     mockMvc.perform(post("/api/v1/users")
             .content(objectMapper.writeValueAsString(request))
-            .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON)
+            .header(HttpHeaders.AUTHORIZATION, token)
+        )
         .andExpect(status().isCreated())
         .andDo(print())
         .andDo(document("user-create",
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
+            requestHeaders(
+                headerWithName(HttpHeaders.AUTHORIZATION).description("이메일 인증 토큰")
+            ),
             requestFields(
                 fieldWithPath("email").description("이메일 주소"),
                 fieldWithPath("password").description("비밀번호 (8~32자, 2종류 이상 조합)")
@@ -70,18 +82,24 @@ class UserControllerTest extends ControllerTestSupport {
 
     //given
     CreateUserRequest request = UserRequestFixture.toCreateRequest();
+    String token = UserRequestFixture.VALID_EMAIL_TOKEN;
     doThrow(UserException.from(DUPLICATE_EMAIL))
-        .when(userFacade).createUser(request.toCommand());
+        .when(userFacade).createUser(request.toCommand(token));
 
     //when and then
     mockMvc.perform(post("/api/v1/users")
             .content(objectMapper.writeValueAsString(request))
-            .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON)
+            .header(HttpHeaders.AUTHORIZATION, token)
+        )
         .andExpect(status().isConflict())
         .andDo(print())
         .andDo(document("user-create-duplicate-email",
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
+            requestHeaders(
+                headerWithName(HttpHeaders.AUTHORIZATION).description("이메일 인증 토큰")
+            ),
             requestFields(
                 fieldWithPath("email").description("중복된 이메일"),
                 fieldWithPath("password").description("비밀번호 (8~32자, 2종류 이상 조합)")
@@ -96,17 +114,23 @@ class UserControllerTest extends ControllerTestSupport {
 
     //given
     CreateUserRequest request = UserRequestFixture.toCreateRequest();
+    String token = UserRequestFixture.VALID_EMAIL_TOKEN;
     doThrow(UserException.from(EMAIL_NOT_VERIFIED))
-        .when(userFacade).createUser(request.toCommand());
+        .when(userFacade).createUser(request.toCommand(token));
 
     //when and then
     mockMvc.perform(post("/api/v1/users")
             .content(objectMapper.writeValueAsString(request))
-            .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON)
+            .header(HttpHeaders.AUTHORIZATION, token)
+        )
         .andExpect(status().isUnauthorized())
         .andDo(document("user-create-unverified-email",
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
+            requestHeaders(
+                headerWithName(HttpHeaders.AUTHORIZATION).description("이메일 인증 토큰")
+            ),
             requestFields(
                 fieldWithPath("email").description("이메일 주소 (인증 필요)"),
                 fieldWithPath("password").description("비밀번호")
@@ -121,15 +145,21 @@ class UserControllerTest extends ControllerTestSupport {
 
     //given
     CreateUserRequest request = UserRequestFixture.toCreateRequestInvalidEmail();
+    String token = UserRequestFixture.VALID_EMAIL_TOKEN;
 
     //when and then
     mockMvc.perform(post("/api/v1/users")
             .content(objectMapper.writeValueAsString(request))
-            .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON)
+            .header(HttpHeaders.AUTHORIZATION, token)
+        )
         .andExpect(status().isBadRequest())
         .andDo(document("user-create-invalid-email",
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
+            requestHeaders(
+                headerWithName(HttpHeaders.AUTHORIZATION).description("이메일 인증 토큰")
+            ),
             requestFields(
                 fieldWithPath("email").description("이메일 주소 (형식 오류)"),
                 fieldWithPath("password").description("비밀번호")
@@ -144,15 +174,21 @@ class UserControllerTest extends ControllerTestSupport {
 
     //given
     CreateUserRequest request = UserRequestFixture.toCreateRequestInvalidPassword();
+    String token = UserRequestFixture.VALID_EMAIL_TOKEN;
 
     //when and then
     mockMvc.perform(post("/api/v1/users")
             .content(objectMapper.writeValueAsString(request))
-            .contentType(MediaType.APPLICATION_JSON))
+            .contentType(MediaType.APPLICATION_JSON)
+            .header(HttpHeaders.AUTHORIZATION, token)
+        )
         .andExpect(status().isBadRequest())
         .andDo(document("user-create-invalid-password",
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
+            requestHeaders(
+                headerWithName(HttpHeaders.AUTHORIZATION).description("이메일 인증 토큰")
+            ),
             requestFields(
                 fieldWithPath("email").description("이메일 주소"),
                 fieldWithPath("password").description("비밀번호 (형식 오류)")
@@ -273,7 +309,9 @@ class UserControllerTest extends ControllerTestSupport {
 
     // given
     VerifyEmailRequest request = UserRequestFixture.toVerifyEmailRequest();
-    doNothing().when(userFacade).verifyEmail(request.toCommand());
+    String token = UserRequestFixture.VALID_EMAIL_TOKEN;
+    when(userFacade.verifyEmail(request.toCommand())).thenReturn(token);
+
 
     // when
     ResultActions result = mockMvc.perform(post("/api/v1/users/email-verification/verify")
@@ -289,6 +327,9 @@ class UserControllerTest extends ControllerTestSupport {
             requestFields(
                 fieldWithPath("email").description("이메일 주소"),
                 fieldWithPath("code").description("이메일 인증 코드")
+            ),
+            responseFields(
+                fieldWithPath("token").description("이메일 인증토큰")
             )
         ));
   }
@@ -299,7 +340,6 @@ class UserControllerTest extends ControllerTestSupport {
 
     // given
     VerifyEmailRequest request = UserRequestFixture.toVerifyEmailRequestInvalidEmail();
-    doNothing().when(userFacade).verifyEmail(request.toCommand());
 
     // when
     ResultActions result = mockMvc.perform(post("/api/v1/users/email-verification/verify")
@@ -326,7 +366,6 @@ class UserControllerTest extends ControllerTestSupport {
 
     // given
     VerifyEmailRequest request = UserRequestFixture.toVerifyEmailRequestInvalidCode();
-    doNothing().when(userFacade).verifyEmail(request.toCommand());
 
     // when
     ResultActions result = mockMvc.perform(post("/api/v1/users/email-verification/verify")
