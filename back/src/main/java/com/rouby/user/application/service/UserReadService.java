@@ -47,4 +47,10 @@ public class UserReadService {
     return userRepository.existsByEmail(email);
   }
 
+  @Transactional(readOnly = true)
+  public User findByUserId(Long id) {
+    return userRepository.findById(id).orElseThrow(() ->
+        UserException.from(INVALID_USER));
+  }
+
 }

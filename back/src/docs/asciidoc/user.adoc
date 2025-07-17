@@ -233,6 +233,14 @@ include::{snippets}/reset-password-204/request-fields.adoc[]
 ==== HTTP 응답 (204 NoContent)
 include::{snippets}/reset-password-204/http-response.adoc[]
 
+== 온보딩 체크 조회 API
+
+==== HTTP 요청
+include::{snippets}/user-info-check-200/http-request.adoc[]
+
+==== HTTP 응답 (200 OK)
+include::{snippets}/user-info-check-200/http-response.adoc[]
+
 ---
 
 == 비밀번호 변경시 이메일 횟수 초과 에러 API
@@ -245,3 +253,4 @@ include::{snippets}/find-password-email-send-limit-fail/request-fields.adoc[]
 
 ==== HTTP 응답 (429 TooManyRequests)
 include::{snippets}/find-password-email-send-limit-fail/http-response.adoc[]
+

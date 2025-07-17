@@ -11,20 +11,20 @@ import org.hibernate.type.SqlTypes;
 
 @Getter
 @Embeddable
-public class InterestKeywords implements Serializable {
+public class ProfileKeywords implements Serializable {
 
   @JdbcTypeCode(SqlTypes.JSON)
   @Column(columnDefinition = "jsonb")
-  private Set<String> interestKeywords;
+  private Set<String> profileKeywords;
 
-  public static InterestKeywords empty(){
-    return new InterestKeywords(new LinkedHashSet<>());
+  public static ProfileKeywords empty(){
+    return new ProfileKeywords(new LinkedHashSet<>());
   }
 
-  private InterestKeywords(Set<String> interestKeywords) {
-    this.interestKeywords = new LinkedHashSet<>(interestKeywords);
+  private ProfileKeywords(Set<String> profileKeywords) {
+    this.profileKeywords = new LinkedHashSet<>(profileKeywords);
   }
 
-  protected InterestKeywords() {
+  protected ProfileKeywords() {
   }
 }

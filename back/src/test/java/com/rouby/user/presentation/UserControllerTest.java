@@ -8,6 +8,7 @@ import static com.rouby.user.application.exception.UserErrorCode.INVALID_EMAIL_V
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -31,12 +32,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.rouby.common.security.WithMockCustomUser;
 import com.rouby.common.support.ControllerTestSupport;
 import com.rouby.notification.email.application.exception.EmailException;
+import com.rouby.user.application.dto.info.UserCheckInfo;
 import com.rouby.user.application.exception.UserException;
+import com.rouby.user.domain.entity.OnboardingState;
 import com.rouby.user.presentation.dto.request.CreateUserRequest;
 import com.rouby.user.presentation.dto.request.FindPasswordRequest;
 import com.rouby.user.presentation.dto.request.ResetPasswordByTokenRequest;
 import com.rouby.user.presentation.dto.request.ResetPasswordRequest;
 import com.rouby.user.presentation.dto.request.SendEmailVerificationRequest;
+import java.util.Set;
 import com.rouby.user.presentation.dto.request.VerifyEmailRequest;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -561,4 +565,51 @@ class UserControllerTest extends ControllerTestSupport {
                 fieldWithPath("newPassword").description("새 비밀번호"))
         ));
   }
+
+  @WithMockCustomUser
+  @DisplayName("로그인 후 정보 조회 API")
+  @Test
+  void userInfoCheck() throws Exception {
+    // given
+    Long userId = 1L;
+
+    UserCheckInfo info = UserCheckInfo.builder()
+        .id(userId)
+        .email("test@example.com")
+        .nickname("루비짱")
+        .healthStatusKeywords(Set.of("불면증", "두통"))
+        .profileKeywords(Set.of("취준", "운동"))
+        .communicationTone(Set.of("따뜻하게", "존대"))
+        .onboardingState(OnboardingState.USER_INFO_SETTING_BEFORE)
+        .build();
+
+    given(userFacade.userInfoCheck(eq(userId)))
+        .willReturn(info);
+
+    // when
+    ResultActions resultActions = mockMvc.perform(get("/api/v1/users/basic-info")
+        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+        .contentType(MediaType.APPLICATION_JSON));
+
+    // then
+    resultActions
+        .andExpect(status().isOk())
+        .andDo(print())
+        .andDo(document("user-info-check-200",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            responseFields(
+                fieldWithPath("id").description("유저 ID"),
+                fieldWithPath("email").description("이메일"),
+                fieldWithPath("nickname").optional().description("닉네임"),
+                fieldWithPath("healthStatusKeywords[]").optional().description("건강 상태 키워드 목록 예: [\"아토피\", \"ADHD\"]"),
+                fieldWithPath("profileKeywords[]").optional().description("프로필 키워드 목록 예: [\"취준\", \"이직\"]"),
+                fieldWithPath("communicationTone[]").optional().description("말투 키워드 목록 예: [\"따듯하게\", \"존대\"]"),
+                fieldWithPath("onboardingStatePath").optional().description("온보딩 상태에 따라 이동할 프론트 라우팅 경로")
+            )
+
+
+        ));
+  }
+
 }
