@@ -89,17 +89,17 @@ const router = createRouter({
         },
       ],
     },
-    // {
-    //   path: '/onboarding',
-    //   component: () => import('@/layouts/HeaderOnlyLayout.vue'),
-    //   children: [
-    //     {
-    //       path: 'health-check',
-    //       name: 'health-check',
-    //       component: () => import('@/features/onBoard/views/OnboardHealthCheckView.vue'),
-    //     },
-    //   ],
-    // },
+    {
+      path: '/onboarding',
+      component: () => import('@/layouts/HeaderOnlyLayout.vue'),
+      children: [
+        {
+          path: 'health-check',
+          name: 'health-check',
+          component: () => import('@/features/onBoard/views/OnboardHealthCheckView.vue'),
+        },
+      ],
+    },
 
     {
       path: '/user',
