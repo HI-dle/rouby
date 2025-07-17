@@ -1,5 +1,5 @@
 import { nextTick, reactive, ref, watch } from 'vue'
-import { formatDateTime, toDateTime } from '@/shared/utils/formatDate'
+import { convertDateToDateTime, formatDateTime } from '@/shared/utils/dateTimeUtil'
 import { validateForm } from './validations'
 import { createSchedule } from './scheduleService'
 
@@ -27,7 +27,7 @@ export const useScheduleForm = () => {
 
   const onDateTimeInput = (e, key) => {
     const val = e.target.value
-    form[key] = form.allDay ? toDateTime(val, 0) : val
+    form[key] = form.allDay ? convertDateToDateTime(val, 0) : val
   }
 
   const focusFirstInvalidInput = async () => {
