@@ -10,24 +10,14 @@ export function useRoutineTaskForm() {
     time: '07:00',
     taskType: 'CHECK',
     targetValue: 1,
-    alarmOffsetMinutes: 'NONE',
+    alarmOffsetMinutes: null,
     byDays: [],
     memo: '',
   })
-  // const form = reactive({
-  //   title: '',
-  //   startDate: '',
-  //   endDate: '',
-  //   time: '07:00',
-  //   type: 'CHECK',
-  //   alert: 'NONE',
-  //   repeatDays: [],
-  //   memo: '',
-  // })
 
-  const errors = ref({})
-  const errorModal = ref({ show: false, msg: '' })
-  const inputRefs = ref({})
+  const errors = reactive({})
+  const errorModal = reactive({ show: false, msg: '' })
+  const inputRefs = reactive({})
 
   const onDateTimeInput = (key, value) => {
     form.value[key] = value
@@ -35,7 +25,6 @@ export function useRoutineTaskForm() {
 
   const focusFirstInvalidInput = async () => {
     for (const key in errors) {
-      console.log('key')
       if (errors[key]) {
         await nextTick()
         inputRefs[key]?.focus?.()

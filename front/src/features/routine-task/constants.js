@@ -17,6 +17,7 @@ export const errorMessage = {
 }
 
 export const days = ['월', '화', '수', '목', '금', '토', '일']
+export const dayEnums = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU']
 
 export const typeOptions = [
   { value: 'CHECK', label: '체크 박스' },
@@ -25,7 +26,7 @@ export const typeOptions = [
 ]
 
 export const alarmOptions = [
-  { value: 'NONE', label: '없음' },
+  { value: null, label: '없음' },
   { value: 5, label: '5분 전' },
   { value: 10, label: '10분 전' },
   { value: 15, label: '15분 전' },
