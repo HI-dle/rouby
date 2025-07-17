@@ -15,7 +15,7 @@ class AesHmacVerificationTokenProviderTest {
 
   private AesHmacVerificationTokenProvider tokenProvider;
 
-  private static final String VALID_AES_KEY = "test-aes-key-123456";
+  private static final String VALID_AES_KEY = "abcdefghijklmnopqrstuvwxyzABCDEF";
   private static final String VALID_HMAC_KEY = "test-hmac-key-for-signing";
   private static final long DEFAULT_EXPIRATION = 300000L;
 
@@ -39,8 +39,8 @@ class AesHmacVerificationTokenProviderTest {
     void initKey_WithValidKey_Success() {
       // given
       AesHmacVerificationTokenProvider provider = new AesHmacVerificationTokenProvider();
-      ReflectionTestUtils.setField(provider, "aesKeyRaw", "valid-16byte-key");
-      ReflectionTestUtils.setField(provider, "hmacKeyRaw", "valid-16byte-key");
+      ReflectionTestUtils.setField(provider, "aesKeyRaw", VALID_AES_KEY);
+      ReflectionTestUtils.setField(provider, "hmacKeyRaw", VALID_HMAC_KEY);
 
       // when & then
       assertDoesNotThrow(() -> ReflectionTestUtils.invokeMethod(provider, "initKey"));
@@ -58,15 +58,15 @@ class AesHmacVerificationTokenProviderTest {
           IllegalStateException.class,
           () -> ReflectionTestUtils.invokeMethod(provider, "initKey")
       );
-      assertThat(exception.getMessage()).contains("AES 키는 최소 16바이트 이상이어야 합니다");
+      assertThat(exception.getMessage()).isEqualTo("AES 키는 최소 32 바이트 이상이어야 합니다.");
     }
 
     @Test
-    @DisplayName("긴 AES 키는 16바이트로 자동 잘림")
+    @DisplayName("긴 AES 키는 32바이트로 자동 잘림")
     void initKey_WithLongKey_TruncatedTo16Bytes() {
       // given
       AesHmacVerificationTokenProvider provider = new AesHmacVerificationTokenProvider();
-      String longKey = "this-is-a-very-long-key-more-than-16-bytes";
+      String longKey = "this-is-a-very-long-key-more-than-32-bytes";
       ReflectionTestUtils.setField(provider, "aesKeyRaw", longKey);
       ReflectionTestUtils.setField(provider, "hmacKeyRaw", longKey);
 
@@ -338,7 +338,7 @@ class AesHmacVerificationTokenProviderTest {
     void validateToken_WithDifferentAesKey_ReturnsFalse() {
       // given
       AesHmacVerificationTokenProvider otherProvider = new AesHmacVerificationTokenProvider();
-      ReflectionTestUtils.setField(otherProvider, "aesKeyRaw", "different-aes-key-123");
+      ReflectionTestUtils.setField(otherProvider, "aesKeyRaw", "different-aes-key-123-long-long-key");
       ReflectionTestUtils.setField(otherProvider, "hmacKeyRaw", VALID_HMAC_KEY);
       ReflectionTestUtils.setField(otherProvider, "expirationMillis", DEFAULT_EXPIRATION);
       ReflectionTestUtils.invokeMethod(otherProvider, "initKey");

@@ -22,6 +22,7 @@ public class AesHmacVerificationTokenProvider {
 
   private static final String TOKEN_PREFIX = "EmailVerification ";
   private static final int IV_LENGTH = 16;
+  private static final int KEY_LENGTH = 32;
   private static final Base64.Encoder ENCODER = Base64.getEncoder();
   private static final Base64.Decoder DECODER = Base64.getDecoder();
 
@@ -39,8 +40,10 @@ public class AesHmacVerificationTokenProvider {
   @PostConstruct
   private void initKey() {
     byte[] keyBytes = aesKeyRaw.getBytes(UTF_8);
-    if (keyBytes.length < IV_LENGTH) {
-      throw new IllegalStateException("AES 키는 최소 16바이트 이상이어야 합니다.");
+    if (keyBytes.length < KEY_LENGTH) {
+      throw new IllegalStateException(String.format(
+          "AES 키는 최소 %d 바이트 이상이어야 합니다.", KEY_LENGTH
+      ));
     }
     aesKey = Arrays.copyOf(keyBytes, IV_LENGTH);
     hmacKey = hmacKeyRaw.getBytes(UTF_8);
