@@ -16,7 +16,7 @@ class AesHmacVerificationTokenProviderTest {
   private AesHmacVerificationTokenProvider tokenProvider;
 
   private static final String VALID_AES_KEY = "abcdefghijklmnopqrstuvwxyzABCDEF";
-  private static final String VALID_HMAC_KEY = "test-hmac-key-for-signing";
+  private static final String VALID_HMAC_KEY = "abcdefghijklmnopqrstuvwxyzABCDEF";
   private static final long DEFAULT_EXPIRATION = 300000L;
 
   @BeforeEach
@@ -303,7 +303,7 @@ class AesHmacVerificationTokenProviderTest {
         // given - 다른 HMAC 키를 가진 provider
         AesHmacVerificationTokenProvider otherProvider = new AesHmacVerificationTokenProvider();
         ReflectionTestUtils.setField(otherProvider, "aesKeyRaw", VALID_AES_KEY);
-        ReflectionTestUtils.setField(otherProvider, "hmacKeyRaw", "different-hmac-key");
+        ReflectionTestUtils.setField(otherProvider, "hmacKeyRaw", VALID_HMAC_KEY + "different");
         ReflectionTestUtils.setField(otherProvider, "expirationMillis", DEFAULT_EXPIRATION);
         ReflectionTestUtils.invokeMethod(otherProvider, "init");
 
