@@ -9,11 +9,13 @@ import com.rouby.user.presentation.dto.request.ResetPasswordRequest;
 import com.rouby.user.presentation.dto.request.SendEmailVerificationRequest;
 import com.rouby.user.presentation.dto.request.VerifyEmailRequest;
 import com.rouby.user.presentation.dto.response.VerifyEmailTokenResponse;
+import com.rouby.user.presentation.validation.StartsWith;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
@@ -46,7 +49,7 @@ public class UserController {
 
   @PostMapping
   public ResponseEntity<Void> createUser(
-      @RequestHeader("Authorization") String token,
+      @RequestHeader("Authorization") @StartsWith(prefix = "EmailVerification ") String token,
       @RequestBody @Valid CreateUserRequest req) {
     userFacade.createUser(req.toCommand(token));
     return ResponseEntity.status(HttpStatus.CREATED).build();
