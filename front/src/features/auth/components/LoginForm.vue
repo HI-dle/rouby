@@ -1,6 +1,5 @@
 <template>
   <form @submit.prevent="onLogin" class="space-y-4">
-
     <!-- 이메일 입력 -->
     <div>
       <BaseInput
@@ -32,7 +31,7 @@
     </div>
 
     <!-- 로그인 상태 유지 체크박스 -->
-    <label class="inline-flex items-center mb-4 cursor-pointer select-none">
+    <label class="inline-flex items-center ml-2 mb-4 cursor-pointer select-none">
       <input type="checkbox" v-model="staySignedIn" class="accent-violet-600" />
       <span class="ml-2 text-sm text-indigo-600">로그인 상태 유지</span>
     </label>
@@ -43,27 +42,20 @@
     </p>
 
     <!-- 로그인 버튼 -->
-    <BaseButton type="submit" class="w-full font-medium">
-      로그인
-    </BaseButton>
-
+    <BaseButton type="submit" class="w-full font-medium"> 로그인 </BaseButton>
 
     <!-- 구분선 -->
-    <div class="relative my-8 text-center">
-      <div class="absolute inset-0 flex items-center" aria-hidden="true">
-        <div class="w-full border-t border-gray-200"></div>
-      </div>
-      <span class="px-2 bg-white/80 z-10 text-main-color relative">또는</span>
+    <div class="flex items-center w-full text-sm text-gray-500">
+      <hr class="flex-grow border-t border-gray-200" />
+      <span class="px-3 text-main-color">또는</span>
+      <hr class="flex-grow border-t border-gray-200" />
     </div>
-
 
     <div class="flex justify-between gap-4 mb-6">
       <SocialLoginButton :icon="kakaoIcon" alt="Kakao Login" @click="onKakaoLogin" />
       <SocialLoginButton :icon="googleIcon" alt="Google Login" @click="onGoogleLogin" />
       <SocialLoginButton :icon="appleIcon" alt="Apple Login" @click="onAppleLogin" />
     </div>
-
-
   </form>
 </template>
 
@@ -88,5 +80,4 @@ const {
   validatePassword,
   onLogin,
 } = useLoginForm()
-
 </script>

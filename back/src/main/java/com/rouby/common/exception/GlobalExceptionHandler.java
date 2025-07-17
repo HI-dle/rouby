@@ -4,6 +4,7 @@ import static com.rouby.common.exception.ErrorMessageConstant.TYPE_MISMATCH_FORM
 import static com.rouby.common.exception.ErrorMessageConstant.UNSPECIFIED_TYPE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 import com.rouby.common.dto.ErrorResponse;
 import com.rouby.common.exception.type.ApiErrorCode;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
@@ -111,6 +113,17 @@ public class GlobalExceptionHandler {
         .body(ErrorResponse.of(ApiErrorCode.INVALID_REQUEST.getMessage(),
             ApiErrorCode.INVALID_REQUEST.getCode(),
             errorFields));
+  }
+
+  @ExceptionHandler(MissingRequestHeaderException.class)
+  public ResponseEntity<ErrorResponse> handleMissingRequestHeaderException(MissingRequestHeaderException e,
+      HttpServletRequest request){
+
+    log(e, request, UNAUTHORIZED);
+    return ResponseEntity
+        .status(UNAUTHORIZED)
+        .body(ErrorResponse.of(ApiErrorCode.UNAUTHORIZED.getMessage(),
+            ApiErrorCode.UNAUTHORIZED.getCode()));
   }
 
   @ExceptionHandler(IllegalArgumentException.class)

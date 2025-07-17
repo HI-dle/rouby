@@ -6,7 +6,19 @@ const router = createRouter({
     {
       path: '/',
       component: () => import('@/layouts/DefaultLayout.vue'),
+      redirect: '/routine/daily',
       children: [
+        {
+          path: '/user',
+          component: () => import('@/features/user/views/UserLayout.vue'),
+          children: [
+            {
+              path: 'password/reset',
+              name: 'password-reset',
+              component: () => import('@/features/user/views/MyPageResetPasswordView.vue'),
+            },
+          ],
+        },
         {
           path: 'schedule',
           component: () => import('@/features/schedule/views/ScheduleLayout.vue'),
@@ -45,26 +57,58 @@ const router = createRouter({
     },
     {
       path: '/auth',
-      component: () => import('@/layouts/AuthLayout.vue'),
-      children: [
-        {
-          path: 'login',
-          name: 'login',
-          component: () => import('@/features/auth/views/LoginView.vue'),
-        },
-      ],
-    },
-    {
-      path: '/auth',
-      component: () => import('@/layouts/AuthLayout.vue'),
+      component: () => import('@/layouts/HeaderOnlyLayout.vue'),
       children: [
         {
           path: 'signup',
           name: 'signup',
           component: () => import('@/features/auth/views/SignupView.vue'),
         },
-      ]
+        {
+          path: 'login',
+          name: 'login',
+          component: () => import('@/features/auth/views/LoginView.vue'),
+        },
+        {
+          path: 'password/find',
+          name: 'password-find',
+          component: () => import('@/features/auth/views/FindPasswordView.vue'),
+        },
+        {
+          path: 'password/reset/token',
+          name: 'password-reset-token',
+          component: () => import('@/features/auth/views/ResetPasswordView.vue'),
+          // props: route => ({ token: route.query.token }),
+        },
+      ],
     },
+    {
+      path: '/onboarding',
+      component: () => import('@/layouts/HeaderOnlyLayout.vue'),
+      children: [
+        {
+          path: 'nickname-setting',
+          name: 'nickname-setting',
+          component: () => import('@/features/onboard/views/OnboardNicknameSettingView.vue'),
+        },
+        {
+          path: 'health-check',
+          name: 'health-check',
+          component: () => import('@/features/onboard/views/OnboardHealthCheckView.vue'),
+        },
+        {
+          path: 'profile-setting',
+          name: 'profile-setting',
+          component: () => import('@/features/onboard/views/OnboardProfileSettingView.vue'),
+        },
+        {
+          path: 'date-setting',
+          name: 'date-setting',
+          component: () => import('@/features/onboard/views/OnboardDateSettingView.vue'),
+        },
+      ],
+    },
+
     {
       path: '/user',
       component: () => import('@/layouts/DefaultLayout.vue'),
@@ -76,7 +120,6 @@ const router = createRouter({
         },
       ],
     },
-
   ],
 })
 

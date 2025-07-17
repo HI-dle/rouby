@@ -38,15 +38,27 @@ public class UserWriteService {
   private final VerificationPasswordTokenStorage verificationPasswordCodeStorage;
   private final SettingProperties settingProperties;
 
+  private final TokenProvider tokenProvider;
 
   @Transactional
   public void create(CreateUserCommand command) {
+    ensureTokenMatchesEmail(command);
     ensureEmailNotTaken(command.email());
-    ensureEmailVerified(command.email());
+    ensureEmailIsVerified(command.email());
 
     User user = User.create(command.email(), command.password(), passwordEncoder);
     userRepository.save(user);
     verificationEmailCodeStorage.delete(command.email());
+  }
+
+  private void ensureTokenMatchesEmail(CreateUserCommand command) {
+    if(!tokenProvider.validateVerificationToken(command.token())){
+      throw UserException.from(INVALID_EMAIL_VERIFICATION_TOKEN);
+    }
+
+    if(!tokenProvider.extractEmail(command.token()).equals(command.email())){
+      throw UserException.from(EMAIL_VERIFICATION_TOKEN_MISMATCH);
+    }
   }
 
   private void ensureEmailNotTaken(String email) {
@@ -55,7 +67,7 @@ public class UserWriteService {
     }
   }
 
-  private void ensureEmailVerified(String email) {
+  private void ensureEmailIsVerified(String email) {
     VerificationEmailCode code = verificationEmailCodeStorage.findByEmail(email)
         .orElseThrow(() -> UserException.from(EMAIL_NOT_VERIFIED));
 
@@ -76,7 +88,7 @@ public class UserWriteService {
     verificationPasswordCodeStorage.deleteByEmail(email);
   }
 
-  public void verifyEmail(VerifyEmailCommand command) {
+  public String verifyEmail(VerifyEmailCommand command) {
     VerificationEmailCode code = verificationEmailCodeStorage.findByEmail(
         command.email()).orElseThrow(
         () -> UserException.from(INVALID_EMAIL_VERIFICATION));
@@ -85,8 +97,8 @@ public class UserWriteService {
       throw UserException.from(INVALID_EMAIL_VERIFICATION);
     }
 
-    code.verified();
-    verificationEmailCodeStorage.verified(command.email(), code);
+    verificationEmailCodeStorage.verified(command.email(), code.verified());
+    return tokenProvider.createVerificationToken(command.email());
   }
 
   @Transactional
