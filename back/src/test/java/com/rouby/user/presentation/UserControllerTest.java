@@ -7,6 +7,7 @@ import static com.rouby.user.application.exception.UserErrorCode.INVALID_EMAIL_V
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -18,6 +19,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -26,7 +28,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.rouby.common.security.WithMockCustomUser;
 import com.rouby.common.support.ControllerTestSupport;
 import com.rouby.notification.email.application.exception.EmailException;
+import com.rouby.user.application.dto.info.UserCheckInfo;
 import com.rouby.user.application.exception.UserException;
+import com.rouby.user.domain.entity.CommunicationTone;
+import com.rouby.user.domain.entity.CurrentStatusKeywords;
+import com.rouby.user.domain.entity.HealthStatusKeywords;
+import com.rouby.user.domain.entity.InterestKeywords;
+import com.rouby.user.domain.entity.OnboardingState;
 import com.rouby.user.presentation.dto.request.CreateUserRequest;
 import com.rouby.user.presentation.dto.request.FindPasswordRequest;
 import com.rouby.user.presentation.dto.request.ResetPasswordByTokenRequest;
@@ -495,4 +503,56 @@ class UserControllerTest extends ControllerTestSupport {
                 fieldWithPath("newPassword").description("새 비밀번호"))
         ));
   }
+
+  @WithMockCustomUser
+  @DisplayName("온보딩 유저 정보 조회 API")
+  @Test
+  void userInfoCheck() throws Exception {
+    // given
+    Long userId = 1L;
+
+    UserCheckInfo info = UserCheckInfo.builder()
+        .id(userId)
+        .email("test@example.com")
+        .nickname("루비짱")
+        .currentStatusKeywords(CurrentStatusKeywords.empty())
+        .healthStatusKeywords(HealthStatusKeywords.empty())
+        .interestKeywords(InterestKeywords.empty())
+        .communicationTone(CommunicationTone.empty())
+        .onboardingState(OnboardingState.USER_INFO_SETTING_BEFORE)
+        .build();
+
+    given(userFacade.userInfoCheck(eq(userId)))
+        .willReturn(info);
+
+    // when
+    ResultActions resultActions = mockMvc.perform(get("/api/v1/users/onboarding/check")
+        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+        .contentType(MediaType.APPLICATION_JSON));
+
+    // then
+    resultActions
+        .andExpect(status().isOk())
+        .andDo(print())
+        .andDo(document("user-info-onboarding-check-200",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            responseFields(
+                fieldWithPath("id").description("유저 ID"),
+                fieldWithPath("email").description("이메일"),
+                fieldWithPath("nickname").optional().description("닉네임"),
+                fieldWithPath("currentStatusKeywords").optional().description("현재 상태 키워드"),
+                fieldWithPath("currentStatusKeywords.currentStatusKeywords").optional().description("{기쁨, 우울}"),
+                fieldWithPath("healthStatusKeywords").optional().description("건강 상태 키워드"),
+                fieldWithPath("healthStatusKeywords.healthStatusKeywords").optional().description("{아토피, ADHD}"),
+                fieldWithPath("interestKeywords").optional().description("관심사 키워드"),
+                fieldWithPath("interestKeywords.interestKeywords").optional().description("{취준, 이직}"),
+                fieldWithPath("communicationTone").optional().description("말투 키워드"),
+                fieldWithPath("communicationTone.roubyCommunicationTone").optional().description("{따듯하게, 존대}"),
+                fieldWithPath("onboardingStatePath").optional().description("온보딩 상태에 따라 이동할 프론트 라우팅 경로")
+            )
+
+        ));
+  }
+
 }

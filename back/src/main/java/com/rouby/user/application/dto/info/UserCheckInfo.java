@@ -6,11 +6,13 @@ import com.rouby.user.domain.entity.HealthStatusKeywords;
 import com.rouby.user.domain.entity.InterestKeywords;
 import com.rouby.user.domain.entity.OnboardingState;
 import com.rouby.user.domain.entity.User;
+import lombok.Builder;
 
 /**
  * @author : hanjihoon
  * @Date : 2025. 07. 17.
  */
+@Builder
 public record UserCheckInfo(Long id,
                             String email,
                             String nickname,
