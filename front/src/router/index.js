@@ -9,6 +9,17 @@ const router = createRouter({
       redirect: '/routine/daily',
       children: [
         {
+          path: '/user',
+          component: () => import('@/features/user/views/UserLayout.vue'),
+          children: [
+            {
+              path: 'password/reset',
+              name: 'password-reset',
+              component: () => import('@/features/user/views/MyPageResetPasswordView.vue'),
+            },
+          ],
+        },
+        {
           path: 'schedule',
           component: () => import('@/features/schedule/views/ScheduleLayout.vue'),
           redirect: '/schedule/daily',
@@ -49,6 +60,11 @@ const router = createRouter({
       component: () => import('@/layouts/HeaderOnlyLayout.vue'),
       children: [
         {
+          path: 'signup',
+          name: 'signup',
+          component: () => import('@/features/auth/views/SignupView.vue'),
+        },
+        {
           path: 'login',
           name: 'login',
           component: () => import('@/features/auth/views/LoginView.vue'),
@@ -63,17 +79,6 @@ const router = createRouter({
           name: 'password-reset-token',
           component: () => import('@/features/auth/views/ResetPasswordView.vue'),
           // props: route => ({ token: route.query.token }),
-        },
-      ],
-    },
-    {
-      path: '/auth',
-      component: () => import('@/layouts/HeaderOnlyLayout.vue'),
-      children: [
-        {
-          path: 'signup',
-          name: 'signup',
-          component: () => import('@/features/auth/views/SignupView.vue'),
         },
       ],
     },

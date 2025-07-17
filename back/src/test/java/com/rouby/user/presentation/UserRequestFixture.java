@@ -2,6 +2,7 @@ package com.rouby.user.presentation;
 
 import com.rouby.user.presentation.dto.request.CreateUserRequest;
 import com.rouby.user.presentation.dto.request.SendEmailVerificationRequest;
+import com.rouby.user.presentation.dto.request.VerifyEmailRequest;
 
 public class UserRequestFixture {
 
@@ -11,6 +12,10 @@ public class UserRequestFixture {
   static final String INVALID_PASSWORD = "short";
   static final String VALID_EMAIL_CODE = "VERIFY";
   static final String INVALID_EMAIL_CODE = "INVALID_CODE";
+  static final String VALID_EMAIL_TOKEN = "EmailVerification "
+      + "KZubXI78rtW5PUIlFUHEl/S2obaHKQ5SG4qYT7lbQX5Oy7/Rr4x3jXUhkhnm2qcP"
+      + ".7vGGCif9isavID1Upp9siCuYh4o2gz6XEoN7y0LB4kY=";
+  static final String INVALID_EMAIL_TOKEN = "invalid-token";
 
   public static CreateUserRequest toCreateRequest() {
     return new CreateUserRequest(VALID_EMAIL, VALID_PASSWORD);

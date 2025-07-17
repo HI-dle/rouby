@@ -4,7 +4,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -17,36 +16,30 @@ import org.springframework.util.Assert;
 public class Period {
 
   @Column(nullable = false)
-  private LocalDate startDate;
+  private LocalDateTime startAt;
 
   @Column(nullable = false)
-  private LocalTime startTime;
+  private LocalDateTime endAt;
 
-  @Column(nullable = false)
-  private LocalDate endDate;
-
-  @Column(nullable = false)
-  private LocalTime endTime;
+  @Column
+  private LocalDateTime untilAt;
 
   @Builder
-  private Period(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
+  private Period(LocalDateTime startAt, LocalDateTime endAt, LocalDateTime untilAt) {
 
-    validate(startDate, startTime, endDate, endTime);
-    this.startDate = startDate;
-    this.startTime = startTime;
-    this.endDate = endDate;
-    this.endTime = endTime;
+    validate(startAt, endAt, untilAt);
+    this.startAt = startAt;
+    this.endAt = endAt;
+    this.untilAt = untilAt;
   }
 
-  private void validate(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
+  private void validate(LocalDateTime startAt, LocalDateTime endAt, LocalDateTime untilAt) {
 
-    LocalDateTime startDateTime = LocalDateTime.of(startDate, startTime);
-    LocalDateTime endDateTime = LocalDateTime.of(endDate, endTime);
-    boolean result = !startDateTime.isAfter(endDateTime);
+    boolean result = !startAt.isAfter(endAt) && (untilAt == null || untilAt.isAfter(endAt));
     Assert.isTrue(result, "시작일시가 종료일시보다 늦을 수 없습니다.");
   }
 
   public boolean isValidRoutineActivateDate(LocalDate routineActivateDate) {
-    return !routineActivateDate.isAfter(endDate);
+    return !routineActivateDate.isAfter(endAt.toLocalDate());
   }
 }

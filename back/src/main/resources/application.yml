@@ -13,6 +13,7 @@ spring:
       - classpath:properties/ai.yml
       - classpath:properties/mail.yml
       - classpath:properties/thymeleaf.yml
+      - classpath:properties/crypto.yml
   profiles:
     group:
       local: local

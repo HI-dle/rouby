@@ -1,6 +1,8 @@
 package com.rouby.user.application;
 
 
+import static com.rouby.notification.email.domain.entity.EmailType.RESET_PASSWORD;
+import static com.rouby.notification.email.domain.entity.EmailType.VERIFICATION;
 import static com.rouby.user.application.exception.UserErrorCode.DUPLICATE_EMAIL;
 
 import com.rouby.common.props.URIProperty;
@@ -17,13 +19,10 @@ import com.rouby.user.application.dto.command.SendEmailVerificationCommand;
 import com.rouby.user.application.dto.command.VerifyEmailCommand;
 import com.rouby.user.application.dto.info.LoginInfo;
 import com.rouby.user.application.exception.UserException;
-import com.rouby.user.application.service.TokenProvider;
 import com.rouby.user.application.service.UserReadService;
 import com.rouby.user.application.service.UserWriteService;
-import com.rouby.user.domain.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,11 +31,12 @@ public class UserFacade {
   private final UserReadService userReadService;
   private final UserWriteService userWriteService;
   private final EmailService emailService;
-  private final TokenProvider tokenProvider;
   private final URIProperty uriProperty;
 
   public void sendEmailVerification(SendEmailVerificationCommand command) {
     String email = command.email();
+
+    emailService.checkSendLimit(email, VERIFICATION);
 
     if (userReadService.alreadyExistsEmail(email)) {
       throw UserException.from(DUPLICATE_EMAIL);
@@ -53,8 +53,8 @@ public class UserFacade {
     }
   }
 
-  public void verifyEmail(VerifyEmailCommand command) {
-    userWriteService.verifyEmail(command);
+  public String verifyEmail(VerifyEmailCommand command) {
+    return userWriteService.verifyEmail(command);
   }
 
   public void createUser(CreateUserCommand command) {
@@ -62,10 +62,9 @@ public class UserFacade {
   }
 
   public void findPassword(FindPasswordCommand command) {
-
     String token = userWriteService.getResetPasswordLink(command);
-
     String resetPasswordLink = uriProperty.generateResetPasswordLink(command.email(), token);
+    emailService.checkSendLimit(command.email(), RESET_PASSWORD);
 
     try {
       emailService.send(command.toSendEmailCommand(command.email(), resetPasswordLink));
@@ -87,16 +86,7 @@ public class UserFacade {
     userWriteService.resetPassword(userId, command);
   }
 
-
-  @Transactional(readOnly = true)
   public LoginInfo login(LoginCommand command){
-    User user = userReadService.validUser(command);
-
-    return new LoginInfo(tokenProvider.createAccessToken(
-        user.getId().toString(),
-        user.getRole().toString(),
-        user.getEmail()));
+    return userReadService.validUser(command);
   }
-
-
 }
