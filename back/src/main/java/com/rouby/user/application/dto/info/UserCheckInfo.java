@@ -1,11 +1,8 @@
 package com.rouby.user.application.dto.info;
 
-import com.rouby.user.domain.entity.CommunicationTone;
-import com.rouby.user.domain.entity.CurrentStatusKeywords;
-import com.rouby.user.domain.entity.HealthStatusKeywords;
-import com.rouby.user.domain.entity.InterestKeywords;
 import com.rouby.user.domain.entity.OnboardingState;
 import com.rouby.user.domain.entity.User;
+import java.util.Set;
 import lombok.Builder;
 
 /**
@@ -16,10 +13,10 @@ import lombok.Builder;
 public record UserCheckInfo(Long id,
                             String email,
                             String nickname,
-                            CurrentStatusKeywords currentStatusKeywords,
-                            HealthStatusKeywords healthStatusKeywords,
-                            InterestKeywords interestKeywords,
-                            CommunicationTone communicationTone,
+                            Set<String> currentStatusKeywords,
+                            Set<String> healthStatusKeywords,
+                            Set<String> interestKeywords,
+                            Set<String> communicationTone,
                             OnboardingState onboardingState
 ) {
   public static UserCheckInfo from(User user) {
@@ -27,10 +24,10 @@ public record UserCheckInfo(Long id,
         user.getId(),
         user.getEmail(),
         user.getNickname(),
-        user.getCurrentStatusKeywords(),
-        user.getHealthStatusKeywords(),
-        user.getInterestKeywords(),
-        user.getCommunicationTone(),
+        user.getCurrentStatusKeywords().getCurrentStatusKeywords(),
+        user.getHealthStatusKeywords().getHealthStatusKeywords(),
+        user.getInterestKeywords().getInterestKeywords(),
+        user.getCommunicationTone().getRoubyCommunicationTone(),
         user.getOnboardingState()
     );
   }

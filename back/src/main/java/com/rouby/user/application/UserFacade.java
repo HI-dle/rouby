@@ -24,7 +24,6 @@ import com.rouby.user.application.service.UserWriteService;
 import com.rouby.user.domain.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor

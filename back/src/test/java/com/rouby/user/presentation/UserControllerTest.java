@@ -30,16 +30,13 @@ import com.rouby.common.support.ControllerTestSupport;
 import com.rouby.notification.email.application.exception.EmailException;
 import com.rouby.user.application.dto.info.UserCheckInfo;
 import com.rouby.user.application.exception.UserException;
-import com.rouby.user.domain.entity.CommunicationTone;
-import com.rouby.user.domain.entity.CurrentStatusKeywords;
-import com.rouby.user.domain.entity.HealthStatusKeywords;
-import com.rouby.user.domain.entity.InterestKeywords;
 import com.rouby.user.domain.entity.OnboardingState;
 import com.rouby.user.presentation.dto.request.CreateUserRequest;
 import com.rouby.user.presentation.dto.request.FindPasswordRequest;
 import com.rouby.user.presentation.dto.request.ResetPasswordByTokenRequest;
 import com.rouby.user.presentation.dto.request.ResetPasswordRequest;
 import com.rouby.user.presentation.dto.request.SendEmailVerificationRequest;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -515,10 +512,10 @@ class UserControllerTest extends ControllerTestSupport {
         .id(userId)
         .email("test@example.com")
         .nickname("루비짱")
-        .currentStatusKeywords(CurrentStatusKeywords.empty())
-        .healthStatusKeywords(HealthStatusKeywords.empty())
-        .interestKeywords(InterestKeywords.empty())
-        .communicationTone(CommunicationTone.empty())
+        .currentStatusKeywords(Set.of("피곤함", "허리 아픔"))
+        .healthStatusKeywords(Set.of("불면증", "두통"))
+        .interestKeywords(Set.of("취준", "운동"))
+        .communicationTone(Set.of("따뜻하게", "존대"))
         .onboardingState(OnboardingState.USER_INFO_SETTING_BEFORE)
         .build();
 
@@ -541,16 +538,13 @@ class UserControllerTest extends ControllerTestSupport {
                 fieldWithPath("id").description("유저 ID"),
                 fieldWithPath("email").description("이메일"),
                 fieldWithPath("nickname").optional().description("닉네임"),
-                fieldWithPath("currentStatusKeywords").optional().description("현재 상태 키워드"),
-                fieldWithPath("currentStatusKeywords.currentStatusKeywords").optional().description("{기쁨, 우울}"),
-                fieldWithPath("healthStatusKeywords").optional().description("건강 상태 키워드"),
-                fieldWithPath("healthStatusKeywords.healthStatusKeywords").optional().description("{아토피, ADHD}"),
-                fieldWithPath("interestKeywords").optional().description("관심사 키워드"),
-                fieldWithPath("interestKeywords.interestKeywords").optional().description("{취준, 이직}"),
-                fieldWithPath("communicationTone").optional().description("말투 키워드"),
-                fieldWithPath("communicationTone.roubyCommunicationTone").optional().description("{따듯하게, 존대}"),
+                fieldWithPath("currentStatusKeywords[]").optional().description("현재 상태 키워드 목록 예: [\"기쁨\", \"우울\"]"),
+                fieldWithPath("healthStatusKeywords[]").optional().description("건강 상태 키워드 목록 예: [\"아토피\", \"ADHD\"]"),
+                fieldWithPath("interestKeywords[]").optional().description("관심사 키워드 목록 예: [\"취준\", \"이직\"]"),
+                fieldWithPath("communicationTone[]").optional().description("말투 키워드 목록 예: [\"따듯하게\", \"존대\"]"),
                 fieldWithPath("onboardingStatePath").optional().description("온보딩 상태에 따라 이동할 프론트 라우팅 경로")
             )
+
 
         ));
   }

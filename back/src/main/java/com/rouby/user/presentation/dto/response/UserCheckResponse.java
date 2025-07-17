@@ -1,11 +1,7 @@
 package com.rouby.user.presentation.dto.response;
 
 import com.rouby.user.application.dto.info.UserCheckInfo;
-import com.rouby.user.domain.entity.CommunicationTone;
-import com.rouby.user.domain.entity.CurrentStatusKeywords;
-import com.rouby.user.domain.entity.HealthStatusKeywords;
-import com.rouby.user.domain.entity.InterestKeywords;
-import com.rouby.user.domain.entity.OnboardingState;
+import java.util.Set;
 import lombok.Builder;
 
 /**
@@ -16,10 +12,10 @@ import lombok.Builder;
 public record UserCheckResponse(Long id,
                                 String email,
                                 String nickname,
-                                CurrentStatusKeywords currentStatusKeywords,
-                                HealthStatusKeywords healthStatusKeywords,
-                                InterestKeywords interestKeywords,
-                                CommunicationTone communicationTone,
+                                Set<String> currentStatusKeywords,
+                                Set<String> healthStatusKeywords,
+                                Set<String> interestKeywords,
+                                Set<String> communicationTone,
                                 String onboardingStatePath) {
 
 
