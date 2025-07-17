@@ -86,7 +86,7 @@ public class UserController {
     return ResponseEntity.noContent().build();
   }
 
-  @GetMapping("/onboarding/check")
+  @GetMapping("/basic-info")
   @PreAuthorize("hasAnyRole('USER')")
   public ResponseEntity<UserCheckResponse> userInfoCheck(
       @AuthenticationPrincipal SecurityUser securityUser) {

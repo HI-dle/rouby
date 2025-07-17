@@ -522,7 +522,7 @@ class UserControllerTest extends ControllerTestSupport {
         .willReturn(info);
 
     // when
-    ResultActions resultActions = mockMvc.perform(get("/api/v1/users/onboarding/check")
+    ResultActions resultActions = mockMvc.perform(get("/api/v1/users/basic-info")
         .header("Authorization", "Bearer {ACCESS_TOKEN}")
         .contentType(MediaType.APPLICATION_JSON));
 
@@ -530,7 +530,7 @@ class UserControllerTest extends ControllerTestSupport {
     resultActions
         .andExpect(status().isOk())
         .andDo(print())
-        .andDo(document("user-info-onboarding-check-200",
+        .andDo(document("user-info-check-200",
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
             responseFields(
