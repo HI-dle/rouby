@@ -1,11 +1,13 @@
-// src/features/auth/useLoginForm.js
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { login } from '@/features/auth/loginApi.js'
 import { storeToken } from '@/features/auth/storeToken.js'
+import { getUserBasicInfo } from '@/features/auth/getUserBasicInfo.js'
+import { useUserStore } from '@/features/user/store/useUserStore.js'
 
 export function useLoginForm() {
   const router = useRouter()
+  const userStore = useUserStore()
 
   const email = ref('')
   const password = ref('')
@@ -36,12 +38,10 @@ export function useLoginForm() {
   }
 
   async function onLogin() {
-    // 초기화
     emailError.value = ''
     passwordError.value = ''
     loginError.value = ''
 
-    // 유효성 검사
     validateEmail()
     validatePassword()
 
@@ -53,11 +53,25 @@ export function useLoginForm() {
         password: password.value,
       })
       storeToken(token, staySignedIn.value)
-      await router.push('/')
+
+      const userInfo = await getUserBasicInfo()
+      userStore.setUserInfo(userInfo)
+
+      const redirectPath = userInfo.onboardingStatePath || '/'
+      await router.push(redirectPath)
     } catch (e) {
       loginError.value = e.response?.data?.message || '아이디 혹은 비밀번호가 일치하지 않습니다.'
     }
   }
+
+  console.log('유저 스토어 상태 확인:', {
+    id: userStore.id,
+    email: userStore.email,
+    nickname: userStore.nickname,
+    healthStatusKeywords: userStore.healthStatusKeywords,
+    profileKeywords: userStore.profileKeywords,
+    communicationTone: userStore.communicationTone,
+  })
 
   return {
     email,
