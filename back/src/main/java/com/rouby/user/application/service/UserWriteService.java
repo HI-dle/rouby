@@ -14,6 +14,7 @@ import com.rouby.user.application.dto.command.FindPasswordCommand;
 import com.rouby.user.application.dto.command.ResetPasswordByTokenCommand;
 import com.rouby.user.application.dto.command.ResetPasswordCommand;
 import com.rouby.user.application.dto.command.SaveVerificationCodeCommand;
+import com.rouby.user.application.dto.command.UpdateUserInfoCommand;
 import com.rouby.user.application.dto.command.VerifyEmailCommand;
 import com.rouby.user.application.exception.UserErrorCode;
 import com.rouby.user.application.exception.UserException;
@@ -143,5 +144,13 @@ public class UserWriteService {
     if (!token.equals(savedToken)) {
       throw UserException.from(PASSWORD_TOKEN_EXPIRED);
     }
+  }
+
+  public void updateUserInfo(UpdateUserInfoCommand command) {
+    User user = userRepository.findById(command.updaterId()).orElseThrow(() ->
+        new CustomException(UserErrorCode.USER_NOT_FOUND));
+    user.updateUserInfo(
+        command.nickname(), command.healthStatusKeywords(), command.profileKeywords(),
+        command.dailyStartTime(), command.dailyEndTime());
   }
 }

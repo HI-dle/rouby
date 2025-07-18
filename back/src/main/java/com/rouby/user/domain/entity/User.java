@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -146,5 +147,18 @@ public class User extends BaseEntity {
   public void updatePassword(UserPasswordEncoder passwordEncoder, String newPassword) {
     validatePassword(newPassword);
     this.password = passwordEncoder.encode(newPassword);
+  }
+
+  public void updateUserInfo(
+      String nickname,
+      Set<String> healthStatusKeywords,
+      Set<String> profileKeywords,
+      LocalTime dailyStartTime,
+      LocalTime dailyEndTime
+  ) {
+    this.nickname = nickname;
+    this.healthStatusKeywords = HealthStatusKeywords.of(healthStatusKeywords);
+    this.profileKeywords = ProfileKeywords.of(profileKeywords);
+    this.dailyActiveTime = DailyActiveTime.of(dailyStartTime, dailyEndTime);
   }
 }
