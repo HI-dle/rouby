@@ -111,6 +111,11 @@ const router = createRouter({
           name: 'end-date-setting',
           component: () => import('@/features/onboard/views/OnboardDateEndSettingView.vue'),
         },
+        {
+          path: 'speech-setting',
+          name: 'speech-setting',
+          component: () => import('@/features/onboard/views/OnboardSpeechSettingView.vue'),
+        },
       ],
     },
 

@@ -8,6 +8,7 @@ export const useOnboardStore = defineStore('onboard', () => {
   const personalKeyword = ref('')
   const startOfDayTime = ref('')
   const endOfDayTime = ref('')
+  const speechType = ref('')
 
   return {
     userName,
@@ -15,6 +16,7 @@ export const useOnboardStore = defineStore('onboard', () => {
     personalKeyword,
     startOfDayTime,
     endOfDayTime,
+    speechType,
   }
 },{
   persist: true,

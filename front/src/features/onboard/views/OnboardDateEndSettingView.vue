@@ -42,7 +42,7 @@ const onNextLinkClick = () => {
 
   const success = dateSettingFormRef.value.onNextClick()
   if (success) {
-    router.push('/다음페이지로')
+    router.push('/onboarding/speech-setting')
   }
 }
 
