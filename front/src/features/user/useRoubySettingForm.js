@@ -12,12 +12,6 @@ export function useRoubySettingForm() {
   const notifyBeforeSchedule = ref(false)
   const notifyBeforeRoutine = ref(true)
 
-  const form = reactive({
-    password: '',
-    passwordConfirm: '',
-    newPassword: '',
-  })
-
   const notificationSettings = computed(() => [
     {
       notificationType: 'BRIEFING',
