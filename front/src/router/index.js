@@ -77,17 +77,17 @@ const router = createRouter({
         },
       ],
     },
-    {
-      path: '/onboarding',
-      component: () => import('@/layouts/HeaderOnlyLayout.vue'),
-      children: [
-        {
-          path: 'health-check',
-          name: 'health-check',
-          component: () => import('@/features/onBoard/views/OnboardHealthCheckView.vue'),
-        },
-      ],
-    },
+    // {
+    //   path: '/onboarding',
+    //   component: () => import('@/layouts/HeaderOnlyLayout.vue'),
+    //   children: [
+    //     {
+    //       path: 'health-check',
+    //       name: 'health-check',
+    //       component: () => import('@/features/onBoard/views/OnboardHealthCheckView.vue'),
+    //     },
+    //   ],
+    // },
 
     {
       path: '/user',
@@ -97,6 +97,11 @@ const router = createRouter({
           path: 'password/reset',
           name: 'password-reset',
           component: () => import('@/features/user/views/MyPageResetPasswordView.vue'),
+        },
+        {
+          path: 'setting/rouby',
+          name: 'rouby-setting',
+          component: () => import('@/features/user/views/MyPageRoubySettingView.vue'),
         },
       ],
     },
