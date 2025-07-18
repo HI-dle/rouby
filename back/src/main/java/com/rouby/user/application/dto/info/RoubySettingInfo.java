@@ -13,7 +13,7 @@ public record RoubySettingInfo(
 
   public static RoubySettingInfo from(User user) {
     return new RoubySettingInfo(
-        user.getCommunicationTone().getRoubyCommunicationTone(),
+        user.getCommunicationToneValues(),
         user.getNotificationSettings().stream()
             .map(NotificationSettingInfo::from)
             .collect(Collectors.toSet())

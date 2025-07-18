@@ -15,6 +15,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -136,6 +137,11 @@ public class User extends BaseEntity {
     return Arrays.stream(NotificationType.values())
         .map(type -> NotificationSetting.createDefault(this, type))
         .collect(Collectors.toSet());
+  }
+
+  public Set<String> getCommunicationToneValues() {
+    if (communicationTone == null) return Collections.emptySet();
+    return communicationTone.getRoubyCommunicationTone();
   }
 
   protected User() {
