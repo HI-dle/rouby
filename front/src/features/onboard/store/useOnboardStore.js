@@ -7,12 +7,14 @@ export const useOnboardStore = defineStore('onboard', () => {
   const selectedHealth = ref('')
   const personalKeyword = ref('')
   const startOfDayTime = ref('')
+  const endOfDayTime = ref('')
 
   return {
     userName,
     selectedHealth,
     personalKeyword,
     startOfDayTime,
+    endOfDayTime,
   }
 },{
   persist: true,

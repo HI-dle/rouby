@@ -3,10 +3,10 @@
     <div class="sub-main-container">
 
       <div class="mt-32">
-        <DateSettingForm
+        <DateEndSettingForm
           ref="dateSettingFormRef"
           :user-name="userName"
-          :personal-keyword="personalKeyword"
+          :start-day-time="startOfDayTime"
         />
       </div>
 
@@ -26,12 +26,12 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import DateSettingForm from '@/features/onboard/Components/DateSettingForm.vue'
+import DateEndSettingForm from '@/features/onboard/Components/DateEndSettingForm.vue'
 import { useOnboardStore } from '@/features/onboard/store/useOnboardStore'
 import { useRouter } from 'vue-router'
 
 const store = useOnboardStore()
-const personalKeyword = computed(() => store.personalKeyword)
+const startOfDayTime = computed(() => store.startOfDayTime)
 const userName = computed(() => store.userName)
 const router = useRouter()
 
