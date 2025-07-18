@@ -9,9 +9,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public record UpdateRoubySettingRequest(
-    @NotNull(message = "말투가 null 입니다.")
     Set<@NotEmpty(message = "말투가 없습니다.") String> communicationTone,
-    @NotNull(message = "알림 설정이 null 입니다.")
+    @NotNull(message = "알림이 null입니다.")
     Set<NotificationSettingRequest> notificationSettings) {
 
   public UpdateUserRoubySettingCommand toCommand() {
