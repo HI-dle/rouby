@@ -10,7 +10,7 @@ public class UntilDateTimeFormatter {
 
   private static final ZoneId DEFAULT_ZONE = ZoneId.of("Asia/Seoul");
 
-  public static ZonedDateTime parse(String str) {
+  public static ZonedDateTime parseZonedDateTime(String str) {
     DateTimeFormatter formatter = new DateTimeFormatterBuilder()
         .appendPattern("yyyyMMdd'T'HHmmss")
         .optionalStart()
@@ -25,8 +25,23 @@ public class UntilDateTimeFormatter {
     }
   }
 
+  public static LocalDateTime parse(String str) {
+    DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+        .appendPattern("yyyyMMdd'T'HHmmss")
+        .optionalStart()
+        .optionalEnd()
+        .toFormatter();
+
+    return LocalDateTime.parse(str, formatter);
+  }
+
   public static String format(ZonedDateTime until) {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmssX");
+    return formatter.format(until);
+  }
+
+  public static String format(LocalDateTime until) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss");
     return formatter.format(until);
   }
 }

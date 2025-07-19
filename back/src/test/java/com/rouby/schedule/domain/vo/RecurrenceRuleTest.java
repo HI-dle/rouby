@@ -6,8 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.rouby.schedule.domain.enums.ByDay;
 import com.rouby.schedule.domain.enums.Freq;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +26,7 @@ class RecurrenceRuleTest {
     @Test
     void from_success_with_checking_val() {
       // given
-      String rruleStr = "FREQ=MONTHLY;INTERVAL=1;BYDAY=MO,TU;UNTIL=20251230T000000+09";
+      String rruleStr = "FREQ=MONTHLY;INTERVAL=1;BYDAY=MO,TU;UNTIL=20251230T000000";
 
       // when
       RecurrenceRule rule = RecurrenceRule.from(rruleStr);
@@ -37,17 +36,16 @@ class RecurrenceRuleTest {
       assertThat(rRuleStr).contains("FREQ=MONTHLY");
       assertThat(rRuleStr).contains("BYDAY=").contains("MO").contains("TU");
       assertThat(rRuleStr).contains("INTERVAL=1");
-      assertThat(rRuleStr).contains("UNTIL=20251230T000000+09");
+      assertThat(rRuleStr).contains("UNTIL=20251230T000000");
     }
 
     public static Stream<Arguments> validRruleStr() {
       return Stream.of(
-          Arguments.of("FREQ=MONTHLY;INTERVAL=1;BYDAY=MO,TU;UNTIL=20251230T000000+09"),
+          Arguments.of("FREQ=MONTHLY;INTERVAL=1;BYDAY=MO,TU;UNTIL=20251230T000000"),
           Arguments.of("FREQ=MONTHLY;INTERVAL=1;BYDAY=;UNTIL=20251230T000000"),
           Arguments.of("FREQ=MONTHLY;INTERVAL=1;BYDAY;UNTIL=20251230T000000"),
           Arguments.of("FREQ=MONTHLY;;INTERVAL=1"),
-          Arguments.of("UNTIL=20251230T000000"),
-          Arguments.of("UNTIL=20251230T000000Z")
+          Arguments.of("UNTIL=20251230T000000")
       );
     }
 
@@ -135,8 +133,7 @@ class RecurrenceRuleTest {
           .freq(Freq.MONTHLY)
           .interval(2)
           .byDay(Set.of(ByDay.MO, ByDay.FR))
-          .until(ZonedDateTime.of(2025, 12, 30, 0, 0, 0, 0,
-              ZoneId.of("Asia/Seoul")))
+          .until(LocalDateTime.of(2025, 12, 30, 0, 0, 0, 0))
           .build();
 
       // when
@@ -146,20 +143,20 @@ class RecurrenceRuleTest {
       assertThat(result).contains("FREQ=MONTHLY");
       assertThat(result).contains("INTERVAL=2");
       assertThat(result).contains("BYDAY=").contains("MO").contains("FR");
-      assertThat(result).contains("UNTIL=20251230T000000+09");
+      assertThat(result).contains("UNTIL=20251230T000000");
     }
 
-    @DisplayName("UTC 존을 가진 RRule 정보 검증 성공")
-    @Test
-    void toStringSuccess_with_UTC_zone_util() {
-      // given
-      RecurrenceRule rule = RecurrenceRule.from("UNTIL=20251230T000000Z");
-
-      // when
-      String result = rule.toRruleString();
-
-      // then
-      assertThat(result).contains("UNTIL=20251230T000000Z");
-    }
+//    @DisplayName("UTC 존을 가진 RRule 정보 검증 성공")
+//    @Test
+//    void toStringSuccess_with_UTC_zone_util() {
+//      // given
+//      RecurrenceRule rule = RecurrenceRule.from("UNTIL=20251230T000000Z");
+//
+//      // when
+//      String result = rule.toRruleString();
+//
+//      // then
+//      assertThat(result).contains("UNTIL=20251230T000000Z");
+//    }
   }
 }

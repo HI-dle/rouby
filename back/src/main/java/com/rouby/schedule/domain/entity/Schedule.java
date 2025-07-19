@@ -15,9 +15,11 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,9 @@ import org.hibernate.type.SqlTypes;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "schedule", indexes = {
+    @Index(name = "idx_schedule_user_start", columnList = "user_id, start_at"),
+})
 public class Schedule extends BaseEntity {
 
   @Id
@@ -93,6 +98,9 @@ public class Schedule extends BaseEntity {
         throw new IllegalArgumentException("루틴 활성 일자가 하루 이상 전일 수 없습니다.");
       }
     }
+
+    // untilAt 이랑 endAt 비교 검증 수행하기 && (untilAt == null || untilAt.isAfter(endAt))
+
   }
 
   private void addToParentSchedule() {
