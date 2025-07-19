@@ -1,5 +1,8 @@
 package com.rouby.user.domain.entity;
 
+import static com.rouby.user.domain.entity.OnboardingState.COMPLETED;
+import static com.rouby.user.domain.entity.OnboardingState.ROUBY_SETTING_BEFORE;
+
 import com.rouby.common.jpa.BaseEntity;
 import com.rouby.user.domain.service.UserPasswordEncoder;
 import jakarta.persistence.CascadeType;
@@ -106,6 +109,20 @@ public class User extends BaseEntity {
       throw new IllegalArgumentException(
           "비밀번호는 영문/숫자/특수문자 중 2가지 이상 조합이어야 합니다.");
     }
+  }
+
+  public void completeUserInfoSetting() {
+    if (!this.onboardingState.canTransitTo(ROUBY_SETTING_BEFORE)) {
+      throw new IllegalStateException("아직 유저 정보 설정이 끝나지 않았습니다.");
+    }
+    this.onboardingState = ROUBY_SETTING_BEFORE;
+  }
+
+  public void completeRoubySetting() {
+    if (!this.onboardingState.canTransitTo(COMPLETED)) {
+      throw new IllegalStateException("아직 루비 정보 설정이 끝나지 않았습니다.");
+    }
+    this.onboardingState = COMPLETED;
   }
 
   @Builder
