@@ -2,7 +2,7 @@
 <template>
   <div class="text-center mt-12 space-y-6 w-full text-main-color">
     <div>
-      <p class="text-base">{{ userName }}님은 {{ selectedHealth }}(이)가 있으시군요!</p>
+      <p class="text-base">{{ userName }}님은 {{ selectedHealthFirst }}(이)가 있으시군요!</p>
       <p class="text-base">루비를 시작하기 전,</p>
       <p class="text-base">{{ userName }}님의 직업이나 현재 관심사에 대해 알고싶어요!</p>
       <p class="text-sm text-#6667D07A mt-2">여러 키워드를 추가할 수 있어요!</p>
@@ -61,7 +61,9 @@ const props = defineProps({
 
 // props는 항상 string 타입으로 통일
 const userName = computed(() => props.userName || '')
-const selectedHealth = computed(() => props.selectedHealth || '')
+const selectedHealthFirst = computed(() => {
+  return Array.isArray(props.selectedHealth) ? props.selectedHealth[0] || '' : props.selectedHealth
+})
 
 const onNextClick = () => {
   if (keywords.value.length === 0) {
@@ -69,8 +71,7 @@ const onNextClick = () => {
     return false
   }
 
-  store.keywords = [...keywords.value]
-  store.personalKeyword = store.keywords[0]
+  store.personalKeyword = [...keywords.value]
 
   console.log('저장된 키워드:', store.keywords)
   console.log('선택된 개인 상태:', store.personalKeyword)

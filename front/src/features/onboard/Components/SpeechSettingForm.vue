@@ -50,8 +50,7 @@ const onNextClick = () => {
     return false
   }
 
-  store.keywords = [...keywords.value]
-  store.speechType = store.keywords[0]
+  store.speechType = [...keywords.value]
 
   console.log('키워드 저장 후 true 반환')
   return true

@@ -1,7 +1,7 @@
 <template>
   <div class="text-center mt-20 space-y-6 text-main-color">
     <div>
-      <p class="text-base">{{ userName }}님은 {{ personalKeyword }}에 관심이 있으시군요!</p>
+      <p class="text-base">{{ userName }}님은 {{ selectedPersonalFirst }}에 관심이 있으시군요!</p>
       <p class="text-base">그렇다면, 언제 하루를 시작 하시나요?</p>
       <p class="text-sm text-[#6667D07A] mt-2">루비와 함께 멋진 하루를 시작해요</p>
     </div>
@@ -56,11 +56,9 @@ const userName = computed(() =>
     : props.userName
 )
 
-const personalKeyword = computed(() =>
-  typeof props.personalKeyword === 'object' && 'value' in props.personalKeyword
-    ? props.personalKeyword.value
-    : props.personalKeyword
-)
+const selectedPersonalFirst = computed(() => {
+  return Array.isArray(props.personalKeyword) ? props.personalKeyword[0] || '' : props.personalKeyword
+})
 const onNextClick = () => {
   timeError.value = ''
 
