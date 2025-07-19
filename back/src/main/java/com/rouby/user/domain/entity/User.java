@@ -98,7 +98,7 @@ public class User extends BaseEntity {
   }
 
   private static void validatePassword(String plainPassword) {
-    if (plainPassword==null || plainPassword.isBlank()) {
+    if (plainPassword == null || plainPassword.isBlank()) {
       throw new IllegalArgumentException("비밀번호는 필수입니다.");
     }
     if (plainPassword.length() < 8 || plainPassword.length() > 32) {
@@ -113,14 +113,16 @@ public class User extends BaseEntity {
 
   public void completeUserInfoSetting() {
     if (!this.onboardingState.canTransitTo(ROUBY_SETTING_BEFORE)) {
-      throw new IllegalStateException("아직 유저 정보 설정이 끝나지 않았습니다.");
+      throw new IllegalStateException(
+          "유저 정보 설정을 완료할 수 없는 상태입니다. 현재 상태: " + this.onboardingState);
     }
     this.onboardingState = ROUBY_SETTING_BEFORE;
   }
 
   public void completeRoubySetting() {
     if (!this.onboardingState.canTransitTo(COMPLETED)) {
-      throw new IllegalStateException("아직 루비 정보 설정이 끝나지 않았습니다.");
+      throw new IllegalStateException(
+          "루비 정보 설정을 완료할 수 없는 상태입니다. 현재 상태: " + this.onboardingState);
     }
     this.onboardingState = COMPLETED;
   }
