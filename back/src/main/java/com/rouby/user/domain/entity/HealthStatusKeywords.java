@@ -23,6 +23,7 @@ public class HealthStatusKeywords implements Serializable {
   }
 
   public static HealthStatusKeywords of(Set<String> healthStatusKeywords){
+    if(healthStatusKeywords != null && healthStatusKeywords.size() > 10) throw new IllegalArgumentException("healthStatusKeywords size 는 최대 10 입니다.");
     return new HealthStatusKeywords(Collections.unmodifiableSet(healthStatusKeywords));
   }
 

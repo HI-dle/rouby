@@ -23,6 +23,7 @@ public class ProfileKeywords implements Serializable {
   }
 
   public static ProfileKeywords of(Set<String> profileKeywords){
+    if(profileKeywords != null && profileKeywords.size() > 10) throw new IllegalArgumentException("profileKeywords size 는 최대 10 입니다.");
     return new ProfileKeywords(Collections.unmodifiableSet(profileKeywords));
   }
 
