@@ -8,9 +8,9 @@ public enum OnboardingState {
 
   USER_INFO_SETTING_BEFORE("/onboarding/nickname-setting"),
 
-  ROUBY_SETTING_BEFORE("/onboarding/루비세팅첫경로"),
+  ROUBY_SETTING_BEFORE("/onboarding/speech-setting"),
 
-  COMPLETED("/기본경로생겼을때넣어야합니다.");
+  COMPLETED("/");
 
   private final String redirectPath;
 
