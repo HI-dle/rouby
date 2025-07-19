@@ -4,8 +4,6 @@ import com.rouby.schedule.presentation.dto.request.CreateScheduleRequest;
 import com.rouby.schedule.presentation.dto.request.CreateScheduleRequest.RecurrenceRuleRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 
 public class CreateScheduleRequestFixture {
 
@@ -21,11 +19,7 @@ public class CreateScheduleRequestFixture {
             .freq("MONTHLY")
             .interval(1)
             .byDay("MO")
-            .until(
-                ZonedDateTime.of(
-                    LocalDateTime.of(2025, 12, 30, 0, 0),
-                    ZoneId.of("Asia/Seoul"))
-            )
+            .until(LocalDateTime.of(2025, 12, 30, 0, 0))
             .build())
         .build();
   }
@@ -42,11 +36,9 @@ public class CreateScheduleRequestFixture {
             .freq("MONTHLY")
             .interval(1)
             .byDay("MO")
-            .until(ZonedDateTime.of(
-                LocalDateTime.of(2025, 12, 30, 0, 0),
-                ZoneId.of("Asia/Seoul"))
-            )
-            .build())
+            .until(LocalDateTime.of(2025, 12, 30, 0, 0))
+            .build()
+        )
         .build();
   }
 }
