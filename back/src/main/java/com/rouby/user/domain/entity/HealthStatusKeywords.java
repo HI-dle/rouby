@@ -1,21 +1,20 @@
 package com.rouby.user.domain.entity;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import lombok.Getter;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 @Getter
 @Embeddable
 public class HealthStatusKeywords implements Serializable {
 
-  @JdbcTypeCode(SqlTypes.JSON)
-  @Column(columnDefinition = "jsonb")
+  @Column(columnDefinition = "text")
+  @Convert(converter = EncryptedStringSetConverter.class)
   private Set<String> healthStatusKeywords;
 
   public static HealthStatusKeywords empty(){
