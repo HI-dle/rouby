@@ -7,7 +7,6 @@ import com.rouby.schedule.domain.vo.Period;
 import com.rouby.schedule.domain.vo.RecurrenceRule;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import lombok.Builder;
 
 @Builder
@@ -24,8 +23,6 @@ public record CreateScheduleCommand(
   public Schedule toEntityWithUserId(Long userId) {
 
     RecurrenceRule recurrenceRuleDomain = (recurrenceRule != null) ? recurrenceRule.toDomain() : null;
-    LocalDateTime untilAt = recurrenceRuleDomain != null && recurrenceRuleDomain.getUntil() != null
-        ? recurrenceRuleDomain.getUntil().toLocalDateTime() : null;
 
     return Schedule.builder()
         .userId(userId)
@@ -36,7 +33,6 @@ public record CreateScheduleCommand(
         .period(Period.builder()
             .startAt(startAt)
             .endAt(endAt)
-            .untilAt(untilAt)
             .build())
         .recurrenceRule(recurrenceRuleDomain)
         .build();
@@ -47,7 +43,7 @@ public record CreateScheduleCommand(
       String freq,
       String byDay,
       Integer interval,
-      ZonedDateTime until
+      LocalDateTime until
   ) {
 
     public RecurrenceRule toDomain() {

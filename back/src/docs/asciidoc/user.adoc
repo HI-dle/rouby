@@ -184,7 +184,7 @@ include::{snippets}/user-email-verification-verify-invalid-verification-email-co
 ---
 
 == 비밀번호 변경 토큰 사용 API
-
+=== 성공
 ==== HTTP 요청
 include::{snippets}/reset-password-by-token-204/http-request.adoc[]
 
@@ -197,7 +197,7 @@ include::{snippets}/reset-password-by-token-204/http-response.adoc[]
 ---
 
 == 비밀번호 찾기 API
-
+=== 성공
 ==== HTTP 요청
 include::{snippets}/find-password-204/http-request.adoc[]
 
@@ -210,7 +210,7 @@ include::{snippets}/find-password-204/http-response.adoc[]
 ---
 
 == 비밀번호 검증 API
-
+=== 성공
 ==== HTTP 요청
 include::{snippets}/validate-reset-token-200/http-request.adoc[]
 
@@ -223,7 +223,7 @@ include::{snippets}/validate-reset-token-200/http-response.adoc[]
 ---
 
 == 비밀번호 변경 API
-
+=== 성공
 ==== HTTP 요청
 include::{snippets}/reset-password-204/http-request.adoc[]
 
@@ -234,7 +234,7 @@ include::{snippets}/reset-password-204/request-fields.adoc[]
 include::{snippets}/reset-password-204/http-response.adoc[]
 
 == 온보딩 체크 조회 API
-
+=== 성공
 ==== HTTP 요청
 include::{snippets}/user-info-check-200/http-request.adoc[]
 
@@ -244,7 +244,7 @@ include::{snippets}/user-info-check-200/http-response.adoc[]
 ---
 
 == 비밀번호 변경시 이메일 횟수 초과 에러 API
-
+=== 실패
 ==== HTTP 요청
 include::{snippets}/find-password-email-send-limit-fail/http-request.adoc[]
 

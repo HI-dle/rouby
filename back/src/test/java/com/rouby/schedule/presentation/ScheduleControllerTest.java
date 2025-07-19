@@ -64,7 +64,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
                 fieldWithPath("recurrenceRule.freq").description("반복 주기 (예: MONTHLY)"),
                 fieldWithPath("recurrenceRule.byDay").description("반복 요일 (예: MO)"),
                 fieldWithPath("recurrenceRule.interval").description("반복 간격"),
-                fieldWithPath("recurrenceRule.until").description("반복 종료일시 (예: 2025-12-30T00:00:00Z)")
+                fieldWithPath("recurrenceRule.until").description("반복 종료일시 (예: 2025-12-30T00:00:00)")
             )
         ));
   }
