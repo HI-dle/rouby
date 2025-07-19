@@ -1,14 +1,13 @@
 <template>
   <div class="main-container">
     <div class="sub-main-container">
-      <!-- 키워드 입력 폼 -->
 
       <div class="mt-32">
-      <PersonalStateForm
-        ref="personalRef"
-        :user-name="userName"
-        :selected-health="selectedHealth"
-      />
+        <DateStartSettingForm
+          ref="dateSettingFormRef"
+          :user-name="userName"
+          :personal-keyword="personalKeyword"
+        />
       </div>
 
       <!-- 다음 단계 이동 -->
@@ -24,26 +23,27 @@
   </div>
 </template>
 
+
 <script setup>
 import { computed, ref } from 'vue'
-import PersonalStateForm from '@/features/onboard/Components/ProfileSettingForm.vue'
+import DateStartSettingForm from '@/features/onboard/Components/DateStartSettingForm.vue'
 import { useOnboardStore } from '@/features/onboard/store/useOnboardStore'
 import { useRouter } from 'vue-router'
 
 const store = useOnboardStore()
-const selectedHealth = computed(() => store.selectedHealth)
+const personalKeyword = computed(() => store.personalKeyword)
 const userName = computed(() => store.userName)
-const exampleKeywords = ref([]) // 유동적으로 받아오기 가능
 const router = useRouter()
 
-const personalRef = ref(null)
+const dateSettingFormRef = ref(null)
 
 const onNextLinkClick = () => {
-  if (!personalRef.value) return
+  if (!dateSettingFormRef.value) return
 
-  const success = personalRef.value.onNextClick()
+  const success = dateSettingFormRef.value.onNextClick()
   if (success) {
-    router.push('/onboarding/start-date-setting')
+    router.push('/onboarding/end-date-setting')
   }
 }
+
 </script>
