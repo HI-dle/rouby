@@ -28,7 +28,7 @@
 </template>
 
 <script setup>
-import { useKeywordForm } from '@/features/onboard/useKeywordForm.js'
+import { useKeywordForm } from '@/shared/composable/useKeywordForm.js'
 import KeywordTag from '@/components/common/KeywordTag.vue'
 import UserSettingInput from '@/components/common/UserSettingInput.vue'
 import FieldError from '@/components/common/FieldError.vue'
