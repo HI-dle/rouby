@@ -118,6 +118,11 @@ const router = createRouter({
           name: 'password-reset',
           component: () => import('@/features/user/views/MyPageResetPasswordView.vue'),
         },
+        {
+          path: 'setting/rouby',
+          name: 'rouby-setting',
+          component: () => import('@/features/user/views/MyPageRoubySettingView.vue'),
+        },
       ],
     },
   ],

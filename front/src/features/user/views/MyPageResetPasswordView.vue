@@ -1,5 +1,4 @@
 <template>
-
   <div class="main-container">
     <div class="sub-main-container">
       <div class="text-center">
@@ -19,4 +18,5 @@
 
 <script setup>
 import MyPageResetPasswordForm from '@/features/user/components/MyPageResetPasswordForm.vue'
+import PasswordLockIcon from '@/assets/password_lock.svg'
 </script>
