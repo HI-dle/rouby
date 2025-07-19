@@ -78,10 +78,10 @@ export function useRoubySettingForm() {
     }
   }
 
-  function addToneTag() {
+  function addToneTag(maxKeywordCount = 3) {
     const raw = keyword.value
 
-    if (communicationTone.value.length >= 3) {
+    if (communicationTone.value.length >= maxKeywordCount) {
       keywordError.value = '태그는 최대 3개까지 입력할 수 있어요.'
       return
     }
@@ -96,7 +96,6 @@ export function useRoubySettingForm() {
       keywordError.value = message
       return
     }
-
 
     const tags = raw
     .split(',')
