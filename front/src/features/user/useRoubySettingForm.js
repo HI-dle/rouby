@@ -82,7 +82,7 @@ export function useRoubySettingForm() {
     const raw = keyword.value
 
     if (communicationTone.value.length >= maxKeywordCount) {
-      keywordError.value = '태그는 최대 3개까지 입력할 수 있어요.'
+      keywordError.value =  `태그는 최대 ${maxKeywordCount}개까지 입력할 수 있어요.`
       return
     }
 
