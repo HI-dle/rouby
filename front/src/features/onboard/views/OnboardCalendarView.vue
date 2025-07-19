@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import CalendarForm from '@/features/onboard/Components/CalendarForm.vue'
+import CalendarForm from '@/features/onboard/Components/CalenderForm.vue'
 import { ref } from 'vue'
 import router from '@/router/index.js'
 
