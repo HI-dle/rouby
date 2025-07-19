@@ -61,6 +61,6 @@ public record CreateRoutineTaskRequest (
   }
 
   public enum Weekday {
-    SU, MO, TU, WE, TH, FR, SA;
+    MO, TU, WE, TH, FR, SA, SU;
   }
 }
