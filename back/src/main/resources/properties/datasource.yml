@@ -25,7 +25,9 @@ spring:
 spring:
   config.activate.on-profile: test
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE
-
+    url: jdbc:tc:postgresql:17.5:///rouby
+    username: postgres
+    password: postgres
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
 ---
 

@@ -1,4 +1,4 @@
-package com.rouby.auth.presentation;
+package com.rouby.user.presentation;
 
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_USER;
 import static org.mockito.ArgumentMatchers.any;
