@@ -95,4 +95,11 @@ public class UserFacade {
     return UserCheckInfo.from(userReadService.findByUserId(id));
   }
 
+  public void completeInitialUserInfoSetting(Long id) {
+    userWriteService.completeInitialUserInfoSetting(id);
+  }
+
+  public void completeInitialRoubySetting(Long id) {
+    userWriteService.completeInitialRoubySetting(id);
+  }
 }
