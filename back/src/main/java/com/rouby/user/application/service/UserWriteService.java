@@ -5,6 +5,7 @@ import static com.rouby.user.application.exception.UserErrorCode.EMAIL_NOT_VERIF
 import static com.rouby.user.application.exception.UserErrorCode.EMAIL_VERIFICATION_TOKEN_MISMATCH;
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION;
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION_TOKEN;
+import static com.rouby.user.application.exception.UserErrorCode.INVALID_ONBOARDING_STATE_TRANSITION;
 import static com.rouby.user.application.exception.UserErrorCode.PASSWORD_TOKEN_EXPIRED;
 import static com.rouby.user.application.exception.UserErrorCode.USER_NOT_FOUND;
 
@@ -68,9 +69,9 @@ public class UserWriteService {
 
   private void ensureEmailIsVerified(String email) {
     VerificationEmailCode code = verificationEmailCodeStorage.findByEmail(email)
-            .orElseThrow(() -> UserException.from(EMAIL_NOT_VERIFIED));
+        .orElseThrow(() -> UserException.from(EMAIL_NOT_VERIFIED));
 
-    if(!code.isVerified()) {
+    if (!code.isVerified()) {
       throw UserException.from(EMAIL_NOT_VERIFIED);
     }
   }
@@ -142,6 +143,28 @@ public class UserWriteService {
 
     if (!token.equals(savedToken)) {
       throw UserException.from(PASSWORD_TOKEN_EXPIRED);
+    }
+  }
+
+  @Transactional
+  public void completeInitialUserInfoSetting(Long id) {
+    User user = userRepository.findById(id)
+        .orElseThrow(() -> UserException.from(UserErrorCode.USER_NOT_FOUND));
+    handleIllegalState(user::completeUserInfoSetting, INVALID_ONBOARDING_STATE_TRANSITION);
+  }
+
+  @Transactional
+  public void completeInitialRoubySetting(Long id) {
+    User user = userRepository.findById(id)
+        .orElseThrow(() -> UserException.from(UserErrorCode.USER_NOT_FOUND));
+    handleIllegalState(user::completeRoubySetting, INVALID_ONBOARDING_STATE_TRANSITION);
+  }
+
+  private void handleIllegalState(Runnable action, UserErrorCode errorCode) {
+    try {
+      action.run();
+    } catch (IllegalStateException e) {
+      throw UserException.from(errorCode);
     }
   }
 }

@@ -2,6 +2,7 @@ package com.rouby.user.application.service;
 
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_USER;
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_USER_PASSWORD;
+import static com.rouby.user.application.exception.UserErrorCode.USER_NOT_FOUND;
 
 import com.rouby.user.application.dto.command.LoginCommand;
 import com.rouby.user.application.dto.info.LoginInfo;
@@ -50,7 +51,6 @@ public class UserReadService {
   @Transactional(readOnly = true)
   public User findByUserId(Long id) {
     return userRepository.findById(id).orElseThrow(() ->
-        UserException.from(INVALID_USER));
+        UserException.from(USER_NOT_FOUND));
   }
-
 }

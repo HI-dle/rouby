@@ -135,6 +135,15 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(status).body(ErrorResponse.from(e));
   }
 
+  @ExceptionHandler(IllegalStateException.class)
+  public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException e,
+      HttpServletRequest request){
+
+    HttpStatus status = BAD_REQUEST;
+    log(e, request, status);
+    return ResponseEntity.status(status).body(ErrorResponse.from(e));
+  }
+
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponse> handleException(Exception e,
       HttpServletRequest request) {

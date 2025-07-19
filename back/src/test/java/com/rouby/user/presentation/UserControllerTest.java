@@ -5,6 +5,7 @@ import static com.rouby.notification.email.application.exception.EmailErrorCode.
 import static com.rouby.user.application.exception.UserErrorCode.DUPLICATE_EMAIL;
 import static com.rouby.user.application.exception.UserErrorCode.EMAIL_NOT_VERIFIED;
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION;
+import static com.rouby.user.application.exception.UserErrorCode.INVALID_ONBOARDING_STATE_TRANSITION;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -607,8 +608,122 @@ class UserControllerTest extends ControllerTestSupport {
                 fieldWithPath("communicationTone[]").optional().description("말투 키워드 목록 예: [\"따듯하게\", \"존대\"]"),
                 fieldWithPath("onboardingStatePath").optional().description("온보딩 상태에 따라 이동할 프론트 라우팅 경로")
             )
+        ));
+  }
 
+  @WithMockCustomUser
+  @DisplayName("유저 정보 설정 완료 API")
+  @Test
+  void completeUserInfoSetting() throws Exception {
+    // given
+    Long userId = 1L;
+    doNothing().when(userFacade).completeInitialUserInfoSetting(eq(userId));
 
+    // when
+    ResultActions resultActions = mockMvc.perform(
+        patch("/api/v1/users/onboarding/user-info/complete")
+            .header("Authorization", "Bearer {ACCESS_TOKEN}")
+            .contentType(MediaType.APPLICATION_JSON)
+    );
+
+    // then
+    resultActions
+        .andExpect(status().isOk())
+        .andDo(print())
+        .andDo(document("complete-user-info-setting-200",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestHeaders(
+                headerWithName("Authorization").description("사용자 인증 토큰")
+            )
+        ));
+  }
+
+  @WithMockCustomUser
+  @DisplayName("유저 정보 설정 완료 실패 - 잘못된 상태 전이")
+  @Test
+  void completeUserInfoSetting_fail_invalid_state_transition() throws Exception {
+    // given
+    Long userId = 1L;
+    doThrow(UserException.from(INVALID_ONBOARDING_STATE_TRANSITION))
+        .when(userFacade).completeInitialUserInfoSetting(userId);
+
+    // when
+    ResultActions resultActions = mockMvc.perform(
+        patch("/api/v1/users/onboarding/user-info/complete")
+            .header("Authorization", "Bearer {ACCESS_TOKEN}")
+            .contentType(MediaType.APPLICATION_JSON)
+    );
+
+    // then
+    resultActions
+        .andExpect(status().isBadRequest())
+        .andDo(print())
+        .andDo(document("complete-user-info-setting-invalid-state",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestHeaders(
+                headerWithName("Authorization").description("사용자 인증 토큰")
+            ),
+            getErrorResponseFieldSnippet()
+        ));
+  }
+
+  @WithMockCustomUser
+  @DisplayName("루비 설정 완료 API")
+  @Test
+  void completeRoubySetting() throws Exception {
+    // given
+    Long userId = 1L;
+    doNothing().when(userFacade).completeInitialRoubySetting(userId);
+
+    // when
+    ResultActions resultActions = mockMvc.perform(
+        patch("/api/v1/users/onboarding/rouby/complete")
+            .header("Authorization", "Bearer {ACCESS_TOKEN}")
+            .contentType(MediaType.APPLICATION_JSON)
+    );
+
+    // then
+    resultActions
+        .andExpect(status().isOk())
+        .andDo(print())
+        .andDo(document("complete-rouby-setting-200",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestHeaders(
+                headerWithName("Authorization").description("사용자 인증 토큰")
+            )
+        ));
+  }
+
+  @WithMockCustomUser
+  @DisplayName("루비 설정 완료 실패 - 잘못된 상태 전이")
+  @Test
+  void completeRoubySetting_fail_invalid_state_transition() throws Exception {
+    // given
+    Long userId = 1L;
+    doThrow(new IllegalStateException("아직 루비 정보 설정이 끝나지 않았습니다."))
+        .when(userFacade).completeInitialRoubySetting(userId);
+
+    // when
+    ResultActions resultActions = mockMvc.perform(
+        patch("/api/v1/users/onboarding/rouby/complete")
+            .header("Authorization", "Bearer {ACCESS_TOKEN}")
+            .contentType(MediaType.APPLICATION_JSON)
+    );
+
+    // then
+    resultActions
+        .andExpect(status().isBadRequest())
+        .andDo(print())
+        .andDo(document("complete-rouby-setting-invalid-state",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestHeaders(
+                headerWithName("Authorization").description("사용자 인증 토큰")
+            ),
+            getErrorResponseFieldSnippet()
         ));
   }
 
