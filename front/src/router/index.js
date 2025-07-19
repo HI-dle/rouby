@@ -116,6 +116,16 @@ const router = createRouter({
           name: 'speech-setting',
           component: () => import('@/features/onboard/views/OnboardSpeechSettingView.vue'),
         },
+        {
+          path: 'alarm-setting',
+          name: 'alarm-setting',
+          component: () => import('@/features/onboard/views/OnboardAlarmSettingView.vue'),
+        },
+        {
+          path: 'Calender-setting',
+          name: 'Calender-setting',
+          component: () => import('@/features/onboard/views/OnboardCalendarView.vue'),
+        },
       ],
     },
 

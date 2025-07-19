@@ -9,6 +9,9 @@ export const useOnboardStore = defineStore('onboard', () => {
   const startOfDayTime = ref('')
   const endOfDayTime = ref('')
   const speechType = ref('')
+  const scheduleAlarm = ref(false)
+  const routineAlarm = ref(true)
+  const briefingAlarm = ref(true)
 
   return {
     userName,
@@ -17,6 +20,9 @@ export const useOnboardStore = defineStore('onboard', () => {
     startOfDayTime,
     endOfDayTime,
     speechType,
+    scheduleAlarm,
+    routineAlarm,
+    briefingAlarm,
   }
 },{
   persist: true,

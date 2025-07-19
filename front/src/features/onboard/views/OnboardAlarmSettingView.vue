@@ -2,7 +2,7 @@
   <div class="main-container">
     <div class="sub-main-container">
       <div class="mt-32">
-      <SpeechSettingForm ref="SpeechFormRef" />
+      <AlarmSettingForm ref="AlarmFormRef" />
       </div>
 
       <div class="w-full mt-10 pt-10 text-center">
@@ -18,18 +18,18 @@
 </template>
 
 <script setup>
-import SpeechSettingForm from '@/features/onboard/Components/SpeechSettingForm.vue'
+import AlarmSettingForm from '@/features/onboard/Components/AlarmSettingForm.vue'
 import { ref } from 'vue'
 import router from '@/router/index.js'
 
-const SpeechFormRef = ref(null)
+const AlarmFormRef = ref(null)
 
 const onNextLinkClick = async () => {
-  if (!SpeechFormRef.value) return
+  if (!AlarmFormRef.value) return
 
-  const success = await SpeechFormRef.value.onNextClick()
+  const success = await AlarmFormRef.value.onNextClick()
   if (success) {
-    await router.push('/onboarding/alarm-setting')
+    await router.push('/onboarding/Calender-setting')
   }
 }
 </script>
