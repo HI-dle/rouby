@@ -1,6 +1,9 @@
 import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { buildErrorCleaner, buildFieldValidator } from '@/utils/formUtils.js'
+import {
+  buildErrorCleaner,
+  buildFieldValidator,
+} from '@/shared/utils/formUtils.js'
 import { myPageResetPassword } from '@/features/user/userService.js'
 import {
   validatePassword,
@@ -36,11 +39,19 @@ export function usePasswordForm() {
     validateField(validatePassword, 'password', form.password)
 
   const validatePasswordConfirmField = () =>
-    validateField(validatePasswordConfirm, 'passwordConfirm', form.newPassword, form.passwordConfirm)
+    validateField(
+      validatePasswordConfirm,
+      'passwordConfirm',
+      form.newPassword,
+      form.passwordConfirm,
+    )
 
   const clearErrors = buildErrorCleaner(errors, [
     { field: 'password', get: (state) => state.password },
-    { field: 'passwordConfirm', get: (state) => state.passwordConfirm },
+    {
+      field: 'passwordConfirm',
+      get: (state) => state.passwordConfirm,
+    },
   ])
 
   const sendResetPassword = async () => {
@@ -66,7 +77,6 @@ export function usePasswordForm() {
       loading.reset = false
     }
   }
-
 
   return {
     form,

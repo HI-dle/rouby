@@ -1,3 +1,6 @@
+import { wrapApi } from '@/shared/utils/errorUtils.js'
+import { myPageResetPassword as myPageResetPasswordApi } from '@/features/user/api.js'
+import { toMyPageResetPasswordPayload } from '@/features/user/dto.js'
 import { wrapApi } from '@/utils/errorUtils.js'
 import {
   myPageResetPassword as myPageResetPasswordApi,

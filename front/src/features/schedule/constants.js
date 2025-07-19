@@ -1,7 +1,5 @@
 export const BYDAY = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA']
 
-export const MIDNIGHT = '00:00'
-
 export const BIWEEKLY = 'BIWEEKLY'
 export const WEEKELY = 'WEEKLY'
 

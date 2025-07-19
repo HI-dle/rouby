@@ -1,15 +1,19 @@
 import axios from '@/api/axios'
 
 export const requestEmailVerification = (payload) => {
-  return axios.post('/api/v1/users/email-verification/request', payload)
+  return axios.post('/v1/users/email-verification/request', payload)
 }
 
 export const verifyEmail = (payload) => {
-  return axios.post('/api/v1/users/email-verification/verify', payload)
+  return axios.post('/v1/users/email-verification/verify', payload)
 }
 
-export const signup = (payload) => {
-  return axios.post('/api/v1/users', payload)
+export const signup = (payload, token) => {
+  return axios.post('/v1/users', payload, {
+    headers: {
+      Authorization: `${token}`,
+    }
+  })
 }
 
 export const findPassword = (payload) => {

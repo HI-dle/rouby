@@ -7,7 +7,6 @@ import com.rouby.schedule.domain.vo.Period;
 import com.rouby.schedule.domain.vo.RecurrenceRule;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -26,6 +25,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Getter
 @Entity
@@ -53,8 +54,8 @@ public class Schedule extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private AlarmOffsetType alarmOffsetType;
 
-  @Column(columnDefinition = "TEXT")
-  @Convert(converter = RecurrenceRuleStringConverter.class)
+  @JdbcTypeCode(SqlTypes.JSON)
+  @Column(columnDefinition = "jsonb")
   private RecurrenceRule recurrenceRule;
 
   @OneToMany(mappedBy = "parentSchedule", cascade = CascadeType.ALL, orphanRemoval = true)

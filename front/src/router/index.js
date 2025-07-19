@@ -9,6 +9,17 @@ const router = createRouter({
       redirect: '/routine/daily',
       children: [
         {
+          path: '/user',
+          component: () => import('@/features/user/views/UserLayout.vue'),
+          children: [
+            {
+              path: 'password/reset',
+              name: 'password-reset',
+              component: () => import('@/features/user/views/MyPageResetPasswordView.vue'),
+            },
+          ],
+        },
+        {
           path: 'schedule',
           component: () => import('@/features/schedule/views/ScheduleLayout.vue'),
           redirect: '/schedule/daily',
@@ -49,6 +60,11 @@ const router = createRouter({
       component: () => import('@/layouts/HeaderOnlyLayout.vue'),
       children: [
         {
+          path: 'signup',
+          name: 'signup',
+          component: () => import('@/features/auth/views/SignupView.vue'),
+        },
+        {
           path: 'login',
           name: 'login',
           component: () => import('@/features/auth/views/LoginView.vue'),
@@ -67,27 +83,31 @@ const router = createRouter({
       ],
     },
     {
-      path: '/auth',
+      path: '/onboarding',
       component: () => import('@/layouts/HeaderOnlyLayout.vue'),
       children: [
         {
-          path: 'signup',
-          name: 'signup',
-          component: () => import('@/features/auth/views/SignupView.vue'),
+          path: 'nickname-setting',
+          name: 'nickname-setting',
+          component: () => import('@/features/onboard/views/OnboardNicknameSettingView.vue'),
+        },
+        {
+          path: 'health-check',
+          name: 'health-check',
+          component: () => import('@/features/onboard/views/OnboardHealthCheckView.vue'),
+        },
+        {
+          path: 'profile-setting',
+          name: 'profile-setting',
+          component: () => import('@/features/onboard/views/OnboardProfileSettingView.vue'),
+        },
+        {
+          path: 'date-setting',
+          name: 'date-setting',
+          component: () => import('@/features/onboard/views/OnboardDateSettingView.vue'),
         },
       ],
     },
-    // {
-    //   path: '/onboarding',
-    //   component: () => import('@/layouts/HeaderOnlyLayout.vue'),
-    //   children: [
-    //     {
-    //       path: 'health-check',
-    //       name: 'health-check',
-    //       component: () => import('@/features/onBoard/views/OnboardHealthCheckView.vue'),
-    //     },
-    //   ],
-    // },
 
     {
       path: '/user',

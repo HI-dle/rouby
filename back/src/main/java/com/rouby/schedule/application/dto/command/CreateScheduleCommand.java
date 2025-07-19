@@ -6,7 +6,7 @@ import com.rouby.schedule.domain.enums.Freq;
 import com.rouby.schedule.domain.vo.Period;
 import com.rouby.schedule.domain.vo.RecurrenceRule;
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import lombok.Builder;
 
@@ -16,14 +16,16 @@ public record CreateScheduleCommand(
     String memo,
     Integer alarmOffsetMinutes,
     LocalDate routineActivateDate,
-    LocalDate startDate,
-    LocalTime startTime,
-    LocalDate endDate,
-    LocalTime endTime,
+    LocalDateTime startAt,
+    LocalDateTime endAt,
     RecurrenceRuleCommand recurrenceRule
 ) {
 
   public Schedule toEntityWithUserId(Long userId) {
+
+    RecurrenceRule recurrenceRuleDomain = (recurrenceRule != null) ? recurrenceRule.toDomain() : null;
+    LocalDateTime untilAt = recurrenceRuleDomain != null && recurrenceRuleDomain.getUntil() != null
+        ? recurrenceRuleDomain.getUntil().toLocalDateTime() : null;
 
     return Schedule.builder()
         .userId(userId)
@@ -32,12 +34,11 @@ public record CreateScheduleCommand(
         .alarmOffsetMinutes(alarmOffsetMinutes)
         .routineActivateDate(routineActivateDate)
         .period(Period.builder()
-            .startDate(startDate)
-            .startTime(startTime)
-            .endDate(endDate)
-            .endTime(endTime)
+            .startAt(startAt)
+            .endAt(endAt)
+            .untilAt(untilAt)
             .build())
-        .recurrenceRule((recurrenceRule != null) ? recurrenceRule.toDomain() : null)
+        .recurrenceRule(recurrenceRuleDomain)
         .build();
   }
 

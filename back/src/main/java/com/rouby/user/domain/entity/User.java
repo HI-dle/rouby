@@ -41,14 +41,12 @@ public class User extends BaseEntity {
   @Embedded
   private DailyActiveTime dailyActiveTime;
 
-  @Embedded
-  private CurrentStatusKeywords currentStatusKeywords;
 
   @Embedded
   private HealthStatusKeywords healthStatusKeywords;
 
   @Embedded
-  private InterestKeywords interestKeywords;
+  private ProfileKeywords profileKeywords;
 
   @Embedded
   private CommunicationTone communicationTone;
@@ -64,6 +62,10 @@ public class User extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private UserRole role;
 
+  @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  private OnboardingState onboardingState;
+
   private LocalDateTime lastActivatedAt;
 
   public static User create(
@@ -76,6 +78,7 @@ public class User extends BaseEntity {
         .password(passwordEncoder.encode(plainPassword))
         .nickname(email.substring(0, email.indexOf("@")))
         .role(UserRole.USER)
+        .onboardingState(OnboardingState.USER_INFO_SETTING_BEFORE)
         .build();
   }
 
@@ -112,20 +115,21 @@ public class User extends BaseEntity {
       String nickname,
       AuthProvider authProvider,
       UserRole role,
-      LocalDateTime lastActivatedAt
+      LocalDateTime lastActivatedAt,
+      OnboardingState onboardingState
   ) {
     this.email = email;
     this.password = password;
     this.nickname = nickname;
     this.dailyActiveTime = DailyActiveTime.defaultTime();
-    this.currentStatusKeywords = CurrentStatusKeywords.empty();
     this.healthStatusKeywords = HealthStatusKeywords.empty();
-    this.interestKeywords = InterestKeywords.empty();
+    this.profileKeywords = ProfileKeywords.empty();
     this.communicationTone = CommunicationTone.empty();
     this.notificationSettings = createDefaultNotificationSettings();
     this.authProvider = authProvider == null ? AuthProvider.DEFAULT : authProvider;
     this.role = role == null ? UserRole.USER : role;
     this.lastActivatedAt = lastActivatedAt;
+    this.onboardingState = onboardingState;
   }
 
   private Set<NotificationSetting> createDefaultNotificationSettings() {

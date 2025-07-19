@@ -2,7 +2,9 @@ package com.rouby.user.application.service;
 
 import static com.rouby.user.application.exception.UserErrorCode.DUPLICATE_EMAIL;
 import static com.rouby.user.application.exception.UserErrorCode.EMAIL_NOT_VERIFIED;
+import static com.rouby.user.application.exception.UserErrorCode.EMAIL_VERIFICATION_TOKEN_MISMATCH;
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION;
+import static com.rouby.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION_TOKEN;
 import static com.rouby.user.application.exception.UserErrorCode.PASSWORD_TOKEN_EXPIRED;
 import static com.rouby.user.application.exception.UserErrorCode.USER_NOT_FOUND;
 
@@ -15,6 +17,7 @@ import com.rouby.user.application.dto.command.SaveVerificationCodeCommand;
 import com.rouby.user.application.dto.command.VerifyEmailCommand;
 import com.rouby.user.application.exception.UserErrorCode;
 import com.rouby.user.application.exception.UserException;
+import com.rouby.user.application.service.token.TokenProvider;
 import com.rouby.user.application.service.verification.VerificationEmailCode;
 import com.rouby.user.application.service.verification.VerificationEmailCodeStorage;
 import com.rouby.user.application.service.verification.VerificationPasswordTokenStorage;
@@ -34,15 +37,27 @@ public class UserWriteService {
   private final UserPasswordEncoder passwordEncoder;
   private final VerificationEmailCodeStorage verificationEmailCodeStorage;
   private final VerificationPasswordTokenStorage verificationPasswordCodeStorage;
+  private final TokenProvider tokenProvider;
 
   @Transactional
   public void create(CreateUserCommand command) {
+    ensureTokenMatchesEmail(command);
     ensureEmailNotTaken(command.email());
-    ensureEmailVerified(command.email());
+    ensureEmailIsVerified(command.email());
 
     User user = User.create(command.email(), command.password(), passwordEncoder);
     userRepository.save(user);
     verificationEmailCodeStorage.delete(command.email());
+  }
+
+  private void ensureTokenMatchesEmail(CreateUserCommand command) {
+    if(!tokenProvider.validateVerificationToken(command.token())){
+      throw UserException.from(INVALID_EMAIL_VERIFICATION_TOKEN);
+    }
+
+    if(!tokenProvider.extractEmail(command.token()).equals(command.email())){
+      throw UserException.from(EMAIL_VERIFICATION_TOKEN_MISMATCH);
+    }
   }
 
   private void ensureEmailNotTaken(String email) {
@@ -51,7 +66,7 @@ public class UserWriteService {
     }
   }
 
-  private void ensureEmailVerified(String email) {
+  private void ensureEmailIsVerified(String email) {
     VerificationEmailCode code = verificationEmailCodeStorage.findByEmail(email)
             .orElseThrow(() -> UserException.from(EMAIL_NOT_VERIFIED));
 
@@ -72,7 +87,7 @@ public class UserWriteService {
     verificationPasswordCodeStorage.deleteByEmail(email);
   }
 
-  public void verifyEmail(VerifyEmailCommand command) {
+  public String verifyEmail(VerifyEmailCommand command) {
     VerificationEmailCode code = verificationEmailCodeStorage.findByEmail(
         command.email()).orElseThrow(
         () -> UserException.from(INVALID_EMAIL_VERIFICATION));
@@ -81,8 +96,8 @@ public class UserWriteService {
       throw UserException.from(INVALID_EMAIL_VERIFICATION);
     }
 
-    code.verified();
-    verificationEmailCodeStorage.verified(command.email(), code);
+    verificationEmailCodeStorage.verified(command.email(), code.verified());
+    return tokenProvider.createVerificationToken(command.email());
   }
 
   @Transactional

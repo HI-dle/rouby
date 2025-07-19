@@ -10,7 +10,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -34,10 +33,11 @@ class RecurrenceRuleTest {
       RecurrenceRule rule = RecurrenceRule.from(rruleStr);
 
       // then
-      assertThat(rule.toString()).contains("FREQ=MONTHLY");
-      assertThat(rule.toString()).contains("BYDAY=").contains("MO").contains("TU");
-      assertThat(rule.toString()).contains("INTERVAL=1");
-      assertThat(rule.toString()).contains("UNTIL=20251230T000000+09");
+      String rRuleStr = rule.toRruleString();
+      assertThat(rRuleStr).contains("FREQ=MONTHLY");
+      assertThat(rRuleStr).contains("BYDAY=").contains("MO").contains("TU");
+      assertThat(rRuleStr).contains("INTERVAL=1");
+      assertThat(rRuleStr).contains("UNTIL=20251230T000000+09");
     }
 
     public static Stream<Arguments> validRruleStr() {
@@ -140,7 +140,7 @@ class RecurrenceRuleTest {
           .build();
 
       // when
-      String result = rule.toString();
+      String result = rule.toRruleString();
 
       // then
       assertThat(result).contains("FREQ=MONTHLY");
@@ -156,7 +156,7 @@ class RecurrenceRuleTest {
       RecurrenceRule rule = RecurrenceRule.from("UNTIL=20251230T000000Z");
 
       // when
-      String result = rule.toString();
+      String result = rule.toRruleString();
 
       // then
       assertThat(result).contains("UNTIL=20251230T000000Z");
