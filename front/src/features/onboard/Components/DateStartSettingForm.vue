@@ -50,11 +50,7 @@ const {
   selectedTime,
 } = useDateSettingForm()
 
-const userName = computed(() =>
-  typeof props.userName === 'object' && 'value' in props.userName
-    ? props.userName.value
-    : props.userName
-)
+const userName = computed(() => props.userName)
 
 const selectedPersonalFirst = computed(() => {
   return Array.isArray(props.personalKeyword) ? props.personalKeyword[0] || '' : props.personalKeyword
