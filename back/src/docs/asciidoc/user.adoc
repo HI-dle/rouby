@@ -254,3 +254,38 @@ include::{snippets}/find-password-email-send-limit-fail/request-fields.adoc[]
 ==== HTTP 응답 (429 TooManyRequests)
 include::{snippets}/find-password-email-send-limit-fail/http-response.adoc[]
 
+---
+
+== 유저 정보 설정 완료 API
+=== 성공: 유저 정보 설정 완료
+==== HTTP 요청
+include::{snippets}/complete-user-info-setting-200/http-request.adoc[]
+==== 요청 헤더
+include::{snippets}/complete-user-info-setting-200/request-headers.adoc[]
+==== HTTP 응답 (200 OK)
+include::{snippets}/complete-user-info-setting-200/http-response.adoc[]
+
+=== 실패: 잘못된 상태 전이
+==== HTTP 요청
+include::{snippets}/complete-user-info-setting-invalid-state/http-request.adoc[]
+==== 요청 헤더
+include::{snippets}/complete-user-info-setting-invalid-state/request-headers.adoc[]
+==== HTTP 응답 (400 Bad Request)
+include::{snippets}/complete-user-info-setting-invalid-state/http-response.adoc[]
+
+== 루비 설정 완료 API
+=== 성공: 루비 설정 완료
+==== HTTP 요청
+include::{snippets}/complete-rouby-setting-200/http-request.adoc[]
+==== 요청 헤더
+include::{snippets}/complete-rouby-setting-200/request-headers.adoc[]
+==== HTTP 응답 (200 OK)
+include::{snippets}/complete-rouby-setting-200/http-response.adoc[]
+
+=== 실패: 잘못된 상태 전이
+==== HTTP 요청
+include::{snippets}/complete-rouby-setting-invalid-state/http-request.adoc[]
+==== 요청 헤더
+include::{snippets}/complete-rouby-setting-invalid-state/request-headers.adoc[]
+==== HTTP 응답 (400 Bad Request)
+include::{snippets}/complete-rouby-setting-invalid-state/http-response.adoc[]
