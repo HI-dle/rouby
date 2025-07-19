@@ -29,6 +29,8 @@ public enum UserErrorCode implements ErrorCode {
       "INVALID_EMAIL_VERIFICATION_TOKEN", HttpStatus.UNAUTHORIZED),
   EMAIL_ALREADY_VERIFIED(
       "이미 인증이 완료된 코드입니다.", "EMAIL_ALREADY_VERIFIED", HttpStatus.CONFLICT),
+  INVALID_ONBOARDING_STATE_TRANSITION("현재 온보딩 단계에서는 해당 작업을 수행할 수 없습니다.",
+      "INVALID_ONBOARDING_STATE_TRANSITION", HttpStatus.BAD_REQUEST),
   ;
 
   private final String message;
