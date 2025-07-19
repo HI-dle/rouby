@@ -25,7 +25,7 @@ public record UserCheckInfo(Long id,
         user.getNickname(),
         user.getHealthStatusKeywords().getHealthStatusKeywords(),
         user.getProfileKeywords().getProfileKeywords(),
-        user.getCommunicationTone().getRoubyCommunicationTone(),
+        user.getCommunicationToneValues(),
         user.getOnboardingState()
     );
   }
