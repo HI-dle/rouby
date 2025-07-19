@@ -1,10 +1,11 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { readRoubySetting, updateRoubySetting } from '@/features/user/userService.js'
+import { isValidKeyword } from '@/shared/composable/useKeywordValidator.js'
 
 export function useRoubySettingForm() {
   const communicationTone = ref([])       // 말투 태그 목록
-  const inputValue = ref('')              // 입력창 값
+  const keyword = ref('')              // 입력창 값
   const keywordError = ref('')            // 에러 메시지
   const router = useRouter()
 
@@ -78,12 +79,24 @@ export function useRoubySettingForm() {
   }
 
   function addToneTag() {
-    const raw = inputValue.value
+    const raw = keyword.value
+
+    if (communicationTone.value.length >= 3) {
+      keywordError.value = '태그는 최대 3개까지 입력할 수 있어요.'
+      return
+    }
 
     if (!raw || typeof raw !== 'string' || raw.trim() === '') {
       keywordError.value = '입력값이 비어 있습니다.'
       return
     }
+
+    const { valid, message } = isValidKeyword(raw)
+    if (!valid) {
+      keywordError.value = message
+      return
+    }
+
 
     const tags = raw
     .split(',')
@@ -105,7 +118,7 @@ export function useRoubySettingForm() {
     })
 
     keywordError.value = added ? '' : '이미 추가된 말투입니다.'
-    inputValue.value = ''
+    keyword.value = ''
   }
 
   function removeToneTag(tag) {
@@ -115,7 +128,7 @@ export function useRoubySettingForm() {
 
   return {
     communicationTone,
-    inputValue,
+    keyword,
     keywordError,
     notifyMorningBriefing,
     notifyBeforeSchedule,

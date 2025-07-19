@@ -5,10 +5,12 @@ import ToggleSwitch from '@/components/common/ToggleSwitch.vue'
 import { useRoubySettingForm } from '@/features/user/useRoubySettingForm.js'
 import KeywordTag from '@/components/common/KeywordTag.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
+import FieldError from '@/components/common/FieldError.vue'
 
 const {
   communicationTone,
-  inputValue,
+  keywordError,
+  keyword,
   notifyBeforeRoutine,
   notifyMorningBriefing,
   notifyBeforeSchedule,
@@ -40,13 +42,13 @@ onMounted(() => {
     <!-- 입력창 -->
     <div class="mt-6">
       <UserSettingInput
-        v-model="inputValue"
+        v-model="keyword"
         placeholder="ex. 귀여운, 공손한"
         @submit="addToneTag"
         :error="keywordError"
       />
     </div>
-
+    <FieldError :message="keywordError" />
     <!-- 구분선 & 간격 -->
     <hr class="my-6 border-t border-gray-300" />
 
