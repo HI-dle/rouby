@@ -42,9 +42,10 @@ public class ScheduleController {
   @PreAuthorize("hasAnyRole('USER')")
   @GetMapping
   public ResponseEntity<SchedulesResponse> getSchedules(
-      @AuthenticationPrincipal SecurityUser securityUser, @RequestBody @Validated GetScheduleRequest req) {
+      @AuthenticationPrincipal SecurityUser securityUser, @Validated GetScheduleRequest req) {
 
-    SchedulesResponse response = scheduleFacade.getSchedules(req.toQuery(securityUser.getId())).toResponse();
+    SchedulesResponse response =
+        SchedulesResponse.of(scheduleFacade.getSchedules(req.toQuery(securityUser.getId())));
 
     return ResponseEntity.ok().body(response);
   }

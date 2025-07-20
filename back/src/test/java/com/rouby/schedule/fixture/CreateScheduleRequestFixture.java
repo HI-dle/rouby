@@ -1,4 +1,4 @@
-package com.rouby.schedule.presentation;
+package com.rouby.schedule.fixture;
 
 import com.rouby.schedule.presentation.dto.request.CreateScheduleRequest;
 import com.rouby.schedule.presentation.dto.request.CreateScheduleRequest.RecurrenceRuleRequest;

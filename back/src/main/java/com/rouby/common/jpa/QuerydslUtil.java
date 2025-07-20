@@ -7,13 +7,16 @@ import java.util.function.Supplier;
 public class QuerydslUtil {
 
   private QuerydslUtil() {
-    throw new RuntimeException("Utility Class");
+    throw new UnsupportedOperationException("Utility Class");
   }
 
   public static BooleanBuilder nullSafeBuilder(Supplier<BooleanExpression> f) {
     try {
-      return new BooleanBuilder(f.get());
-    } catch (Exception e) {
+      BooleanExpression expression = f.get();
+      return expression != null
+          ? new BooleanBuilder(expression)
+          : new BooleanBuilder();
+    } catch (RuntimeException e) {
       return new BooleanBuilder();
     }
   }
