@@ -703,7 +703,7 @@ class UserControllerTest extends ControllerTestSupport {
   void completeRoubySetting_fail_invalid_state_transition() throws Exception {
     // given
     Long userId = 1L;
-    doThrow(new IllegalStateException("아직 루비 정보 설정이 끝나지 않았습니다."))
+    doThrow(UserException.from(ONBOARDING_STATE_CHANGE_NOT_ALLOWED))
         .when(userFacade).completeInitialRoubySetting(userId);
 
     // when
