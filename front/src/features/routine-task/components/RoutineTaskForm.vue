@@ -2,8 +2,8 @@
 import SelectBox from "@/components/common/SelectBox.vue";
 import BaseButton from '@/components/common/BaseButton.vue'
 import FieldError from '@/components/common/FieldError.vue'
-import { days, typeOptions, alarmOptions, dayEnums } from '../constants'
-import { Calendar, Bell, ListTodo, StickyNote } from 'lucide-vue-next'
+import {alarmOptions, dayEnums, days, typeOptions} from '../constants'
+import {Bell, Calendar, ListTodo, StickyNote} from 'lucide-vue-next'
 
 const props = defineProps({
   form: Object,
@@ -43,7 +43,6 @@ const onTaskTypeChange = (value) => {
         class="w-full h-10 font-medium bg-transparent px-2 shadow-[0_2px_0_0_rgba(0,0,0,0.05)] pb-2 mt-4 focus:outline-none focus:shadow-[0_2px_0_0_theme(colors.main-color/30%)]"
       />
       <FieldError :message="errors.title" />
-      <!-- <p v-if="errors.title" class="text-sm text-error-color mt-1 mx-2">{{ errors.title }}</p> -->
     </div>
        <!--일정-->
       <div class="w-full flex justify-end">
