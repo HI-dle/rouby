@@ -20,7 +20,7 @@ export function useRoutineTaskForm() {
   const inputRefs = reactive({})
 
   const onDateTimeInput = (key, value) => {
-    form.value[key] = value
+    form[key] = value
   }
 
   const focusFirstInvalidInput = async () => {
