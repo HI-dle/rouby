@@ -99,8 +99,11 @@ public class Schedule extends BaseEntity {
       }
     }
 
-    // untilAt 이랑 endAt 비교 검증 수행하기 && (untilAt == null || untilAt.isAfter(endAt))
-
+    if (recurrenceRule != null && recurrenceRule.getUntil() != null) {
+      if (!period.isValidUntil(recurrenceRule.getUntil())) {
+        throw new IllegalArgumentException("반복 종료 일시가 일정 종료 일시보다 이전일 수 없습니다.");
+      }
+    }
   }
 
   private void addToParentSchedule() {

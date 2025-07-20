@@ -10,4 +10,6 @@ public interface ScheduleRepository {
   Schedule save(Schedule entity);
 
   List<ScheduleWithOverrides> findSchedulesByCriteria(GetScheduleCriteria criteria);
+
+  <S extends Schedule> Iterable<S> saveAll(Iterable<S> entities);
 }
