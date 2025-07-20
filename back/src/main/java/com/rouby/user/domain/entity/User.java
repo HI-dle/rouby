@@ -44,7 +44,6 @@ public class User extends BaseEntity {
   @Embedded
   private DailyActiveTime dailyActiveTime;
 
-
   @Embedded
   private HealthStatusKeywords healthStatusKeywords;
 
@@ -79,7 +78,6 @@ public class User extends BaseEntity {
     return User.builder()
         .email(email)
         .password(passwordEncoder.encode(plainPassword))
-        .nickname(email.substring(0, email.indexOf("@")))
         .role(UserRole.USER)
         .onboardingState(OnboardingState.USER_INFO_SETTING_BEFORE)
         .build();
@@ -116,7 +114,24 @@ public class User extends BaseEntity {
       throw new IllegalStateException(
           "유저 정보 설정을 완료할 수 없는 상태입니다. 현재 상태: " + this.onboardingState);
     }
+
+    validateUserInfoRequirement();
     this.onboardingState = ROUBY_SETTING_BEFORE;
+  }
+
+  private void validateUserInfoRequirement() {
+    if (nickname == null || nickname.isBlank()) {
+      throw new IllegalStateException("닉네임은 필수입니다.");
+    }
+    if (healthStatusKeywords.isEmpty()) {
+      throw new IllegalStateException("유저의 건강 상태 키워드는 비어있을 수 없습니다.");
+    }
+    if (profileKeywords.isEmpty()) {
+      throw new IllegalStateException("유저의 프로필 키워드는 비어있을 수 없습니다.");
+    }
+    if (dailyActiveTime.isNull()) {
+      throw new IllegalStateException("유저의 활동 시간은 null 일 수 없습니다.");
+    }
   }
 
   public void completeRoubySetting() {
@@ -124,7 +139,15 @@ public class User extends BaseEntity {
       throw new IllegalStateException(
           "루비 정보 설정을 완료할 수 없는 상태입니다. 현재 상태: " + this.onboardingState);
     }
+
+    validateRoubySettingRequirement();
     this.onboardingState = COMPLETED;
+  }
+
+  private void validateRoubySettingRequirement() {
+    if (communicationTone.isEmpty()) {
+      throw new IllegalStateException("루미 말투는 비어있을 수 없습니다.");
+    }
   }
 
   @Builder

@@ -21,6 +21,10 @@ public class HealthStatusKeywords implements Serializable {
     return new HealthStatusKeywords(new LinkedHashSet<>());
   }
 
+  boolean isEmpty() {
+    return healthStatusKeywords == null || healthStatusKeywords.isEmpty();
+  }
+
   private HealthStatusKeywords(Set<String> healthStatusKeywords) {
     this.healthStatusKeywords = new LinkedHashSet<>(healthStatusKeywords);
   }

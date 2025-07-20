@@ -21,6 +21,10 @@ public class CommunicationTone implements Serializable {
     return new CommunicationTone(new LinkedHashSet<>());
   }
 
+  boolean isEmpty() {
+    return roubyCommunicationTone == null || roubyCommunicationTone.isEmpty();
+  }
+
   private CommunicationTone(Set<String> communicationTone) {
     this.roubyCommunicationTone = new LinkedHashSet<>(communicationTone);
   }

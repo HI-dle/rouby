@@ -14,7 +14,11 @@ public class DailyActiveTime implements Serializable {
   private LocalTime dailyEndTime;
 
   public static DailyActiveTime defaultTime() {
-    return new DailyActiveTime(LocalTime.of(9, 0), LocalTime.of(22, 0));
+    return new DailyActiveTime(null, null);
+  }
+
+  boolean isNull() {
+    return dailyStartTime == null || dailyEndTime == null;
   }
 
   public static DailyActiveTime of(LocalTime dailyStartTime, LocalTime dailyEndTime) {
