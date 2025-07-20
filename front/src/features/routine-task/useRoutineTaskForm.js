@@ -1,6 +1,6 @@
-import {nextTick, reactive, ref} from 'vue'
-import { validateForm } from './validations'
-import { createRoutineTask } from './routineTaskService'
+import {nextTick, reactive} from 'vue'
+import {validateForm} from './validations'
+import {createRoutineTask} from './routineTaskService'
 
 export function useRoutineTaskForm() {
   const form = reactive({
@@ -77,7 +77,6 @@ export function useRoutineTaskForm() {
 
       const id = await createRoutineTask(payload)
       onSuccess?.(id)
-      console.log('aaa')
       return id
     } catch (err) {
       const msg = err.response?.data?.message || err.message || '저장 실패'
