@@ -5,7 +5,7 @@ import static com.rouby.user.application.exception.UserErrorCode.EMAIL_NOT_VERIF
 import static com.rouby.user.application.exception.UserErrorCode.EMAIL_VERIFICATION_TOKEN_MISMATCH;
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION;
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION_TOKEN;
-import static com.rouby.user.application.exception.UserErrorCode.INVALID_ONBOARDING_STATE_TRANSITION;
+import static com.rouby.user.application.exception.UserErrorCode.ONBOARDING_STATE_CHANGE_NOT_ALLOWED;
 import static com.rouby.user.application.exception.UserErrorCode.PASSWORD_TOKEN_EXPIRED;
 import static com.rouby.user.application.exception.UserErrorCode.USER_NOT_FOUND;
 
@@ -150,14 +150,14 @@ public class UserWriteService {
   public void completeInitialUserInfoSetting(Long id) {
     User user = userRepository.findById(id)
         .orElseThrow(() -> UserException.from(UserErrorCode.USER_NOT_FOUND));
-    handleIllegalState(user::completeUserInfoSetting, INVALID_ONBOARDING_STATE_TRANSITION);
+    handleIllegalState(user::completeUserInfoSetting, ONBOARDING_STATE_CHANGE_NOT_ALLOWED);
   }
 
   @Transactional
   public void completeInitialRoubySetting(Long id) {
     User user = userRepository.findById(id)
         .orElseThrow(() -> UserException.from(UserErrorCode.USER_NOT_FOUND));
-    handleIllegalState(user::completeRoubySetting, INVALID_ONBOARDING_STATE_TRANSITION);
+    handleIllegalState(user::completeRoubySetting, ONBOARDING_STATE_CHANGE_NOT_ALLOWED);
   }
 
   private void handleIllegalState(Runnable action, UserErrorCode errorCode) {

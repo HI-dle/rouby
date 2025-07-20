@@ -5,7 +5,7 @@ import static com.rouby.notification.email.application.exception.EmailErrorCode.
 import static com.rouby.user.application.exception.UserErrorCode.DUPLICATE_EMAIL;
 import static com.rouby.user.application.exception.UserErrorCode.EMAIL_NOT_VERIFIED;
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION;
-import static com.rouby.user.application.exception.UserErrorCode.INVALID_ONBOARDING_STATE_TRANSITION;
+import static com.rouby.user.application.exception.UserErrorCode.ONBOARDING_STATE_CHANGE_NOT_ALLOWED;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -645,7 +645,7 @@ class UserControllerTest extends ControllerTestSupport {
   void completeUserInfoSetting_fail_invalid_state_transition() throws Exception {
     // given
     Long userId = 1L;
-    doThrow(UserException.from(INVALID_ONBOARDING_STATE_TRANSITION))
+    doThrow(UserException.from(ONBOARDING_STATE_CHANGE_NOT_ALLOWED))
         .when(userFacade).completeInitialUserInfoSetting(userId);
 
     // when
