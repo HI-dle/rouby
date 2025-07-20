@@ -146,6 +146,7 @@ public class UserWriteService {
     }
   }
 
+  @Transactional
   public void updateUserInfo(UpdateUserInfoCommand command) {
     User user = userRepository.findById(command.updaterId()).orElseThrow(() ->
         new CustomException(UserErrorCode.USER_NOT_FOUND));

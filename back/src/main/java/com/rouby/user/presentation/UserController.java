@@ -100,7 +100,7 @@ public class UserController {
   @PreAuthorize("hasAnyRole('USER')")
   public ResponseEntity<Void> updateUserInfo(
       @AuthenticationPrincipal SecurityUser securityUser,
-      @Valid UpdateMyUserInfoRequest request
+      @RequestBody @Valid UpdateMyUserInfoRequest request
   ) {
     userFacade.updateMyUserInfo(request.toCommand(securityUser.getId()));
     return ResponseEntity.noContent().build();
