@@ -6,3 +6,12 @@ export const createSchedule = (payload) => {
   }
   return axios.post('/v1/schedules', payload)
 }
+
+export const getSchedules = (params) => {
+  if (!params || typeof params !== 'object') {
+    throw new Error('유효하지 않은 params입니다.')
+  }
+  return axios.get('/v1/schedules', {
+    params: params,
+  })
+}
