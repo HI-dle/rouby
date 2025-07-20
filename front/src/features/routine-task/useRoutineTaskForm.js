@@ -67,7 +67,6 @@ export function useRoutineTaskForm() {
 
   const onSubmit = async (onSuccess, onError) => {
     if (!validateForm(form, errors)) {
-      console.log(form)
       focusFirstInvalidInput()
       return
     }
