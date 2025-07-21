@@ -104,4 +104,11 @@ public class UserFacade {
     userWriteService.updateRoubySettings(userId, command);
   }
 
+  public void completeInitialUserInfoSetting(Long id) {
+    userWriteService.completeInitialUserInfoSetting(id);
+  }
+
+  public void completeInitialRoubySetting(Long id) {
+    userWriteService.completeInitialRoubySetting(id);
+  }
 }

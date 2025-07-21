@@ -111,4 +111,20 @@ public class UserController {
     return ResponseEntity.ok(
         UserCheckResponse.from(userFacade.userInfoCheck(securityUser.getId())));
   }
+
+  @PreAuthorize("hasAnyRole('USER')")
+  @PatchMapping("/onboarding/user-info/complete")
+  public ResponseEntity<Void> completeUserInfoSetting(
+      @AuthenticationPrincipal SecurityUser securityUser) {
+    userFacade.completeInitialUserInfoSetting(securityUser.getId());
+    return ResponseEntity.ok().build();
+  }
+
+  @PreAuthorize("hasAnyRole('USER')")
+  @PatchMapping("/onboarding/rouby/complete")
+  public ResponseEntity<Void> completeRoubySetting(
+      @AuthenticationPrincipal SecurityUser securityUser) {
+    userFacade.completeInitialRoubySetting(securityUser.getId());
+    return ResponseEntity.ok().build();
+  }
 }
