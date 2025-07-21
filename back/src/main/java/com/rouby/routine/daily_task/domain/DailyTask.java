@@ -23,7 +23,7 @@ public class DailyTask extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "routine_task", nullable = false)
+  @Column(name = "routine_task_id", nullable = false)
   private Long routineTaskId;
 
   @Column(name = "current_value", nullable = false)
