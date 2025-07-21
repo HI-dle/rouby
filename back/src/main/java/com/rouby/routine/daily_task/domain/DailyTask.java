@@ -1,14 +1,11 @@
-package com.rouby.routine.routine_task.domain;
+package com.rouby.routine.daily_task.domain;
 
 import com.rouby.common.jpa.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import lombok.AccessLevel;
@@ -26,9 +23,8 @@ public class DailyTask extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "routine_task_id", nullable = false)
-  private RoutineTask routineTask;
+  @Column(name = "routine_task", nullable = false)
+  private Long routineTaskId;
 
   @Column(name = "current_value", nullable = false)
   private Integer currentValue;
@@ -37,9 +33,9 @@ public class DailyTask extends BaseEntity {
   private LocalDate taskDate;
 
   @Builder
-  public DailyTask(Integer currentValue, RoutineTask routineTask, LocalDate taskDate) {
+  public DailyTask(Integer currentValue, Long routineTaskId, LocalDate taskDate) {
     this.currentValue = currentValue;
-    this.routineTask = routineTask;
+    this.routineTaskId = routineTaskId;
     this.taskDate = taskDate;
   }
 }
