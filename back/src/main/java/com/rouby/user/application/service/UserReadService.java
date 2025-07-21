@@ -2,9 +2,11 @@ package com.rouby.user.application.service;
 
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_USER;
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_USER_PASSWORD;
+import static com.rouby.user.application.exception.UserErrorCode.USER_NOT_FOUND;
 
 import com.rouby.user.application.dto.command.LoginCommand;
 import com.rouby.user.application.dto.info.LoginInfo;
+import com.rouby.user.application.dto.info.RoubySettingInfo;
 import com.rouby.user.application.exception.UserException;
 import com.rouby.user.application.service.token.TokenProvider;
 import com.rouby.user.domain.entity.User;
@@ -20,6 +22,7 @@ public class UserReadService {
 
   private final UserRepository userRepository;
   private final UserPasswordEncoder passwordEncoder;
+
   private final TokenProvider tokenProvider;
 
   @Transactional(readOnly = true)
@@ -35,7 +38,6 @@ public class UserReadService {
         user.getRole().toString(),
         user.getEmail()));
   }
-
 
   @Transactional(readOnly = true)
   public User findByEmail(String email) {
@@ -53,4 +55,9 @@ public class UserReadService {
         UserException.from(INVALID_USER));
   }
 
+  @Transactional(readOnly = true)
+  public RoubySettingInfo getRoubySettingInfo(Long userId) {
+    return RoubySettingInfo.from(userRepository.findById(userId)
+        .orElseThrow(() -> UserException.from(USER_NOT_FOUND)));
+  }
 }
