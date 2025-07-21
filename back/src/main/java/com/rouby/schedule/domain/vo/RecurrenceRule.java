@@ -5,8 +5,9 @@ import com.rouby.schedule.domain.enums.ByDay;
 import com.rouby.schedule.domain.enums.Freq;
 import com.rouby.schedule.domain.support.UntilDateTimeFormatter;
 import io.jsonwebtoken.lang.Assert;
+import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -20,16 +21,16 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Embeddable
 public class RecurrenceRule {
 
   private Freq freq;
   private Set<ByDay> byDay;
   private Integer interval;
-  private ZonedDateTime until;
-
+  private LocalDateTime until;
 
   @Builder
-  private RecurrenceRule(Freq freq, Set<ByDay> byDay, Integer interval, ZonedDateTime until) {
+  private RecurrenceRule(Freq freq, Set<ByDay> byDay, Integer interval, LocalDateTime until) {
     this.freq = freq;
     this.byDay = byDay;
     this.interval = interval;
@@ -37,7 +38,6 @@ public class RecurrenceRule {
 
     validate();
   }
-
 
   public String toRruleString() {
 
@@ -117,7 +117,7 @@ public class RecurrenceRule {
     UNTIL(str -> UntilDateTimeFormatter.parse(str),
         (rrule, until) -> {
       if (rrule.until != null) throw new IllegalArgumentException("UNTIL 중복 설정");
-      rrule.until = (ZonedDateTime) until;
+      rrule.until = (LocalDateTime) until;
     }),
     ;
 

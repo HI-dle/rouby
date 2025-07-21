@@ -1,21 +1,17 @@
 import { defineStore } from 'pinia'
 import { format, startOfWeek } from 'date-fns'
+import { computed, ref } from 'vue'
 
-export const useDatePickStore = defineStore('date-pick', {
-  state: () => ({
-    weeklySelected: {}, // key: '2024-07-14', value: '2024-07-17'
-    monthlySelected: {}, // key: '2024-07', value: '2024-07-01'
-    selectedDate: null,
-  }),
+export const useDatePickStore = defineStore(
+  'date-pick',
+  () => {
+    // state
+    const weeklySelected = ref({}) // key: '2024-07-14', value: '2024-07-17'
+    const monthlySelected = ref({}) // key: '2024-07', value: '2024-07-01'
+    const selectedDate = ref(null)
 
-  persist: {
-    storage: JSON.parse(localStorage.getItem('alwaysLogin') || 'false')
-      ? localStorage
-      : sessionStorage,
-  },
-
-  actions: {
-    setSelectedDate(baseDate, date, isMonthly = false) {
+    // actions
+    function setSelectedDate(baseDate, date, isMonthly = false) {
       const key = isMonthly
         ? format(date, 'yyyy-MM')
         : format(startOfWeek(baseDate), 'yyyy-MM-dd')
@@ -23,30 +19,51 @@ export const useDatePickStore = defineStore('date-pick', {
       const value = format(date, 'yyyy-MM-dd')
 
       if (isMonthly) {
-        this.monthlySelected[key] = value
+        monthlySelected.value[key] = value
       } else {
-        this.weeklySelected[key] = value
+        weeklySelected.value[key] = value
       }
 
-      this.selectedDate = value
-    },
+      selectedDate.value = value
+    }
 
-    getSelectedDate(baseDate, isMonthly = false) {
+    function getSelectedDate(baseDate, isMonthly = false) {
       const key = isMonthly
         ? format(baseDate, 'yyyy-MM')
         : format(startOfWeek(baseDate), 'yyyy-MM-dd')
 
-      return isMonthly ? this.monthlySelected[key] : this.weeklySelected[key]
-    },
+      return isMonthly ? monthlySelected.value[key] : weeklySelected.value[key]
+    }
 
-    setCurrentSelectedDate(date) {
-      this.selectedDate = format(date, 'yyyy-MM-dd')
+    function setCurrentSelectedDate(date) {
+      selectedDate.value = format(date, 'yyyy-MM-dd')
+    }
+
+    // getters
+    const lastSelectedDate = computed(() => {
+      return selectedDate.value ?? format(new Date(), 'yyyy-MM-dd')
+    })
+
+    return {
+      // state
+      weeklySelected,
+      monthlySelected,
+      selectedDate,
+
+      // actions
+      setSelectedDate,
+      getSelectedDate,
+      setCurrentSelectedDate,
+
+      // getters
+      lastSelectedDate,
+    }
+  },
+  {
+    persist: {
+      storage: JSON.parse(localStorage.getItem('alwaysLogin') || 'false')
+        ? localStorage
+        : sessionStorage,
     },
   },
-
-  getters: {
-    lastSelectedDate: (state) => {
-      return state.selectedDate ?? format(new Date(), 'yyyy-MM-dd')
-    },
-  },
-})
+)

@@ -25,6 +25,16 @@ public class CommunicationTone implements Serializable {
     return roubyCommunicationTone == null || roubyCommunicationTone.isEmpty();
   }
 
+  public static CommunicationTone of(Set<String> communicationTone, long maxSize) {
+    if (communicationTone == null || communicationTone.isEmpty()) {
+      return CommunicationTone.empty();
+    }
+    if(communicationTone.size() > maxSize){
+      throw new IllegalArgumentException("말투 설정 최대 개수를 초과하였습니다.");
+    }
+    return new CommunicationTone(communicationTone);
+  }
+
   private CommunicationTone(Set<String> communicationTone) {
     this.roubyCommunicationTone = new LinkedHashSet<>(communicationTone);
   }

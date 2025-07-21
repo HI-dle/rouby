@@ -1,5 +1,8 @@
 import { nextTick, reactive, ref, watch } from 'vue'
-import { convertDateToDateTime, formatDateTime } from '@/shared/utils/dateTimeUtil'
+import {
+  convertDateToDateTime,
+  formatDateTime,
+} from '@/shared/utils/dateTimeUtils'
 import { validateForm } from './validations'
 import { createSchedule } from './scheduleService'
 

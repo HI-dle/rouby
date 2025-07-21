@@ -6,6 +6,7 @@ import static com.rouby.user.application.exception.UserErrorCode.USER_NOT_FOUND;
 
 import com.rouby.user.application.dto.command.LoginCommand;
 import com.rouby.user.application.dto.info.LoginInfo;
+import com.rouby.user.application.dto.info.RoubySettingInfo;
 import com.rouby.user.application.exception.UserException;
 import com.rouby.user.application.service.token.TokenProvider;
 import com.rouby.user.domain.entity.User;
@@ -37,7 +38,6 @@ public class UserReadService {
         user.getEmail()));
   }
 
-
   @Transactional(readOnly = true)
   public User findByEmail(String email) {
     return userRepository.findByEmail(email)
@@ -52,5 +52,11 @@ public class UserReadService {
   public User findByUserId(Long id) {
     return userRepository.findById(id).orElseThrow(() ->
         UserException.from(USER_NOT_FOUND));
+  }
+
+  @Transactional(readOnly = true)
+  public RoubySettingInfo getRoubySettingInfo(Long userId) {
+    return RoubySettingInfo.from(userRepository.findById(userId)
+        .orElseThrow(() -> UserException.from(USER_NOT_FOUND)));
   }
 }

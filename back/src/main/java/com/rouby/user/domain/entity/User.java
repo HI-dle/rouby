@@ -18,6 +18,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -180,6 +181,10 @@ public class User extends BaseEntity {
         .collect(Collectors.toSet());
   }
 
+  public Set<String> getCommunicationToneValues() {
+    if (communicationTone == null) return Collections.emptySet();
+    return communicationTone.getRoubyCommunicationTone();
+  }
 
   protected User() {
     this.notificationSettings = new HashSet<>();
@@ -188,5 +193,13 @@ public class User extends BaseEntity {
   public void updatePassword(UserPasswordEncoder passwordEncoder, String newPassword) {
     validatePassword(newPassword);
     this.password = passwordEncoder.encode(newPassword);
+  }
+
+  public void updateRoubySettings(
+      CommunicationTone communicationTone,
+      Set<NotificationSetting> notificationSettings) {
+    this.communicationTone = communicationTone;
+    this.notificationSettings.clear();
+    this.notificationSettings.addAll(notificationSettings);
   }
 }

@@ -6,6 +6,9 @@ import static com.rouby.user.application.exception.UserErrorCode.DUPLICATE_EMAIL
 import static com.rouby.user.application.exception.UserErrorCode.EMAIL_NOT_VERIFIED;
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION;
 import static com.rouby.user.application.exception.UserErrorCode.ONBOARDING_STATE_CHANGE_NOT_ALLOWED;
+import static com.rouby.user.domain.entity.NotificationType.BRIEFING;
+import static com.rouby.user.domain.entity.NotificationType.ROUTINE;
+import static com.rouby.user.domain.entity.NotificationType.SCHEDULE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -19,6 +22,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -33,6 +37,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.rouby.common.security.WithMockCustomUser;
 import com.rouby.common.support.ControllerTestSupport;
 import com.rouby.notification.email.application.exception.EmailException;
+import com.rouby.user.application.dto.info.RoubySettingInfo;
+import com.rouby.user.application.dto.info.RoubySettingInfo.NotificationSettingInfo;
 import com.rouby.user.application.dto.info.UserCheckInfo;
 import com.rouby.user.application.exception.UserException;
 import com.rouby.user.domain.entity.OnboardingState;
@@ -41,8 +47,10 @@ import com.rouby.user.presentation.dto.request.FindPasswordRequest;
 import com.rouby.user.presentation.dto.request.ResetPasswordByTokenRequest;
 import com.rouby.user.presentation.dto.request.ResetPasswordRequest;
 import com.rouby.user.presentation.dto.request.SendEmailVerificationRequest;
-import java.util.Set;
+import com.rouby.user.presentation.dto.request.UpdateRoubySettingRequest;
+import com.rouby.user.presentation.dto.request.UpdateRoubySettingRequest.NotificationSettingRequest;
 import com.rouby.user.presentation.dto.request.VerifyEmailRequest;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -483,8 +491,6 @@ class UserControllerTest extends ControllerTestSupport {
         .token(UUID.randomUUID().toString())
         .build();
 
-    String token = UUID.randomUUID().toString();
-
     doNothing().when(userFacade).resetPasswordByToken(request.toCommand());
 
     //when
@@ -566,6 +572,83 @@ class UserControllerTest extends ControllerTestSupport {
                 fieldWithPath("newPassword").description("새 비밀번호"))
         ));
   }
+
+  @WithMockCustomUser
+  @DisplayName("마이페이지 루비세팅 조회 API")
+  @Test
+  void getRoubySetting() throws Exception {
+    // given
+    Long userId = 1L;
+    RoubySettingInfo roubySettingInfo = new RoubySettingInfo(
+        Set.of("친절함", "직설적임"),
+        Set.of(
+            new NotificationSettingInfo(SCHEDULE, true),
+            new NotificationSettingInfo(ROUTINE, false),
+            new NotificationSettingInfo(BRIEFING, true)
+        )
+    );
+
+    given(userFacade.getRoubySettingInfo(userId)).willReturn(roubySettingInfo);
+
+    // when
+    ResultActions resultActions = mockMvc.perform(get("/api/v1/users/rouby-setting")
+        .header("Authorization", "Bearer {ACCESS_TOKEN}"));
+
+    // then
+    resultActions.andExpect(status().isOk())
+        .andDo(print())
+        .andDo(document("get-rouby-setting-200",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            responseFields(
+                fieldWithPath("communicationTone").description("루비 커뮤니케이션 톤 목록 "),
+                fieldWithPath("notificationSettings").description("알림 설정 목록"),
+                fieldWithPath("notificationSettings[].notificationType").description("알림 유형"),
+                fieldWithPath("notificationSettings[].enabled").description(
+                    "알림 사용 여부 (true: 사용, false: 사용 안 함)")
+            )
+
+        ));
+  }
+
+  @WithMockCustomUser
+  @DisplayName("마이페이지 루비세팅 수정 API")
+  @Test
+  void updateRoubySetting() throws Exception {
+    // given
+    Long userId = 1L;
+
+    UpdateRoubySettingRequest request = new UpdateRoubySettingRequest(Set.of("친절함", "직설적임"),
+        Set.of(
+            new NotificationSettingRequest(SCHEDULE, true),
+            new NotificationSettingRequest(ROUTINE, false),
+            new NotificationSettingRequest(BRIEFING, true)
+        ));
+
+    doNothing().when(userFacade).updateRoubySettings(eq(userId), any());
+
+    // when
+    ResultActions resultActions = mockMvc.perform(put("/api/v1/users/rouby-setting")
+        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+        .content(objectMapper.writeValueAsString(request))
+        .contentType(MediaType.APPLICATION_JSON));
+
+    // then
+    resultActions.andExpect(status().isNoContent())
+        .andDo(print())
+        .andDo(document("update-rouby-setting-204",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestFields(
+                fieldWithPath("communicationTone").description("변경할 루비 커뮤니케이션 톤 목록"),
+                fieldWithPath("notificationSettings").description("변경할 알림 설정 목록"),
+                fieldWithPath("notificationSettings[].notificationType").description("알림 유형"),
+                fieldWithPath("notificationSettings[].enabled").description(
+                    "알림 사용 여부 (true: 사용, false: 사용 안 함)")
+            )
+        ));
+  }
+
 
   @WithMockCustomUser
   @DisplayName("로그인 후 정보 조회 API")
