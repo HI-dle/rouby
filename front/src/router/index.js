@@ -138,6 +138,11 @@ const router = createRouter({
           component: () =>
             import('@/features/onboard/views/OnboardDateSettingView.vue'),
         },
+        {
+          path: 'setting/rouby',
+          name: 'rouby-setting',
+          component: () => import('@/features/user/views/MyPageRoubySettingView.vue'),
+        },
       ],
     },
   ],
