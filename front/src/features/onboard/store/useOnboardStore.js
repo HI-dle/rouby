@@ -2,6 +2,10 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
+const isTokenInLocalStorage = () => {
+  return !!localStorage.getItem('token')
+}
+
 export const useOnboardStore = defineStore('onboard', () => {
   const userName = ref('')
   const selectedHealth = ref([])
@@ -24,6 +28,9 @@ export const useOnboardStore = defineStore('onboard', () => {
     routineAlarm,
     briefingAlarm,
   }
-},{
-  persist: true,
+}, {
+  persist: {
+    key: 'onboard',
+    storage: isTokenInLocalStorage() ? localStorage : sessionStorage,
+  },
 })
