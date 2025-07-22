@@ -9,7 +9,6 @@ import static com.rouby.user.application.exception.UserErrorCode.ONBOARDING_STAT
 import static com.rouby.user.application.exception.UserErrorCode.PASSWORD_TOKEN_EXPIRED;
 import static com.rouby.user.application.exception.UserErrorCode.USER_NOT_FOUND;
 
-import com.rouby.common.exception.CustomException;
 import com.rouby.common.props.SettingProperties;
 import com.rouby.user.application.dto.command.CreateUserCommand;
 import com.rouby.user.application.dto.command.FindPasswordCommand;
@@ -108,10 +107,10 @@ public class UserWriteService {
   @Transactional
   public void resetPassword(Long userId, ResetPasswordCommand command) {
     User user = userRepository.findById(userId).orElseThrow(() ->
-        new CustomException(UserErrorCode.USER_NOT_FOUND));
+        UserException.from(UserErrorCode.USER_NOT_FOUND));
 
     if (!passwordEncoder.matches(command.currentPassword(), user.getPassword())) {
-      throw new CustomException(UserErrorCode.INVALID_PASSWORD);
+      throw UserException.from(UserErrorCode.INVALID_PASSWORD);
     }
 
     user.updatePassword(passwordEncoder, command.newPassword());

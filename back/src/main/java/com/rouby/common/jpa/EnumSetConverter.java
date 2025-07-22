@@ -3,6 +3,8 @@ package com.rouby.common.jpa;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rouby.common.exception.CustomException;
+import com.rouby.common.exception.type.ApiErrorCode;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import java.io.IOException;
@@ -25,9 +27,9 @@ public abstract class EnumSetConverter<T extends Enum<T>> implements AttributeCo
   public String convertToDatabaseColumn(Set<T> attribute) {
     if (attribute == null || attribute.isEmpty()) return "[]";
     try {
-      return objectMapper.writeValueAsString(attribute); // → ["MO","TU"]
+      return objectMapper.writeValueAsString(attribute);
     } catch (JsonProcessingException e) {
-      throw new RuntimeException("데이터 저장에 실패하였습니다.", e);
+      throw CustomException.from(ApiErrorCode.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -35,14 +37,16 @@ public abstract class EnumSetConverter<T extends Enum<T>> implements AttributeCo
   public Set<T> convertToEntityAttribute(String dbData) {
     if (dbData == null || dbData.isBlank()) return Collections.emptySet();
     try {
-      Set<String> names = objectMapper.readValue(dbData, new TypeReference<Set<String>>() {});
+      Set<String> names = objectMapper.readValue(dbData, new TypeReference<>() {});
       Set<T> result = new HashSet<>();
       for (String name : names) {
         result.add(Enum.valueOf(enumClass, name));
       }
       return result;
+    } catch (IllegalArgumentException e) {
+      throw new IllegalArgumentException("유효하지 않은 코드 데이터가 존재합니다.", e);
     } catch (IOException e) {
-      throw new RuntimeException("데이터 변환에 실패하였습니다.", e);
+      throw CustomException.from(ApiErrorCode.INTERNAL_SERVER_ERROR);
     }
   }
 }
