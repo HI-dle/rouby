@@ -8,6 +8,8 @@ import com.rouby.common.config.WebConfig;
 import com.rouby.common.config.WebMvcConfig;
 import com.rouby.common.exception.GlobalExceptionHandler;
 import com.rouby.common.resolver.CustomPageableArgumentResolver;
+import com.rouby.routine.daily_task.application.facade.DailyTaskFacade;
+import com.rouby.routine.daily_task.presentation.DailyTaskController;
 import com.rouby.routine.routine_task.application.facade.RoutineTaskFacade;
 import com.rouby.routine.routine_task.presentaion.RoutineTaskController;
 import com.rouby.user.application.UserFacade;
@@ -32,9 +34,18 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureRestDocs
 @AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(
-    controllers = {ScheduleController.class, AuthController.class, UserController.class, RoutineTaskController.class},
+    controllers = {
+        ScheduleController.class,
+        AuthController.class,
+        UserController.class,
+        RoutineTaskController.class,
+        DailyTaskController.class
+    },
     excludeFilters = {
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebMvcConfig.class)
+        @ComponentScan.Filter(
+            type = FilterType.ASSIGNABLE_TYPE,
+            classes = WebMvcConfig.class
+        )
     }
 )
 @Import({
@@ -59,6 +70,9 @@ public abstract class ControllerTestSupport {
 
   @MockitoBean
   protected RoutineTaskFacade routineTaskFacade;
+
+  @MockitoBean
+  protected DailyTaskFacade dailyTaskFacade;
 
   @MockitoBean
   protected AuthenticationManager authenticationManager;

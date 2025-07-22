@@ -13,3 +13,27 @@ Authorization: {{access_token}}
   "byDays": ["MO", "WE", "FR"],
   "until": "2025-08-16T07:30:00+09:00"
 }
+
+
+### 데일리 테스크 생성
+PUT {{url}}/api/v1/daily-task/progress
+Content-Type: application/json
+Authorization: {{access_token}}
+
+{
+  "currentValue": 1,
+  "routineTaskId": 1,
+  "taskDate": "2025-07-18"
+}
+
+### 데일리 테스크 수정
+PUT {{url}}/api/v1/daily-task/progress
+Content-Type: application/json
+Authorization: {{access_token}}
+
+{
+  "id": 1,
+  "currentValue": 3,
+  "routineTaskId": 1,
+  "taskDate": "2025-07-18"
+}
