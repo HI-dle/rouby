@@ -5,6 +5,7 @@ import static com.rouby.notification.email.application.exception.EmailErrorCode.
 import static com.rouby.user.application.exception.UserErrorCode.DUPLICATE_EMAIL;
 import static com.rouby.user.application.exception.UserErrorCode.EMAIL_NOT_VERIFIED;
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION;
+import static com.rouby.user.application.exception.UserErrorCode.ONBOARDING_STATE_CHANGE_NOT_ALLOWED;
 import static com.rouby.user.domain.entity.NotificationType.BRIEFING;
 import static com.rouby.user.domain.entity.NotificationType.ROUTINE;
 import static com.rouby.user.domain.entity.NotificationType.SCHEDULE;
@@ -12,6 +13,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -48,7 +50,10 @@ import com.rouby.user.presentation.dto.request.ResetPasswordRequest;
 import com.rouby.user.presentation.dto.request.SendEmailVerificationRequest;
 import com.rouby.user.presentation.dto.request.UpdateRoubySettingRequest;
 import com.rouby.user.presentation.dto.request.UpdateRoubySettingRequest.NotificationSettingRequest;
+import com.rouby.user.presentation.dto.request.UpdateMyUserInfoRequest;
 import com.rouby.user.presentation.dto.request.VerifyEmailRequest;
+import java.util.Set;
+import java.time.LocalTime;
 import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -705,16 +710,175 @@ class UserControllerTest extends ControllerTestSupport {
                 fieldWithPath("id").description("유저 ID"),
                 fieldWithPath("email").description("이메일"),
                 fieldWithPath("nickname").optional().description("닉네임"),
-                fieldWithPath("healthStatusKeywords[]").optional()
-                    .description("건강 상태 키워드 목록 예: [\"아토피\", \"ADHD\"]"),
-                fieldWithPath("profileKeywords[]").optional()
-                    .description("프로필 키워드 목록 예: [\"취준\", \"이직\"]"),
-                fieldWithPath("communicationTone[]").optional()
-                    .description("말투 키워드 목록 예: [\"따듯하게\", \"존대\"]"),
-                fieldWithPath("onboardingStatePath").optional()
-                    .description("온보딩 상태에 따라 이동할 프론트 라우팅 경로")
+                fieldWithPath("healthStatusKeywords[]").optional().description("건강 상태 키워드 목록 예: [\"아토피\", \"ADHD\"]"),
+                fieldWithPath("profileKeywords[]").optional().description("프로필 키워드 목록 예: [\"취준\", \"이직\"]"),
+                fieldWithPath("communicationTone[]").optional().description("말투 키워드 목록 예: [\"따듯하게\", \"존대\"]"),
+                fieldWithPath("onboardingStatePath").optional().description("온보딩 상태에 따라 이동할 프론트 라우팅 경로")
             )
         ));
   }
+
+  @WithMockCustomUser
+  @DisplayName("유저 정보 설정 완료 API")
+  @Test
+  void completeUserInfoSetting() throws Exception {
+    // given
+    Long userId = 1L;
+    doNothing().when(userFacade).completeInitialUserInfoSetting(eq(userId));
+
+    // when
+    ResultActions resultActions = mockMvc.perform(
+        patch("/api/v1/users/onboarding/user-info/complete")
+            .header("Authorization", "Bearer {ACCESS_TOKEN}")
+            .contentType(MediaType.APPLICATION_JSON)
+    );
+
+    // then
+    resultActions
+        .andExpect(status().isOk())
+        .andDo(print())
+        .andDo(document("complete-user-info-setting-200",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestHeaders(
+                headerWithName("Authorization").description("사용자 인증 토큰")
+            )
+        ));
+  }
+
+  @WithMockCustomUser
+  @DisplayName("유저 정보 설정 완료 실패 - 잘못된 상태 전이")
+  @Test
+  void completeUserInfoSetting_fail_invalid_state_transition() throws Exception {
+    // given
+    Long userId = 1L;
+    doThrow(UserException.from(ONBOARDING_STATE_CHANGE_NOT_ALLOWED))
+        .when(userFacade).completeInitialUserInfoSetting(userId);
+
+    // when
+    ResultActions resultActions = mockMvc.perform(
+        patch("/api/v1/users/onboarding/user-info/complete")
+            .header("Authorization", "Bearer {ACCESS_TOKEN}")
+            .contentType(MediaType.APPLICATION_JSON)
+    );
+
+    // then
+    resultActions
+        .andExpect(status().isBadRequest())
+        .andDo(print())
+        .andDo(document("complete-user-info-setting-invalid-state",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestHeaders(
+                headerWithName("Authorization").description("사용자 인증 토큰")
+            ),
+            getErrorResponseFieldSnippet()
+        ));
+  }
+
+  @WithMockCustomUser
+  @DisplayName("루비 설정 완료 API")
+  @Test
+  void completeRoubySetting() throws Exception {
+    // given
+    Long userId = 1L;
+    doNothing().when(userFacade).completeInitialRoubySetting(userId);
+
+    // when
+    ResultActions resultActions = mockMvc.perform(
+        patch("/api/v1/users/onboarding/rouby/complete")
+            .header("Authorization", "Bearer {ACCESS_TOKEN}")
+            .contentType(MediaType.APPLICATION_JSON)
+    );
+
+    // then
+    resultActions
+        .andExpect(status().isOk())
+        .andDo(print())
+        .andDo(document("complete-rouby-setting-200",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestHeaders(
+                headerWithName("Authorization").description("사용자 인증 토큰")
+            )
+        ));
+  }
+
+  @WithMockCustomUser
+  @DisplayName("루비 설정 완료 실패 - 잘못된 상태 전이")
+  @Test
+  void completeRoubySetting_fail_invalid_state_transition() throws Exception {
+    // given
+    Long userId = 1L;
+    doThrow(UserException.from(ONBOARDING_STATE_CHANGE_NOT_ALLOWED))
+        .when(userFacade).completeInitialRoubySetting(userId);
+
+    // when
+    ResultActions resultActions = mockMvc.perform(
+        patch("/api/v1/users/onboarding/rouby/complete")
+            .header("Authorization", "Bearer {ACCESS_TOKEN}")
+            .contentType(MediaType.APPLICATION_JSON)
+    );
+
+    // then
+    resultActions
+        .andExpect(status().isBadRequest())
+        .andDo(print())
+        .andDo(document("complete-rouby-setting-invalid-state",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestHeaders(
+                headerWithName("Authorization").description("사용자 인증 토큰")
+            ),
+            getErrorResponseFieldSnippet()
+        ));
+  }
+
+  @WithMockCustomUser
+  @DisplayName("회원 정보 수정 API - 204 No Content")
+  @Test
+  void updateUserInfo() throws Exception {
+    // given
+    Long userId = 1L;
+
+    UpdateMyUserInfoRequest request = new UpdateMyUserInfoRequest(
+        "루비짱",
+        Set.of("스트레스", "우울감"),
+        Set.of("자기개발", "명상"),
+        LocalTime.of(7, 0),
+        LocalTime.of(23, 0)
+    );
+
+    willDoNothing()
+        .given(userFacade)
+        .updateMyUserInfo(argThat(command ->
+            command.updaterId().equals(userId) &&
+                command.nickname().equals("루비짱")
+        ));
+
+    // when
+    ResultActions resultActions = mockMvc.perform(
+        patch("/api/v1/users/user-info")
+            .header("Authorization", "Bearer {ACCESS_TOKEN}")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request))
+    );
+
+    // then
+    resultActions
+        .andExpect(status().isNoContent())
+        .andDo(print())
+        .andDo(document("user-info-update-204",
+            preprocessRequest(prettyPrint()),
+            requestFields(
+                fieldWithPath("nickname").description("닉네임 (최대 20자)"),
+                fieldWithPath("healthStatusKeywords[]").description("건강 상태 키워드 목록 예: [\"스트레스\", \"우울감\"]"),
+                fieldWithPath("profileKeywords[]").description("프로필 키워드 목록 예: [\"자기개발\", \"명상\"]"),
+                fieldWithPath("dailyStartTime").description("하루 시작 시간 (예: 07:00)"),
+                fieldWithPath("dailyEndTime").description("하루 종료 시간 (예: 23:00)")
+            )
+        ));
+  }
+
 
 }

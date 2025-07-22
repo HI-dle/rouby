@@ -70,7 +70,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
                     "일정 전 알림 시간 설정 (5, 10, 15, 30 분 / 1, 2시간 / 1, 2 일 / 1주일 전)"),
                 fieldWithPath("startAt").description("시작 일시 (예: 2025-08-30T13:00:00)"),
                 fieldWithPath("endAt").description("종료 일시 (예: 2025-08-30T15:00:00)"),
-                fieldWithPath("routineActivateDate").description("루틴 활성 시점 (예: 2025-08-10)"),
+                fieldWithPath("routineOffsetDays").description("루틴 활성 일시 간격 (예: 10)"),
                 fieldWithPath("recurrenceRule").description("반복 규칙"),
                 fieldWithPath("recurrenceRule.freq").description("반복 주기 (예: MONTHLY)"),
                 fieldWithPath("recurrenceRule.byDay").description("반복 요일 (예: MO)"),
@@ -151,23 +151,24 @@ class ScheduleControllerTest extends ControllerTestSupport {
                     "일정 전 알림 시간 설정 (5, 10, 15, 30 분 / 1, 2시간 / 1, 2 일 / 1주일 전)"),
                 fieldWithPath("schedules[].startAt").description("시작 일시 (예: 2025-08-30T13:00:00)"),
                 fieldWithPath("schedules[].endAt").description("종료 일시 (예: 2025-08-30T15:00:00)"),
-                fieldWithPath("schedules[].routineActivateDate").description("루틴 활성 시점 (예: 2025-08-10)"),
+                fieldWithPath("schedules[].routineOffsetDays").description("루틴 활성 일시 간격 (예: 10)"),
                 fieldWithPath("schedules[].recurrenceRule").description("반복 규칙"),
                 fieldWithPath("schedules[].recurrenceRule.freq").description("반복 주기 (예: MONTHLY)"),
                 fieldWithPath("schedules[].recurrenceRule.byDay").description("반복 요일 (예: MO)"),
                 fieldWithPath("schedules[].recurrenceRule.interval").description("반복 간격"),
                 fieldWithPath("schedules[].recurrenceRule.until").description("반복 종료일시 (예: 2025-12-30T00:00:00)"),
-
-                fieldWithPath("schedules[].scheduleOverrides[].id").description("일정 아이디"),
-                fieldWithPath("schedules[].scheduleOverrides[].userId").description("유저 아이디"),
-                fieldWithPath("schedules[].scheduleOverrides[].title").description("일정 제목"),
-                fieldWithPath("schedules[].scheduleOverrides[].memo").description("일정 메모"),
+                fieldWithPath("schedules[].recurrenceRule.rruleStr").description("rrule 문자열 (예: FREQ=WEEKLY;BYDAY=MO,TU,WE,TH;INTERVAL=1;DTSTART=20250721T030000Z)"),
+                fieldWithPath("schedules[].scheduleOverrides[].id").description("예외 일정 아이디"),
+                fieldWithPath("schedules[].scheduleOverrides[].userId").description("예외 일정 유저 아이디"),
+                fieldWithPath("schedules[].scheduleOverrides[].title").description("예외 일정 제목"),
+                fieldWithPath("schedules[].scheduleOverrides[].memo").description("예외 일정 메모"),
+                fieldWithPath("schedules[].scheduleOverrides[].routineOffsetDays").description("예외 일정 루틴 활성 일시 간격 (예: 10)"),
                 fieldWithPath("schedules[].scheduleOverrides[].alarmOffsetMinutes").description(
-                    "일정 전 알림 시간 설정 (5, 10, 15, 30 분 / 1, 2시간 / 1, 2 일 / 1주일 전)"),
-                fieldWithPath("schedules[].scheduleOverrides[].startAt").description("변경 일정 시작 일시 (예: 2025-12-30T00:00:00)"),
-                fieldWithPath("schedules[].scheduleOverrides[].endAt").description("변경 일정 종료 일시 (예: 2025-12-30T00:00:00)"),
-                fieldWithPath("schedules[].scheduleOverrides[].overrideType").description("반복 변경 타입 (MODIFIED, CANCELED)"),
-                fieldWithPath("schedules[].scheduleOverrides[].overrideDate").description("반복 변경 일자 (예: 2025-12-30)")
+                    "예외 일정 전 알림 시간 설정 (5, 10, 15, 30 분 / 1, 2시간 / 1, 2 일 / 1주일 전)"),
+                fieldWithPath("schedules[].scheduleOverrides[].startAt").description("예외 변경 일정 시작 일시 (예: 2025-12-30T00:00:00)"),
+                fieldWithPath("schedules[].scheduleOverrides[].endAt").description("예외 변경 일정 종료 일시 (예: 2025-12-30T00:00:00)"),
+                fieldWithPath("schedules[].scheduleOverrides[].overrideType").description("예외 반복 변경 타입 (MODIFIED, CANCELED)"),
+                fieldWithPath("schedules[].scheduleOverrides[].overrideDate").description("예외 반복 변경 일자 (예: 2025-12-30)")
             )
         ));
   }
@@ -191,7 +192,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
     // then
     resultActions.andExpect(status().isBadRequest())
         .andDo(print())
-        .andDo(document("get-schedules-400",
+        .andDo(document("get-schedules-invalid-request-400",
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
             queryParameters(

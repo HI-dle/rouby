@@ -5,7 +5,7 @@ import { useGoBack } from '@/shared/composable/useGoBack'
 import { useAutoResize } from '@/shared/composable/useAutoResize'
 import { useScheduleForm } from '../useScheduleForm'
 import ScheduleForm from '../components/ScheduleForm.vue'
-import { useScheduleStore } from '@/stores/uaeScheduleStore'
+import { useScheduleStore } from '@/stores/useScheduleStore'
 
 const props = defineProps({
   id: Number, // 또는 Number, 형식에 맞게
@@ -15,8 +15,10 @@ const instanceKey = `${props.id}@${props.date}`
 
 const scheduleStore = useScheduleStore()
 const scheduleInstance = computed(() => {
-  return scheduleStore.getScheduleInstanceByKey(instanceKey.value)
+  return scheduleStore.getScheduleInstanceByKey(instanceKey)
 })
+
+console.log(instanceKey, scheduleInstance.value)
 
 defineOptions({
   name: 'ModifyScheduleView',

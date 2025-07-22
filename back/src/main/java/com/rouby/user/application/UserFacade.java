@@ -16,6 +16,7 @@ import com.rouby.user.application.dto.command.ResetPasswordByTokenCommand;
 import com.rouby.user.application.dto.command.ResetPasswordCommand;
 import com.rouby.user.application.dto.command.SaveVerificationCodeCommand;
 import com.rouby.user.application.dto.command.SendEmailVerificationCommand;
+import com.rouby.user.application.dto.command.UpdateUserInfoCommand;
 import com.rouby.user.application.dto.command.UpdateUserRoubySettingCommand;
 import com.rouby.user.application.dto.command.VerifyEmailCommand;
 import com.rouby.user.application.dto.info.LoginInfo;
@@ -104,6 +105,16 @@ public class UserFacade {
     userWriteService.updateRoubySettings(userId, command);
   }
 
+  public void completeInitialUserInfoSetting(Long id) {
+    userWriteService.completeInitialUserInfoSetting(id);
+  }
+
+  public void completeInitialRoubySetting(Long id) {
+    userWriteService.completeInitialRoubySetting(id);
+  }
+  public void updateMyUserInfo(UpdateUserInfoCommand command) {
+    userWriteService.updateUserInfo(command);
+  }
   public void delete(Long userId) {
     userWriteService.delete(userId);
   }

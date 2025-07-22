@@ -3,11 +3,11 @@ import { useRouter } from 'vue-router'
 export const useGoBack = () => {
   const router = useRouter()
 
-  const goBackOrPath = (path = '/') => {
+  const goBackOrPath = async (path = '/') => {
     if (window.history.length > 1) {
-      router.back()
+      await router.back()
     } else {
-      router.push(path)
+      await router.push(path)
     }
   }
 

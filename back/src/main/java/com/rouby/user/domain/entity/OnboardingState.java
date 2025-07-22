@@ -6,12 +6,11 @@ package com.rouby.user.domain.entity;
  */
 public enum OnboardingState {
 
-
-  ROUBY_SETTING_BEFORE("/onboarding/루비세팅첫경로"),
-
   USER_INFO_SETTING_BEFORE("/onboarding/nickname-setting"),
 
-  COMPLETED("/기본경로생겼을때넣어야합니다.");
+  ROUBY_SETTING_BEFORE("/onboarding/speech-setting"),
+
+  COMPLETED("/");
 
   private final String redirectPath;
 
@@ -23,4 +22,15 @@ public enum OnboardingState {
     return redirectPath;
   }
 
+  OnboardingState next() {
+    return switch (this) {
+      case USER_INFO_SETTING_BEFORE -> ROUBY_SETTING_BEFORE;
+      case ROUBY_SETTING_BEFORE -> COMPLETED;
+      case COMPLETED -> null;
+    };
+  }
+
+  boolean canTransitTo(OnboardingState nextState) {
+    return this.next() == nextState;
+  }
 }

@@ -22,7 +22,6 @@ public class UserReadService {
 
   private final UserRepository userRepository;
   private final UserPasswordEncoder passwordEncoder;
-
   private final TokenProvider tokenProvider;
 
   @Transactional(readOnly = true)
@@ -52,7 +51,7 @@ public class UserReadService {
   @Transactional(readOnly = true)
   public User findByUserId(Long id) {
     return userRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(() ->
-        UserException.from(INVALID_USER));
+        UserException.from(USER_NOT_FOUND));
   }
 
   @Transactional(readOnly = true)

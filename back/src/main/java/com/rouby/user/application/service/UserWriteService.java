@@ -5,16 +5,17 @@ import static com.rouby.user.application.exception.UserErrorCode.EMAIL_NOT_VERIF
 import static com.rouby.user.application.exception.UserErrorCode.EMAIL_VERIFICATION_TOKEN_MISMATCH;
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION;
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION_TOKEN;
+import static com.rouby.user.application.exception.UserErrorCode.ONBOARDING_STATE_CHANGE_NOT_ALLOWED;
 import static com.rouby.user.application.exception.UserErrorCode.PASSWORD_TOKEN_EXPIRED;
 import static com.rouby.user.application.exception.UserErrorCode.USER_NOT_FOUND;
 
-import com.rouby.common.exception.CustomException;
 import com.rouby.common.props.SettingProperties;
 import com.rouby.user.application.dto.command.CreateUserCommand;
 import com.rouby.user.application.dto.command.FindPasswordCommand;
 import com.rouby.user.application.dto.command.ResetPasswordByTokenCommand;
 import com.rouby.user.application.dto.command.ResetPasswordCommand;
 import com.rouby.user.application.dto.command.SaveVerificationCodeCommand;
+import com.rouby.user.application.dto.command.UpdateUserInfoCommand;
 import com.rouby.user.application.dto.command.UpdateUserRoubySettingCommand;
 import com.rouby.user.application.dto.command.VerifyEmailCommand;
 import com.rouby.user.application.exception.UserErrorCode;
@@ -107,10 +108,11 @@ public class UserWriteService {
   @Transactional
   public void resetPassword(Long userId, ResetPasswordCommand command) {
     User user = userRepository.findByIdAndDeletedAtIsNull(userId).orElseThrow(() ->
-        new CustomException(UserErrorCode.USER_NOT_FOUND));
+        UserException.from(UserErrorCode.USER_NOT_FOUND));
+
 
     if (!passwordEncoder.matches(command.currentPassword(), user.getPassword())) {
-      throw new CustomException(UserErrorCode.INVALID_PASSWORD);
+      throw UserException.from(UserErrorCode.INVALID_PASSWORD);
     }
 
     user.updatePassword(passwordEncoder, command.newPassword());
@@ -156,6 +158,37 @@ public class UserWriteService {
     if (!token.equals(savedToken)) {
       throw UserException.from(PASSWORD_TOKEN_EXPIRED);
     }
+  }
+
+  @Transactional
+  public void completeInitialUserInfoSetting(Long id) {
+    User user = userRepository.findById(id)
+        .orElseThrow(() -> UserException.from(UserErrorCode.USER_NOT_FOUND));
+    handleIllegalState(user::completeUserInfoSetting, ONBOARDING_STATE_CHANGE_NOT_ALLOWED);
+  }
+
+  @Transactional
+  public void completeInitialRoubySetting(Long id) {
+    User user = userRepository.findById(id)
+        .orElseThrow(() -> UserException.from(UserErrorCode.USER_NOT_FOUND));
+    handleIllegalState(user::completeRoubySetting, ONBOARDING_STATE_CHANGE_NOT_ALLOWED);
+  }
+
+  private void handleIllegalState(Runnable action, UserErrorCode errorCode) {
+    try {
+      action.run();
+    } catch (IllegalStateException e) {
+      throw UserException.from(errorCode);
+    }
+  }
+
+  @Transactional
+  public void updateUserInfo(UpdateUserInfoCommand command) {
+    User user = userRepository.findById(command.updaterId()).orElseThrow(() ->
+        UserException.from(UserErrorCode.USER_NOT_FOUND));
+    user.updateUserInfo(
+        command.nickname(), command.healthStatusKeywords(), command.profileKeywords(),
+        command.dailyStartTime(), command.dailyEndTime());
   }
 
   @Transactional

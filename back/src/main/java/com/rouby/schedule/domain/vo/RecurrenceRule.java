@@ -1,12 +1,15 @@
 package com.rouby.schedule.domain.vo;
 
 
+import com.rouby.schedule.domain.entity.ByDaySetConverter;
 import com.rouby.schedule.domain.enums.ByDay;
 import com.rouby.schedule.domain.enums.Freq;
 import com.rouby.schedule.domain.support.UntilDateTimeFormatter;
 import io.jsonwebtoken.lang.Assert;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Set;
@@ -15,16 +18,19 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode
 @Embeddable
-public class RecurrenceRule {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class RecurrenceRule implements Serializable {
 
   private Freq freq;
+  @Convert(converter = ByDaySetConverter.class)
   private Set<ByDay> byDay;
   private Integer interval;
   private LocalDateTime until;

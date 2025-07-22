@@ -8,7 +8,7 @@ export const formatDateTime = (
   if (!date) return ''
 
   const copy = new Date(date)
-  if (isNaN(copy)) return ''
+  if (isNaN(copy.getTime())) return ''
 
   if (noMins) copy.setMinutes(0, 0)
 

@@ -17,7 +17,7 @@ export function useDatePickerSelectedDate(props, emit, datePickStore) {
 
   watch(selectedDate, (val) => {
     emit('update:modelValue', val)
-    datePickStore.setCurrentSelectedDate(val)
+    datePickStore.setSelectedDate(val)
   })
 
   return selectedDate

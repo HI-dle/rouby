@@ -33,7 +33,7 @@ public class ScheduleJpaRepositoryCustomImpl implements ScheduleJpaRepositoryCus
         schedule.memo,
         schedule.period.startAt,
         schedule.period.endAt,
-        schedule.routineActivateDate,
+        schedule.routineOffsetDays,
         schedule.alarmOffsetType,
         schedule.recurrenceRule,
         child.id,
@@ -42,6 +42,7 @@ public class ScheduleJpaRepositoryCustomImpl implements ScheduleJpaRepositoryCus
         child.memo,
         child.period.startAt,
         child.period.endAt,
+        child.routineOffsetDays,
         child.alarmOffsetType,
         child.overrideInfo.overrideType,
         child.overrideInfo.overrideDate)
@@ -49,7 +50,8 @@ public class ScheduleJpaRepositoryCustomImpl implements ScheduleJpaRepositoryCus
         .leftJoin(child)
         .on(
             schedule.recurrenceRule.isNotNull()
-            .and(child.parentSchedule.eq(schedule))
+                .and(child.deletedAt.isNull())
+                .and(child.parentSchedule.eq(schedule))
         )
         .where(buildWhereClause(criteria))
         .orderBy(schedule.period.startAt.asc())
@@ -78,6 +80,7 @@ public class ScheduleJpaRepositoryCustomImpl implements ScheduleJpaRepositoryCus
                               .memo(t.get(child.memo))
                               .startAt(t.get(child.period.startAt))
                               .endAt(t.get(child.period.endAt))
+                              .routineOffsetDays(t.get(child.routineOffsetDays))
                               .alarmOffsetType(t.get(child.alarmOffsetType))
                               .overrideType(t.get(child.overrideInfo.overrideType))
                               .overrideDate(t.get(child.overrideInfo.overrideDate))
@@ -92,7 +95,7 @@ public class ScheduleJpaRepositoryCustomImpl implements ScheduleJpaRepositoryCus
                           .memo(first.get(schedule.memo))
                           .startAt(first.get(schedule.period.startAt))
                           .endAt(first.get(schedule.period.endAt))
-                          .routineActivateDate(first.get(schedule.routineActivateDate))
+                          .routineOffsetDays(first.get(schedule.routineOffsetDays))
                           .alarmOffsetType(first.get(schedule.alarmOffsetType))
                           .recurrenceRule(first.get(schedule.recurrenceRule))
                           .scheduleOverrides(children)
