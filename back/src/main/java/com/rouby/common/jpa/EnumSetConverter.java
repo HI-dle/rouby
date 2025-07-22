@@ -45,6 +45,7 @@ public abstract class EnumSetConverter<T extends Enum<T>> implements AttributeCo
       return result;
     } catch (IllegalArgumentException e) {
       throw new IllegalArgumentException("유효하지 않은 코드 데이터가 존재합니다.", e);
+
     } catch (IOException e) {
       throw CustomException.from(ApiErrorCode.INTERNAL_SERVER_ERROR);
     }
