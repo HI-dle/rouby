@@ -17,6 +17,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -201,5 +202,18 @@ public class User extends BaseEntity {
     this.communicationTone = communicationTone;
     this.notificationSettings.clear();
     this.notificationSettings.addAll(notificationSettings);
+  }
+
+  public void updateUserInfo(
+      String nickname,
+      Set<String> healthStatusKeywords,
+      Set<String> profileKeywords,
+      LocalTime dailyStartTime,
+      LocalTime dailyEndTime
+  ) {
+    this.nickname = nickname;
+    this.healthStatusKeywords = HealthStatusKeywords.of(healthStatusKeywords);
+    this.profileKeywords = ProfileKeywords.of(profileKeywords);
+    this.dailyActiveTime = DailyActiveTime.of(dailyStartTime, dailyEndTime);
   }
 }
