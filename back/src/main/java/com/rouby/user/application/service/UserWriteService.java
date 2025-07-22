@@ -158,6 +158,7 @@ public class UserWriteService {
     }
   }
 
+  @Transactional
   public void delete(Long userId) {
     User user = userRepository.findByIdAndDeletedAtIsNull(userId)
         .orElseThrow(() -> UserException.from(USER_NOT_FOUND));
