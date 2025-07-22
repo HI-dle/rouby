@@ -26,15 +26,19 @@ const {
         >
           <div class="flex flex-col w-full">
             <div class="font-semibold">{{ schedule.title }}</div>
+
             <div class="flex justify-between items-center mt-1">
               <div class="text-xs text-gray-500">
                 {{ formatSchedulePeriod(schedule.startAt, schedule.endAt) }}
               </div>
               <div class="flex justify-normal">
-                <Bell v-if="schedule.alarmOffsetMinutes" class="ml-2 h-2 w-2" />
+                <Bell
+                  v-if="schedule.alarmOffsetMinutes"
+                  class="ml-2 h-2.5 w-2.5 text-main-color"
+                />
                 <RefreshCw
                   v-if="schedule.recurrenceRule?.rruleStr"
-                  class="ml-2 h-2 w-2"
+                  class="ml-1 h-2.5 w-2.5 text-main-color"
                 />
               </div>
             </div>
