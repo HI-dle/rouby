@@ -104,4 +104,7 @@ public class UserFacade {
     userWriteService.updateRoubySettings(userId, command);
   }
 
+  public void delete(Long userId) {
+    userWriteService.delete(userId);
+  }
 }

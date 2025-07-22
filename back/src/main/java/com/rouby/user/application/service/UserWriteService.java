@@ -106,7 +106,7 @@ public class UserWriteService {
 
   @Transactional
   public void resetPassword(Long userId, ResetPasswordCommand command) {
-    User user = userRepository.findById(userId).orElseThrow(() ->
+    User user = userRepository.findByIdAndDeletedAtIsNull(userId).orElseThrow(() ->
         new CustomException(UserErrorCode.USER_NOT_FOUND));
 
     if (!passwordEncoder.matches(command.currentPassword(), user.getPassword())) {
@@ -130,7 +130,7 @@ public class UserWriteService {
 
   @Transactional
   public void updateRoubySettings(Long userId, UpdateUserRoubySettingCommand command) {
-    User user = userRepository.findById(userId).orElseThrow(() ->
+    User user = userRepository.findByIdAndDeletedAtIsNull(userId).orElseThrow(() ->
         UserException.from(USER_NOT_FOUND));
 
     user.updateRoubySettings(command.toCommunicationTone(
@@ -156,5 +156,12 @@ public class UserWriteService {
     if (!token.equals(savedToken)) {
       throw UserException.from(PASSWORD_TOKEN_EXPIRED);
     }
+  }
+
+  public void delete(Long userId) {
+    User user = userRepository.findByIdAndDeletedAtIsNull(userId)
+        .orElseThrow(() -> UserException.from(USER_NOT_FOUND));
+
+    user.delete(userId);
   }
 }

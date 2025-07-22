@@ -160,4 +160,18 @@ public class User extends BaseEntity {
     this.notificationSettings.clear();
     this.notificationSettings.addAll(notificationSettings);
   }
+
+  public void delete(Long userId) {
+    this.password = null;
+    this.nickname = null;
+    this.dailyActiveTime = null;
+    this.healthStatusKeywords = null;
+    this.profileKeywords = null;
+    this.communicationTone = null;
+    this.notificationSettings.clear();
+    this.authProvider = AuthProvider.DEFAULT;
+    this.lastActivatedAt = null;
+
+    super.delete(userId);
+  }
 }
