@@ -184,7 +184,7 @@ public class UserWriteService {
   @Transactional
   public void updateUserInfo(UpdateUserInfoCommand command) {
     User user = userRepository.findById(command.updaterId()).orElseThrow(() ->
-        new CustomException(UserErrorCode.USER_NOT_FOUND));
+        UserException.from(UserErrorCode.USER_NOT_FOUND));
     user.updateUserInfo(
         command.nickname(), command.healthStatusKeywords(), command.profileKeywords(),
         command.dailyStartTime(), command.dailyEndTime());
