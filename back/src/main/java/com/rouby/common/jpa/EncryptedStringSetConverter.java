@@ -1,4 +1,4 @@
-package com.rouby.user.domain.entity;
+package com.rouby.common.jpa;
 
 import com.rouby.common.utils.AesCryptoUtils;
 import jakarta.annotation.PostConstruct;
@@ -35,7 +35,7 @@ public class EncryptedStringSetConverter implements AttributeConverter<Set<Strin
       return null;
     }
     try {
-      String joined = String.join(",", attribute); // 예: "A,B,C"
+      String joined = String.join("§§§", attribute); // 예: "A,B,C"
       byte[] encrypted = cryptoUtils.encrypt(joined);
       return ENCODER.encodeToString(encrypted);
     } catch (Exception e) {
@@ -51,8 +51,9 @@ public class EncryptedStringSetConverter implements AttributeConverter<Set<Strin
     try {
       byte[] decoded = DECODER.decode(dbData);
       String decrypted = cryptoUtils.decrypt(decoded);
-      return Arrays.stream(decrypted.split(","))
+      return Arrays.stream(decrypted.split("§§§"))
           .map(String::trim)
+          .filter(s -> !s.isEmpty())
           .collect(Collectors.toSet());
     } catch (Exception e) {
       throw new IllegalStateException("암호화된 문자열을 Set<String>으로 복호화 중 오류 발생", e);

@@ -1,5 +1,6 @@
 package com.rouby.user.domain.entity;
 
+import com.rouby.common.jpa.EncryptedStringSetConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embeddable;
