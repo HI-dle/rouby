@@ -26,6 +26,10 @@ public class HealthStatusKeywords implements Serializable {
     return new HealthStatusKeywords(Collections.unmodifiableSet(healthStatusKeywords));
   }
 
+  boolean isEmpty() {
+    return healthStatusKeywords == null || healthStatusKeywords.isEmpty();
+  }
+
   private HealthStatusKeywords(Set<String> healthStatusKeywords) {
     this.healthStatusKeywords = healthStatusKeywords;
   }

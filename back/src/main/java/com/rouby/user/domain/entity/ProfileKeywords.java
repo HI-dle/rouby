@@ -26,6 +26,10 @@ public class ProfileKeywords implements Serializable {
     return new ProfileKeywords(Collections.unmodifiableSet(profileKeywords));
   }
 
+  boolean isEmpty() {
+    return profileKeywords == null || profileKeywords.isEmpty();
+  }
+
   private ProfileKeywords(Set<String> profileKeywords) {
     this.profileKeywords = new LinkedHashSet<>(profileKeywords);
   }

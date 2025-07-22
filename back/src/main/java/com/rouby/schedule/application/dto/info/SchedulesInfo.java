@@ -1,10 +1,8 @@
 package com.rouby.schedule.application.dto.info;
 
 import com.rouby.schedule.domain.repository.info.ScheduleWithOverrides;
-import com.rouby.schedule.presentation.dto.response.SchedulesResponse;
-import com.rouby.schedule.presentation.dto.response.SchedulesResponse.RecurrenceRuleResponse;
-import com.rouby.schedule.presentation.dto.response.SchedulesResponse.ScheduleOverrideResponse;
-import com.rouby.schedule.presentation.dto.response.SchedulesResponse.ScheduleResponse;
+import com.rouby.schedule.domain.repository.info.ScheduleWithOverrides.ScheduleOverride;
+import com.rouby.schedule.domain.vo.RecurrenceRule;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,87 +19,64 @@ public record SchedulesInfo(
 
     return SchedulesInfo.builder()
         .schedules(schedulesByCriteria.stream()
-            .map(schedule ->
-                ScheduleInfo.builder()
-                    .id(schedule.id())
-                    .title(schedule.title())
-                    .memo(schedule.memo())
-                    .startAt(schedule.startAt())
-                    .endAt(schedule.endAt())
-                    .routineActivateDate(schedule.routineActivateDate())
-                    .alarmOffsetMinutes(schedule.alarmOffsetType().getMinutes())
-                    .recurrenceRule(RecurrenceRuleInfo.builder()
-                        .freq(schedule.recurrenceRule().getFreq().toString())
-                        .interval(schedule.recurrenceRule().getInterval())
-                        .until(schedule.recurrenceRule().getUntil())
-                        .byDay(schedule.recurrenceRule().getByDay().stream()
-                            .map(Enum::toString)
-                            .collect(Collectors.toSet()))
-                            .build())
-                    .scheduleOverrides(
-                        schedule.scheduleOverrides().stream()
-                            .map(override->
-                                ScheduleOverrideInfo.builder()
-                                    .id(override.id())
-                                    .userId(override.userId())
-                                    .startAt(override.startAt())
-                                    .endAt(override.endAt())
-                                    .alarmOffsetMinutes(override.alarmOffsetType().getMinutes())
-                                    .overrideDate(override.overrideDate())
-                                    .overrideType(override.overrideType().toString())
-                                    .build()
-                            )
-                            .toList()
-                    )
-                    .build()
+            .map(SchedulesInfo::mapToScheduleInfo
             )
             .toList())
         .build();
   }
 
-  public SchedulesResponse toResponse() {
-    return SchedulesResponse.builder()
-        .schedules(this.schedules.stream()
-            .map(info ->
-                ScheduleResponse.builder()
-                    .id(info.id)
-                    .title(info.title)
-                    .memo(info.memo)
-                    .alarmOffsetMinutes(info.alarmOffsetMinutes)
-                    .startAt(info.startAt)
-                    .endAt(info.endAt)
-                    .routineActivateDate(info.routineActivateDate())
-                    .recurrenceRule(
-                        RecurrenceRuleResponse.builder()
-                            .freq(info.recurrenceRule.freq)
-                            .until(info.recurrenceRule.until)
-                            .interval(info.recurrenceRule.interval)
-                            .byDay(info.recurrenceRule.byDay)
-                            .build()
-                    )
-                    .scheduleOverrides(
-                        info.scheduleOverrides().stream()
-                            .map(override->
-                                ScheduleOverrideResponse.builder()
-                                    .id(override.id())
-                                    .userId(override.userId())
-                                    .startAt(override.startAt())
-                                    .endAt(override.endAt())
-                                    .alarmOffsetMinutes(override.alarmOffsetMinutes())
-                                    .overrideDate(override.overrideDate())
-                                    .overrideType(override.overrideType())
-                                    .build()
-                            )
-                            .toList()
-                    )
-                    .build()
-            )
-            .toList())
+  private static ScheduleInfo mapToScheduleInfo(ScheduleWithOverrides schedule) {
+    return ScheduleInfo.builder()
+        .id(schedule.id())
+        .userId(schedule.userId())
+        .title(schedule.title())
+        .memo(schedule.memo())
+        .startAt(schedule.startAt())
+        .endAt(schedule.endAt())
+        .routineActivateDate(schedule.routineActivateDate())
+        .alarmOffsetMinutes(schedule.alarmOffsetType().getMinutes())
+        .recurrenceRule(mapToRRuleInfo(schedule.recurrenceRule()))
+        .scheduleOverrides(
+            schedule.scheduleOverrides().stream()
+                .map(SchedulesInfo::mapToScheduleOverrideInfo
+                )
+                .toList()
+        )
         .build();
   }
+
+  private static RecurrenceRuleInfo mapToRRuleInfo(RecurrenceRule rrule) {
+    if (rrule == null) return null;
+
+    return RecurrenceRuleInfo.builder()
+        .freq(rrule.getFreq().toString())
+        .interval(rrule.getInterval())
+        .until(rrule.getUntil())
+        .byDay(rrule.getByDay() == null
+            ? null
+            : rrule.getByDay().stream()
+            .map(Enum::toString)
+            .collect(Collectors.toSet()))
+        .build();
+  }
+
+  private static ScheduleOverrideInfo mapToScheduleOverrideInfo(ScheduleOverride override) {
+    return ScheduleOverrideInfo.builder()
+        .id(override.id())
+        .userId(override.userId())
+        .startAt(override.startAt())
+        .endAt(override.endAt())
+        .title(override.title())
+        .memo(override.memo())
+        .alarmOffsetMinutes(override.alarmOffsetType().getMinutes())
+        .overrideDate(override.overrideDate())
+        .overrideType(override.overrideType().toString())
+        .build();
+  }
+
 
   @Builder
-  record ScheduleInfo(
+  public record ScheduleInfo(
       Long id,
       Long userId,
       String title,
@@ -116,7 +91,7 @@ public record SchedulesInfo(
   }
 
   @Builder
-  record RecurrenceRuleInfo(
+  public record RecurrenceRuleInfo(
       String freq,
       Set<String> byDay,
       Integer interval,
@@ -125,7 +100,7 @@ public record SchedulesInfo(
   }
 
   @Builder
-  record ScheduleOverrideInfo(
+  public record ScheduleOverrideInfo(
       Long id,
       Long userId,
       String title,

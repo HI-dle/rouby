@@ -7,9 +7,11 @@ import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.util.Assert;
 
+@Getter
 @Embeddable
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -38,5 +40,9 @@ public class Period {
 
   public boolean isValidRoutineActivateDate(LocalDate routineActivateDate) {
     return !routineActivateDate.isAfter(endAt.toLocalDate());
+  }
+
+  public boolean isValidUntil(LocalDateTime until) {
+    return until.isAfter(endAt);
   }
 }

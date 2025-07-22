@@ -11,6 +11,7 @@ import {
   isSameMonth,
 } from 'date-fns'
 import { ko } from 'date-fns/locale'
+import { getWeekDates } from '@/shared/utils/dateUtils'
 
 export function useDatePickerDates(
   baseDate,
@@ -24,10 +25,7 @@ export function useDatePickerDates(
     )
   }
 
-  const weekDates = computed(() => {
-    const start = startOfWeek(baseDate.value, { weekStartsOn })
-    return Array.from({ length: 7 }, (_, i) => addDays(start, i))
-  })
+  const weekDates = computed(() => getWeekDates(baseDate.value, weekStartsOn))
 
   const calendarDays = computed(() => {
     const start = startOfWeek(startOfMonth(baseDate.value), { weekStartsOn })

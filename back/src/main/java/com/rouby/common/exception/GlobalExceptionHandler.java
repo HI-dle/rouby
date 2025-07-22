@@ -14,6 +14,7 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -32,6 +33,18 @@ public class GlobalExceptionHandler {
     log(e, request, e.getStatus());
     return ResponseEntity.status(e.getStatus())
         .body(ErrorResponse.from(e));
+  }
+
+  @ExceptionHandler(value = {AuthorizationDeniedException.class})
+  protected ResponseEntity<Object> handleAuthorizationDeniedException(AuthorizationDeniedException e,
+      HttpServletRequest request) {
+
+    log(e, request, UNAUTHORIZED);
+
+    return ResponseEntity
+        .status(UNAUTHORIZED)
+        .body(ErrorResponse.of(ApiErrorCode.UNAUTHORIZED.getMessage(),
+            ApiErrorCode.UNAUTHORIZED.getCode()));
   }
 
   @ExceptionHandler(ConstraintViolationException.class)
@@ -135,6 +148,15 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(status).body(ErrorResponse.from(e));
   }
 
+  @ExceptionHandler(IllegalStateException.class)
+  public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException e,
+      HttpServletRequest request){
+
+    HttpStatus status = BAD_REQUEST;
+    log(e, request, status);
+    return ResponseEntity.status(status).body(ErrorResponse.from(e));
+  }
+
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponse> handleException(Exception e,
       HttpServletRequest request) {
@@ -155,7 +177,7 @@ public class GlobalExceptionHandler {
 
   private static void log(Throwable e, HttpServletRequest request, HttpStatus status) {
 
-    log.error("{}:{}:{}:{}", request.getRequestURI(), status.value(), e.getClass().getSimpleName(),
+    log.warn("{}:{}:{}:{}", request.getRequestURI(), status.value(), e.getClass().getSimpleName(),
         e.getMessage());
   }
 }

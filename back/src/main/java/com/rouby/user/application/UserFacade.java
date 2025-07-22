@@ -17,9 +17,11 @@ import com.rouby.user.application.dto.command.ResetPasswordCommand;
 import com.rouby.user.application.dto.command.SaveVerificationCodeCommand;
 import com.rouby.user.application.dto.command.SendEmailVerificationCommand;
 import com.rouby.user.application.dto.command.UpdateUserInfoCommand;
+import com.rouby.user.application.dto.command.UpdateUserRoubySettingCommand;
 import com.rouby.user.application.dto.command.VerifyEmailCommand;
 import com.rouby.user.application.dto.info.LoginInfo;
 import com.rouby.user.application.dto.info.UserCheckInfo;
+import com.rouby.user.application.dto.info.RoubySettingInfo;
 import com.rouby.user.application.exception.UserException;
 import com.rouby.user.application.service.UserReadService;
 import com.rouby.user.application.service.UserWriteService;
@@ -95,7 +97,21 @@ public class UserFacade {
   public UserCheckInfo userInfoCheck(Long id) {
     return UserCheckInfo.from(userReadService.findByUserId(id));
   }
+  public RoubySettingInfo getRoubySettingInfo(Long userId) {
+    return userReadService.getRoubySettingInfo(userId);
+  }
 
+  public void updateRoubySettings(Long userId, UpdateUserRoubySettingCommand command) {
+    userWriteService.updateRoubySettings(userId, command);
+  }
+
+  public void completeInitialUserInfoSetting(Long id) {
+    userWriteService.completeInitialUserInfoSetting(id);
+  }
+
+  public void completeInitialRoubySetting(Long id) {
+    userWriteService.completeInitialRoubySetting(id);
+  }
   public void updateMyUserInfo(UpdateUserInfoCommand command) {
     userWriteService.updateUserInfo(command);
   }
