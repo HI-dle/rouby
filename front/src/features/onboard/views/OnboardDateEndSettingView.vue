@@ -29,6 +29,7 @@ import { computed, ref } from 'vue'
 import DateEndSettingForm from '@/features/onboard/Components/DateEndSettingForm.vue'
 import { useOnboardStore } from '@/features/onboard/store/useOnboardStore'
 import { useRouter } from 'vue-router'
+import { updateUserInfo, completeUserSetting } from '@/features/onboard/onboardUserSettingApi.js'
 
 const store = useOnboardStore()
 const startOfDayTime = computed(() => store.startOfDayTime)
@@ -37,13 +38,22 @@ const router = useRouter()
 
 const dateSettingFormRef = ref(null)
 
-const onNextLinkClick = () => {
+const onNextLinkClick = async () => {
   if (!dateSettingFormRef.value) return
 
+
   const success = dateSettingFormRef.value.onNextClick()
-  if (success) {
-    router.push('/onboarding/speech-setting')
+  if (!success) return
+
+  try {
+
+    await updateUserInfo()
+    await completeUserSetting()
+    await router.push('/onboarding/speech-setting')
+  } catch (e) {
+    alert('설정 저장에 실패했습니다. 다시 시도해주세요.')
+    console.error(e)
   }
 }
-
 </script>
+

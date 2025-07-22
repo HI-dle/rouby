@@ -11,22 +11,13 @@
 
 <script setup>
 import { useOnboardStore } from '@/features/onboard/store/useOnboardStore'
-import { updateRoubySetting, completeRoubySetting } from '@/features/onboard/onboardRoubySettingApi.js'
 
 const store = useOnboardStore()
 
 const onNextClick = async () => {
-  try {
-    await updateRoubySetting({
-      importantSchedule: store,
-    })
-    await completeRoubySetting()
-    return true
-  } catch (e) {
-    // 오류 처리 (예: 사용자에게 안내)
-    return false
-  }
+  return true
 }
 
 defineExpose({ onNextClick })
 </script>
+
