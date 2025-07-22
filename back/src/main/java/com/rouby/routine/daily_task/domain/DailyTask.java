@@ -66,11 +66,11 @@ public class DailyTask extends BaseEntity {
     }
   }
 
-  private static void validateCurrentValue(Integer progressValue) {
-    if (progressValue == null) {
+  private static void validateCurrentValue(Integer currentValue) {
+    if (currentValue == null) {
       throw new IllegalArgumentException("진행률 값은 필수입니다.");
     }
-    if (progressValue < 0) {
+    if (currentValue < 0) {
       throw new IllegalArgumentException("진행률 값은 0 이상이어야 합니다.");
     }
   }
