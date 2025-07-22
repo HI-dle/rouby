@@ -29,7 +29,7 @@ const onNextLinkClick = async () => {
 
   const success = await AlarmFormRef.value.onNextClick()
   if (success) {
-    await router.push('/onboarding/Calender-setting')
+    await router.push('/onboarding/calender-setting')
   }
 }
 </script>

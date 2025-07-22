@@ -153,8 +153,8 @@ const router = createRouter({
           component: () => import('@/features/onboard/views/OnboardAlarmSettingView.vue'),
         },
         {
-          path: 'Calender-setting',
-          name: 'Calender-setting',
+          path: 'calender-setting',
+          name: 'calender-setting',
           component: () => import('@/features/onboard/views/OnboardCalendarView.vue'),
         },
         {

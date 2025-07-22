@@ -11,7 +11,7 @@ import {
   validatePasswordConfirm,
   validateEmail
 } from '@/features/auth/validations.js'
-import { buildFieldValidator } from '@/utils/formUtils.js'
+import { buildFieldValidator } from '@/shared/utils/formUtils.js'
 
 export function usePasswordForm() {
   const route = useRoute()
