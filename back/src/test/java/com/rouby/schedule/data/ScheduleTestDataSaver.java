@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-//@Disabled("필요한 경우 해당 어노테이션을 주석 처리하고 사용해주세요.")
+@Disabled("필요한 경우 해당 어노테이션을 주석 처리하고 사용해주세요.")
 @SpringBootTest
 public class ScheduleTestDataSaver {
 
