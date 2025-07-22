@@ -3,9 +3,9 @@ import {
   extractDate,
   formatDateTime,
 } from '@/shared/utils/dateTimeUtils'
-import { BIWEEKLY, BYDAY, WEEKELY } from './constants'
+import { BIWEEKLY, WEEKELY } from './constants'
 import { getNxtDate } from '@/shared/utils/dateUtils'
-import { subDays } from 'date-fns'
+import { differenceInDays } from 'date-fns'
 
 export function toCreateSchedulePayload(form) {
   if (!form || typeof form !== 'object') {
@@ -16,7 +16,7 @@ export function toCreateSchedulePayload(form) {
     title: form.title,
     memo: form.memo,
     alarmOffsetMinutes: form.alarmOffsetMinutes,
-    routineOffsetDays: subDays(form.routineStart, form.start),
+    routineOffsetDays: differenceInDays(form.start, form.routineStart),
     startAt: form.allDay
       ? convertDateToDateTime(extractDate(form.start), 0)
       : formatDateTime(form.start),

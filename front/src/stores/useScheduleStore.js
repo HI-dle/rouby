@@ -33,13 +33,9 @@ export const useScheduleStore = defineStore(
     const setMonthlySchedules = (monthKey, schedules) => {
       if (!Array.isArray(schedules)) return
 
-      try {
-        const { dailyMap, rawMap } = expandSchedulesByDay(schedules, monthKey)
-        rawSchedules[monthKey] = rawMap
-        dailySchedules[monthKey] = dailyMap
-      } catch (error) {
-        throw error
-      }
+      const { dailyMap, rawMap } = expandSchedulesByDay(schedules, monthKey)
+      rawSchedules[monthKey] = rawMap
+      dailySchedules[monthKey] = dailyMap
     }
 
     const addRawSchedule = (schedule) => {
@@ -47,9 +43,13 @@ export const useScheduleStore = defineStore(
 
       const date = new Date(schedule.startAt)
       const monthKey = format(date, 'yyyy-MM')
-      schedule.recurrenceRule.rruleStr = buildRRuleString(
-        schedule.recurrenceRule,
-      )
+
+      if (schedule.recurrenceRule) {
+        schedule.recurrenceRule.rruleStr = buildRRuleString(
+          schedule.recurrenceRule,
+        )
+      }
+
       if (!rawSchedules[monthKey]) {
         rawSchedules[monthKey] = {}
       }
