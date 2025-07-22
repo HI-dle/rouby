@@ -162,14 +162,14 @@ public class UserWriteService {
 
   @Transactional
   public void completeInitialUserInfoSetting(Long id) {
-    User user = userRepository.findById(id)
+    User user = userRepository.findByIdAndDeletedAtIsNull(id)
         .orElseThrow(() -> UserException.from(UserErrorCode.USER_NOT_FOUND));
     handleIllegalState(user::completeUserInfoSetting, ONBOARDING_STATE_CHANGE_NOT_ALLOWED);
   }
 
   @Transactional
   public void completeInitialRoubySetting(Long id) {
-    User user = userRepository.findById(id)
+    User user = userRepository.findByIdAndDeletedAtIsNull(id)
         .orElseThrow(() -> UserException.from(UserErrorCode.USER_NOT_FOUND));
     handleIllegalState(user::completeRoubySetting, ONBOARDING_STATE_CHANGE_NOT_ALLOWED);
   }
@@ -184,7 +184,7 @@ public class UserWriteService {
 
   @Transactional
   public void updateUserInfo(UpdateUserInfoCommand command) {
-    User user = userRepository.findById(command.updaterId()).orElseThrow(() ->
+    User user = userRepository.findByIdAndDeletedAtIsNull(command.updaterId()).orElseThrow(() ->
         UserException.from(UserErrorCode.USER_NOT_FOUND));
     user.updateUserInfo(
         command.nickname(), command.healthStatusKeywords(), command.profileKeywords(),
