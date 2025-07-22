@@ -1,0 +1,131 @@
+[[ROUTINE-API]]
+= Daily-Task API
+
+== 데일리 태스크 진행 API
+
+=== 성공: 데일리 태스크 생성
+
+==== HTTP 요청
+include::{snippets}/daily-task-progress-create-success/http-request.adoc[]
+
+==== 요청 헤더
+include::{snippets}/daily-task-progress-create-success/request-headers.adoc[]
+
+==== 요청 필드
+include::{snippets}/daily-task-progress-create-success/request-fields.adoc[]
+
+==== HTTP 응답 (200 OK)
+include::{snippets}/daily-task-progress-create-success/http-response.adoc[]
+
+---
+
+=== 성공: 데일리 태스크 수정
+
+==== HTTP 요청
+include::{snippets}/daily-task-progress-update-success/http-request.adoc[]
+
+==== 요청 헤더
+include::{snippets}/daily-task-progress-update-success/request-headers.adoc[]
+
+==== 요청 필드
+include::{snippets}/daily-task-progress-update-success/request-fields.adoc[]
+
+==== HTTP 응답 (200 OK)
+include::{snippets}/daily-task-progress-update-success/http-response.adoc[]
+
+---
+
+=== 실패: 유효성 검증 오류
+
+==== 유효하지 않은 currentValue (0 이하)
+
+===== HTTP 요청
+include::{snippets}/daily-task-progress-negative-value/http-request.adoc[]
+
+===== 요청 필드
+include::{snippets}/daily-task-progress-negative-value/request-fields.adoc[]
+
+===== HTTP 응답 (400 Bad Request)
+include::{snippets}/daily-task-progress-negative-value/http-response.adoc[]
+
+---
+
+==== 유효하지 않은 ID (0 이하)
+
+===== HTTP 요청
+include::{snippets}/daily-task-progress-invalid-id/http-request.adoc[]
+
+===== 요청 필드
+include::{snippets}/daily-task-progress-invalid-id/request-fields.adoc[]
+
+===== HTTP 응답 (400 Bad Request)
+include::{snippets}/daily-task-progress-invalid-id/http-response.adoc[]
+
+---
+
+==== 유효하지 않은 routineTaskId (0 이하)
+
+===== HTTP 요청
+include::{snippets}/daily-task-progress-invalid-routine-task-id/http-request.adoc[]
+
+===== 요청 필드
+include::{snippets}/daily-task-progress-invalid-routine-task-id/request-fields.adoc[]
+
+===== HTTP 응답 (400 Bad Request)
+include::{snippets}/daily-task-progress-invalid-routine-task-id/http-response.adoc[]
+
+---
+
+=== 실패: 서비스 오류
+
+==== 존재하지 않는 루틴 태스크
+
+===== HTTP 요청
+include::{snippets}/daily-task-progress-routine-task-not-found/http-request.adoc[]
+
+===== 요청 필드
+include::{snippets}/daily-task-progress-routine-task-not-found/request-fields.adoc[]
+
+===== HTTP 응답 (409 conflict)
+include::{snippets}/daily-task-progress-routine-task-not-found/http-response.adoc[]
+
+---
+
+==== 루틴 태스크 접근 권한 없음
+
+===== HTTP 요청
+include::{snippets}/daily-task-progress-routine-task-access-denied/http-request.adoc[]
+
+===== 요청 필드
+include::{snippets}/daily-task-progress-routine-task-access-denied/request-fields.adoc[]
+
+===== HTTP 응답 (401 Unauthorized)
+include::{snippets}/daily-task-progress-routine-task-access-denied/http-response.adoc[]
+
+---
+
+==== 존재하지 않는 데일리 태스크
+
+===== HTTP 요청
+include::{snippets}/daily-task-progress-daily-task-not-found/http-request.adoc[]
+
+===== 요청 필드
+include::{snippets}/daily-task-progress-daily-task-not-found/request-fields.adoc[]
+
+===== HTTP 응답 (401 Unauthorized)
+include::{snippets}/daily-task-progress-daily-task-not-found/http-response.adoc[]
+
+---
+
+==== 중복 생성 시도
+
+===== HTTP 요청
+include::{snippets}/daily-task-progress-duplicate-task/http-request.adoc[]
+
+===== 요청 필드
+include::{snippets}/daily-task-progress-duplicate-task/request-fields.adoc[]
+
+===== HTTP 응답 (401 Unauthorized)
+include::{snippets}/daily-task-progress-duplicate-task/http-response.adoc[]
+
+---
