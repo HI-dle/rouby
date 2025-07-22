@@ -5,15 +5,18 @@ import static com.rouby.user.application.exception.UserErrorCode.EMAIL_NOT_VERIF
 import static com.rouby.user.application.exception.UserErrorCode.EMAIL_VERIFICATION_TOKEN_MISMATCH;
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION;
 import static com.rouby.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION_TOKEN;
+import static com.rouby.user.application.exception.UserErrorCode.ONBOARDING_STATE_CHANGE_NOT_ALLOWED;
 import static com.rouby.user.application.exception.UserErrorCode.PASSWORD_TOKEN_EXPIRED;
 import static com.rouby.user.application.exception.UserErrorCode.USER_NOT_FOUND;
 
 import com.rouby.common.exception.CustomException;
+import com.rouby.common.props.SettingProperties;
 import com.rouby.user.application.dto.command.CreateUserCommand;
 import com.rouby.user.application.dto.command.FindPasswordCommand;
 import com.rouby.user.application.dto.command.ResetPasswordByTokenCommand;
 import com.rouby.user.application.dto.command.ResetPasswordCommand;
 import com.rouby.user.application.dto.command.SaveVerificationCodeCommand;
+import com.rouby.user.application.dto.command.UpdateUserRoubySettingCommand;
 import com.rouby.user.application.dto.command.VerifyEmailCommand;
 import com.rouby.user.application.exception.UserErrorCode;
 import com.rouby.user.application.exception.UserException;
@@ -37,6 +40,8 @@ public class UserWriteService {
   private final UserPasswordEncoder passwordEncoder;
   private final VerificationEmailCodeStorage verificationEmailCodeStorage;
   private final VerificationPasswordTokenStorage verificationPasswordCodeStorage;
+  private final SettingProperties settingProperties;
+
   private final TokenProvider tokenProvider;
 
   @Transactional
@@ -68,9 +73,9 @@ public class UserWriteService {
 
   private void ensureEmailIsVerified(String email) {
     VerificationEmailCode code = verificationEmailCodeStorage.findByEmail(email)
-            .orElseThrow(() -> UserException.from(EMAIL_NOT_VERIFIED));
+        .orElseThrow(() -> UserException.from(EMAIL_NOT_VERIFIED));
 
-    if(!code.isVerified()) {
+    if (!code.isVerified()) {
       throw UserException.from(EMAIL_NOT_VERIFIED);
     }
   }
@@ -119,18 +124,27 @@ public class UserWriteService {
 
     validatePasswordToken(command.email(), command.token());
 
-    user.updatePassword( passwordEncoder, command.newPassword());
+    user.updatePassword(passwordEncoder, command.newPassword());
 
     verificationPasswordCodeStorage.deleteByEmail(command.email());
   }
 
+  @Transactional
+  public void updateRoubySettings(Long userId, UpdateUserRoubySettingCommand command) {
+    User user = userRepository.findById(userId).orElseThrow(() ->
+        UserException.from(USER_NOT_FOUND));
+
+    user.updateRoubySettings(command.toCommunicationTone(
+            settingProperties.getCommunicationToneProperties().getMaxSize()),
+        command.toNotificationSettings(user));
+  }
+
   public String getResetPasswordLink(FindPasswordCommand command) {
-    if(!userRepository.existsByEmail(command.email())) {
+    if (!userRepository.existsByEmail(command.email())) {
       throw UserException.from(USER_NOT_FOUND);
     }
 
     String code = UUID.randomUUID().toString();
-
     verificationPasswordCodeStorage.storePasswordResetToken(command.email(), code);
 
     return code;
@@ -142,6 +156,28 @@ public class UserWriteService {
 
     if (!token.equals(savedToken)) {
       throw UserException.from(PASSWORD_TOKEN_EXPIRED);
+    }
+  }
+
+  @Transactional
+  public void completeInitialUserInfoSetting(Long id) {
+    User user = userRepository.findById(id)
+        .orElseThrow(() -> UserException.from(UserErrorCode.USER_NOT_FOUND));
+    handleIllegalState(user::completeUserInfoSetting, ONBOARDING_STATE_CHANGE_NOT_ALLOWED);
+  }
+
+  @Transactional
+  public void completeInitialRoubySetting(Long id) {
+    User user = userRepository.findById(id)
+        .orElseThrow(() -> UserException.from(UserErrorCode.USER_NOT_FOUND));
+    handleIllegalState(user::completeRoubySetting, ONBOARDING_STATE_CHANGE_NOT_ALLOWED);
+  }
+
+  private void handleIllegalState(Runnable action, UserErrorCode errorCode) {
+    try {
+      action.run();
+    } catch (IllegalStateException e) {
+      throw UserException.from(errorCode);
     }
   }
 }

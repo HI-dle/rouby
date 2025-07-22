@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum AlarmOffsetType {
 
+  NONE(null, "5분 전"),
   M_5(5, "5분 전"),
   M_10(10, "10분 전"),
   M_15(15, "15분 전"),
@@ -24,8 +25,12 @@ public enum AlarmOffsetType {
   private final String desc;
 
   public static AlarmOffsetType parse(Integer minutes) {
+    if (minutes == null) return NONE;
     return Arrays.stream(AlarmOffsetType.values())
-        .filter(type -> type.minutes.equals(minutes))
+        .filter(type -> {
+          if(type.minutes == null) return false;
+          return type.minutes.equals(minutes);
+        })
         .findFirst()
         .orElseThrow(() -> new IllegalArgumentException("지원되지 않는 알림 설정 시간(분) 정보입니다."));
   }

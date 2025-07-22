@@ -5,7 +5,6 @@ import com.rouby.routine.routine_task.domain.enums.AlarmOffsetType;
 import com.rouby.routine.routine_task.domain.enums.OverrideType;
 import com.rouby.routine.routine_task.domain.enums.TaskType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -22,13 +21,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "routine_tasks")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
 public class RoutineTask extends BaseEntity {
 
   @Id
@@ -52,8 +52,8 @@ public class RoutineTask extends BaseEntity {
   @Column(name = "alarm_offset_type", length = 10)
   private AlarmOffsetType alarmOffsetType;
 
-  @Column(columnDefinition = "TEXT")
-  @Convert(converter = RRuleConverter.class)
+  @JdbcTypeCode(SqlTypes.JSON)
+  @Column(name = "recurrenceRule", columnDefinition = "jsonb", nullable = false)
   private RecurrenceRule recurrenceRule;
 
   @Embedded
@@ -67,5 +67,38 @@ public class RoutineTask extends BaseEntity {
   @JoinColumn(name = "parent_routine_task_id")
   private RoutineTask parentRoutineTask;
 
+  @Builder
+  private RoutineTask(AlarmOffsetType alarmOffsetType, OverrideType overrideType,
+      RoutineTask parentRoutineTask, RecurrenceRule recurrenceRule, RoutineTimeInfo routineTimeInfo,
+      Integer targetValue, TaskType taskType, String title, Long userId) {
+    validate(title, targetValue, taskType, routineTimeInfo);
+    this.alarmOffsetType = alarmOffsetType;
+    this.overrideType = overrideType;
+    this.parentRoutineTask = parentRoutineTask;
+    this.recurrenceRule = recurrenceRule;
+    this.routineTimeInfo = routineTimeInfo;
+    this.targetValue = targetValue;
+    this.taskType = taskType;
+    this.title = title;
+    this.userId = userId;
+  }
 
+  private void validate(String title, Integer targetValue, TaskType taskType, RoutineTimeInfo timeInfo) {
+    if (title == null || title.trim().isEmpty()) {
+      throw new IllegalArgumentException("제목은 필수입니다.");
+    }
+
+    if (taskType == null) {
+      throw new IllegalArgumentException("taskType은 필수입니다.");
+    }
+
+    if (taskType != TaskType.CHECK && (targetValue == null || targetValue < 0)) {
+      throw new IllegalArgumentException("targetValue는 0 이상의 값이어야 합니다.");
+    }
+
+    if (timeInfo == null) {
+      throw new IllegalArgumentException("routineTimeInfo는 필수입니다.");
+    }
+
+  }
 }

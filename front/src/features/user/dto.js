@@ -5,3 +5,10 @@ export function toMyPageResetPasswordPayload(form) {
     token: form.token?.trim()
   };
 }
+
+export function toMyPageRoubySettingPayload(form) {
+  return {
+    communicationTone: form.communicationTone,
+    notificationSettings: form.notificationSettings,
+  };
+}

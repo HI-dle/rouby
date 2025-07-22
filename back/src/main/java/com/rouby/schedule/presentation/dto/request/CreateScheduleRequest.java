@@ -12,7 +12,6 @@ import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import lombok.Builder;
 
 @Builder
@@ -46,7 +45,7 @@ public record CreateScheduleRequest (
       @Pattern(regexp = "^(MO|TU|WE|TH|FR|SA|SU)(,(MO|TU|WE|TH|FR|SA|SU))*$")
       String byDay,
       @Positive @Max(30) Integer interval,
-      @Future ZonedDateTime until
+      @Future LocalDateTime until
   ) {
 
     public RecurrenceRuleCommand toCommand() {
