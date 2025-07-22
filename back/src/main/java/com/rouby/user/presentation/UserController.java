@@ -1,9 +1,6 @@
 package com.rouby.user.presentation;
 
 import com.rouby.user.application.UserFacade;
-import com.rouby.user.domain.entity.User;
-import com.rouby.user.domain.repository.UserRepository;
-import com.rouby.user.domain.service.UserPasswordEncoder;
 import com.rouby.user.infrastructure.security.dto.SecurityUser;
 import com.rouby.user.presentation.dto.request.CreateUserRequest;
 import com.rouby.user.presentation.dto.request.FindPasswordRequest;
@@ -16,14 +13,12 @@ import com.rouby.user.presentation.dto.response.RoubySettingResponse;
 import com.rouby.user.presentation.dto.response.UserCheckResponse;
 import com.rouby.user.presentation.dto.response.VerifyEmailTokenResponse;
 import com.rouby.user.presentation.validation.StartsWith;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -120,7 +115,7 @@ public class UserController {
   @PatchMapping("/delete")
   public ResponseEntity<Void> delete(
       @AuthenticationPrincipal SecurityUser securityUser) {
-      userFacade.delete(securityUser.getId());
+    userFacade.delete(securityUser.getId());
     return ResponseEntity.noContent().build();
   }
 }
