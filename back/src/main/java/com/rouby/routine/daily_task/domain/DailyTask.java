@@ -45,4 +45,47 @@ public class DailyTask extends BaseEntity {
     this.routineTaskId = routineTaskId;
     this.taskDate = taskDate;
   }
+
+  public static DailyTask create(Long routineTaskId, LocalDate taskDate, Integer currentValue) {
+    validateRequirements(routineTaskId, taskDate);
+    validateCurrentValue(currentValue);
+
+    return DailyTask.builder()
+        .routineTaskId(routineTaskId)
+        .taskDate(taskDate)
+        .currentValue(currentValue)
+        .build();
+  }
+
+  private static void validateRequirements(Long routineTaskId, LocalDate taskDate) {
+    if (routineTaskId == null) {
+      throw new IllegalArgumentException("루틴 태스크 ID는 필수입니다.");
+    }
+    if (taskDate == null) {
+      throw new IllegalArgumentException("태스크 날짜는 필수입니다.");
+    }
+  }
+
+  private static void validateCurrentValue(Integer progressValue) {
+    if (progressValue == null) {
+      throw new IllegalArgumentException("진행률 값은 필수입니다.");
+    }
+    if (progressValue < 0) {
+      throw new IllegalArgumentException("진행률 값은 0 이상이어야 합니다.");
+    }
+  }
+
+  public void update(Long routineTaskId, LocalDate taskDate, Integer newValue) {
+    validateRoutineIdentity(routineTaskId, taskDate);
+    validateCurrentValue(newValue);
+
+    this.currentValue = newValue;
+  }
+
+  private void validateRoutineIdentity(Long routineTaskId, LocalDate taskDate) {
+    validateRequirements(routineTaskId, taskDate);
+    if (!this.routineTaskId.equals(routineTaskId) || !this.taskDate.equals(taskDate)) {
+      throw new IllegalArgumentException("요청한 routineTaskId와 taskDate가 해당 DailyTask와 일치하지 않습니다.");
+    }
+  }
 }
