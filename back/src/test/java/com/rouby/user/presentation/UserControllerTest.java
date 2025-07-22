@@ -649,6 +649,27 @@ class UserControllerTest extends ControllerTestSupport {
         ));
   }
 
+  @WithMockCustomUser
+  @DisplayName("회원탈퇴 API")
+  @Test
+  void deleteUser() throws Exception {
+    Long userId = 1L;
+
+    doNothing().when(userFacade).delete(eq(userId));
+
+    // when
+    ResultActions resultActions = mockMvc.perform(patch("/api/v1/users/delete")
+        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+        .contentType(MediaType.APPLICATION_JSON));
+
+    // then
+    resultActions.andExpect(status().isNoContent())
+        .andDo(print())
+        .andDo(document("delete-user-204",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint())
+        ));
+  }
 
   @WithMockCustomUser
   @DisplayName("로그인 후 정보 조회 API")
@@ -691,8 +712,6 @@ class UserControllerTest extends ControllerTestSupport {
                 fieldWithPath("communicationTone[]").optional().description("말투 키워드 목록 예: [\"따듯하게\", \"존대\"]"),
                 fieldWithPath("onboardingStatePath").optional().description("온보딩 상태에 따라 이동할 프론트 라우팅 경로")
             )
-
-
         ));
   }
 
