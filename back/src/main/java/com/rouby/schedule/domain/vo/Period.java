@@ -38,11 +38,15 @@ public class Period {
     Assert.isTrue(result, "시작일시가 종료일시보다 늦을 수 없습니다.");
   }
 
-  public boolean isValidRoutineActivateDate(LocalDate routineActivateDate) {
-    return !routineActivateDate.isAfter(endAt.toLocalDate());
+  public boolean isValidRoutineOffsetDays(Integer routineOffsetDays) {
+    return !calcRoutineActivateDate(routineOffsetDays).isAfter(endAt.toLocalDate());
   }
 
   public boolean isValidUntil(LocalDateTime until) {
     return until.isAfter(endAt);
+  }
+
+  public LocalDate calcRoutineActivateDate(Integer routineOffsetDays) {
+    return this.startAt.toLocalDate().minusDays(routineOffsetDays);
   }
 }
