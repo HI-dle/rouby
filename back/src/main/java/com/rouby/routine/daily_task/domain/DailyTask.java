@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -14,7 +15,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "daily_tasks")
+@Table(name = "daily_tasks",
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "uk_routine_task_date",
+            columnNames = {"routine_task_id", "task_date"}
+        )
+    })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DailyTask extends BaseEntity {
