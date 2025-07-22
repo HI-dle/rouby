@@ -12,7 +12,7 @@ import { useDatePickerGestures } from '@/shared/composable/useDatePickerGestures
 import { useDatePickerSelectedDate } from '@/shared/composable/useDatePickerSelectedDate'
 import { useDatePickerDates } from '@/shared/composable/useDatePickerDates'
 
-const today = new Date()
+const today = ref(new Date())
 const isMonthly = ref(false)
 
 const props = defineProps({
@@ -27,7 +27,7 @@ const selectedDate = useDatePickerSelectedDate(props, emit, datePickStore)
 const baseDate = ref(selectedDate.value)
 
 const { currentMonthLabel } = useDatePickerDates(baseDate, selectedDate, today)
-const { selectDate, syncStoreOnWeeklyModeSwitch, handleBaseDateWatch } =
+const { selectDate, syncStoreOnModeSwitch, handleBaseDateWatch } =
   useDatePickerState({
     baseDate,
     selectedDate,
@@ -35,7 +35,7 @@ const { selectDate, syncStoreOnWeeklyModeSwitch, handleBaseDateWatch } =
     datePickStore,
   })
 
-watch(isMonthly, syncStoreOnWeeklyModeSwitch)
+watch(isMonthly, syncStoreOnModeSwitch)
 watch(baseDate, handleBaseDateWatch, { immediate: true })
 
 const prevWeek = () => (baseDate.value = subWeeks(baseDate.value, 1))

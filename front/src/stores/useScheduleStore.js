@@ -1,7 +1,10 @@
 import { reactive } from 'vue'
 import { defineStore } from 'pinia'
 import { format } from 'date-fns'
-import { expandSchedulesByDay } from '@/shared/utils/rruleUtils'
+import {
+  buildRRuleString,
+  expandSchedulesByDay,
+} from '@/shared/utils/rruleUtils'
 
 export const useScheduleStore = defineStore(
   'schedule',
@@ -21,19 +24,44 @@ export const useScheduleStore = defineStore(
      */
     const dailySchedules = reactive({})
 
+    // 서버 응답 원본 저장: 재계산이 필요할 때 활용
+    const rawSchedules = reactive({}) // { '2025-07': [schedule, ...] }
+
     /**
      * 월 단위로 기존 데이터 제거 후 새로 채움
      */
     const setMonthlySchedules = (monthKey, schedules) => {
       if (!Array.isArray(schedules)) return
 
-      const dailyMap = expandSchedulesByDay(schedules, monthKey)
-      dailySchedules[monthKey] = {}
-
-      for (const dateKey in dailyMap) {
-        dailySchedules[monthKey][dateKey] = dailyMap[dateKey]
-      }
+      const { dailyMap, rawMap } = expandSchedulesByDay(schedules, monthKey)
+      rawSchedules[monthKey] = rawMap
+      dailySchedules[monthKey] = dailyMap
     }
+
+    const addRawSchedule = (schedule) => {
+      if (!schedule || !schedule.startAt || !schedule.id) return
+
+      const date = new Date(schedule.startAt)
+      const monthKey = format(date, 'yyyy-MM')
+
+      if (schedule.recurrenceRule) {
+        schedule.recurrenceRule.rruleStr = buildRRuleString(
+          schedule.recurrenceRule,
+        )
+      }
+
+      if (!rawSchedules[monthKey]) {
+        rawSchedules[monthKey] = {}
+      }
+      rawSchedules[monthKey][schedule.id] = schedule
+
+      recalculateMonth(monthKey)
+    }
+
+    /**
+     * 월간 키 존재 여부 확인 (중복 조회 방지 등)
+     */
+    const hasMonth = (monthKey) => !!dailySchedules[monthKey]
 
     /**
      * 해당 월 전체 일정 리스트 반환 (flat)
@@ -60,19 +88,33 @@ export const useScheduleStore = defineStore(
      * instanceKey (ex. 14@2025-07-01)로 일정 1건 조회
      */
     const getScheduleInstanceByKey = (instanceKey) => {
+      if (!instanceKey || !instanceKey.includes('@')) return null
       const [, dateKey] = instanceKey.split('@')
       const monthKey = dateKey.slice(0, 7)
 
-      if (!dailySchedules) return null
       return dailySchedules?.[monthKey]?.[dateKey]?.[instanceKey] || null
+    }
+
+    /**
+     * (선택) 원본 스케줄 기준으로 다시 확장 계산
+     */
+    const recalculateMonth = (monthKey) => {
+      const base = rawSchedules[monthKey]
+      if (base) {
+        setMonthlySchedules(monthKey, Object.values(base))
+      }
     }
 
     return {
       dailySchedules,
+      rawSchedules,
       setMonthlySchedules,
+      addRawSchedule,
+      hasMonth,
       getMonthlySchedules,
       getSchedulesForDate,
       getScheduleInstanceByKey,
+      recalculateMonth,
     }
   },
   {
