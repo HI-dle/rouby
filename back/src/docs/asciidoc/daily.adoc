@@ -86,7 +86,7 @@ include::{snippets}/daily-task-progress-routine-task-not-found/http-request.adoc
 ===== 요청 필드
 include::{snippets}/daily-task-progress-routine-task-not-found/request-fields.adoc[]
 
-===== HTTP 응답 (409 conflict)
+===== HTTP 응답 (404 not found)
 include::{snippets}/daily-task-progress-routine-task-not-found/http-response.adoc[]
 
 ---
@@ -99,7 +99,7 @@ include::{snippets}/daily-task-progress-routine-task-access-denied/http-request.
 ===== 요청 필드
 include::{snippets}/daily-task-progress-routine-task-access-denied/request-fields.adoc[]
 
-===== HTTP 응답 (401 Unauthorized)
+===== HTTP 응답 (403 forbidden)
 include::{snippets}/daily-task-progress-routine-task-access-denied/http-response.adoc[]
 
 ---
@@ -112,7 +112,7 @@ include::{snippets}/daily-task-progress-daily-task-not-found/http-request.adoc[]
 ===== 요청 필드
 include::{snippets}/daily-task-progress-daily-task-not-found/request-fields.adoc[]
 
-===== HTTP 응답 (401 Unauthorized)
+===== HTTP 응답 (404 not found)
 include::{snippets}/daily-task-progress-daily-task-not-found/http-response.adoc[]
 
 ---
@@ -125,7 +125,7 @@ include::{snippets}/daily-task-progress-duplicate-task/http-request.adoc[]
 ===== 요청 필드
 include::{snippets}/daily-task-progress-duplicate-task/request-fields.adoc[]
 
-===== HTTP 응답 (401 Unauthorized)
+===== HTTP 응답 (409 conflict)
 include::{snippets}/daily-task-progress-duplicate-task/http-response.adoc[]
 
 ---
