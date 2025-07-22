@@ -36,9 +36,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.rouby.common.security.WithMockCustomUser;
 import com.rouby.common.support.ControllerTestSupport;
 import com.rouby.notification.email.application.exception.EmailException;
-import com.rouby.user.application.dto.info.UserCheckInfo;
 import com.rouby.user.application.dto.info.RoubySettingInfo;
 import com.rouby.user.application.dto.info.RoubySettingInfo.NotificationSettingInfo;
+import com.rouby.user.application.dto.info.UserCheckInfo;
 import com.rouby.user.application.exception.UserException;
 import com.rouby.user.domain.entity.OnboardingState;
 import com.rouby.user.presentation.dto.request.CreateUserRequest;
@@ -48,9 +48,8 @@ import com.rouby.user.presentation.dto.request.ResetPasswordRequest;
 import com.rouby.user.presentation.dto.request.SendEmailVerificationRequest;
 import com.rouby.user.presentation.dto.request.UpdateRoubySettingRequest;
 import com.rouby.user.presentation.dto.request.UpdateRoubySettingRequest.NotificationSettingRequest;
-import java.util.Set;
-import java.util.Set;
 import com.rouby.user.presentation.dto.request.VerifyEmailRequest;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -325,7 +324,6 @@ class UserControllerTest extends ControllerTestSupport {
     VerifyEmailRequest request = UserRequestFixture.toVerifyEmailRequest();
     String token = UserRequestFixture.VALID_EMAIL_TOKEN;
     when(userFacade.verifyEmail(request.toCommand())).thenReturn(token);
-
 
     // when
     ResultActions result = mockMvc.perform(post("/api/v1/users/email-verification/verify")
@@ -707,10 +705,14 @@ class UserControllerTest extends ControllerTestSupport {
                 fieldWithPath("id").description("유저 ID"),
                 fieldWithPath("email").description("이메일"),
                 fieldWithPath("nickname").optional().description("닉네임"),
-                fieldWithPath("healthStatusKeywords[]").optional().description("건강 상태 키워드 목록 예: [\"아토피\", \"ADHD\"]"),
-                fieldWithPath("profileKeywords[]").optional().description("프로필 키워드 목록 예: [\"취준\", \"이직\"]"),
-                fieldWithPath("communicationTone[]").optional().description("말투 키워드 목록 예: [\"따듯하게\", \"존대\"]"),
-                fieldWithPath("onboardingStatePath").optional().description("온보딩 상태에 따라 이동할 프론트 라우팅 경로")
+                fieldWithPath("healthStatusKeywords[]").optional()
+                    .description("건강 상태 키워드 목록 예: [\"아토피\", \"ADHD\"]"),
+                fieldWithPath("profileKeywords[]").optional()
+                    .description("프로필 키워드 목록 예: [\"취준\", \"이직\"]"),
+                fieldWithPath("communicationTone[]").optional()
+                    .description("말투 키워드 목록 예: [\"따듯하게\", \"존대\"]"),
+                fieldWithPath("onboardingStatePath").optional()
+                    .description("온보딩 상태에 따라 이동할 프론트 라우팅 경로")
             )
         ));
   }
