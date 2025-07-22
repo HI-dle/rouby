@@ -10,23 +10,6 @@ export const useDatePickStore = defineStore(
     const monthlySelected = ref({}) // key: '2024-07', value: '2024-07-01'
     const selectedDate = ref(null)
 
-    // actions
-    function setSelectedDate(baseDate, date, isMonthly = false) {
-      const key = isMonthly
-        ? format(date, 'yyyy-MM')
-        : format(startOfWeek(baseDate), 'yyyy-MM-dd')
-
-      const value = format(date, 'yyyy-MM-dd')
-
-      if (isMonthly) {
-        monthlySelected.value[key] = value
-      } else {
-        weeklySelected.value[key] = value
-      }
-
-      selectedDate.value = value
-    }
-
     function getSelectedDate(baseDate, isMonthly = false) {
       const key = isMonthly
         ? format(baseDate, 'yyyy-MM')
@@ -35,8 +18,12 @@ export const useDatePickStore = defineStore(
       return isMonthly ? monthlySelected.value[key] : weeklySelected.value[key]
     }
 
-    function setCurrentSelectedDate(date) {
+    function setSelectedDate(date) {
       selectedDate.value = format(date, 'yyyy-MM-dd')
+
+      monthlySelected.value[format(date, 'yyyy-MM')] = selectedDate.value
+      weeklySelected.value[format(startOfWeek(date), 'yyyy-MM-dd')] =
+        selectedDate.value
     }
 
     // getters
@@ -51,9 +38,8 @@ export const useDatePickStore = defineStore(
       selectedDate,
 
       // actions
-      setSelectedDate,
       getSelectedDate,
-      setCurrentSelectedDate,
+      setSelectedDate,
 
       // getters
       lastSelectedDate,

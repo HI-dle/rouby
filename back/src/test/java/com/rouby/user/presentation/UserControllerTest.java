@@ -13,6 +13,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -49,7 +50,10 @@ import com.rouby.user.presentation.dto.request.ResetPasswordRequest;
 import com.rouby.user.presentation.dto.request.SendEmailVerificationRequest;
 import com.rouby.user.presentation.dto.request.UpdateRoubySettingRequest;
 import com.rouby.user.presentation.dto.request.UpdateRoubySettingRequest.NotificationSettingRequest;
+import com.rouby.user.presentation.dto.request.UpdateMyUserInfoRequest;
 import com.rouby.user.presentation.dto.request.VerifyEmailRequest;
+import java.util.Set;
+import java.time.LocalTime;
 import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -809,5 +813,52 @@ class UserControllerTest extends ControllerTestSupport {
             getErrorResponseFieldSnippet()
         ));
   }
+
+  @WithMockCustomUser
+  @DisplayName("회원 정보 수정 API - 204 No Content")
+  @Test
+  void updateUserInfo() throws Exception {
+    // given
+    Long userId = 1L;
+
+    UpdateMyUserInfoRequest request = new UpdateMyUserInfoRequest(
+        "루비짱",
+        Set.of("스트레스", "우울감"),
+        Set.of("자기개발", "명상"),
+        LocalTime.of(7, 0),
+        LocalTime.of(23, 0)
+    );
+
+    willDoNothing()
+        .given(userFacade)
+        .updateMyUserInfo(argThat(command ->
+            command.updaterId().equals(userId) &&
+                command.nickname().equals("루비짱")
+        ));
+
+    // when
+    ResultActions resultActions = mockMvc.perform(
+        patch("/api/v1/users/user-info")
+            .header("Authorization", "Bearer {ACCESS_TOKEN}")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request))
+    );
+
+    // then
+    resultActions
+        .andExpect(status().isNoContent())
+        .andDo(print())
+        .andDo(document("user-info-update-204",
+            preprocessRequest(prettyPrint()),
+            requestFields(
+                fieldWithPath("nickname").description("닉네임 (최대 20자)"),
+                fieldWithPath("healthStatusKeywords[]").description("건강 상태 키워드 목록 예: [\"스트레스\", \"우울감\"]"),
+                fieldWithPath("profileKeywords[]").description("프로필 키워드 목록 예: [\"자기개발\", \"명상\"]"),
+                fieldWithPath("dailyStartTime").description("하루 시작 시간 (예: 07:00)"),
+                fieldWithPath("dailyEndTime").description("하루 종료 시간 (예: 23:00)")
+            )
+        ));
+  }
+
 
 }
