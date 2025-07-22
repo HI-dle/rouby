@@ -33,8 +33,8 @@ public record SchedulesInfo(
         .memo(schedule.memo())
         .startAt(schedule.startAt())
         .endAt(schedule.endAt())
-        .routineActivateDate(schedule.routineActivateDate())
-        .alarmOffsetMinutes(schedule.alarmOffsetType().getMinutes())
+        .routineOffsetDays(schedule.routineOffsetDays())
+        .alarmOffsetMinutes(schedule.alarmOffsetType() == null ? null : schedule.alarmOffsetType().getMinutes())
         .recurrenceRule(mapToRRuleInfo(schedule.recurrenceRule()))
         .scheduleOverrides(
             schedule.scheduleOverrides().stream()
@@ -49,7 +49,7 @@ public record SchedulesInfo(
     if (rrule == null) return null;
 
     return RecurrenceRuleInfo.builder()
-        .freq(rrule.getFreq().toString())
+        .freq(rrule.getFreq() == null ? null : rrule.getFreq().toString())
         .interval(rrule.getInterval())
         .until(rrule.getUntil())
         .byDay(rrule.getByDay() == null
@@ -57,6 +57,7 @@ public record SchedulesInfo(
             : rrule.getByDay().stream()
             .map(Enum::toString)
             .collect(Collectors.toSet()))
+        .rruleStr(rrule.toRruleString())
         .build();
   }
 
@@ -68,7 +69,8 @@ public record SchedulesInfo(
         .endAt(override.endAt())
         .title(override.title())
         .memo(override.memo())
-        .alarmOffsetMinutes(override.alarmOffsetType().getMinutes())
+        .routineOffsetDays(override.routineOffsetDays())
+        .alarmOffsetMinutes(override.alarmOffsetType() == null ? null : override.alarmOffsetType().getMinutes())
         .overrideDate(override.overrideDate())
         .overrideType(override.overrideType().toString())
         .build();
@@ -83,7 +85,7 @@ public record SchedulesInfo(
       String memo,
       LocalDateTime startAt,
       LocalDateTime endAt,
-      LocalDate routineActivateDate,
+      Integer routineOffsetDays,
       Integer alarmOffsetMinutes,
       RecurrenceRuleInfo recurrenceRule,
       List<ScheduleOverrideInfo> scheduleOverrides
@@ -95,7 +97,8 @@ public record SchedulesInfo(
       String freq,
       Set<String> byDay,
       Integer interval,
-      LocalDateTime until
+      LocalDateTime until,
+      String rruleStr
   ) {
   }
 
@@ -107,6 +110,7 @@ public record SchedulesInfo(
       String memo,
       LocalDateTime startAt,
       LocalDateTime endAt,
+      Integer routineOffsetDays,
       Integer alarmOffsetMinutes,
       String overrideType,
       LocalDate overrideDate

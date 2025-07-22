@@ -40,7 +40,7 @@ public class ScheduleTestDataFactory {
         )
         .build();
 
-    ReflectionTestUtils.setField(schedule, "routineActivateDate", LocalDate.now().minusMonths(3).plusDays(index));
+    ReflectionTestUtils.setField(schedule, "routineOffsetDays", 3);
     if (index % 4 == 0) {
       ReflectionTestUtils.setField(schedule, "children", List.of(createScheduleOverride(schedule, index)));
     }
@@ -65,6 +65,7 @@ public class ScheduleTestDataFactory {
         .overrideType(OverrideType.MODIFIED)
         .build()
     );
+    ReflectionTestUtils.setField(override, "routineOffsetDays", 3);
     ReflectionTestUtils.setField(override, "parentSchedule", parent);
 
     return override;

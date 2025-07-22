@@ -33,7 +33,7 @@ public record SchedulesResponse(
         .alarmOffsetMinutes(info.alarmOffsetMinutes())
         .startAt(info.startAt())
         .endAt(info.endAt())
-        .routineActivateDate(info.routineActivateDate())
+        .routineOffsetDays(info.routineOffsetDays())
         .recurrenceRule(
             mapToRRuleResponse(info.recurrenceRule())
         )
@@ -54,6 +54,7 @@ public record SchedulesResponse(
         .until(rRuleInfo.until())
         .interval(rRuleInfo.interval())
         .byDay(rRuleInfo.byDay())
+        .rruleStr(rRuleInfo.rruleStr())
         .build();
   }
 
@@ -66,6 +67,7 @@ public record SchedulesResponse(
         .title(override.title())
         .memo(override.memo())
         .alarmOffsetMinutes(override.alarmOffsetMinutes())
+        .routineOffsetDays(override.routineOffsetDays())
         .overrideDate(override.overrideDate())
         .overrideType(override.overrideType())
         .build();
@@ -80,7 +82,7 @@ public record SchedulesResponse(
       String memo,
       LocalDateTime startAt,
       LocalDateTime endAt,
-      LocalDate routineActivateDate,
+      Integer routineOffsetDays,
       Integer alarmOffsetMinutes,
       RecurrenceRuleResponse recurrenceRule,
       List<ScheduleOverrideResponse> scheduleOverrides
@@ -92,7 +94,8 @@ public record SchedulesResponse(
       String freq,
       Set<String> byDay,
       Integer interval,
-      LocalDateTime until
+      LocalDateTime until,
+      String rruleStr
   ) {
   }
 
@@ -104,6 +107,7 @@ public record SchedulesResponse(
       String memo,
       LocalDateTime startAt,
       LocalDateTime endAt,
+      Integer routineOffsetDays,
       Integer alarmOffsetMinutes,
       String overrideType,
       LocalDate overrideDate
