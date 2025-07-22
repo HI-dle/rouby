@@ -5,6 +5,9 @@ import {
 } from '@/shared/utils/dateTimeUtils'
 import { validateForm } from './validations'
 import { createSchedule } from './scheduleService'
+import { useScheduleStore } from '@/stores/useScheduleStore'
+
+const { addRawSchedule } = useScheduleStore()
 
 export const useScheduleForm = () => {
   const createInitialForm = () => {
@@ -53,9 +56,12 @@ export const useScheduleForm = () => {
 
     isSubmitting.value = true
     try {
-      const scheduleId = await createSchedule(form)
-      onSuccess?.(scheduleId)
-      return scheduleId
+      const schedule = await createSchedule(form)
+      addRawSchedule(schedule)
+
+      await nextTick()
+      onSuccess?.(schedule.id)
+      return schedule.id
     } catch (err) {
       const msg = err.response?.data?.message || err.message || '저장 실패'
       onError?.(msg)
