@@ -7,10 +7,12 @@ import com.rouby.user.presentation.dto.request.FindPasswordRequest;
 import com.rouby.user.presentation.dto.request.ResetPasswordByTokenRequest;
 import com.rouby.user.presentation.dto.request.ResetPasswordRequest;
 import com.rouby.user.presentation.dto.request.SendEmailVerificationRequest;
+import com.rouby.user.presentation.dto.request.UpdateMyUserInfoRequest;
 import com.rouby.user.presentation.dto.request.UpdateRoubySettingRequest;
 import com.rouby.user.presentation.dto.response.RoubySettingResponse;
 import com.rouby.user.presentation.dto.response.UserCheckResponse;
 import com.rouby.user.presentation.dto.request.VerifyEmailRequest;
+import com.rouby.user.presentation.dto.response.UserCheckResponse;
 import com.rouby.user.presentation.dto.response.VerifyEmailTokenResponse;
 import com.rouby.user.presentation.validation.StartsWith;
 import jakarta.validation.Valid;
@@ -110,6 +112,16 @@ public class UserController {
       @AuthenticationPrincipal SecurityUser securityUser) {
     return ResponseEntity.ok(
         UserCheckResponse.from(userFacade.userInfoCheck(securityUser.getId())));
+  }
+
+  @PatchMapping("/user-info")
+  @PreAuthorize("hasAnyRole('USER')")
+  public ResponseEntity<Void> updateUserInfo(
+      @AuthenticationPrincipal SecurityUser securityUser,
+      @RequestBody @Valid UpdateMyUserInfoRequest request
+  ) {
+    userFacade.updateMyUserInfo(request.toCommand(securityUser.getId()));
+    return ResponseEntity.noContent().build();
   }
 
   @PreAuthorize("hasAnyRole('USER')")

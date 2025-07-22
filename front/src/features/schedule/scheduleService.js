@@ -5,15 +5,16 @@ import { format } from 'date-fns'
 
 export const createSchedule = wrapApi(async (form) => {
   const payload = toCreateSchedulePayload(form)
+  console.log(payload)
   const res = await createApi(payload)
   const scheduleId = res.headers['location']?.split('/').filter(Boolean).pop()
-  return scheduleId
+  return { id: scheduleId, ...payload }
 }, {})
 
-export const getSchedules = wrapApi(async (s, e) => {
+export const getSchedules = wrapApi(async (fromAt, toAt) => {
   const res = await getApi({
-    fromAt: format(s, "yyyy-MM-dd'T'HH:mm:ss"),
-    toAt: format(e, "yyyy-MM-dd'T'HH:mm:ss"),
+    fromAt: format(fromAt, "yyyy-MM-dd'T'HH:mm:ss"),
+    toAt: format(toAt, "yyyy-MM-dd'T'HH:mm:ss"),
   })
   return res
 }, {})

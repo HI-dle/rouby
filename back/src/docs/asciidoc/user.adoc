@@ -256,6 +256,19 @@ include::{snippets}/find-password-email-send-limit-fail/http-response.adoc[]
 
 ---
 
+== 회원 정보 수정 API
+=== 성공
+==== HTTP 요청
+include::{snippets}/user-info-update-204/http-request.adoc[]
+
+==== 요청 필드
+include::{snippets}/user-info-update-204/request-fields.adoc[]
+
+==== HTTP 응답 (204 NoContent)
+include::{snippets}/user-info-update-204/http-response.adoc[]
+
+---
+
 == 유저 정보 설정 완료 API
 === 성공
 ==== HTTP 요청

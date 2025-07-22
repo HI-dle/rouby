@@ -39,14 +39,27 @@ const router = createRouter({
                 import('@/features/schedule/views/DailyScheduleView.vue'),
             },
             {
-              path: '/schedule/:id/:date',
-              name: 'ScheduleDetail',
+              path: ':id/:date',
+              name: 'schedule-modify',
               component: () =>
                 import('@/features/schedule/views/ModifyScheduleView.vue'),
               props: (route) => ({
                 id: Number(route.params.id),
                 date: route.params.date,
               }),
+            },
+          ],
+        },
+        {
+          path: 'routine-task',
+          component: () => import('@/features/routine/views/RoutineLayout.vue'),
+          redirect: '/routine/daily',
+          children: [
+            {
+              path: 'create',
+              name: 'routine-task',
+              component: () =>
+                import('@/features/routine/views/DailyRoutineView.vue'),
             },
           ],
         },

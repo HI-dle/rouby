@@ -47,3 +47,16 @@ content-type: application/json
   "email": "{{valid-email}}",
   "password": "{{valid-password}}"
 }
+
+### 유저정보 업데이트
+PATCH http://localhost:8080/api/v1/users/user-info
+Content-Type: application/json
+Authorization: {{access_token}}
+
+{
+  "nickname": "루비짱",
+  "healthStatusKeywords": ["스트레스", "우울감"],
+  "profileKeywords": ["운동", "명상"],
+  "dailyStartTime": "07:00",
+  "dailyEndTime": "23:00"
+}

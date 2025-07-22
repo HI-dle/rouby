@@ -1,5 +1,5 @@
 <script setup>
-import { CalendarClock, Calendar, Bell, RefreshCw } from 'lucide-vue-next'
+import { CalendarClock, Calendar, Bell, RefreshCw, Info } from 'lucide-vue-next'
 import SelectBox from '@/components/common/SelectBox.vue'
 import ToggleSwitch from '@/components/common/ToggleSwitch.vue'
 import { alarmOptions, repeatOptions } from '../constants'
@@ -46,7 +46,9 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
       />
 
       <div>
-        <div class="grid grid-cols-[2fr_4fr] gap-4 xxs:grid-cols-[4fr_4fr]">
+        <div
+          class="grid grid-cols-[2fr_4fr] gap-4 xs:grid-cols-[3fr_4fr] xxs:grid-cols-[4fr_4fr]"
+        >
           <!-- 하루종일 -->
           <div class="flex justify-normal items-center">
             <div class="flex items-center gap-2 mx-2 h-9">
@@ -93,7 +95,9 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
       <hr class="bg-border-color" />
 
       <!-- 알림 -->
-      <div class="grid grid-cols-[2fr_4fr] gap-4 xxs:grid-cols-[4fr_4fr]">
+      <div
+        class="grid grid-cols-[2fr_4fr] gap-4 xs:grid-cols-[3fr_4fr] xxs:grid-cols-[4fr_4fr]"
+      >
         <div class="flex justify-normal items-center">
           <div class="mx-2 h-9 flex items-center justify-center">
             <Bell class="w-4 h-4 text-content-color" />
@@ -110,7 +114,9 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
       </div>
 
       <!-- 반복 -->
-      <div class="grid grid-cols-[2fr_4fr] gap-4 xxs:grid-cols-[4fr_4fr]">
+      <div
+        class="grid grid-cols-[2fr_4fr] gap-4 xs:grid-cols-[3fr_4fr] xxs:grid-cols-[4fr_4fr]"
+      >
         <div class="flex justify-normal items-center">
           <div class="mx-2 h-9 flex items-center justify-center">
             <RefreshCw class="w-4 h-4 text-content-color" />
@@ -128,14 +134,29 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
 
       <!-- 루틴 시작 -->
       <div>
-        <div class="grid grid-cols-[2fr_4fr] gap-4 xxs:grid-cols-[4fr_4fr]">
+        <div
+          class="grid grid-cols-[2fr_4fr] gap-4 xs:grid-cols-[3fr_4fr] xxs:grid-cols-[4fr_4fr]"
+        >
           <div class="flex justify-normal items-center">
             <div class="mx-2 h-9 flex items-center justify-center">
               <Calendar class="w-4 h-4 text-content-color" />
             </div>
-            <label class="ml-2 text-base font-semibold text-content-color"
-              >루틴 시작</label
-            >
+            <div class="relative group flex items-center">
+              <label class="ml-2 text-base font-semibold text-content-color"
+                >루틴 시작</label
+              >
+              <div class="flex items-center p-2 xxs:p-1 xxxs:hidden">
+                <Info class="w-3 h-3 text-gray-400" />
+              </div>
+              <div
+                class="absolute top-full xs:min-w-[280px] min-w-[380px] max-w-[400px] -left-12 right-3 mt-2 hidden group-hover:block px-2 py-1 rounded bg-main-color text-white text-xs shadow z-20 whitespace-normal break-words text-center"
+              >
+                <p class="max-w-[380px] xs:max-w-[280px]">
+                  이 일정이 루틴에 언제부터 반영되어야 할지 알려주시면, 루비가
+                  참고할게요.
+                </p>
+              </div>
+            </div>
           </div>
           <input
             :ref="(el) => (inputRefs.routineStart = el)"
