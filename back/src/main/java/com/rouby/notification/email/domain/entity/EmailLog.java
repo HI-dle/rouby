@@ -9,6 +9,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -17,7 +18,12 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "email_log")
+@Table(
+    name = "email_log",
+    indexes = {
+        @Index(name = "idx_email_created_at", columnList = "email_address, created_at")
+    }
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EmailLog extends LogBaseEntity {
 
