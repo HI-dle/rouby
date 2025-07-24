@@ -16,7 +16,7 @@ public record ScheduleWithOverrides(
     String memo,
     LocalDateTime startAt,
     LocalDateTime endAt,
-    LocalDate routineActivateDate,
+    Integer routineOffsetDays,
     AlarmOffsetType alarmOffsetType,
     RecurrenceRule recurrenceRule,
     List<ScheduleOverride> scheduleOverrides
@@ -30,6 +30,7 @@ public record ScheduleWithOverrides(
       String memo,
       LocalDateTime startAt,
       LocalDateTime endAt,
+      Integer routineOffsetDays,
       AlarmOffsetType alarmOffsetType,
       OverrideType overrideType,
       LocalDate overrideDate

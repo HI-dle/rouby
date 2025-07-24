@@ -5,7 +5,6 @@ import com.rouby.schedule.domain.enums.ByDay;
 import com.rouby.schedule.domain.enums.Freq;
 import com.rouby.schedule.domain.vo.Period;
 import com.rouby.schedule.domain.vo.RecurrenceRule;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.Builder;
 
@@ -14,7 +13,7 @@ public record CreateScheduleCommand(
     String title,
     String memo,
     Integer alarmOffsetMinutes,
-    LocalDate routineActivateDate,
+    Integer routineOffsetDays,
     LocalDateTime startAt,
     LocalDateTime endAt,
     RecurrenceRuleCommand recurrenceRule
@@ -29,7 +28,7 @@ public record CreateScheduleCommand(
         .title(title)
         .memo(memo)
         .alarmOffsetMinutes(alarmOffsetMinutes)
-        .routineActivateDate(routineActivateDate)
+        .routineOffsetDays(routineOffsetDays)
         .period(Period.builder()
             .startAt(startAt)
             .endAt(endAt)

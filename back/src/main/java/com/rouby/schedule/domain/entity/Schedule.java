@@ -54,11 +54,12 @@ public class Schedule extends BaseEntity {
   @Embedded
   private Period period;
 
-  private LocalDate routineActivateDate;
+  private Integer routineOffsetDays;
 
   @Enumerated(EnumType.STRING)
   private AlarmOffsetType alarmOffsetType;
 
+  @Embedded
   @JdbcTypeCode(SqlTypes.JSON)
   @Column(columnDefinition = "jsonb")
   private RecurrenceRule recurrenceRule;
@@ -75,13 +76,13 @@ public class Schedule extends BaseEntity {
 
   @Builder
   private Schedule(Long userId, String title, String memo, Period period,
-      LocalDate routineActivateDate, Integer alarmOffsetMinutes, RecurrenceRule recurrenceRule) {
+      Integer routineOffsetDays, Integer alarmOffsetMinutes, RecurrenceRule recurrenceRule) {
 
     this.userId = userId;
     this.title = title;
     this.memo = memo;
     this.period = period;
-    this.routineActivateDate = routineActivateDate;
+    this.routineOffsetDays = routineOffsetDays;
     this.alarmOffsetType = alarmOffsetMinutes != null ? AlarmOffsetType.parse(alarmOffsetMinutes) : null;
     this.recurrenceRule = recurrenceRule;
 
@@ -90,8 +91,8 @@ public class Schedule extends BaseEntity {
 
   private void validate() {
 
-    if (routineActivateDate != null) {
-      if (!period.isValidRoutineActivateDate(routineActivateDate)) {
+    if (routineOffsetDays != null) {
+      if (!period.isValidRoutineOffsetDays(routineOffsetDays)) {
         throw new IllegalArgumentException("루틴 활성 일자가 일정보다 나중일 수 없습니다.");
       }
       if (isRoutineActivateDateOneMoreDayBefore()) {
@@ -117,6 +118,6 @@ public class Schedule extends BaseEntity {
   }
 
   private boolean isRoutineActivateDateOneMoreDayBefore() {
-    return routineActivateDate.isBefore(LocalDate.now().minusDays(1));
+    return period.getStartAt().toLocalDate().minusDays(routineOffsetDays).isBefore(LocalDate.now().minusDays(1));
   }
 }

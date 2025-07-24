@@ -10,7 +10,6 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.Builder;
 
@@ -20,7 +19,7 @@ public record CreateScheduleRequest (
   @NotBlank @Size(max = 500) String title,
   @Size(max = 10_000) String memo,
   @PositiveOrZero @Max(10080) Integer alarmOffsetMinutes,
-  LocalDate routineActivateDate,
+  Integer routineOffsetDays,
   @NotNull LocalDateTime startAt,
   @NotNull LocalDateTime endAt,
   RecurrenceRuleRequest recurrenceRule
@@ -31,7 +30,7 @@ public record CreateScheduleRequest (
         .title(title)
         .memo(memo)
         .alarmOffsetMinutes(alarmOffsetMinutes)
-        .routineActivateDate(routineActivateDate)
+        .routineOffsetDays(routineOffsetDays)
         .startAt(startAt)
         .endAt(endAt)
         .recurrenceRule((recurrenceRule != null) ? recurrenceRule.toCommand() : null)
