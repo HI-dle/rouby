@@ -28,6 +28,7 @@
 </template>
 
 <script setup>
+import { watch } from 'vue'
 import { useKeywordForm } from '@/shared/composable/useKeywordForm.js'
 import KeywordTag from '@/components/common/KeywordTag.vue'
 import UserSettingInput from '@/components/common/UserSettingInput.vue'
@@ -42,7 +43,28 @@ const {
   keywords,
   handleSubmit,
   removeKeyword,
-} = useKeywordForm(3)
+} = useKeywordForm(store.speechType ?? [], 3)
+
+watch(
+  () => store.speechType,
+  (newVal) => {
+    if (
+      newVal &&
+      JSON.stringify(newVal) !== JSON.stringify(keywords.value)
+    ) {
+      keywords.value = [...newVal]
+    }
+  },
+  { immediate: true }
+)
+
+watch(
+  keywords,
+  (newKeywords) => {
+    store.speechType = [...newKeywords]
+  },
+  { deep: true }
+)
 
 const onNextClick = () => {
   if (keywords.value.length === 0) {
@@ -51,11 +73,11 @@ const onNextClick = () => {
   }
 
   store.speechType = [...keywords.value]
-
   console.log('키워드 저장 후 true 반환')
   return true
 }
 
 defineExpose({ onNextClick })
 </script>
+
 

@@ -1,9 +1,9 @@
 import { ref } from 'vue'
 import { isValidKeyword } from '@/shared/composable/useKeywordValidator.js'
 
-export function useKeywordForm(maxKeywordCount = 10) {
+export function useKeywordForm(initialKeywords = [], maxKeywordCount = 10) {
   const keyword = ref('')
-  const keywords = ref([])
+  const keywords = ref([...initialKeywords])
   const keywordError = ref('')
 
   const handleSubmit = () => {

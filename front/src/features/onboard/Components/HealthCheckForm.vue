@@ -33,11 +33,11 @@
 </template>
 
 <script setup>
+import { watch } from 'vue'
 import { useKeywordForm } from '@/shared/composable/useKeywordForm.js'
 import KeywordTag from '@/components/common/KeywordTag.vue'
 import UserSettingInput from '@/components/common/UserSettingInput.vue'
 import FieldError from '@/components/common/FieldError.vue'
-import { watch } from 'vue'
 import { useOnboardStore } from '@/features/onboard/store/useOnboardStore'
 
 const store = useOnboardStore()
@@ -50,14 +50,39 @@ const props = defineProps({
   },
 })
 
+// 피니아 저장소에 저장된 초기 키워드를 초기값으로 넘기고, 최대 10개 제한
 const {
   keyword,
   keywordError,
   keywords,
   handleSubmit,
   removeKeyword,
-} = useKeywordForm()
+} = useKeywordForm(store.selectedHealth ?? [], 10)
 
+// store.selectedHealth가 변경되면 keywords도 동기화 (초기값 이후 변경 반영용)
+watch(
+  () => store.selectedHealth,
+  (newVal) => {
+    if (
+      newVal &&
+      JSON.stringify(newVal) !== JSON.stringify(keywords.value)
+    ) {
+      keywords.value = [...newVal]
+    }
+  },
+  { immediate: true }
+)
+
+// keywords 변경 시 피니아 저장소에 반영
+watch(
+  keywords,
+  (newKeywords) => {
+    store.selectedHealth = [...newKeywords]
+  },
+  { deep: true }
+)
+
+// 다음 단계 버튼 등에서 호출하는 함수
 const onNextClick = () => {
   if (keywords.value.length === 0) {
     alert('건강 상태를 최소 1개 이상 입력해주세요!')
@@ -65,11 +90,9 @@ const onNextClick = () => {
   }
 
   store.selectedHealth = [...keywords.value]
-
   console.log('키워드 저장 후 true 반환')
   return true
 }
 
 defineExpose({ onNextClick })
 </script>
-
