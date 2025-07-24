@@ -1,14 +1,12 @@
 <template>
   <div class="main-container">
     <div class="sub-main-container">
-
       <div class="mt-32">
         <NicknameSettingForm
           ref="nicknameFormRef"
           v-model="nickname" />
       </div>
 
-      <!-- 다음 단계 이동 -->
       <div class="w-full mt-10 pt-10 text-center">
         <button
           @click="goNext"
@@ -21,21 +19,37 @@
   </div>
 </template>
 
+
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import NicknameSettingForm from '@/features/onboard/Components/NicknameSettingForm.vue'
+import { useOnboardStore } from '@/features/onboard/store/useOnboardStore'
 
-const nickname = ref('')
-const nicknameFormRef = ref(null)
+const store = useOnboardStore()
 const router = useRouter()
 
+const nickname = ref(store.userName)
+
+watch(
+  () => store.userName,
+  (val) => {
+    if (val !== nickname.value) nickname.value = val
+  }
+)
+
+watch(
+  nickname,
+  (val) => {
+    if (val !== store.userName) store.userName = val
+  }
+)
+
+const nicknameFormRef = ref(null)
+
 const goNext = () => {
-  // 닉네임 유효성 검사 실패 시 이동 막기
   const isValid = nicknameFormRef.value?.validate()
   if (!isValid) return
-
-  // router 이동만 수행
   router.push('/onboarding/health-check')
 }
 </script>

@@ -146,10 +146,29 @@ const router = createRouter({
             import('@/features/onboard/views/OnboardProfileSettingView.vue'),
         },
         {
-          path: 'date-setting',
-          name: 'date-setting',
-          component: () =>
-            import('@/features/onboard/views/OnboardDateSettingView.vue'),
+          path: 'start-date-setting',
+          name: 'start-date-setting',
+          component: () => import('@/features/onboard/views/OnboardDateStartSettingView.vue'),
+        },
+        {
+          path: 'end-date-setting',
+          name: 'end-date-setting',
+          component: () => import('@/features/onboard/views/OnboardDateEndSettingView.vue'),
+        },
+        {
+          path: 'speech-setting',
+          name: 'speech-setting',
+          component: () => import('@/features/onboard/views/OnboardSpeechSettingView.vue'),
+        },
+        {
+          path: 'alarm-setting',
+          name: 'alarm-setting',
+          component: () => import('@/features/onboard/views/OnboardAlarmSettingView.vue'),
+        },
+        {
+          path: 'calender-setting',
+          name: 'calender-setting',
+          component: () => import('@/features/onboard/views/OnboardCalendarView.vue'),
         },
         {
           path: 'setting/rouby',

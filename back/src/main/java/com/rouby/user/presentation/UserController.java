@@ -139,4 +139,5 @@ public class UserController {
     userFacade.completeInitialRoubySetting(securityUser.getId());
     return ResponseEntity.ok().build();
   }
+
 }
