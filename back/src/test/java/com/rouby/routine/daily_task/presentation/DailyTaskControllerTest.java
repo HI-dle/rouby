@@ -5,8 +5,8 @@ import static com.rouby.routine.daily_task.application.exception.DailyTaskErrorC
 import static com.rouby.routine.routine_task.application.exception.RoutineTaskErrorCode.ROUTINE_TASK_ACCESS_DENIED;
 import static com.rouby.routine.routine_task.application.exception.RoutineTaskErrorCode.ROUTINE_TASK_NOT_FOUND;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -37,8 +37,8 @@ class DailyTaskControllerTest extends ControllerTestSupport {
 
     // given
     ProgressDailyTaskRequest request = DailyTaskRequestFixture.createRequest();
-    doNothing().when(dailyTaskFacade).progressDailyTask(any());
-
+    when(dailyTaskFacade.progressDailyTask(any()))
+        .thenReturn(DailyTaskRequestFixture.VALID_ROUTINE_TASK_ID);
     // when and then
     mockMvc.perform(post("/api/v1/daily-task/progress")
             .header("Authorization", "Bearer {ACCESS_TOKEN}")
@@ -68,7 +68,8 @@ class DailyTaskControllerTest extends ControllerTestSupport {
 
     // given
     ProgressDailyTaskRequest request = DailyTaskRequestFixture.updateRequest();
-    doNothing().when(dailyTaskFacade).progressDailyTask(any());
+    when(dailyTaskFacade.progressDailyTask(any()))
+        .thenReturn(DailyTaskRequestFixture.VALID_ROUTINE_TASK_ID);
 
     // when and then
     mockMvc.perform(post("/api/v1/daily-task/progress")
