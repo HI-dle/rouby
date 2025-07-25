@@ -15,13 +15,13 @@ public class DailyTaskFacade {
   private final DailyTaskWriteService dailyTaskWriteService;
   private final RoutineTaskReadService routineTaskReadService;
 
-  public void progressDailyTask(ProgressDailyTaskCommand command) {
+  public Long progressDailyTask(ProgressDailyTaskCommand command) {
     routineTaskReadService.ensureRoutineTaskOwner(command.routineTaskId(), command.userId());
 
     if (command.id() == null) {
-      dailyTaskWriteService.createDailyTask(command.toCreate());
+      return dailyTaskWriteService.createDailyTask(command.toCreate());
     } else {
-      dailyTaskWriteService.updateDailyTask(command.toUpdate());
+      return dailyTaskWriteService.updateDailyTask(command.toUpdate());
     }
   }
 }

@@ -20,25 +20,26 @@ public class DailyTaskWriteService {
   private final DailyTaskRepository dailyTaskRepository;
 
   @Transactional
-  public void createDailyTask(CreateDailyTaskCommand command) {
+  public Long createDailyTask(CreateDailyTaskCommand command) {
     ensureNoDuplicateDailyTask(command.routineTaskId(), command.taskDate());
     DailyTask dailyTask = DailyTask.create(
         command.routineTaskId(), command.taskDate(), command.currentValue());
 
-    dailyTaskRepository.save(dailyTask);
+    return dailyTaskRepository.save(dailyTask).getId();
   }
 
   private void ensureNoDuplicateDailyTask(Long routineTaskId, LocalDate taskDate) {
-    if(dailyTaskRepository.existsByRoutineTaskIdAndTaskDate(routineTaskId, taskDate)){
+    if (dailyTaskRepository.existsByRoutineTaskIdAndTaskDate(routineTaskId, taskDate)) {
       throw DailyTaskException.from(DUPLICATE_DAILY_TASK);
     }
   }
 
   @Transactional
-  public void updateDailyTask(UpdateDailyTaskCommand command) {
+  public Long updateDailyTask(UpdateDailyTaskCommand command) {
     DailyTask dailyTask = dailyTaskRepository.findByIdAndDeletedAtIsNull(command.id())
         .orElseThrow(() -> DailyTaskException.from(DAILY_TASK_NOT_FOUND));
 
     dailyTask.update(command.routineTaskId(), command.taskDate(), command.currentValue());
+    return dailyTask.getId();
   }
 }

@@ -2,6 +2,7 @@ package com.rouby.routine.daily_task.presentation;
 
 import com.rouby.routine.daily_task.application.facade.DailyTaskFacade;
 import com.rouby.routine.daily_task.presentation.dto.ProgressDailyTaskRequest;
+import com.rouby.routine.daily_task.presentation.dto.ProgressDailyTaskResponse;
 import com.rouby.user.infrastructure.security.dto.SecurityUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +23,14 @@ public class DailyTaskController {
 
   @PostMapping("/progress")
   @PreAuthorize("hasAnyRole('USER')")
-  public ResponseEntity<Void> progressDailyTask(
+  public ResponseEntity<ProgressDailyTaskResponse> progressDailyTask(
       @AuthenticationPrincipal SecurityUser securityUser,
       @RequestBody @Valid ProgressDailyTaskRequest request) {
 
-    dailyTaskFacade.progressDailyTask(request.toCommand(securityUser.getId()));
-    return ResponseEntity.ok().build();
+    return ResponseEntity.ok(
+        ProgressDailyTaskResponse.from(
+            dailyTaskFacade.progressDailyTask(request.toCommand(securityUser.getId()))
+        )
+    );
   }
 }
