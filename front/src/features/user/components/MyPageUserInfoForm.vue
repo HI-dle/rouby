@@ -45,7 +45,7 @@ onMounted(() => {
     <hr class="my-6 border-t border-gray-300" />
     <!-- 건강 상태 메모 -->
     <div class="flex flex-wrap gap-2 mt-4">
-      <h2 class="text-lg font-semibold text-content-color">건강 상태 메모</h2>
+      <div class="w-[100%]"><h2 class="text-lg font-semibold text-content-color">건강 상태 메모</h2></div>
       <KeywordTag
         v-for="tag in healthStatusKeywords"
         :key="tag"
@@ -69,7 +69,7 @@ onMounted(() => {
     <hr class="my-6 border-t border-gray-300" />
 
     <div class="flex flex-wrap gap-2 mt-4">
-      <h2 class="text-lg font-semibold text-content-color">관심 태그</h2>
+      <div class="w-[100%]"><h2 class="text-lg font-semibold text-content-color">관심 태그</h2></div>
       <KeywordTag
         v-for="tag in profileKeywords"
         :key="tag"
