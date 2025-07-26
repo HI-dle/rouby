@@ -9,15 +9,24 @@ const router = createRouter({
       redirect: '/routine/daily',
       children: [
         {
-          path: '/user',
+          path: 'user',
           component: () => import('@/features/user/views/UserLayout.vue'),
           children: [
             {
-              path: 'password/reset',
-              name: 'password-reset',
-              component: () =>
-                import('@/features/user/views/MyPageResetPasswordView.vue'),
+              path: 'mypage',
+              name: 'mypage',
+              component: () => import('@/features/user/views/MyPageView.vue'),
             },
+            {
+              path: 'password',
+              name: 'password-reset',
+              component: () => import('@/features/user/views/MyPageResetPasswordView.vue'),
+            },
+            {
+              path: 'rouby-setting',
+              name: 'rouby-setting',
+              component: () => import('@/features/user/views/MyPageRoubySettingView.vue'),
+            }
           ],
         },
         {
@@ -88,11 +97,6 @@ const router = createRouter({
             },
           ],
         },
-        {
-          path: 'mypage',
-          name: 'mypage',
-          component: () => import('@/features/user/views/MypageView.vue'),
-        },
       ],
     },
     {
@@ -150,11 +154,6 @@ const router = createRouter({
           name: 'date-setting',
           component: () =>
             import('@/features/onboard/views/OnboardDateSettingView.vue'),
-        },
-        {
-          path: 'setting/rouby',
-          name: 'rouby-setting',
-          component: () => import('@/features/user/views/MyPageRoubySettingView.vue'),
         },
       ],
     },
