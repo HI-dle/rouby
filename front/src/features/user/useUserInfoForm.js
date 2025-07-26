@@ -4,8 +4,8 @@ import {readUserInfo, updateUserInfo} from '@/features/user/userService.js'
 import {isValidKeyword} from '@/shared/composable/useKeywordValidator.js'
 
 export function useUserInfoForm() {
-  const healthStatusKeywords = ref([])       // 말투 태그 목록
-  const profileKeywords = ref([])       // 말투 태그 목록
+  const healthStatusKeywords = ref([])        // 건강 상태
+  const profileKeywords = ref([])       // 관심 태그
   const healthStatusKeyword = ref('')              // 입력창 값
   const profileKeyword = ref('')              // 입력창 값
   const healthStatusKeywordError = ref('')            // 에러 메시지
@@ -79,7 +79,7 @@ export function useUserInfoForm() {
     .filter(tag => tag.length > 0)
 
     if (tags.length === 0) {
-      profileKeywordError.value = '유효한 말투를 입력해주세요.'
+      profileKeywordError.value = '유효한 키워드를 입력해주세요.'
       return
     }
 
@@ -92,7 +92,7 @@ export function useUserInfoForm() {
       }
     })
 
-    profileKeywordError.value = added ? '' : '이미 추가된 말투입니다.'
+    profileKeywordError.value = added ? '' : '이미 추가된 키워드입니다.'
     profileKeyword.value = ''
   }
 
@@ -125,7 +125,7 @@ export function useUserInfoForm() {
       .filter(tag => tag.length > 0)
 
     if (tags.length === 0) {
-      healthStatusKeywordError.value = '유효한 말투를 입력해주세요.'
+      healthStatusKeywordError.value = '유효한 키워드를 입력해주세요.'
       return
     }
 
@@ -138,7 +138,7 @@ export function useUserInfoForm() {
       }
     })
 
-    healthStatusKeywordError.value = added ? '' : '이미 추가된 말투입니다.'
+    healthStatusKeywordError.value = added ? '' : '이미 추가된 키워드입니다.'
     healthStatusKeyword.value = ''
   }
 

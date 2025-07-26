@@ -8,7 +8,7 @@ import MyPageUserInfoForm from '@/features/user/components/MyPageUserInfoForm.vu
       <div class="text-center">
         <h1 class="text-2xl font-bold text-main-color mb-2">내 정보 설정</h1>
       </div>
-      <!-- 루비설정 폼 -->
+      <!-- 사용자 정보 설정 폼 -->
       <MyPageUserInfoForm />
     </div>
   </div>
