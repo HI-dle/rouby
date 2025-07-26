@@ -19,9 +19,10 @@ const props = defineProps({
     default: '',
   },
 })
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'withdrawal'])
 const close = () => {
   emit('update:modelValue', false)
+  emit('withdrawal')
 }
 </script>
 <template>

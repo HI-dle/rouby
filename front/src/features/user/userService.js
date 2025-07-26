@@ -3,6 +3,7 @@ import {
   myPageResetPassword as myPageResetPasswordApi,
   myPageUpdateRoubySetting as myPageUpdateRoubySettingApi,
   myPageReadRoubySetting as myPageReadRoubySettingApi,
+  myPageWithdrawalOfUser as myPageWithdrawalOfUserApi,
 } from '@/features/user/api.js'
 import { toMyPageResetPasswordPayload, toMyPageRoubySettingPayload } from '@/features/user/dto.js'
 
@@ -30,5 +31,13 @@ export const readRoubySetting= wrapApi(
   {
     fieldMessages: {},
     fallbackMessage: '루비 설정 조회 실패',
+  },
+)
+
+export const withdrawalOfUser= wrapApi(
+  () => myPageWithdrawalOfUserApi(),
+  {
+    fieldMessages: {},
+    fallbackMessage: '회원 탈퇴 실패',
   },
 )
