@@ -10,7 +10,8 @@ import BaseInput from "@/components/common/BaseInput.vue";
 const {
   healthStatusKeywords,
   profileKeywords,
-  keywordError,
+  healthStatusKeywordError,
+  profileKeywordError,
   healthStatusKeyword,
   profileKeyword,
   nickname,
@@ -60,10 +61,10 @@ onMounted(() => {
         v-model="healthStatusKeyword"
         placeholder="ex. 아토피, ADHD, 우울증, 유당불내증"
         @submit="addHealthStatusKeywordsTag"
-        :error="keywordError"
+        :error="healthStatusKeywordError"
       />
     </div>
-    <FieldError :message="keywordError" />
+    <FieldError :message="healthStatusKeywordError" />
 
     <!-- 구분선 & 간격 -->
     <hr class="my-6 border-t border-gray-300" />
@@ -84,10 +85,10 @@ onMounted(() => {
         v-model="profileKeyword"
         placeholder="ex. 다이어트, 개발, 헬스, 요리"
         @submit="addProfileKeywordsTag"
-        :error="keywordError"
+        :error="profileKeywordError"
       />
     </div>
-    <FieldError :message="keywordError" />
+    <FieldError :message="profileKeywordError" />
 
 
     <!-- 구분선 & 간격 -->

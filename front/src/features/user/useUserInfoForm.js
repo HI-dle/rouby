@@ -8,7 +8,8 @@ export function useUserInfoForm() {
   const profileKeywords = ref([])       // 말투 태그 목록
   const healthStatusKeyword = ref('')              // 입력창 값
   const profileKeyword = ref('')              // 입력창 값
-  const keywordError = ref('')            // 에러 메시지
+  const healthStatusKeywordError = ref('')            // 에러 메시지
+  const profileKeywordError = ref('')            // 에러 메시지
   const router = useRouter()
 
   const nickname = ref('')
@@ -57,18 +58,18 @@ export function useUserInfoForm() {
     const raw = profileKeyword.value
 
     if (profileKeywords.value.length >= profileKeywordsCount) {
-      keywordError.value =  `태그는 최대 ${profileKeywordsCount}개까지 입력할 수 있어요.`
+      profileKeywordError.value =  `태그는 최대 ${profileKeywordsCount}개까지 입력할 수 있어요.`
       return
     }
 
     if (!raw || typeof raw !== 'string' || raw.trim() === '') {
-      keywordError.value = '입력값이 비어 있습니다.'
+      profileKeywordError.value = '입력값이 비어 있습니다.'
       return
     }
 
     const { valid, message } = isValidKeyword(raw)
     if (!valid) {
-      keywordError.value = message
+      profileKeywordError.value = message
       return
     }
 
@@ -78,7 +79,7 @@ export function useUserInfoForm() {
     .filter(tag => tag.length > 0)
 
     if (tags.length === 0) {
-      keywordError.value = '유효한 말투를 입력해주세요.'
+      profileKeywordError.value = '유효한 말투를 입력해주세요.'
       return
     }
 
@@ -91,7 +92,7 @@ export function useUserInfoForm() {
       }
     })
 
-    keywordError.value = added ? '' : '이미 추가된 말투입니다.'
+    profileKeywordError.value = added ? '' : '이미 추가된 말투입니다.'
     profileKeyword.value = ''
   }
 
@@ -103,18 +104,18 @@ export function useUserInfoForm() {
     const raw = healthStatusKeyword.value
 
     if (healthStatusKeywords.value.length >= healthStatusKeywordsCount) {
-      keywordError.value =  `태그는 최대 ${healthStatusKeywordsCount}개까지 입력할 수 있어요.`
+      healthStatusKeywordError.value =  `태그는 최대 ${healthStatusKeywordsCount}개까지 입력할 수 있어요.`
       return
     }
 
     if (!raw || typeof raw !== 'string' || raw.trim() === '') {
-      keywordError.value = '입력값이 비어 있습니다.'
+      healthStatusKeywordError.value = '입력값이 비어 있습니다.'
       return
     }
 
     const { valid, message } = isValidKeyword(raw)
     if (!valid) {
-      keywordError.value = message
+      healthStatusKeywordError.value = message
       return
     }
 
@@ -124,7 +125,7 @@ export function useUserInfoForm() {
       .filter(tag => tag.length > 0)
 
     if (tags.length === 0) {
-      keywordError.value = '유효한 말투를 입력해주세요.'
+      healthStatusKeywordError.value = '유효한 말투를 입력해주세요.'
       return
     }
 
@@ -137,7 +138,7 @@ export function useUserInfoForm() {
       }
     })
 
-    keywordError.value = added ? '' : '이미 추가된 말투입니다.'
+    healthStatusKeywordError.value = added ? '' : '이미 추가된 말투입니다.'
     healthStatusKeyword.value = ''
   }
 
@@ -149,7 +150,8 @@ export function useUserInfoForm() {
   return {
     healthStatusKeywords,
     profileKeywords,
-    keywordError,
+    healthStatusKeywordError,
+    profileKeywordError,
     healthStatusKeyword,
     profileKeyword,
     nickname,
