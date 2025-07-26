@@ -101,7 +101,7 @@ public class UserController {
   @PutMapping("/rouby-setting")
   public ResponseEntity<Void> updateRoubySetting(
       @AuthenticationPrincipal SecurityUser securityUser,
-      @RequestBody @Valid UpdateRoubySettingRequest request){
+      @RequestBody @Valid UpdateRoubySettingRequest request) {
     userFacade.updateRoubySettings(securityUser.getId(), request.toCommand());
     return ResponseEntity.noContent().build();
   }
@@ -138,5 +138,12 @@ public class UserController {
       @AuthenticationPrincipal SecurityUser securityUser) {
     userFacade.completeInitialRoubySetting(securityUser.getId());
     return ResponseEntity.ok().build();
+  }
+
+  @PatchMapping("/delete")
+  public ResponseEntity<Void> delete(
+      @AuthenticationPrincipal SecurityUser securityUser) {
+    userFacade.delete(securityUser.getId());
+    return ResponseEntity.noContent().build();
   }
 }

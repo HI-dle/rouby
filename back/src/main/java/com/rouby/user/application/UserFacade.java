@@ -115,4 +115,7 @@ public class UserFacade {
   public void updateMyUserInfo(UpdateUserInfoCommand command) {
     userWriteService.updateUserInfo(command);
   }
+  public void delete(Long userId) {
+    userWriteService.delete(userId);
+  }
 }
