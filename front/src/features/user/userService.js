@@ -1,10 +1,16 @@
-import { wrapApi } from '@/shared/utils/errorUtils.js'
+import {wrapApi} from '@/shared/utils/errorUtils.js'
 import {
+  myPageReadRoubySetting as myPageReadRoubySettingApi,
+  myPageReadUserInfo as myPageReadUserInfoApi,
   myPageResetPassword as myPageResetPasswordApi,
   myPageUpdateRoubySetting as myPageUpdateRoubySettingApi,
-  myPageReadRoubySetting as myPageReadRoubySettingApi,
+  myPageUpdateUserInfo as myPageUpdateUserInfoApi,
 } from '@/features/user/api.js'
-import { toMyPageResetPasswordPayload, toMyPageRoubySettingPayload } from '@/features/user/dto.js'
+import {
+  toMyPageResetPasswordPayload,
+  toMyPageRoubySettingPayload,
+  toMyPageUserInfoPayload
+} from '@/features/user/dto.js'
 
 export const myPageResetPassword = wrapApi(
   (form) => myPageResetPasswordApi(toMyPageResetPasswordPayload(form)).then(() => ({ ok: true })),
@@ -30,5 +36,21 @@ export const readRoubySetting= wrapApi(
   {
     fieldMessages: {},
     fallbackMessage: '루비 설정 조회 실패',
+  },
+)
+
+export const updateUserInfo= wrapApi(
+  (form) => myPageUpdateUserInfoApi(toMyPageUserInfoPayload(form)).then(() => ({ ok: true })),
+  {
+    fieldMessages: {},
+    fallbackMessage: '유저 정보 업데이트에 실패했습니다.'
+  },
+)
+
+export const readUserInfo= wrapApi(
+  () => myPageReadUserInfoApi(),
+  {
+    fieldMessages: {},
+    fallbackMessage: '유저 정보 조회 실패',
   },
 )

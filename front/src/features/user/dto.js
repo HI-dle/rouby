@@ -12,3 +12,13 @@ export function toMyPageRoubySettingPayload(form) {
     notificationSettings: form.notificationSettings,
   };
 }
+
+export function toMyPageUserInfoPayload(form) {
+  return {
+    nickname: form.nickname,
+    healthStatusKeywords: form.healthStatusKeywords,
+    profileKeywords: form.profileKeywords,
+    dailyStartTime: form.dailyStartTime,
+    dailyEndTime: form.dailyEndTime,
+  };
+}
