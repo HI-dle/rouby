@@ -8,6 +8,8 @@ import com.rouby.schedule.domain.support.UntilDateTimeFormatter;
 import io.jsonwebtoken.lang.Assert;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -29,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RecurrenceRule implements Serializable {
 
+  @Enumerated(EnumType.STRING)
   private Freq freq;
   @Convert(converter = ByDaySetConverter.class)
   private Set<ByDay> byDay;
