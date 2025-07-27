@@ -12,6 +12,7 @@ import com.rouby.schedule.domain.repository.info.ScheduleWithOverrides;
 import com.rouby.schedule.domain.repository.info.ScheduleWithOverrides.ScheduleOverride;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -88,6 +89,7 @@ public class ScheduleJpaRepositoryCustomImpl implements ScheduleJpaRepositoryCus
                               .overrideDate(t.get(child.overrideInfo.overrideDate))
                               .build()
                           )
+                          .sorted(Comparator.comparing(ScheduleOverride::startAt))
                           .toList();
 
                       return ScheduleWithOverrides.builder()
