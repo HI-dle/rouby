@@ -33,9 +33,12 @@ public class RecurrenceRule implements Serializable {
 
   @Enumerated(EnumType.STRING)
   private Freq freq;
+
   @Convert(converter = ByDaySetConverter.class)
   private Set<ByDay> byDay;
+
   private Integer interval;
+
   private LocalDateTime until;
 
   @Builder
