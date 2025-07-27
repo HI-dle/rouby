@@ -51,19 +51,6 @@ const router = createRouter({
           ],
         },
         {
-          path: 'routine-task',
-          component: () => import('@/features/routine/views/RoutineLayout.vue'),
-          redirect: '/routine/daily',
-          children: [
-            {
-              path: 'create',
-              name: 'routine-task',
-              component: () =>
-                import('@/features/routine/views/DailyRoutineView.vue'),
-            },
-          ],
-        },
-        {
           path: 'routine',
           component: () => import('@/features/routine/views/RoutineLayout.vue'),
           redirect: '/routine/daily',
@@ -77,14 +64,26 @@ const router = createRouter({
           ],
         },
         {
-        path: 'routine-task',
-        component: () => import('@/features/routine-task/views/RoutineTaskLayout.vue'),
-        redirect: '/routine/daily',
-        children: [
+          path: 'routine-task',
+          component: () =>
+            import('@/features/routine-task/views/RoutineTaskLayout.vue'),
+          redirect: '/routine/daily',
+          children: [
             {
               path: 'create',
               name: 'routine-task-create',
-              component: () => import('@/features/routine-task/views/CreateRoutineTaskView.vue'),
+              component: () =>
+                import(
+                  '@/features/routine-task/views/CreateRoutineTaskView.vue'
+                ),
+            },
+            {
+              path: 'detail',
+              name: 'routine-task-detail',
+              component: () =>
+                import(
+                  '@/features/routine-task/views/DetailRoutineTaskView.vue'
+                ),
             },
           ],
         },
@@ -154,7 +153,8 @@ const router = createRouter({
         {
           path: 'setting/rouby',
           name: 'rouby-setting',
-          component: () => import('@/features/user/views/MyPageRoubySettingView.vue'),
+          component: () =>
+            import('@/features/user/views/MyPageRoubySettingView.vue'),
         },
       ],
     },
