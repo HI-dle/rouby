@@ -33,10 +33,18 @@ public class ScheduleTestDataSaver {
 
     JdbcTestDataRepository repository = new JdbcTestDataRepository(jdbcTemplate, objectMapper);
     List<Schedule> schedules;
-    for (int i = 0; i < maxSize; i += batchSize) {
 
-      schedules = ScheduleTestDataFactory.generateTestSchedules(i, batchSize);
-      repository.batchInsert(batchSize, schedules);
+    for (int i = 0; i < maxSize; i += batchSize) {
+      try {
+        schedules = ScheduleTestDataFactory.generateTestSchedules(i, batchSize);
+        repository.batchInsert(batchSize, schedules);
+        System.out.printf("Inserted batch %d-%d%n", i, i + batchSize);
+
+      } catch (Exception e) {
+
+        System.err.printf("Failed to insert batch %d-%d: %s%n", i, i + batchSize, e.getMessage());
+        break;
+      }
     }
   }
 }

@@ -17,24 +17,25 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class ScheduleTestDataFactory {
 
   private static final int MAX_USER_COUNT = 1_000;
-  private static List<Schedule> overridesResult;
+
+  private static final int OVERRIDE_FREQUENCY = 4; // 4개 중 1개에 override 생성
+  private static final int OVERRIDES_PER_SCHEDULE = 10;
 
   public static List<Schedule> generateTestSchedules(int offset, int count) {
     List<Schedule> schedulesResult = new ArrayList<>(count);
-    overridesResult = new ArrayList<>(count / 4 * 10);
+    List<Schedule> overridesResult = new ArrayList<>(count / 4 * 10);
 
     for (int i = offset; i < offset + count; i++) {
 
       Schedule schedule = createSchedule(i);
 
       List<Schedule> overrides = Collections.emptyList();
-      if (i % 4 == 0) {
+      if (i % OVERRIDE_FREQUENCY == 0) {
         int finalI = i;
-        overrides = IntStream.range(0, 10)
+        overrides = IntStream.range(0, OVERRIDES_PER_SCHEDULE)
             .mapToObj(j -> createScheduleOverride(schedule, finalI, j))
             .toList();
         overridesResult.addAll(overrides);
-       // ReflectionTestUtils.setField(schedule, "children", overrides);
       }
       schedulesResult.add(schedule);
       schedulesResult.addAll(overrides);
@@ -88,12 +89,5 @@ public class ScheduleTestDataFactory {
     ReflectionTestUtils.setField(override, "parentSchedule", parent);
 
     return override;
-  }
-
-  public static void removeReferenceWith() {
-//    schedulesResult.stream().filter(schedule -> schedule.getChildren() != null)
-//        .forEach(schedule -> ReflectionTestUtils.setField(schedule, "children", null));
-
-    overridesResult.forEach(override -> ReflectionTestUtils.setField(override, "parentSchedule", null));
   }
 }

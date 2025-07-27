@@ -59,7 +59,10 @@ public class JdbcTestDataRepository {
                     arg.getOverrideInfo().getOverrideDate()),
                 Types.DATE);
             ps.setObject(11,
-                arg.getRecurrenceRule() == null ? null: getString(arg.getRecurrenceRule()).replace("byDay", "by_day"),
+                arg.getRecurrenceRule() == null
+                    ? null
+                    : toJsonString(arg.getRecurrenceRule())
+                        .replaceAll("\"byDay\":", "\"by_day\":"),
                 Types.VARCHAR);
             ps.setLong(12, arg.getUserId());
             ps.setLong(13, arg.getUserId());
@@ -71,7 +74,7 @@ public class JdbcTestDataRepository {
     }
   }
 
-  private String getString(Object object) {
+  private String toJsonString(Object object) {
 
     try {
       return objectMapper.writeValueAsString(object);
