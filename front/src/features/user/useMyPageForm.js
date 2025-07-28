@@ -1,7 +1,7 @@
 import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { myPageWithdrawalOfUser } from '@/features/user/api.js'
 import { useOnboardStore} from '@/features/onboard/store/useOnboardStore.js'
+import { withdrawalOfUser } from '@/features/user/userService.js'
 
 export function useMyPageForm() {
   const router = useRouter()
@@ -9,8 +9,9 @@ export function useMyPageForm() {
   const nickname = computed(() => store.userName)
   const showConfirmModal = ref(false)
   const showErrorModal = ref(false)
+  const isWithdrawing = ref(false)
   const errors = reactive({
-    apiResult:'',
+    apiResult: '',
   })
 
   const menuItems = [
@@ -33,19 +34,22 @@ export function useMyPageForm() {
   }
 
   const onConfirmWithdraw = async () => {
+    isWithdrawing.value = true
     try {
-      const success = await myPageWithdrawalOfUser()
+      const success = await withdrawalOfUser()
       if (success) {
-        goTo('/auth/login')
+        goTo({ name: 'login' } )
       }
 
-    }catch (err) {
+    } catch (err) {
       if (err.fieldErrors) {
         Object.assign(errors, err.fieldErrors)
       } else {
         errors.apiResult = '회원 탈퇴에 실패 하였습니다.'
       }
       showErrorModal.value = true
+    } finally {
+      isWithdrawing.value = false
     }
   }
 

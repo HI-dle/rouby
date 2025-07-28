@@ -19,10 +19,13 @@ const props = defineProps({
     default: '',
   },
 })
-const emit = defineEmits(['update:modelValue', 'withdrawal'])
+const emit = defineEmits(['update:modelValue'])
 const close = () => {
   emit('update:modelValue', false)
-  emit('withdrawal')
+}
+const handleClick = () => {
+  emit('close') // 확인 버튼 눌렀을 때
+  close()
 }
 </script>
 <template>
@@ -39,7 +42,7 @@ const close = () => {
     >
       <h2 v-if="title" class="text-lg font-semibold text-main-color mb-4">{{ title }}</h2>
       <p class="text-sm text-gray-700 mb-6">{{ message }}</p>
-      <BaseButton @click="close" :class="['text-sm w-2/5 h-10', props.buttonClass]">
+      <BaseButton @click="handleClick" :class="['text-sm w-2/5 h-10', props.buttonClass]">
         {{ buttonText }}
       </BaseButton>
     </div>

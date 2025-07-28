@@ -1,19 +1,22 @@
 <template>
   <div
-    class="w-full min-h-screen flex flex-col justify-between bg-gradient-to-b from-white to-violet-50"
+    class="w-full min-h-screen flex flex-col justify-between"
   >
     <!-- 상단 콘텐츠 -->
     <div class="px-6 pt-14">
       <div class="text-center space-y-2">
         <figure>
           <img
-            :src="HeaderIcon"
+            :src="MyPageIcon"
             alt="헤더 아이콘"
-            class="mx-auto h-10 w-auto"
+            class="mx-auto h-16 w-auto"
           />
         </figure>
-        <p class="text-lg font-bold text-main-color">
-          {{ nickname }}님, 안녕하세요
+        <p class="text-2xl font-bold text-main-color">
+          {{ nickname }}님,
+        </p>
+        <p class="text-sm content-color">
+          안녕하세요. 오늘도 루비가 함께 하겠습니다.
         </p>
       </div>
       <div class="mt-10 divide-y divide-gray-200">
@@ -33,7 +36,7 @@
       v-model="showConfirmModal"
       message="정말 탈퇴 하시겠습니까?"
       buttonText="탈퇴하기"
-      @withdrawal="onConfirmWithdraw"
+      @close="onConfirmWithdraw"
     />
 
     <BaseModal
@@ -45,7 +48,7 @@
 </template>
 
 <script setup>
-import HeaderIcon from '@/assets/header_logo.svg'
+import MyPageIcon from '@/assets/mypage_icon.svg'
 import BaseModal from '@/components/common/BaseModal.vue'
 import { useMyPageForm } from '@/features/user/useMyPageForm.js'
 
