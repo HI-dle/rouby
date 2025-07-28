@@ -67,15 +67,12 @@ export function useDailyTaskForm(task) {
         taskDate: task.date,
       }
 
-      console.log('API 요청 데이터:', requestData)
-
       const result = await updateTaskProgressApi(requestData)
 
       task.id = result.id
       task.currentValue = newValue
       uiState.lastSavedValue = newValue
       uiState.syncStatus = 'synced'
-      console.log('저장 완료:', result)
     } catch (error) {
       // 실패 시 롤백 및 에러 표시 (wrapApi가 처리한 에러)
       uiState.displayValue = uiState.lastSavedValue
@@ -88,7 +85,6 @@ export function useDailyTaskForm(task) {
         uiState.errorMessage = error.message
       }
 
-      console.error('저장 실패:', error)
     }
   }
 
@@ -100,7 +96,6 @@ export function useDailyTaskForm(task) {
     }
 
     const newValue = event.target.checked ? 1 : 0
-    console.log('체크박스 클릭 - UI만 즉시 반영:', newValue)
 
     // 즉시 UI만 반영 (저장은 안함)
     uiState.displayValue = newValue
@@ -115,25 +110,20 @@ export function useDailyTaskForm(task) {
 
   // 체크박스 영역에서 마우스가 벗어날 때 저장
   const handleCheckboxBlur = () => {
-    console.log(
-      '체크박스 마우스 아웃 - 저장 시도:',
-      uiState.displayValue,
-      'vs',
-      uiState.lastSavedValue,
-    )
-
     if (
       uiState.displayValue !== uiState.lastSavedValue &&
       uiState.syncStatus === 'pending'
     ) {
-      console.log('체크박스 저장 실행!')
       handleOptimisticUpdate(uiState.displayValue).catch()
     }
   }
 
   // 숫자 값 변경 처리 (즉시 UI 반영, 저장은 지연)
+  const MIN_VALUE = 0
+  const MAX_VALUE = 999
+
   const handleValueChange = (newValue) => {
-    if (newValue < 0 || newValue > 999) {
+    if (newValue < MIN_VALUE || newValue > MAX_VALUE) {
       return
     }
 
