@@ -23,9 +23,9 @@
           <div class="w-8 h-8 rounded-lg flex items-center justify-center">
             <BookOpenCheck class="w-5 h-5 text-content-color" />
           </div>
-          <span class="text-gray-700 font-medium">할일</span>
+          <span class="text-content-color font-medium">할일</span>
         </div>
-        <div class="text-gray-900 font-medium">{{ task.title }}</div>
+        <div class="text-content-color font-medium">{{ task.title }}</div>
       </div>
 
       <!-- 상태 -->
@@ -34,7 +34,7 @@
           <div class="w-8 h-8 rounded-lg flex items-center justify-center">
             <Box class="w-5 h-5 text-content-color" />
           </div>
-          <span class="text-gray-700 font-medium">상태</span>
+          <span class="text-content-color font-medium">상태</span>
         </div>
 
         <!-- CHECK 타입: 간단한 체크박스만 -->
@@ -52,7 +52,7 @@
             <!-- 저장 실패 -->
             <TriangleAlert
               v-else-if="uiState.syncStatus === 'failed'"
-              class="w-4 h-4 text-red-400"
+              class="w-4 h-4 text-error-color"
             />
           </div>
 
@@ -101,7 +101,7 @@
             <!-- 저장 실패 -->
             <TriangleAlert
               v-else-if="uiState.syncStatus === 'failed'"
-              class="w-4 h-4 text-red-400"
+              class="w-4 h-4 text-error-color"
             />
           </div>
 
@@ -150,9 +150,9 @@
           <div class="w-8 h-8 rounded-lg flex items-center justify-center">
             <ListTodo class="w-5 h-5 text-content-color" />
           </div>
-          <span class="text-gray-700 font-medium">타입</span>
+          <span class="text-content-color font-medium">타입</span>
         </div>
-        <div class="text-gray-900 font-medium">{{ getTaskTypeLabel() }}</div>
+        <div class="text-content-color font-medium">{{ getTaskTypeLabel() }}</div>
       </div>
 
       <!-- 알림 -->
@@ -161,9 +161,9 @@
           <div class="w-8 h-8 rounded-lg flex items-center justify-center">
             <Bell class="w-5 h-5 text-content-color" />
           </div>
-          <span class="text-gray-700 font-medium">알림</span>
+          <span class="text-content-color font-medium">알림</span>
         </div>
-        <div class="text-gray-900 font-medium">{{ getAlarmLabel() }}</div>
+        <div class="text-content-color font-medium">{{ getAlarmLabel() }}</div>
       </div>
 
       <!-- 반복 -->
@@ -172,7 +172,7 @@
           <div class="w-8 h-8 rounded-lg flex items-center justify-center">
             <RotateCcw class="w-5 h-5 text-content-color" />
           </div>
-          <span class="text-gray-700 font-medium">반복</span>
+          <span class="text-content-color font-medium">반복</span>
         </div>
         <div class="flex items-center gap-2 text-sm">
           <span
@@ -181,7 +181,7 @@
             :class="[
               day.isEnabled
                 ? 'bg-[#6667D0] text-white'
-                : 'bg-gray-100 text-gray-700',
+                : 'bg-gray-100 text-content-color',
               'w-6 h-6 rounded-full flex items-center justify-center text-sm font-semibold',
             ]"
           >
@@ -196,9 +196,9 @@
           <div class="w-8 h-8 rounded-lg flex items-center justify-center">
             <Clock class="w-5 h-5 text-content-color" />
           </div>
-          <span class="text-gray-700 font-medium">시간</span>
+          <span class="text-content-color font-medium">시간</span>
         </div>
-        <div class="text-gray-900 font-medium">{{ task.time }}</div>
+        <div class="text-content-color font-medium">{{ task.time }}</div>
       </div>
 
       <!-- 메모 -->
@@ -207,9 +207,9 @@
           <div class="w-8 h-8 rounded-lg flex items-center justify-center">
             <FileText class="w-5 h-5 text-content-color" />
           </div>
-          <span class="text-gray-700 font-medium">메모</span>
+          <span class="text-content-color font-medium">메모</span>
         </div>
-        <div class="text-gray-900 font-medium text-right max-w-xs">
+        <div class="text-content-color font-medium text-right max-w-xs">
           <p class="whitespace-pre-line break-words">
             {{ task.memo || '메모가 없습니다.' }}
           </p>
