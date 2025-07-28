@@ -138,7 +138,7 @@
           <div class="w-8 h-8 rounded-lg flex items-center justify-center">
             <RotateCcw class="w-5 h-5 text-content-color" />
           </div>
-          <span class="text-gray-700 font-medium">반복(매주)</span>
+          <span class="text-gray-700 font-medium">반복</span>
         </div>
         <div class="flex items-center gap-2 text-sm">
           <span

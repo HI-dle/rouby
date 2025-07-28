@@ -1,6 +1,6 @@
 <template>
   <div class="main-container">
-    <div class="sub-main-container space-y-6">
+    <div class="sub-main-container space-y-6 bg-white">
       <!-- 페이지 헤더 -->
       <div class="flex items-center justify-between">
         <button class="w-8 h-8 flex items-center justify-center">
