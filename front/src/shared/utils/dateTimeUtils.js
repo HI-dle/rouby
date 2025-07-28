@@ -1,5 +1,6 @@
 import { format } from 'date-fns'
 import { ko } from 'date-fns/locale'
+import { isValid, parseISO, isSameDay, addDays } from 'date-fns'
 
 export const formatDateTime = (
   date,
@@ -42,4 +43,29 @@ export const formatKoreanDatetime = (isoString) => {
   if (isNaN(date)) return ''
 
   return format(date, 'yyyy.MM.dd a hh:mm', { locale: ko })
+}
+
+export const formatDateHeader = (dateString) => {
+  const date = parseISO(dateString)
+  const today = new Date()
+
+  if (!isValid(date)) return ''
+
+  const weekday = new Intl.DateTimeFormat('ko-KR', { weekday: 'long' }).format(date)
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+
+  if (isSameDay(date, today)) {
+    return `오늘, ${month}월 ${day}일 ${weekday}`
+  }
+
+  if (isSameDay(date, addDays(today, 1))) {
+    return `내일, ${month}월 ${day}일 ${weekday}`
+  }
+
+  if (isSameDay(date, addDays(today, -1))) {
+    return `어제, ${month}월 ${day}일 ${weekday}`
+  }
+
+  return `${month}월 ${day}일 ${weekday}`
 }
