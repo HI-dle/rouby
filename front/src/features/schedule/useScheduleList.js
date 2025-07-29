@@ -1,4 +1,4 @@
-import { ref, reactive, computed, watch } from 'vue'
+import { ref, reactive, computed, watch, isRef } from 'vue'
 import { useRouter } from 'vue-router'
 import { debounce } from 'lodash-es'
 import { format, differenceInCalendarDays, subDays } from 'date-fns'
@@ -7,8 +7,12 @@ import { useScheduleStore } from '@/stores/useScheduleStore'
 import { getMonthRange } from '@/shared/utils/dateUtils'
 import { getSchedules } from './scheduleService'
 
-export const useScheduleList = () => {
-  const selectedDate = ref(null)
+export const useScheduleList = (maybeSelectedDate = null) => {
+  const selectedDate =
+    maybeSelectedDate && isRef(maybeSelectedDate)
+      ? maybeSelectedDate
+      : ref(maybeSelectedDate ?? null)
+
   const errorModal = reactive({})
 
   const router = useRouter()
@@ -22,41 +26,51 @@ export const useScheduleList = () => {
   const startOfThisMonth = computed(() => weekRange.value.rangeStart)
   const startOfNextMonth = computed(() => weekRange.value.rangeEnd)
 
-  const debouncedFetch = debounce(async (fromAt, toAt) => {
-    try {
-      const { data } = await getSchedules(fromAt, toAt)
-      const key = format(fromAt, 'yyyy-MM')
-      scheduleStore.setMonthlySchedules(key, data?.schedules)
-    } catch (err) {
-      console.error(err)
-      const msg =
-        err?.response?.data?.message || err?.message || '스케줄 조회 실패'
-      errorModal.show = true
-      errorModal.msg = msg
-    }
-  }, 300)
-
-  const fetchSchedulesByPeriod = (fromAt, toAt) => {
-    const key = format(fromAt, 'yyyy-MM')
-    if (!scheduleStore.getMonthlySchedules(key)) {
-      debouncedFetch(fromAt, toAt)
-    }
-  }
-
   const schedulesForSelectedDate = computed(() =>
     selectedDate.value
       ? scheduleStore.getSchedulesForDate(selectedDate.value)
       : [],
   )
 
+  const schedulesForSelectedMonth = ref(
+    scheduleStore.getSchedulesMonthlyByDate(selectedDate.value),
+  )
+
+  let debounceTimer = null
+  const fetchSchedulesByPeriod = async (fromAt, toAt) => {
+    if (!scheduleStore.getSchedulesMonthlyByDate(fromAt)) {
+      if (debounceTimer) clearTimeout(debounceTimer)
+
+      return new Promise((resolve, reject) => {
+        debounceTimer = setTimeout(async () => {
+          try {
+            const { data } = await getSchedules(fromAt, toAt)
+            const key = format(fromAt, 'yyyy-MM')
+            scheduleStore.setMonthlySchedules(key, data?.schedules)
+            resolve()
+          } catch (err) {
+            console.error(err)
+            errorModal.show = true
+            errorModal.msg = err.message || '스케줄 조회 실패'
+            reject(err)
+          }
+        }, 300)
+      })
+    }
+  }
+
   const goToScheduleDetail = (schedule) => {
     if (!schedule?.id || !schedule?.instanceDate) return
 
+    goToScheduleDetailOf(schedule.id, schedule.instanceDate)
+  }
+
+  const goToScheduleDetailOf = (id, instanceDate) => {
     router.push({
       name: 'schedule-modify',
       params: {
-        id: schedule.id,
-        date: schedule.instanceDate,
+        id: id,
+        date: instanceDate,
       },
     })
   }
@@ -84,9 +98,12 @@ export const useScheduleList = () => {
     return `${formattedStart} ~ ${formattedEnd}`
   }
 
-  watch([startOfThisMonth, startOfNextMonth], ([s, n]) => {
+  watch([startOfThisMonth, startOfNextMonth], async ([s, n]) => {
     if (s && n) {
-      fetchSchedulesByPeriod(s, n)
+      await fetchSchedulesByPeriod(s, n)
+      schedulesForSelectedMonth.value = scheduleStore.getSchedulesMonthlyByDate(
+        selectedDate.value,
+      )
     }
   })
 
@@ -94,7 +111,9 @@ export const useScheduleList = () => {
     selectedDate,
     errorModal,
     schedulesForSelectedDate,
+    schedulesForSelectedMonth,
     goToScheduleDetail,
+    goToScheduleDetailOf,
     formatSchedulePeriod,
   }
 }
