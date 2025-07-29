@@ -29,7 +29,6 @@ export function useDatePickerState({
 
   const handleBaseDateWatch = () => {
     const saved = datePickStore.getSelectedDate(baseDate.value, isMonthly.value)
-
     if (saved) {
       const parsedDate = getMidnightDate(saved)
 

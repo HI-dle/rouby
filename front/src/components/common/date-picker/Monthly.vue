@@ -33,7 +33,11 @@ const props = defineProps({
   },
 })
 const { baseDate, selectedDate, today } = toRefs(props)
-const { calendarDays, isToday, isSelected } = useDatePickerDates(baseDate, selectedDate, today)
+const { calendarDays, isToday, isSelected } = useDatePickerDates(
+  baseDate,
+  selectedDate,
+  today,
+)
 
 const getDateClasses = (date) => {
   return {
@@ -50,7 +54,7 @@ const getDateClasses = (date) => {
   <div class="flex justify-between items-center select-none">
     <BaseButton
       @click="prevMonth"
-      class="hidden md:flex w-6 h-6 justify-center items-center text-base px-1 ml-6 bg-none bg-border-color text-main-color"
+      class="hidden sm:flex w-6 h-6 justify-center items-center text-base px-1 ml-6 bg-none bg-border-color text-main-color"
       aria-label="이전 월"
     >
       <ChevronLeft class="h-4 w-4" />
@@ -63,7 +67,11 @@ const getDateClasses = (date) => {
 
       <!-- 날짜 그리드 -->
       <div class="grid grid-cols-7 gap-y-1">
-        <div class="flex w-full justify-center" v-for="(date, index) in calendarDays" :key="index">
+        <div
+          class="flex w-full justify-center"
+          v-for="(date, index) in calendarDays"
+          :key="index"
+        >
           <div
             @click="() => selectDate(date)"
             class="w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer"
@@ -76,7 +84,7 @@ const getDateClasses = (date) => {
     </div>
     <BaseButton
       @click="nextMonth"
-      class="hidden md:flex w-6 h-6 justify-center items-center text-base px-1 mr-6 bg-none bg-border-color text-main-color"
+      class="hidden sm:flex w-6 h-6 justify-center items-center text-base px-1 mr-6 bg-none bg-border-color text-main-color"
       aria-label="다음 월"
     >
       <ChevronRight class="h-4 w-4" />

@@ -13,7 +13,7 @@ export function useDatePickerGestures({
 
   const onTouchStart = (e) => {
     if (!e.changedTouches || e.changedTouches.length === 0) return
-
+    e.preventDefault()
     touchStartX = e.changedTouches[0].clientX
     touchStartY = e.changedTouches[0].clientY
   }
