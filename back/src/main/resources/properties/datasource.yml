@@ -2,7 +2,7 @@
 spring:
   config.activate.on-profile: local
   datasource:
-    url: jdbc:postgresql://localhost:5432/rouby
+    url: jdbc:postgresql://localhost:5432/rouby?rewriteBatchedInserts=true
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -11,14 +11,11 @@ spring:
         rewriteBatchedInserts: true
         # rewriteBatchedStatements: true # mysql 용
         # schema: rouby
-  jdbc:
-    batch:
-      size: 10000
   sql:
     init:
-      mode: never
-      # schema-locations: classpath:db/schema.sql
-      # data-locations: classpath:db/alter.sql # db 시작할때 실행시킬 script
+      mode: always
+      schema-locations: classpath:db/schema.sql
+      #data-locations: classpath:db/data.sql
 
 ---
 # test 환경
