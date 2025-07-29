@@ -11,3 +11,7 @@ export const myPageReadRoubySetting = () => {
 export const myPageUpdateRoubySetting = (payload) => {
   return axios.put('/v1/users/rouby-setting', payload)
 }
+
+export const myPageWithdrawalOfUser = () => {
+  return axios.patch('/v1/users/delete')
+}
