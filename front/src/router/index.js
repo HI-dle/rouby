@@ -20,13 +20,15 @@ const router = createRouter({
             {
               path: 'password',
               name: 'password-reset',
-              component: () => import('@/features/user/views/MyPageResetPasswordView.vue'),
+              component: () =>
+                import('@/features/user/views/MyPageResetPasswordView.vue'),
             },
             {
               path: 'rouby-setting',
               name: 'rouby-setting',
-              component: () => import('@/features/user/views/MyPageRoubySettingView.vue'),
-            }
+              component: () =>
+                import('@/features/user/views/MyPageRoubySettingView.vue'),
+            },
           ],
         },
         {
@@ -36,17 +38,31 @@ const router = createRouter({
           redirect: '/schedule/daily',
           children: [
             {
+              path: 'daily/list',
+              name: 'schedule-daily',
+              component: () =>
+                import('@/features/schedule/views/DailyScheduleListView.vue'),
+            },
+            {
+              path: 'monthly',
+              name: 'schedule-monthly',
+              component: () =>
+                import(
+                  '@/features/schedule/views/MonthlyScheduleCalendarView.vue'
+                ),
+            },
+            {
               path: 'create',
               name: 'schedule-create',
               component: () =>
                 import('@/features/schedule/views/CreateScheduleView.vue'),
+              props: (route) => ({
+                start: route.query.start,
+                end: route.query.end,
+                allDay: route.query.allDay,
+              }),
             },
-            {
-              path: 'daily',
-              name: 'schedule-daily',
-              component: () =>
-                import('@/features/schedule/views/DailyScheduleView.vue'),
-            },
+
             {
               path: ':id/:date',
               name: 'schedule-modify',
@@ -56,19 +72,6 @@ const router = createRouter({
                 id: Number(route.params.id),
                 date: route.params.date,
               }),
-            },
-          ],
-        },
-        {
-          path: 'routine-task',
-          component: () => import('@/features/routine/views/RoutineLayout.vue'),
-          redirect: '/routine/daily',
-          children: [
-            {
-              path: 'create',
-              name: 'routine-task',
-              component: () =>
-                import('@/features/routine/views/DailyRoutineView.vue'),
             },
           ],
         },
@@ -86,14 +89,18 @@ const router = createRouter({
           ],
         },
         {
-        path: 'routine-task',
-        component: () => import('@/features/routine-task/views/RoutineTaskLayout.vue'),
-        redirect: '/routine/daily',
-        children: [
+          path: 'routine-task',
+          component: () =>
+            import('@/features/routine-task/views/RoutineTaskLayout.vue'),
+          redirect: '/routine/daily',
+          children: [
             {
               path: 'create',
               name: 'routine-task-create',
-              component: () => import('@/features/routine-task/views/CreateRoutineTaskView.vue'),
+              component: () =>
+                import(
+                  '@/features/routine-task/views/CreateRoutineTaskView.vue'
+                ),
             },
           ],
         },
