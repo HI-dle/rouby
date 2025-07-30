@@ -12,6 +12,7 @@ import com.rouby.schedule.domain.repository.info.ScheduleWithOverrides;
 import com.rouby.schedule.domain.repository.info.ScheduleWithOverrides.ScheduleOverride;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,36 +28,38 @@ public class ScheduleJpaRepositoryCustomImpl implements ScheduleJpaRepositoryCus
   public List<ScheduleWithOverrides> findSchedulesByCriteria(GetScheduleCriteria criteria) {
 
     List<Tuple> tuples = jpaQueryFactory.select(
-        schedule.id,
-        schedule.userId,
-        schedule.title,
-        schedule.memo,
-        schedule.period.startAt,
-        schedule.period.endAt,
-        schedule.routineOffsetDays,
-        schedule.alarmOffsetType,
-        schedule.recurrenceRule,
-        child.id,
-        child.userId,
-        child.title,
-        child.memo,
-        child.period.startAt,
-        child.period.endAt,
-        child.routineOffsetDays,
-        child.alarmOffsetType,
-        child.overrideInfo.overrideType,
-        child.overrideInfo.overrideDate)
+            schedule.id,
+            schedule.userId,
+            schedule.title,
+            schedule.memo,
+            schedule.period.startAt,
+            schedule.period.endAt,
+            schedule.routineOffsetDays,
+            schedule.alarmOffsetType,
+            schedule.recurrenceRule,
+            child.id,
+            child.userId,
+            child.title,
+            child.memo,
+            child.period.startAt,
+            child.period.endAt,
+            child.routineOffsetDays,
+            child.alarmOffsetType,
+            child.overrideInfo.overrideType,
+            child.overrideInfo.overrideDate)
         .from(schedule)
         .leftJoin(child)
         .on(
             schedule.recurrenceRule.isNotNull()
                 .and(child.deletedAt.isNull())
                 .and(child.parentSchedule.eq(schedule))
+                .and(startAtBeforeToAt(child, criteria.toAt()))
+                .and(endAtAfterFromAt(child, criteria.fromAt()))
         )
-        .where(buildWhereClause(criteria))
-        .orderBy(schedule.period.startAt.asc())
+        .where(buildWhereClause(schedule, criteria))
+        .orderBy(schedule.userId.asc(), schedule.period.startAt.asc())
         .fetch();
-    
+
     return convertGroupedList(tuples);
   }
 
@@ -86,6 +89,7 @@ public class ScheduleJpaRepositoryCustomImpl implements ScheduleJpaRepositoryCus
                               .overrideDate(t.get(child.overrideInfo.overrideDate))
                               .build()
                           )
+                          .sorted(Comparator.comparing(ScheduleOverride::startAt))
                           .toList();
 
                       return ScheduleWithOverrides.builder()
@@ -107,41 +111,42 @@ public class ScheduleJpaRepositoryCustomImpl implements ScheduleJpaRepositoryCus
         ));
   }
 
-  private BooleanBuilder buildWhereClause(GetScheduleCriteria criteria) {
-    return eqUserId(criteria.userId())
-        .and(schedule.deletedAt.isNull())
-        .and(schedule.overrideInfo.overrideType.isNull())
-        .and(recurringCriteria(criteria).or(singleCriteria(criteria)));
+  private BooleanBuilder buildWhereClause(QSchedule s, GetScheduleCriteria criteria) {
+
+    return eqUserId(s, criteria.userId())
+        .and(s.deletedAt.isNull())
+        .and(s.overrideInfo.overrideType.isNull())
+        .and(recurringCriteria(s, criteria).or(singleCriteria(s, criteria)));
   }
 
-  private BooleanBuilder recurringCriteria(GetScheduleCriteria criteria) {
+  private BooleanBuilder recurringCriteria(QSchedule s, GetScheduleCriteria criteria) {
 
-    return new BooleanBuilder().and(schedule.recurrenceRule.isNotNull())
-        .and(startAtBeforeToAt(criteria.toAt()))
-        .and(schedule.recurrenceRule.until.isNull()
-            .or(untilAtAfterFromAt(criteria.fromAt())));
+    return new BooleanBuilder(s.recurrenceRule.isNotNull())
+        .and(startAtBeforeToAt(s, criteria.toAt()))
+        .and(s.recurrenceRule.until.isNull()
+            .or(untilAtAfterFromAt(s, criteria.fromAt())));
   }
 
-  private BooleanBuilder singleCriteria(GetScheduleCriteria criteria) {
+  private BooleanBuilder singleCriteria(QSchedule s, GetScheduleCriteria criteria) {
 
-    return new BooleanBuilder().and(schedule.recurrenceRule.isNull())
-        .and(startAtBeforeToAt(criteria.toAt()))
-        .and(endAtAfterFromAt(criteria.fromAt()));
+    return new BooleanBuilder(s.recurrenceRule.isNull())
+        .and(startAtBeforeToAt(s, criteria.toAt()))
+        .and(endAtAfterFromAt(s, criteria.fromAt()));
   }
 
-  private static BooleanBuilder startAtBeforeToAt(LocalDateTime toAt) {
-    return nullSafeBuilder(() -> schedule.period.startAt.before(toAt));
+  private static BooleanBuilder startAtBeforeToAt(QSchedule s, LocalDateTime toAt) {
+    return nullSafeBuilder(() -> s.period.startAt.before(toAt));
   }
 
-  private static BooleanBuilder untilAtAfterFromAt(LocalDateTime fromAt) {
-    return nullSafeBuilder(() -> schedule.recurrenceRule.until.after(fromAt));
+  private static BooleanBuilder untilAtAfterFromAt(QSchedule s, LocalDateTime fromAt) {
+    return nullSafeBuilder(() -> s.recurrenceRule.until.after(fromAt));
   }
 
-  private static BooleanBuilder endAtAfterFromAt(LocalDateTime fromAt) {
-    return nullSafeBuilder(() -> schedule.period.endAt.after(fromAt));
+  private static BooleanBuilder endAtAfterFromAt(QSchedule s, LocalDateTime fromAt) {
+    return nullSafeBuilder(() -> s.period.endAt.after(fromAt));
   }
 
-  private BooleanBuilder eqUserId(Long userId)  {
-    return nullSafeBuilder(() -> schedule.userId.eq(userId));
+  private BooleanBuilder eqUserId(QSchedule s, Long userId)  {
+    return nullSafeBuilder(() -> s.userId.eq(userId));
   }
 }

@@ -1,6 +1,7 @@
 package com.rouby.common.exception;
 
 import com.rouby.common.exception.type.ErrorCode;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -10,8 +11,15 @@ public class CustomException extends RuntimeException {
   private final HttpStatus status;
   private final String code;
 
-  public CustomException(ErrorCode errorCode) {
+  protected CustomException(ErrorCode errorCode) {
     super(errorCode.getMessage());
+    this.status = errorCode.getStatus();
+    this.code = errorCode.getCode();
+  }
+
+  protected CustomException(ErrorCode errorCode, @NotNull String message) {
+    super(message);
+
     this.status = errorCode.getStatus();
     this.code = errorCode.getCode();
   }

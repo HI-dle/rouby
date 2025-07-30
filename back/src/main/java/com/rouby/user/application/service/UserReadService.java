@@ -50,13 +50,13 @@ public class UserReadService {
 
   @Transactional(readOnly = true)
   public User findByUserId(Long id) {
-    return userRepository.findById(id).orElseThrow(() ->
+    return userRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(() ->
         UserException.from(USER_NOT_FOUND));
   }
 
   @Transactional(readOnly = true)
   public RoubySettingInfo getRoubySettingInfo(Long userId) {
-    return RoubySettingInfo.from(userRepository.findById(userId)
+    return RoubySettingInfo.from(userRepository.findByIdAndDeletedAtIsNull(userId)
         .orElseThrow(() -> UserException.from(USER_NOT_FOUND)));
   }
 }

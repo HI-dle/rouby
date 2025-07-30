@@ -327,3 +327,11 @@ include::{snippets}/update-rouby-setting-204/request-fields.adoc[]
 
 ==== HTTP 응답 (204 NoContent)
 include::{snippets}/update-rouby-setting-204/http-response.adoc[]
+
+== 회원탈퇴 API
+
+==== HTTP 요청
+include::{snippets}/delete-user-204/http-request.adoc[]
+
+==== HTTP 응답 (204 NoContent)
+include::{snippets}/delete-user-204/http-response.adoc[]

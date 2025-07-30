@@ -216,4 +216,18 @@ public class User extends BaseEntity {
     this.profileKeywords = ProfileKeywords.of(profileKeywords);
     this.dailyActiveTime = DailyActiveTime.of(dailyStartTime, dailyEndTime);
   }
+
+  public void delete(Long userId) {
+    this.password = null;
+    this.nickname = null;
+    this.dailyActiveTime = null;
+    this.healthStatusKeywords = null;
+    this.profileKeywords = null;
+    this.communicationTone = null;
+    this.notificationSettings.clear();
+    this.authProvider = AuthProvider.DEFAULT;
+    this.lastActivatedAt = null;
+
+    super.delete(userId);
+  }
 }

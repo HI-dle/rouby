@@ -43,8 +43,7 @@ public class GlobalExceptionHandler {
 
     return ResponseEntity
         .status(UNAUTHORIZED)
-        .body(ErrorResponse.of(ApiErrorCode.UNAUTHORIZED.getMessage(),
-            ApiErrorCode.UNAUTHORIZED.getCode()));
+        .body(ErrorResponse.from(ApiErrorCode.UNAUTHORIZED));
   }
 
   @ExceptionHandler(ConstraintViolationException.class)
@@ -135,8 +134,7 @@ public class GlobalExceptionHandler {
     log(e, request, UNAUTHORIZED);
     return ResponseEntity
         .status(UNAUTHORIZED)
-        .body(ErrorResponse.of(ApiErrorCode.UNAUTHORIZED.getMessage(),
-            ApiErrorCode.UNAUTHORIZED.getCode()));
+        .body(ErrorResponse.from(ApiErrorCode.UNAUTHORIZED));
   }
 
   @ExceptionHandler(IllegalArgumentException.class)
@@ -145,7 +143,7 @@ public class GlobalExceptionHandler {
 
     HttpStatus status = BAD_REQUEST;
     log(e, request, status);
-    return ResponseEntity.status(status).body(ErrorResponse.from(e));
+    return ResponseEntity.status(status).body(ErrorResponse.of(e.getMessage(), ApiErrorCode.INVALID_REQUEST.getCode()));
   }
 
   @ExceptionHandler(IllegalStateException.class)
@@ -154,7 +152,7 @@ public class GlobalExceptionHandler {
 
     HttpStatus status = BAD_REQUEST;
     log(e, request, status);
-    return ResponseEntity.status(status).body(ErrorResponse.from(e));
+    return ResponseEntity.status(status).body(ErrorResponse.of(e.getMessage(), ApiErrorCode.INVALID_REQUEST.getCode()));
   }
 
   @ExceptionHandler(Exception.class)
@@ -163,7 +161,7 @@ public class GlobalExceptionHandler {
 
     HttpStatus status = INTERNAL_SERVER_ERROR;
     log(e, request, status);
-    return ResponseEntity.status(status).body(ErrorResponse.from(e));
+    return ResponseEntity.status(status).body(ErrorResponse.from(ApiErrorCode.INTERNAL_SERVER_ERROR));
   }
 
   @ExceptionHandler(Throwable.class)
@@ -172,7 +170,7 @@ public class GlobalExceptionHandler {
 
     HttpStatus status = INTERNAL_SERVER_ERROR;
     log(e, request, status);
-    return ResponseEntity.status(status).body(ErrorResponse.from(e));
+    return ResponseEntity.status(status).body(ErrorResponse.from(ApiErrorCode.INTERNAL_SERVER_ERROR));
   }
 
   private static void log(Throwable e, HttpServletRequest request, HttpStatus status) {

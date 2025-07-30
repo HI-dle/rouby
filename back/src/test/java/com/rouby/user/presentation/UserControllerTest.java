@@ -330,7 +330,6 @@ class UserControllerTest extends ControllerTestSupport {
     String token = UserRequestFixture.VALID_EMAIL_TOKEN;
     when(userFacade.verifyEmail(request.toCommand())).thenReturn(token);
 
-
     // when
     ResultActions result = mockMvc.perform(post("/api/v1/users/email-verification/verify")
         .content(objectMapper.writeValueAsString(request))
@@ -653,6 +652,27 @@ class UserControllerTest extends ControllerTestSupport {
         ));
   }
 
+  @WithMockCustomUser
+  @DisplayName("회원탈퇴 API")
+  @Test
+  void deleteUser() throws Exception {
+    Long userId = 1L;
+
+    doNothing().when(userFacade).delete(eq(userId));
+
+    // when
+    ResultActions resultActions = mockMvc.perform(patch("/api/v1/users/delete")
+        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+        .contentType(MediaType.APPLICATION_JSON));
+
+    // then
+    resultActions.andExpect(status().isNoContent())
+        .andDo(print())
+        .andDo(document("delete-user-204",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint())
+        ));
+  }
 
   @WithMockCustomUser
   @DisplayName("로그인 후 정보 조회 API")

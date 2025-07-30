@@ -107,8 +107,9 @@ public class UserWriteService {
 
   @Transactional
   public void resetPassword(Long userId, ResetPasswordCommand command) {
-    User user = userRepository.findById(userId).orElseThrow(() ->
+    User user = userRepository.findByIdAndDeletedAtIsNull(userId).orElseThrow(() ->
         UserException.from(UserErrorCode.USER_NOT_FOUND));
+
 
     if (!passwordEncoder.matches(command.currentPassword(), user.getPassword())) {
       throw UserException.from(UserErrorCode.INVALID_PASSWORD);
@@ -131,7 +132,7 @@ public class UserWriteService {
 
   @Transactional
   public void updateRoubySettings(Long userId, UpdateUserRoubySettingCommand command) {
-    User user = userRepository.findById(userId).orElseThrow(() ->
+    User user = userRepository.findByIdAndDeletedAtIsNull(userId).orElseThrow(() ->
         UserException.from(USER_NOT_FOUND));
 
     user.updateRoubySettings(command.toCommunicationTone(
@@ -161,14 +162,14 @@ public class UserWriteService {
 
   @Transactional
   public void completeInitialUserInfoSetting(Long id) {
-    User user = userRepository.findById(id)
+    User user = userRepository.findByIdAndDeletedAtIsNull(id)
         .orElseThrow(() -> UserException.from(UserErrorCode.USER_NOT_FOUND));
     handleIllegalState(user::completeUserInfoSetting, ONBOARDING_STATE_CHANGE_NOT_ALLOWED);
   }
 
   @Transactional
   public void completeInitialRoubySetting(Long id) {
-    User user = userRepository.findById(id)
+    User user = userRepository.findByIdAndDeletedAtIsNull(id)
         .orElseThrow(() -> UserException.from(UserErrorCode.USER_NOT_FOUND));
     handleIllegalState(user::completeRoubySetting, ONBOARDING_STATE_CHANGE_NOT_ALLOWED);
   }
@@ -183,10 +184,18 @@ public class UserWriteService {
 
   @Transactional
   public void updateUserInfo(UpdateUserInfoCommand command) {
-    User user = userRepository.findById(command.updaterId()).orElseThrow(() ->
+    User user = userRepository.findByIdAndDeletedAtIsNull(command.updaterId()).orElseThrow(() ->
         UserException.from(UserErrorCode.USER_NOT_FOUND));
     user.updateUserInfo(
         command.nickname(), command.healthStatusKeywords(), command.profileKeywords(),
         command.dailyStartTime(), command.dailyEndTime());
+  }
+
+  @Transactional
+  public void delete(Long userId) {
+    User user = userRepository.findByIdAndDeletedAtIsNull(userId)
+        .orElseThrow(() -> UserException.from(USER_NOT_FOUND));
+
+    user.delete(userId);
   }
 }

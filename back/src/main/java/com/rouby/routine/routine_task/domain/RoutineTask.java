@@ -99,6 +99,9 @@ public class RoutineTask extends BaseEntity {
     if (timeInfo == null) {
       throw new IllegalArgumentException("routineTimeInfo는 필수입니다.");
     }
+  }
 
+  public boolean isOwner(Long userId){
+    return this.userId.equals(userId);
   }
 }
