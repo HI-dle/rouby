@@ -45,6 +45,8 @@ const props = defineProps({
 })
 const emit = defineEmits(['update:modelValue'])
 
+const store = useOnboardStore()
+
 const {
   nickname: internalNickname,
   nicknameError,
@@ -52,31 +54,33 @@ const {
   validateNickname,
 } = useNicknameForm()
 
-// 💡 computed로 양방향 바인딩 연결
+watch(
+  () => props.modelValue,
+  (newVal) => {
+    if (newVal !== internalNickname.value) {
+      internalNickname.value = newVal ?? ''
+    }
+  },
+  { immediate: true }
+)
+
 const nickname = computed({
   get() {
-    return props.modelValue
+    return internalNickname.value
   },
   set(val) {
+    internalNickname.value = val
     emit('update:modelValue', val)
-    watch(() => props.modelValue, (newVal) => {
-        if (newVal !== internalNickname.value) {
-            internalNickname.value = newVal
-            }
-      },
-      { immediate: true })
   },
 })
 
-// store에 반영
-const store = useOnboardStore()
-  watch(nickname, (val, oldVal) => {
-    if (val !== oldVal) {
-      store.userName = val
-    }
-  })
+watch(
+  nickname,
+  (val) => {
+    store.userName = val
+  }
+)
 
-// 부모가 호출할 수 있도록 expose
 defineExpose({ validate: validateNickname })
 </script>
 

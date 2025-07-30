@@ -1,9 +1,7 @@
 <template>
   <div class="text-center mt-12 space-y-6 w-full text-main-color">
     <div>
-      <p class="text-base">루비를 시작하기 전,</p>
-      <p class="text-base">{{ userName }}님의 건강 상태에 대해 알고싶어요!</p>
-      <p class="text-sm text-#6667D07A mt-2">여러 키워드를 추가할 수 있어요!</p>
+      <p class="text-base">제가 어떤 말투이길 바라시나요?</p>
     </div>
 
     <!-- 키워드 태그 목록 -->
@@ -20,14 +18,11 @@
     <div class="mt-10">
       <UserSettingInput
         v-model="keyword"
-        placeholder="키워드를 추가해주세요."
+        placeholder="귀여운, 건방진, 까칠한, 겸손한"
         @submit="handleSubmit"
         :error="keywordError"
       />
       <FieldError :message="keywordError" />
-      <p class="float-left text-s text-#6667D07A mt-2 ml-2.5">
-        ex) {{ exampleKeywords.join(', ') }}
-      </p>
     </div>
   </div>
 </template>
@@ -42,26 +37,16 @@ import { useOnboardStore } from '@/features/onboard/store/useOnboardStore'
 
 const store = useOnboardStore()
 
-const props = defineProps({
-  userName: String,
-  exampleKeywords: {
-    type: Array,
-    default: () => ['아토피', 'ADHD', '건망증', '당뇨', '건강'],
-  },
-})
-
-// 피니아 저장소에 저장된 초기 키워드를 초기값으로 넘기고, 최대 10개 제한
 const {
   keyword,
   keywordError,
   keywords,
   handleSubmit,
   removeKeyword,
-} = useKeywordForm(store.selectedHealth ?? [], 10)
+} = useKeywordForm(store.speechType ?? [], 3)
 
-// store.selectedHealth가 변경되면 keywords도 동기화 (초기값 이후 변경 반영용)
 watch(
-  () => store.selectedHealth,
+  () => store.speechType,
   (newVal) => {
     if (
       newVal &&
@@ -73,26 +58,26 @@ watch(
   { immediate: true }
 )
 
-// keywords 변경 시 피니아 저장소에 반영
 watch(
   keywords,
   (newKeywords) => {
-    store.selectedHealth = [...newKeywords]
+    store.speechType = [...newKeywords]
   },
   { deep: true }
 )
 
-// 다음 단계 버튼 등에서 호출하는 함수
 const onNextClick = () => {
   if (keywords.value.length === 0) {
-    alert('건강 상태를 최소 1개 이상 입력해주세요!')
+    alert('말투를 최소 1개 이상 입력해주세요!')
     return false
   }
 
-  store.selectedHealth = [...keywords.value]
+  store.speechType = [...keywords.value]
   console.log('키워드 저장 후 true 반환')
   return true
 }
 
 defineExpose({ onNextClick })
 </script>
+
+

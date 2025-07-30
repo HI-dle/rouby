@@ -1,21 +1,21 @@
 import { ref } from 'vue'
-import { isValidKeyword } from '@/components/composable/useKeywordValidator'
+import { isValidKeyword } from '@/shared/composable/useKeywordValidator.js'
 
-export function useKeywordForm() {
+export function useKeywordForm(initialKeywords = [], maxKeywordCount = 10) {
   const keyword = ref('')
-  const keywords = ref([])
+  const keywords = ref([...initialKeywords])
   const keywordError = ref('')
 
   const handleSubmit = () => {
     const value = keyword.value.trim()
 
-    // 최대 20개 제한
-    if (keywords.value.length >= 10) {
-      keywordError.value = '태그는 최대 10개까지 입력할 수 있어요.'
+    // 최대 개수 제한
+    if (keywords.value.length >= maxKeywordCount) {
+      keywordError.value = `태그는 최대 ${maxKeywordCount}개까지 입력할 수 있어요.`
       return
     }
 
-    // 유효성 검사 (글자수 등)
+    // 유효성 검사
     const { valid, message } = isValidKeyword(value)
     if (!valid) {
       keywordError.value = message

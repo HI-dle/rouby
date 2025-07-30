@@ -3,10 +3,10 @@
     <div class="sub-main-container">
 
       <div class="mt-32">
-        <DateSettingForm
+        <DateEndSettingForm
           ref="dateSettingFormRef"
           :user-name="userName"
-          :personal-keyword="personalKeyword"
+          :start-day-time="startOfDayTime"
         />
       </div>
 
@@ -26,24 +26,34 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import DateSettingForm from '@/features/onboard/Components/DateSettingForm.vue'
+import DateEndSettingForm from '@/features/onboard/Components/DateEndSettingForm.vue'
 import { useOnboardStore } from '@/features/onboard/store/useOnboardStore'
 import { useRouter } from 'vue-router'
+import { updateUserInfo, completeUserSetting } from '@/features/onboard/onboardUserSettingApi.js'
 
 const store = useOnboardStore()
-const personalKeyword = computed(() => store.personalKeyword)
+const startOfDayTime = computed(() => store.startOfDayTime)
 const userName = computed(() => store.userName)
 const router = useRouter()
 
 const dateSettingFormRef = ref(null)
 
-const onNextLinkClick = () => {
+const onNextLinkClick = async () => {
   if (!dateSettingFormRef.value) return
 
+
   const success = dateSettingFormRef.value.onNextClick()
-  if (success) {
-    router.push('/다음페이지로')
+  if (!success) return
+
+  try {
+
+    await updateUserInfo()
+    await completeUserSetting()
+    await router.push('/onboarding/speech-setting')
+  } catch (e) {
+    alert('설정 저장에 실패했습니다. 다시 시도해주세요.')
+    console.error(e)
   }
 }
-
 </script>
+
