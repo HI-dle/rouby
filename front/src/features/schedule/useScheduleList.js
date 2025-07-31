@@ -38,25 +38,27 @@ export const useScheduleList = (maybeSelectedDate = null) => {
 
   let debounceTimer = null
   const fetchSchedulesByPeriod = async (fromAt, toAt) => {
-    if (!scheduleStore.getSchedulesMonthlyByDate(fromAt)) {
-      if (debounceTimer) clearTimeout(debounceTimer)
-
-      return new Promise((resolve, reject) => {
-        debounceTimer = setTimeout(async () => {
-          try {
-            const { data } = await getSchedules(fromAt, toAt)
-            const key = format(fromAt, 'yyyy-MM')
-            scheduleStore.setMonthlySchedules(key, data?.schedules)
-            resolve()
-          } catch (err) {
-            console.error(err)
-            errorModal.show = true
-            errorModal.msg = err.message || '스케줄 조회 실패'
-            reject(err)
-          }
-        }, 300)
-      })
+    if (scheduleStore.getSchedulesMonthlyByDate(fromAt)) {
+      return Promise.resolve()
     }
+
+    if (debounceTimer) clearTimeout(debounceTimer)
+
+    return new Promise((resolve, reject) => {
+      debounceTimer = setTimeout(async () => {
+        try {
+          const { data } = await getSchedules(fromAt, toAt)
+          const key = format(fromAt, 'yyyy-MM')
+          scheduleStore.setMonthlySchedules(key, data?.schedules)
+          resolve()
+        } catch (err) {
+          console.error(err)
+          errorModal.show = true
+          errorModal.msg = err.message || '스케줄 조회 실패'
+          reject(err)
+        }
+      }, 300)
+    })
   }
 
   const goToScheduleDetail = (schedule) => {
@@ -98,14 +100,17 @@ export const useScheduleList = (maybeSelectedDate = null) => {
     return `${formattedStart} ~ ${formattedEnd}`
   }
 
-  watch([startOfThisMonth, startOfNextMonth], async ([s, n]) => {
-    if (s && n) {
-      await fetchSchedulesByPeriod(s, n)
-      schedulesForSelectedMonth.value = scheduleStore.getSchedulesMonthlyByDate(
-        selectedDate.value,
-      )
-    }
-  })
+  watch(
+    [startOfThisMonth, startOfNextMonth],
+    async ([s, n]) => {
+      if (s && n) {
+        await fetchSchedulesByPeriod(s, n)
+        schedulesForSelectedMonth.value =
+          scheduleStore.getSchedulesMonthlyByDate(selectedDate.value)
+      }
+    },
+    { immediate: true },
+  )
 
   return {
     selectedDate,

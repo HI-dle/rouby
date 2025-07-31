@@ -39,11 +39,12 @@ export const useScheduleCalendar = (
         allDay: info.allDay,
       },
     })
-    setTimeout(() => (isSelectTriggered = false), 0)
+    nextTick(() => (isSelectTriggered = false))
   }
 
   const onDateClick = (info) => {
     if (isSelectTriggered) return
+
     router.push({
       path: '/schedule/create',
       query: {
@@ -58,7 +59,6 @@ export const useScheduleCalendar = (
     baseDate.value = subMonths(baseDate.value, 1)
     calendarRef.value.getApi().prev()
   }
-
   const nextMonth = () => {
     baseDate.value = addMonths(baseDate.value, 1)
     calendarRef.value.getApi().next()
@@ -89,10 +89,14 @@ export const useScheduleCalendar = (
     convertedSchedules,
     async (events) => {
       await nextTick()
+
       const api = calendarRef.value?.getApi()
-      if (!api || !events || events.length === 0) return
+      if (!api) return
+
       api.removeAllEvents()
-      api.addEventSource(events)
+      if (events && events.length > 0) {
+        api.addEventSource(events)
+      }
     },
     { immediate: true },
   )
