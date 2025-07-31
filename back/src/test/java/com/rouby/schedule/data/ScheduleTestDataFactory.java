@@ -10,7 +10,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.testcontainers.shaded.org.apache.commons.lang3.tuple.Pair;
 
 
 public class ScheduleTestDataFactory {
@@ -19,28 +18,29 @@ public class ScheduleTestDataFactory {
   private static final int OVERRIDE_FREQUENCY = 4; // 4개 중 1개에 override 생성
   private static final int OVERRIDES_PER_SCHEDULE = 10;
 
-public static List<Schedule> generateTestSchedules(int offset, int count,
-    List<Long> scheduleIds, int startIdx) {
-  List<Schedule> schedulesResult = new ArrayList<>(count + count / OVERRIDE_FREQUENCY * OVERRIDES_PER_SCHEDULE);
+  public static List<Schedule> generateTestSchedules(int offset, int count,
+      List<Long> scheduleIds, int startIdx) {
+    List<Schedule> schedulesResult = new ArrayList<>(
+        count + count / OVERRIDE_FREQUENCY * OVERRIDES_PER_SCHEDULE);
 
-  for (int i = offset; i < offset + count; i++) {
+    for (int i = offset; i < offset + count; i++) {
 
-    // 부모 Schedule 생성
-    Schedule schedule = createSchedule(i, scheduleIds.get(startIdx++));
-    schedulesResult.add(schedule);
+      // 부모 Schedule 생성
+      Schedule schedule = createSchedule(i, scheduleIds.get(startIdx++));
+      schedulesResult.add(schedule);
 
-    // 자식 Schedule (예외) 생성
-    if (i % OVERRIDE_FREQUENCY == 0) {
-      for (int j = 0; j < OVERRIDES_PER_SCHEDULE; j++) {
-        Long childId = scheduleIds.get(startIdx++);
-        Schedule override = createScheduleOverride(schedule, i, j, childId);
-        schedulesResult.add(override);
+      // 자식 Schedule (예외) 생성
+      if (i % OVERRIDE_FREQUENCY == 0) {
+        for (int j = 0; j < OVERRIDES_PER_SCHEDULE; j++) {
+          Long childId = scheduleIds.get(startIdx++);
+          Schedule override = createScheduleOverride(schedule, i, j, childId);
+          schedulesResult.add(override);
+        }
       }
     }
-  }
 
-  return schedulesResult;
-}
+    return schedulesResult;
+  }
 
   private static Schedule createSchedule(int index, Long id) {
     long userId = (index % MAX_USER_COUNT) + 1;

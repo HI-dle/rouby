@@ -3,16 +3,15 @@ package com.rouby.schedule.data;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rouby.schedule.domain.entity.Schedule;
 import com.rouby.schedule.domain.repository.ScheduleRepository;
-import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.testcontainers.shaded.org.apache.commons.lang3.tuple.Pair;
 
-//@Disabled("필요한 경우 해당 어노테이션을 주석 처리하고 사용해주세요.")
+@Disabled("필요한 경우 해당 어노테이션을 주석 처리하고 사용해주세요.")
 @SpringBootTest
 public class ScheduleTestDataSaver {
 
