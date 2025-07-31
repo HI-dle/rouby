@@ -1,4 +1,4 @@
-import { isRef, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 
 export function useDatePickerSelectedDate(propsOrInitial, emit, datePickStore) {
   let selectedDate

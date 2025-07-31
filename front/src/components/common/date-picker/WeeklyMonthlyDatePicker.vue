@@ -42,7 +42,7 @@ const nextWeek = () => (baseDate.value = addWeeks(baseDate.value, 1))
 const prevMonth = () => (baseDate.value = subMonths(baseDate.value, 1))
 const nextMonth = () => (baseDate.value = addMonths(baseDate.value, 1))
 
-const { onTouchStart, onTouchEnd } = useDatePickerGestures({
+const { onTouchStart, onTouchMove, onTouchEnd } = useDatePickerGestures({
   isMonthly,
   prevWeek,
   nextWeek,
@@ -52,7 +52,11 @@ const { onTouchStart, onTouchEnd } = useDatePickerGestures({
 </script>
 
 <template>
-  <div @touchstart="onTouchStart" @touchend="onTouchEnd">
+  <div
+    @touchstart="onTouchStart"
+    @touchend="onTouchEnd"
+    @touchmove.prevent="onTouchMove"
+  >
     <div class="flex justify-center items-center gap-2 mb-2">
       <BaseButton
         @click="() => (isMonthly = !isMonthly)"

@@ -35,7 +35,7 @@ const router = createRouter({
           path: 'schedule',
           component: () =>
             import('@/features/schedule/views/ScheduleLayout.vue'),
-          redirect: '/schedule/daily',
+          redirect: '/schedule/daily/list',
           children: [
             {
               path: 'daily/list',
