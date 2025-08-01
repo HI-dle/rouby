@@ -35,7 +35,7 @@ public class ScheduleTestDataSaver {
     List<Schedule> schedules;
     int totalSize = ScheduleTestDataFactory.getCountSchedules(maxSize);
 
-    List<Long> ids = repository.fetchNextIds("schedule_id_seq", totalSize);
+    List<Long> ids = repository.fetchNextIds(totalSize);
 
     int idIndex = 0;
 

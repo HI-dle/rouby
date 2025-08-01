@@ -78,7 +78,7 @@ public class JdbcTestDataRepository {
         });
   }
 
-  public List<Long> fetchNextIds(String sequenceName, int count) {
+  public List<Long> fetchNextIds(int count) {
     String sql = "SELECT nextval('schedule_seq') FROM generate_series(1, ?)";
     return jdbcTemplate.query(
         sql,
