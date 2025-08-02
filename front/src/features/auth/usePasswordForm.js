@@ -4,14 +4,15 @@ import { useRoute, useRouter } from 'vue-router'
 import {
   findPassword,
   resetPassword,
-  verificationPasswordCode
+  verificationPasswordCode,
 } from '@/features/auth/authService'
 import {
   validatePassword,
   validatePasswordConfirm,
-  validateEmail
+  validateEmail,
 } from '@/features/auth/validations.js'
-import { buildFieldValidator } from '@/utils/formUtils.js'
+import { buildFieldValidator } from '@/shared/utils/formUtils'
+
 
 export function usePasswordForm() {
   const route = useRoute()
@@ -42,7 +43,12 @@ export function usePasswordForm() {
     validateField(validatePassword, 'password', form.password)
 
   const validatePasswordConfirmField = () =>
-    validateField(validatePasswordConfirm, 'passwordConfirm', form.password, form.passwordConfirm)
+    validateField(
+      validatePasswordConfirm,
+      'passwordConfirm',
+      form.password,
+      form.passwordConfirm,
+    )
 
   const validateEmailField = () =>
     validateField(validateEmail, 'email', form.email)

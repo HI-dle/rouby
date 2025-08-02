@@ -5,6 +5,8 @@ import {
   myPageResetPassword as myPageResetPasswordApi,
   myPageUpdateRoubySetting as myPageUpdateRoubySettingApi,
   myPageUpdateUserInfo as myPageUpdateUserInfoApi,
+  myPageReadRoubySetting as myPageReadRoubySettingApi,
+  myPageWithdrawalOfUser as myPageWithdrawalOfUserApi,
 } from '@/features/user/api.js'
 import {
   toMyPageResetPasswordPayload,
@@ -52,5 +54,13 @@ export const readUserInfo= wrapApi(
   {
     fieldMessages: {},
     fallbackMessage: '유저 정보 조회 실패',
+  },
+)
+
+export const withdrawalOfUser= wrapApi(
+  () => myPageWithdrawalOfUserApi(),
+  {
+    fieldMessages: {},
+    fallbackMessage: '회원 탈퇴 실패',
   },
 )

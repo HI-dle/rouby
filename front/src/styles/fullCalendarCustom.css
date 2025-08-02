@@ -1,0 +1,40 @@
+.custom-calendar {
+  @apply max-w-full mx-0 my-auto;
+}
+.fc .fc-scrollgrid-section-sticky > * {
+  @apply !bg-none;
+}
+.fc .fc-daygrid-event {
+  @apply overflow-hidden;
+}
+/* .fc .fc-event-time {
+  @apply hidden md:block;
+} */
+.fc .fc-event-title {
+  /* @apply hidden sm:block; */
+  @apply font-semibold;
+}
+.fc-col-header-cell-cushion {
+  @apply text-xs text-content-color;
+}
+.fc .fc-daygrid-day-number {
+  @apply text-xs;
+}
+.fc .fc-daygrid-day.fc-day-today {
+  @apply bg-border-color/30;
+}
+.fc-daygrid-block-event .fc-event-time {
+  @apply font-normal;
+}
+.fc-daygrid-block-event .fc-event-title {
+  @apply font-semibold;
+}
+.fc-daygrid-event-dot {
+  @apply border-placeholder-color;
+}
+.fc-h-event {
+  @apply px-1 py-0 bg-placeholder-color border-none border-placeholder-color hover:bg-placeholder-color hover:border-placeholder-color;
+}
+.fc .fc-highlight {
+  @apply bg-placeholder-pink-color/5;
+}

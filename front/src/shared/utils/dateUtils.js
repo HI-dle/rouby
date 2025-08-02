@@ -4,6 +4,7 @@ import {
   startOfMonth,
   addMonths,
   endOfMonth,
+  isSameDay,
 } from 'date-fns'
 import { formatDateTime } from './dateTimeUtils'
 
@@ -57,4 +58,26 @@ export const getNxtDate = (dateStr) => {
   date.setDate(date.getDate() + 1)
 
   return formatDateTime(date)
+}
+
+export const isAllDay = (startAtStr, endAtStr) => {
+  const start = new Date(startAtStr)
+  const end = new Date(endAtStr)
+
+  const isStartMidnight =
+    start.getHours() === 0 &&
+    start.getMinutes() === 0 &&
+    start.getSeconds() === 0
+
+  const isEndEndOfDay =
+    end.getHours() === 23 && end.getMinutes() === 59 && end.getSeconds() === 59
+
+  const isEndNextMidnight =
+    end.getHours() === 0 &&
+    end.getMinutes() === 0 &&
+    end.getSeconds() === 0 &&
+    end > start &&
+    isSameDay(new Date(start), new Date(end.getTime() - 1))
+
+  return isStartMidnight && (isEndEndOfDay || isEndNextMidnight)
 }

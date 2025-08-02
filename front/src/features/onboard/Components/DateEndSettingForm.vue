@@ -1,9 +1,9 @@
 <template>
   <div class="text-center mt-20 space-y-6 text-main-color">
     <div>
-      <p class="text-base">{{ userName }}님은 {{ personalKeyword }}에 관심이 있으시군요!</p>
-      <p class="text-base">그렇다면, 언제 하루를 시작 하시나요?</p>
-      <p class="text-sm text-[#6667D07A] mt-2">루비와 함께 멋진 하루를 시작해요</p>
+      <p class="text-base">{{ userName }}님은 {{ startTime }}에 하루를 시작하시는군요!</p>
+      <p class="text-base">그렇다면, 언제 하루를 마감 하시나요?</p>
+      <p class="text-sm text-[#6667D07A] mt-2">루비와 함께 하루를 마무리해요</p>
     </div>
 
     <div class="flex justify-center gap-4 mt-6">
@@ -40,7 +40,7 @@ const timeError = ref('')
 
 const props = defineProps({
   userName: String,
-  personalKeyword: String,
+  startDayTime: String,
 })
 
 const {
@@ -56,10 +56,10 @@ const userName = computed(() =>
     : props.userName
 )
 
-const personalKeyword = computed(() =>
-  typeof props.personalKeyword === 'object' && 'value' in props.personalKeyword
-    ? props.personalKeyword.value
-    : props.personalKeyword
+const startTime = computed(() =>
+  typeof props.startDayTime === 'object' && 'value' in props.startDayTime
+    ? props.startDayTime.value
+    : props.startDayTime
 )
 const onNextClick = () => {
   timeError.value = ''
@@ -70,7 +70,7 @@ const onNextClick = () => {
   }
 
   // 시간 저장
-  store.startOfDayTime = selectedTime.value
+  store.endOfDayTime = selectedTime.value
 
   return true
 }

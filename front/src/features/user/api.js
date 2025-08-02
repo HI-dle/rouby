@@ -18,4 +18,8 @@ export const myPageReadUserInfo = () => {
 
 export const myPageUpdateUserInfo = (payload) => {
   return axios.patch('/v1/users/user-info', payload)
+
+export const myPageWithdrawalOfUser = () => {
+  return axios.patch('/v1/users/delete')
+
 }

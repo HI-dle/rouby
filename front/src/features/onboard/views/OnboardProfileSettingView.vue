@@ -43,7 +43,7 @@ const onNextLinkClick = () => {
 
   const success = personalRef.value.onNextClick()
   if (success) {
-    router.push('/onboarding/date-setting')
+    router.push('/onboarding/start-date-setting')
   }
 }
 </script>

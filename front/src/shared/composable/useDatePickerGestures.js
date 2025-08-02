@@ -11,11 +11,31 @@ export function useDatePickerGestures({
   let touchStartX = 0
   let touchStartY = 0
 
+  let gestureHandled = false
+
   const onTouchStart = (e) => {
     if (!e.changedTouches || e.changedTouches.length === 0) return
+    const touch = e.changedTouches[0]
+    touchStartX = touch.clientX
+    touchStartY = touch.clientY
+    gestureHandled = false
+  }
 
-    touchStartX = e.changedTouches[0].clientX
-    touchStartY = e.changedTouches[0].clientY
+  const onTouchMove = (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0 || gestureHandled)
+      return
+
+    const touch = e.changedTouches[0]
+    const diffX = touch.clientX - touchStartX
+    const diffY = touch.clientY - touchStartY
+
+    if (
+      Math.abs(diffY) > VERTICAL_THRESHOLD &&
+      Math.abs(diffY) > Math.abs(diffX)
+    ) {
+      e.preventDefault()
+      gestureHandled = true
+    }
   }
 
   const onTouchEnd = (e) => {
@@ -38,5 +58,5 @@ export function useDatePickerGestures({
     }
   }
 
-  return { onTouchStart, onTouchEnd }
+  return { onTouchStart, onTouchMove, onTouchEnd }
 }
