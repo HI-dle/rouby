@@ -1,27 +1,51 @@
 import { nextTick, reactive, ref, watch } from 'vue'
+import { addDays, subDays } from 'date-fns'
 import {
   convertDateToDateTime,
   formatDateTime,
+  isMidnight,
 } from '@/shared/utils/dateTimeUtils'
 import { validateForm } from './validations'
 import { createSchedule } from './scheduleService'
 import { useScheduleStore } from '@/stores/useScheduleStore'
+import { useDatePickStore } from '@/stores/useDatePickStore'
 
+const { selectedDate, setSelectedDate } = useDatePickStore()
 const { addRawSchedule } = useScheduleStore()
 
-export const useScheduleForm = () => {
+export const useScheduleForm = (initValues = {}) => {
   const createInitialForm = () => {
-    const now = new Date()
-    const oneHourLater = new Date(now.getTime() + 3600000)
+    let baseDate = new Date()
+
+    if (initValues.start) {
+      baseDate = new Date(initValues.start)
+      setSelectedDate(baseDate)
+    } else if (selectedDate) {
+      const [year, month, day] = selectedDate.split('-').map(Number)
+      baseDate = new Date(
+        year,
+        month - 1,
+        day,
+        baseDate.getHours(),
+        baseDate.getMinutes(),
+      )
+    }
+
+    const endDate =
+      initValues.end != null
+        ? new Date(
+            initValues.allDay ? subDays(initValues.end, 1) : initValues.end,
+          )
+        : new Date(baseDate.getTime() + 60 * 60 * 1000)
 
     return reactive({
       title: '',
       memo: '',
-      allDay: false,
-      start: formatDateTime(now, { noMins: true }),
-      end: formatDateTime(oneHourLater, { noMins: true }),
+      allDay: initValues.allDay ?? false,
+      start: formatDateTime(baseDate, { noMins: true }),
+      end: formatDateTime(endDate, { noMins: true }),
       alarmOffsetMinutes: null,
-      routineStart: formatDateTime(now, { type: 'date' }),
+      routineStart: formatDateTime(baseDate, { type: 'date' }),
       repeat: null,
     })
   }
@@ -84,6 +108,21 @@ export const useScheduleForm = () => {
       },
     )
   })
+
+  watch(
+    () => form.allDay,
+    (newVal) => {
+      const endDate = new Date(form.end)
+
+      if (!newVal && isMidnight(endDate)) {
+        form.end = formatDateTime(addDays(form.end, 1))
+      }
+      if (newVal && isMidnight(endDate)) {
+        form.end = formatDateTime(subDays(form.end, 1))
+      }
+    },
+    { immediate: false },
+  )
 
   return {
     form,

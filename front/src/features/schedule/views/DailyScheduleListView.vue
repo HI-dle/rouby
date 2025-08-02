@@ -17,7 +17,7 @@ const {
   <div class="main-container">
     <div class="sub-main-container !pt-0 !px-0">
       <WeeklyMonthlyDatePicker v-model="selectedDate" />
-      <div class="flex flex-col pt-4 px-4 gap-3 text-content-color text-base">
+      <div class="flex flex-col pt-4 px-4 gap-2 text-content-color text-base">
         <div
           v-for="schedule in schedulesForSelectedDate"
           @click="goToScheduleDetail(schedule)"

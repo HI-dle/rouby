@@ -66,7 +66,8 @@ export const useScheduleStore = defineStore(
     /**
      * 해당 월 전체 일정 리스트 반환 (flat)
      */
-    const getMonthlySchedules = (monthKey) => {
+    const getSchedulesMonthlyByDate = (date) => {
+      const monthKey = format(date, 'yyyy-MM')
       const monthData = dailySchedules[monthKey]
       if (!monthData) return null
 
@@ -81,6 +82,7 @@ export const useScheduleStore = defineStore(
     const getSchedulesForDate = (date) => {
       const dateKey = format(date, 'yyyy-MM-dd')
       const monthKey = dateKey.slice(0, 7)
+
       return Object.values(dailySchedules[monthKey]?.[dateKey] || {})
     }
 
@@ -111,7 +113,7 @@ export const useScheduleStore = defineStore(
       setMonthlySchedules,
       addRawSchedule,
       hasMonth,
-      getMonthlySchedules,
+      getSchedulesMonthlyByDate,
       getSchedulesForDate,
       getScheduleInstanceByKey,
       recalculateMonth,
