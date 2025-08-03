@@ -1,4 +1,4 @@
-package com.rouby.schedule.infrastructure.util;
+package com.rouby.test.data;
 
 import com.rouby.routine.daily_task.domain.DailyTask;
 import com.rouby.routine.daily_task.domain.repository.DailyTaskRepository;
@@ -10,34 +10,35 @@ import com.rouby.routine.routine_task.domain.enums.Freq;
 import com.rouby.routine.routine_task.domain.enums.TaskType;
 import com.rouby.routine.routine_task.domain.enums.Weekday;
 import com.rouby.routine.routine_task.domain.repository.RoutineTaskRepository;
-import jakarta.annotation.PostConstruct;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 /**
  * @author : hanjihoon
- * @Date : 2025. 08. 02.
+ * @Date : 2025. 08. 04.
  */
-//테스트 코드에 추가
-@Slf4j
-@Component
-@RequiredArgsConstructor
-public class RoutineTaskTestDataLoader {
+@SpringBootTest
+@Disabled
+public class RoutineTestDataRunner {
 
-  private final RoutineTaskRepository routineTaskRepository;
-  private final DailyTaskRepository dailyTaskRepository;
+  @Autowired
+  private RoutineTaskRepository routineTaskRepository;
+
+  @Autowired
+  private DailyTaskRepository dailyTaskRepository;
 
   private static final Long TEST_USER_ID = 1L;
 
-  @PostConstruct
-  public void insertTestRoutineTasks() {
+  @Test
+  public void run() {
     LocalDate startDate = LocalDate.of(2025, 8, 1);
     LocalDate endDate = LocalDate.of(2025, 8, 30);
 
@@ -59,10 +60,10 @@ public class RoutineTaskTestDataLoader {
           .alarmOffsetType(AlarmOffsetType.M_5)
           .recurrenceRule(recurrenceRule)
           .routineTimeInfo(RoutineTimeInfo.builder()
-              .startDate(LocalDate.of(2025,8,1))
-              .until(LocalDate.of(2025,8,30))
-              .time(LocalTime.now())
-              .weekdays(Set.of(Weekday.WE,Weekday.SA))
+              .startDate(startDate)
+              .until(endDate)
+              .time(LocalTime.of(8 + i, 0)) // 8:00, 9:00, 10:00 등
+              .weekdays(Set.of(Weekday.WE, Weekday.SA))
               .build())
           .build();
 
@@ -74,6 +75,7 @@ public class RoutineTaskTestDataLoader {
 
       generateDailyTasks(routine.getId(), startDate, endDate, byDays);
     }
+
   }
 
   private void generateDailyTasks(Long routineTaskId, LocalDate startDate, LocalDate endDate, List<DayOfWeek> byDays) {
@@ -88,4 +90,3 @@ public class RoutineTaskTestDataLoader {
     dailyTaskRepository.saveAll(dailyTasks);
   }
 }
-
