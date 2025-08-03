@@ -17,9 +17,11 @@ import com.rouby.common.security.WithMockCustomUser;
 import com.rouby.common.support.ControllerTestSupport;
 import com.rouby.routine.routine_task.presentaion.dto.request.CreateRoutineTaskRequest;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Set;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,8 +42,8 @@ class RoutineTaskControllerTest extends ControllerTestSupport {
         15,
         LocalDate.of(2025, 7, 15),
         LocalTime.of(8, 0),
-        List.of(CreateRoutineTaskRequest.Weekday.MO, CreateRoutineTaskRequest.Weekday.WE, CreateRoutineTaskRequest.Weekday.FR),
-        ZonedDateTime.parse("2025-08-15T22:30:00+09:00[Asia/Seoul]")
+        Set.of(CreateRoutineTaskRequest.Weekday.MO, CreateRoutineTaskRequest.Weekday.WE, CreateRoutineTaskRequest.Weekday.FR),
+        LocalDateTime.parse("2025-08-15T22:30:00+09:00[Asia/Seoul]")
     );
 
     String content = objectMapper.writeValueAsString(request);

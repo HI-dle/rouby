@@ -2,7 +2,6 @@ package com.rouby.routine.routine_task.domain;
 
 import com.rouby.common.jpa.BaseEntity;
 import com.rouby.routine.routine_task.domain.enums.AlarmOffsetType;
-import com.rouby.routine.routine_task.domain.enums.OverrideType;
 import com.rouby.routine.routine_task.domain.enums.TaskType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -52,6 +51,7 @@ public class RoutineTask extends BaseEntity {
   @Column(name = "alarm_offset_type", length = 10)
   private AlarmOffsetType alarmOffsetType;
 
+  @Embedded
   @JdbcTypeCode(SqlTypes.JSON)
   @Column(name = "recurrenceRule", columnDefinition = "jsonb", nullable = false)
   private RecurrenceRule recurrenceRule;
@@ -59,21 +59,21 @@ public class RoutineTask extends BaseEntity {
   @Embedded
   private RoutineTimeInfo routineTimeInfo;
 
-  @Enumerated(EnumType.STRING)
-  @Column(name = "override_type", length = 10)
-  private OverrideType overrideType;
+  // rrule에 대한 메타 정보 반복 중 특정 일자 태스크를 수정이나 취소가 일어났을 때 예외 하기 위함 (알람 정보도 포함)
+  @Embedded
+  private OverrideInfo overrideInfo;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "parent_routine_task_id")
   private RoutineTask parentRoutineTask;
 
   @Builder
-  private RoutineTask(AlarmOffsetType alarmOffsetType, OverrideType overrideType,
+  private RoutineTask(AlarmOffsetType alarmOffsetType, OverrideInfo overrideInfo,
       RoutineTask parentRoutineTask, RecurrenceRule recurrenceRule, RoutineTimeInfo routineTimeInfo,
       Integer targetValue, TaskType taskType, String title, Long userId) {
     validate(title, targetValue, taskType, routineTimeInfo);
     this.alarmOffsetType = alarmOffsetType;
-    this.overrideType = overrideType;
+    this.overrideInfo = overrideInfo;
     this.parentRoutineTask = parentRoutineTask;
     this.recurrenceRule = recurrenceRule;
     this.routineTimeInfo = routineTimeInfo;

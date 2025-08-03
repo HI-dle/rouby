@@ -8,9 +8,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public record CreateRoutineTaskRequest (
     @NotBlank(message = "제목은 비어 있을 수 없습니다.")
@@ -34,10 +37,10 @@ public record CreateRoutineTaskRequest (
 
     @NotNull(message = "요일 리스트는 null일 수 없습니다.")
     @Size(min = 1, message = "요일은 최소 1개 이상 선택해야 합니다.")
-    List<Weekday> byDays,
+    Set<Weekday> byDays,
 
     @NotNull(message = "종료일은 필수입니다.")
-    ZonedDateTime until
+    LocalDateTime until
     ) {
 
   public CreateRoutineTaskCommand toCommand(Long writerId) {
@@ -49,7 +52,9 @@ public record CreateRoutineTaskRequest (
         .alarmOffsetMinutes(alarmOffsetMinutes)
         .startDate(startDate)
         .time(time)
-        .byDays(byDays.stream().map(x -> CommandWeekday.valueOf(x.name())).toList())
+        .byDays(byDays.stream()
+            .map(x -> CommandWeekday.valueOf(x.name()))
+            .collect(Collectors.toSet()))
         .until(until)
         .build();
   }

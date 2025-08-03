@@ -6,4 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DailyTaskJpaRepository extends DailyTaskRepository,
     JpaRepository<DailyTask, Long>, DailyTaskJpaRepositoryCustom {
+
+
+
 }
