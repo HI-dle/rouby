@@ -1,8 +1,8 @@
 package com.rouby.routine.routine_task.domain.repository;
 
 import com.rouby.routine.routine_task.domain.RoutineTask;
-import com.rouby.routine.routine_task.domain.repository.search.RoutineTaskResult;
-import java.time.LocalDate;
+import com.rouby.routine.routine_task.domain.repository.search.GetRoutineTaskCriteria;
+import com.rouby.routine.routine_task.domain.repository.search.RoutineTaskWithOverrides;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,5 +11,5 @@ public interface RoutineTaskRepository {
 
   Optional<RoutineTask> findByIdAndDeletedAtIsNull(Long id);
 
-  List<RoutineTaskResult> findOneMonthByUserId(Long userId, LocalDate startDate, LocalDate endDate);
+  List<RoutineTaskWithOverrides> findRoutineTaskByCriteria(GetRoutineTaskCriteria getRoutineTaskCriteria);
 }
