@@ -1,7 +1,6 @@
 package com.rouby.routine.routine_task.application.dto.command;
 
 import com.rouby.routine.routine_task.domain.repository.search.GetRoutineTaskCriteria;
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import lombok.Builder;
 

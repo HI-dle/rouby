@@ -5,7 +5,6 @@ import com.rouby.routine.routine_task.application.dto.command.GetRoutineTaskComm
 import com.rouby.routine.routine_task.application.dto.info.GetRoutineTaskInfo;
 import com.rouby.routine.routine_task.application.service.RoutineTaskReadService;
 import com.rouby.routine.routine_task.application.service.RoutineTaskWriteService;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

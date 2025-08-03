@@ -8,7 +8,6 @@ import com.rouby.routine.routine_task.application.dto.info.GetRoutineTaskInfo;
 import com.rouby.routine.routine_task.application.exception.RoutineTaskException;
 import com.rouby.routine.routine_task.domain.RoutineTask;
 import com.rouby.routine.routine_task.domain.repository.RoutineTaskRepository;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
