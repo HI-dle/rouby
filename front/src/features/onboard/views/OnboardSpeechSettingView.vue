@@ -1,10 +1,13 @@
 <template>
   <div class="main-container">
-    <div class="sub-main-container">
-      <div class="mt-32">
-      <SpeechSettingForm ref="SpeechFormRef" />
-      </div>
-
+    <div class="sub-main-container justify-center">
+      <SpeechSettingForm
+        v-model:keyword="keyword"
+        :keyword-error="keywordError"
+        :keywords="keywords"
+        :handle-submit="handleSubmit"
+        :remove-keyword="removeKeyword"
+      />
       <div class="w-full mt-10 pt-10 text-center">
         <button
           @click="onNextLinkClick"
@@ -18,18 +21,35 @@
 </template>
 
 <script setup>
-import SpeechSettingForm from '@/features/onboard/Components/SpeechSettingForm.vue'
-import { ref } from 'vue'
-import router from '@/router/index.js'
+import SpeechSettingForm from '@/features/onboard/components/SpeechSettingForm.vue'
+import { useKeywordForm } from '@/shared/composable/useKeywordForm'
+import { useUserInfoStore } from '@/stores/useUserInfoStore'
+import { watch } from 'vue'
 
-const SpeechFormRef = ref(null)
+const store = useUserInfoStore()
+const router = useRouter()
+const { keyword, keywordError, keywords, handleSubmit, removeKeyword } =
+  useKeywordForm(store.communicationTone ?? [], 3)
+
+const onNextClick = () => {
+  if (keywords.value.length === 0) {
+    alert('말투를 최소 1개 이상 입력해주세요!')
+    return false
+  }
+  return true
+}
 
 const onNextLinkClick = async () => {
-  if (!SpeechFormRef.value) return
-
-  const success = await SpeechFormRef.value.onNextClick()
-  if (success) {
+  if (onNextClick()) {
     await router.push('/onboarding/alarm-setting')
   }
 }
+
+watch(
+  keywords,
+  (newKeywords) => {
+    store.communicationTone = [...newKeywords]
+  },
+  { deep: true },
+)
 </script>

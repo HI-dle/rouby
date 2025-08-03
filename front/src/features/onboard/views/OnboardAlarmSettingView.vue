@@ -1,9 +1,11 @@
 <template>
   <div class="main-container">
-    <div class="sub-main-container">
-      <div class="mt-32">
-      <AlarmSettingForm ref="AlarmFormRef" />
-      </div>
+    <div class="sub-main-container justify-center">
+      <AlarmSettingForm
+        v-model:schedule-noti-enabled="store.scheduleNotiEnabled"
+        v-model:routine-noti-enabled="store.routineNotiEnabled"
+        v-model:briefing-noti-enabled="store.briefingNotiEnabled"
+      />
 
       <div class="w-full mt-10 pt-10 text-center">
         <button
@@ -18,18 +20,17 @@
 </template>
 
 <script setup>
-import AlarmSettingForm from '@/features/onboard/Components/AlarmSettingForm.vue'
-import { ref } from 'vue'
-import router from '@/router/index.js'
+import AlarmSettingForm from '@/features/onboard/components/AlarmSettingForm.vue'
+import { requestPermissionAndInitFCM } from '@/shared/firebase/config'
 
-const AlarmFormRef = ref(null)
+import { useUserInfoStore } from '@/stores/useUserInfoStore'
+import { useRouter } from 'vue-router'
+
+const store = useUserInfoStore()
+const router = useRouter()
 
 const onNextLinkClick = async () => {
-  if (!AlarmFormRef.value) return
-
-  const success = await AlarmFormRef.value.onNextClick()
-  if (success) {
-    await router.push('/onboarding/calender-setting')
-  }
+  requestPermissionAndInitFCM()
+  await router.push('/onboarding/calender-setting')
 }
 </script>

@@ -5,6 +5,7 @@ import {
   buildRRuleString,
   expandSchedulesByDay,
 } from '@/shared/utils/rruleUtils'
+import { getPiniaStorage } from '@/shared/utils/piniaUtils'
 
 export const useScheduleStore = defineStore(
   'schedule',
@@ -108,8 +109,6 @@ export const useScheduleStore = defineStore(
     }
 
     return {
-      dailySchedules,
-      rawSchedules,
       setMonthlySchedules,
       addRawSchedule,
       hasMonth,
@@ -121,9 +120,7 @@ export const useScheduleStore = defineStore(
   },
   {
     persist: {
-      storage: JSON.parse(localStorage.getItem('alwaysLogin') || 'false')
-        ? localStorage
-        : sessionStorage,
+      storage: getPiniaStorage(),
     },
   },
 )

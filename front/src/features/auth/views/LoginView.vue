@@ -4,7 +4,9 @@
       <!-- 로고 -->
       <div class="text-center my-6">
         <img :src="HeaderIcon" alt="Rouby Logo" class="mx-auto h-10 w-auto" />
-        <p class="text-sm text-violet-500 mt-1">나만의 루틴 비서, 루비를 만나보세요!</p>
+        <p class="text-sm text-violet-500 mt-1">
+          나만의 루틴 비서, 루비를 만나보세요!
+        </p>
       </div>
 
       <!-- 환영 문구 -->
@@ -16,7 +18,23 @@
       </div>
 
       <!-- 로그인 폼 -->
-      <LoginForm />
+      <LoginForm
+        :email="email"
+        :password="password"
+        :staySignedIn="staySignedIn"
+        :emailError="emailError"
+        :passwordError="passwordError"
+        :loginError="loginError"
+        @update:email="email = $event"
+        @update:password="password = $event"
+        @update:staySignedIn="staySignedIn = $event"
+        @validate-email="validateEmail"
+        @validate-password="validatePassword"
+        @submit="onLogin"
+        @kakao="onKakaoLogin"
+        @google="onGoogleLogin"
+        @apple="onAppleLogin"
+      />
 
       <!-- 하단 링크 -->
       <div class="text-center text-xs space-x-2 mt-8 mb-6">
@@ -24,7 +42,9 @@
         <span>|</span>
         <a href="#" class="text-main-color hover:underline">아이디 찾기</a>
         <span>|</span>
-        <RouterLink to="signup" class="text-main-color hover:underline">회원가입</RouterLink>
+        <RouterLink to="signup" class="text-main-color hover:underline"
+          >회원가입</RouterLink
+        >
       </div>
     </div>
   </div>
@@ -33,4 +53,20 @@
 <script setup>
 import LoginForm from '../components/LoginForm.vue'
 import HeaderIcon from '@/assets/header_logo.svg'
+import { useLoginForm } from '../useLoginForm'
+
+const {
+  email,
+  password,
+  staySignedIn,
+  emailError,
+  passwordError,
+  loginError,
+  validateEmail,
+  validatePassword,
+  onLogin,
+  onKakaoLogin,
+  onGoogleLogin,
+  onAppleLogin,
+} = useLoginForm()
 </script>

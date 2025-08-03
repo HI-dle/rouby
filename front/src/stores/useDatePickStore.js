@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { format, startOfWeek } from 'date-fns'
 import { computed, ref } from 'vue'
+import { getPiniaStorage } from '@/shared/utils/piniaUtils'
 
 export const useDatePickStore = defineStore(
   'date-pick',
@@ -47,9 +48,7 @@ export const useDatePickStore = defineStore(
   },
   {
     persist: {
-      storage: JSON.parse(localStorage.getItem('alwaysLogin') || 'false')
-        ? localStorage
-        : sessionStorage,
+      storage: getPiniaStorage(),
     },
   },
 )

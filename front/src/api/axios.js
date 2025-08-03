@@ -1,6 +1,7 @@
+import { useAuthStore } from '@/stores/useAuthStore'
 import axios from 'axios'
-import { getStoredToken } from '@/features/auth/storeToken.js'
 
+const authStore = useAuthStore()
 const instance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api',
   timeout: 10000,
@@ -12,9 +13,9 @@ const instance = axios.create({
 // 요청 인터셉터 – Authorization 헤더 자동 추가
 instance.interceptors.request.use(
   (config) => {
-    const token = getStoredToken()
+    const token = authStore.getToken()
     if (token) {
-      config.headers.Authorization = "Bearer " + `${token}`
+      config.headers.Authorization = 'Bearer ' + `${token}`
     }
     return config
   },
