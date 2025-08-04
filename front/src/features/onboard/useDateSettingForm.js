@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 
-function parseTime(timeStr) {
+function parseTime(timeStr, type) {
   if (!timeStr || typeof timeStr !== 'string') {
     return type === 'end'
       ? { period: '오후', hour: 10 } // 22:00

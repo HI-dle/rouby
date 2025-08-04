@@ -4,6 +4,7 @@ import { login, getUserBasicInfo } from '@/features/auth/api.js'
 import { useGoBack } from '@/shared/composable/useGoBack'
 import { useUserInfoStore } from '@/stores/useUserInfoStore'
 import { useAuthStore } from '@/stores/useAuthStore'
+import { setPiniaStorage } from '@/shared/utils/piniaUtils'
 
 export function useLoginForm() {
   const goPathOrBack = useGoBack()

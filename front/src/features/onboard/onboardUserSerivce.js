@@ -11,9 +11,10 @@ function formatTimeToLocalTimeString(timeStr) {
   }
   return timeStr // 이미 HH:mm:ss 형태면 그대로
 }
-const store = useUserInfoStore()
 
 export async function updateUserInfo() {
+  const store = useUserInfoStore()
+
   const payload = {
     nickname: store.nickname,
     healthStatusKeywords: Array.isArray(store.healthStatusKeywords)
@@ -44,6 +45,7 @@ export async function completeUserSetting() {
 }
 
 export async function updateRoubySetting() {
+  const store = useUserInfoStore()
   const payload = {
     communicationTone: store.communicationTone,
     notificationSettings: [

@@ -45,6 +45,4 @@ const props = defineProps({
 
 const period = defineModel('period')
 const hour = defineModel('hour')
-
-const emit = defineEmits(['update:period', 'update:hour'])
 </script>

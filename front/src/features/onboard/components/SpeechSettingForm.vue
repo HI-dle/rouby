@@ -10,7 +10,7 @@
         v-for="k in keywords"
         :key="k"
         :label="k"
-        @remove="removeKeyword(k)"
+        @remove="emit('remove-keyword', k)"
       />
     </div>
 
@@ -20,7 +20,7 @@
         :model-value="keyword"
         @update:model-value="(val) => emit('update:keyword', val)"
         placeholder="귀여운, 건방진, 까칠한, 겸손한"
-        @submit="handleSubmit"
+        @submit="emit('submit')"
         :error="keywordError"
       />
       <FieldError :message="keywordError" />
@@ -37,9 +37,7 @@ const props = defineProps({
   keyword: String,
   keywordError: String,
   keywords: Array,
-  handleSubmit: Function,
-  removeKeyword: Function,
 })
 
-const emit = defineEmits(['update:keyword'])
+const emit = defineEmits(['update:keyword', 'submit', 'remove-keyword'])
 </script>

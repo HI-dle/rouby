@@ -1,11 +1,11 @@
 import { ref } from 'vue'
 
-export function usenicknameForm(initialValue = '') {
+export function useNicknameForm(initialValue = '') {
   const nickname = ref(initialValue)
   const nicknameError = ref('')
   const isFocused = ref(false)
 
-  const validatenickname = () => {
+  const validateNickname = () => {
     if (!nickname.value.trim()) {
       nicknameError.value = '닉네임을 입력해주세요.'
       return false
@@ -22,6 +22,6 @@ export function usenicknameForm(initialValue = '') {
     nickname,
     nicknameError,
     isFocused,
-    validatenickname,
+    validateNickname,
   }
 }

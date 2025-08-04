@@ -1,8 +1,10 @@
+const PINIA_STATE_KEY = 'pinia-state'
+
 export function getPiniaStorage() {
   try {
     const raw =
-      localStorage.getItem('pinia-state') ||
-      sessionStorage.getItem('pinia-state')
+      localStorage.getItem(PINIA_STATE_KEY) ||
+      sessionStorage.getItem(PINIA_STATE_KEY)
     const parsed = raw ? JSON.parse(raw) : {}
     const saved = parsed?.staySignedIn
 
@@ -17,11 +19,11 @@ export function setPiniaStorage(staySignedIn) {
   try {
     const storage = staySignedIn ? localStorage : sessionStorage
 
-    localStorage.removeItem('pinia-state')
-    sessionStorage.removeItem('pinia-state')
+    localStorage.removeItem(PINIA_STATE_KEY)
+    sessionStorage.removeItem(PINIA_STATE_KEY)
 
     storage.setItem(
-      'pinia-state',
+      PINIA_STATE_KEY,
       JSON.stringify({ staySignedIn: staySignedIn }),
     )
   } catch (e) {

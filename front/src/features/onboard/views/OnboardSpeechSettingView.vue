@@ -5,8 +5,8 @@
         v-model:keyword="keyword"
         :keyword-error="keywordError"
         :keywords="keywords"
-        :handle-submit="handleSubmit"
-        :remove-keyword="removeKeyword"
+        @submit="handleSubmit"
+        @remove-keyword="removeKeyword"
       />
       <div class="w-full mt-10 pt-10 text-center">
         <button
@@ -21,10 +21,11 @@
 </template>
 
 <script setup>
+import { watch } from 'vue'
+import { useRouter } from 'vue-router'
 import SpeechSettingForm from '@/features/onboard/components/SpeechSettingForm.vue'
 import { useKeywordForm } from '@/shared/composable/useKeywordForm'
 import { useUserInfoStore } from '@/stores/useUserInfoStore'
-import { watch } from 'vue'
 
 const store = useUserInfoStore()
 const router = useRouter()

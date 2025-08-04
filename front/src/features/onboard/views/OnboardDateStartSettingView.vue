@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-import { ref, watchEffect } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserInfoStore } from '@/stores/useUserInfoStore'
 import { useDateSettingForm } from '../useDateSettingForm'
@@ -37,9 +37,11 @@ const { form, periodOptions, hourOptions, selectedTime } = useDateSettingForm(
   'start',
 )
 
-const selectedPersonalFirst = Array.isArray(store.profileKeywords)
-  ? store.profileKeywords[0] || ''
-  : store.profileKeywords
+const selectedPersonalFirst = computed(() => {
+  const keywords = store.profileKeywords
+  if (!keywords) return ''
+  return Array.isArray(keywords) ? keywords[0] || '' : keywords
+})
 
 const timeError = ref('')
 const onNextClick = () => {
