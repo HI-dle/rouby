@@ -1,6 +1,7 @@
 package com.rouby.assistant.prompt.application.service;
 
 import com.rouby.assistant.prompt.application.command.CreatePromptCommand;
+import com.rouby.assistant.prompt.application.info.PromptInfo;
 import com.rouby.assistant.prompt.domain.PromptRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,8 +11,7 @@ import org.springframework.stereotype.Service;
 public class PromptWriteService {
   private final PromptRepository promptRepository;
 
-  public void createPrompt(CreatePromptCommand command) {
-    promptRepository.save(command.toEntity());
-
+  public PromptInfo createPrompt(CreatePromptCommand command) {
+    return PromptInfo.of(promptRepository.save(command.toEntity()));
   }
 }

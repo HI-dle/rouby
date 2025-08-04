@@ -1,4 +1,4 @@
-package com.rouby.assistant.prompt.infrastructure.persistance;
+package com.rouby.assistant.prompt.infrastructure.persistence;
 
 import com.rouby.assistant.prompt.domain.Prompt;
 import com.rouby.assistant.prompt.domain.PromptRepository;

@@ -20,17 +20,17 @@ import lombok.NoArgsConstructor;
 public class Prompt extends BaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
-  public Long id;
+  private Long id;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  public PromptType promptType;
+  private PromptType promptType;
 
   @Column(nullable = false, columnDefinition = "TEXT")
-  public String promptTemplate;
+  private String promptTemplate;
 
   @Column(nullable = false)
-  public Integer version;
+  private Integer version;
 
   @Builder
   private Prompt(Long id, PromptType promptType, String promptTemplate, Integer version) {

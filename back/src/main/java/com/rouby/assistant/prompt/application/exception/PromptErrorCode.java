@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum PromptErrorCode implements ErrorCode {
-  PROMPT_NOT_FOUNT("프롬프트를 찾을 수 없습니다.", "PROMPT_NOT_FOUNT", HttpStatus.NOT_FOUND),
+  PROMPT_NOT_FOUND("프롬프트를 찾을 수 없습니다.", "PROMPT_NOT_FOUNT", HttpStatus.NOT_FOUND),
   ;
 
   private final String message;

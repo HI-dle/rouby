@@ -2,7 +2,9 @@ package com.rouby.assistant.prompt.presentation;
 
 import com.rouby.assistant.prompt.application.PromptFacade;
 import com.rouby.assistant.prompt.presentation.request.CreatePromptRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,8 +21,8 @@ public class PromptController {
 
   @PostMapping
   @PreAuthorize("hasAnyRole('ADMIN')")
-  public ResponseEntity<Void> createPrompt(@RequestBody CreatePromptRequest request) {
+  public ResponseEntity<Void> createPrompt(@RequestBody @Valid CreatePromptRequest request) {
     promptFacade.createPrompt(request.toCommand());
-    return ResponseEntity.ok().build();
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 }
