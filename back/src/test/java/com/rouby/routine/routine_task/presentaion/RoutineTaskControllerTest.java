@@ -92,7 +92,6 @@ class RoutineTaskControllerTest extends ControllerTestSupport {
 
     GetRoutineTaskRequest request = new GetRoutineTaskRequest(fromDate, toDate);
 
-    // Override DTO mock 데이터 생성
     GetRoutineTaskInfo.RoutineTaskOverrideDto overrideDto = GetRoutineTaskInfo.RoutineTaskOverrideDto.builder()
         .id(100L)
         .title("오버라이드 제목")
@@ -109,7 +108,6 @@ class RoutineTaskControllerTest extends ControllerTestSupport {
         .overrideDate(LocalDate.of(2025, 8, 6))
         .build();
 
-    // RoutineTask DTO mock 데이터 생성
     GetRoutineTaskInfo.RoutineTask routineTaskDto = GetRoutineTaskInfo.RoutineTask.builder()
         .id(1L)
         .userId(1L)
@@ -136,7 +134,6 @@ class RoutineTaskControllerTest extends ControllerTestSupport {
         .routineOverrides(List.of(overrideDto))
         .build();
 
-    // GetRoutineTaskResponse DTO 생성
     GetRoutineTaskInfo mockResponse = GetRoutineTaskInfo.builder()
         .routines(List.of(routineTaskDto))
         .build();
@@ -145,11 +142,12 @@ class RoutineTaskControllerTest extends ControllerTestSupport {
 
     // when
     ResultActions result = mockMvc.perform(get("/api/v1/routine-task")
-        .param("fromDate", fromDate.toString())
-        .param("toDate", toDate.toString())
+        .param("fromDate", request.fromDate().toString())
+        .param("toDate", request.toDate().toString())
         .contentType(MediaType.APPLICATION_JSON)
         .header("Authorization", "Bearer ACCESS_TOKEN")
     );
+
 
     // then
     result.andExpect(status().isOk())
