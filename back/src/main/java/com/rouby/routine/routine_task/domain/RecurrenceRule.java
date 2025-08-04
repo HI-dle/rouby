@@ -62,7 +62,7 @@ public class RecurrenceRule implements Serializable {
       sb.append(RuleType.FREQ).append(equal).append(freq).append(separator);
     }
     if (byDay != null && !byDay.isEmpty()) {
-      String byDayStr = String.join(",", byDay.stream().map(Enum::name).toList());
+      String byDayStr = byDay.stream().map(Enum::name).collect(Collectors.joining(","));
       sb.append(RuleType.BYDAY).append(equal).append(byDayStr).append(separator);
     }
     if (interval != null) {

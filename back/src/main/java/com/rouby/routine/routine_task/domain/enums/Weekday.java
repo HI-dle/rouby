@@ -37,11 +37,9 @@ public enum Weekday {
   }
   public static Set<Weekday> parseStringToSet(String byDayStr) {
 
-    Set<Weekday> byDaySet = Collections.emptySet();
-
     if (byDayStr != null && !byDayStr.isBlank()) {
       try {
-        byDaySet = Arrays.stream(byDayStr.split(","))
+        return Arrays.stream(byDayStr.split(","))
             .map(String::trim)
             .filter(day -> !day.isEmpty())
             .map(Weekday::valueOf)
@@ -50,7 +48,7 @@ public enum Weekday {
         throw new IllegalArgumentException("잘못된 요일 값이 포함되어 있습니다: " + byDayStr, e);
       }
     }
-    return byDaySet;
+    return Collections.emptySet();
   }
 
 }

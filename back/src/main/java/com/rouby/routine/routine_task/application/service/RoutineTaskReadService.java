@@ -28,6 +28,7 @@ public class RoutineTaskReadService {
     }
   }
 
+  @Transactional(readOnly = true)
   public GetRoutineTaskInfo getRoutineTask(GetRoutineTaskCommand command) {
     return GetRoutineTaskInfo.of(routineTaskRepository.findRoutineTaskByCriteria(command.toCriteria()));
   }

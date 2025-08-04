@@ -63,7 +63,7 @@ public record GetRoutineTaskInfo(
     return RecurrenceRuleDto.builder()
         .freq(rrule.getFreq() != null ? rrule.getFreq().name() : null)
         .interval(rrule.getInterval())
-        .until(LocalDate.from(rrule.getUntil()))
+        .until(rrule.getUntil() != null ? rrule.getUntil().toLocalDate() : null)
         .byDay(rrule.getByDay() != null
             ? rrule.getByDay().stream()
             .map(Weekday::name)

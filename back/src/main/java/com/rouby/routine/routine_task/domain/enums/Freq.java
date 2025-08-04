@@ -19,14 +19,14 @@ public enum Freq {
 
   private final Predicate<Integer> intervalValidator;
 
-  public static com.rouby.schedule.domain.enums.Freq parse(String freq) {
+  public static Freq parse(String freq) {
 
     if (freq == null || freq.isBlank())
       return null;
 
-    com.rouby.schedule.domain.enums.Freq frequency;
+    Freq frequency;
     try {
-      frequency = com.rouby.schedule.domain.enums.Freq.valueOf(freq);
+      frequency = Freq.valueOf(freq);
     } catch (IllegalArgumentException e) {
       throw new IllegalArgumentException("잘못된 빈도 값입니다: " + freq, e);
     }

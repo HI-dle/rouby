@@ -31,6 +31,6 @@ include::{snippets}/routine-task-get-200/http-request.adoc[]
 
 include::{snippets}/routine-task-get-200/query-parameters.adoc[]
 
-==== HTTP 응답 (201 OK)
+==== HTTP 응답 (200 OK)
 
 include::{snippets}/routine-task-get-200/response-body.adoc[]
