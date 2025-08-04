@@ -10,8 +10,6 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -48,7 +46,7 @@ class RoutineTaskControllerTest extends ControllerTestSupport {
         LocalDate.of(2025, 7, 15),
         LocalTime.of(8, 0),
         Set.of(CreateRoutineTaskRequest.Weekday.MO, CreateRoutineTaskRequest.Weekday.WE, CreateRoutineTaskRequest.Weekday.FR),
-        LocalDateTime.parse("2025-08-15T22:30:00+09:00[Asia/Seoul]")
+        LocalDateTime.parse("2025-08-15T22:30:00")
     );
 
     String content = objectMapper.writeValueAsString(request);
