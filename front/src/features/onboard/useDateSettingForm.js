@@ -1,12 +1,37 @@
 import { ref, computed } from 'vue'
-import { useOnboardStore } from '@/features/onboard/store/useOnboardStore'
 
-export function useDateSettingForm() {
-  const store = useOnboardStore()
+function parseTime(timeStr, type) {
+  if (!timeStr || typeof timeStr !== 'string') {
+    return type === 'end'
+      ? { period: '오후', hour: 10 } // 22:00
+      : { period: '오전', hour: 8 } // 08:00
+  }
+
+  const [hourStr] = timeStr.split(':')
+  let hour = parseInt(hourStr, 10)
+
+  if (isNaN(hour) || hour < 0 || hour > 23) {
+    return { period: '오전', hour: 8 }
+  }
+
+  let period = '오전'
+
+  if (hour === 0) {
+    hour = 12
+  } else if (hour >= 12) {
+    period = '오후'
+    if (hour > 12) hour -= 12
+  }
+
+  return { period, hour }
+}
+
+export function useDateSettingForm(storedVal, type) {
+  const parsed = parseTime(storedVal, type)
 
   const form = ref({
-    period: '오전',
-    hour: 8,
+    period: parsed.period,
+    hour: parsed.hour,
   })
 
   const periodOptions = [
@@ -26,22 +51,10 @@ export function useDateSettingForm() {
     return `${String(hour).padStart(2, '0')}:00`
   })
 
-  const onNextClick = () => {
-    if (!form.value.hour || !form.value.period) {
-      alert('시간을 선택해주세요!')
-      return false
-    }
-
-    store.startOfDayTime = selectedTime.value
-    console.log('저장된 시간:', store.startOfDayTime)
-    return true
-  }
-
   return {
     form,
     periodOptions,
     hourOptions,
     selectedTime,
-    onNextClick,
   }
 }

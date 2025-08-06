@@ -3,7 +3,13 @@ import { ref } from 'vue'
 import { cn } from '@/lib/utils'
 import SettingButton from '@/assets/settingButton.svg'
 
-const emit = defineEmits(['update:modelValue', 'submit', 'blur', 'focus', 'keydown'])
+const emit = defineEmits([
+  'update:modelValue',
+  'submit',
+  'blur',
+  'focus',
+  'keydown',
+])
 
 const props = defineProps({
   modelValue: String,
@@ -14,8 +20,8 @@ const props = defineProps({
   label: String,
   labelClass: {
     type: String,
-    default: ''
-  }
+    default: '',
+  },
 })
 
 const isFocused = ref(false)
@@ -46,13 +52,19 @@ const handleBlur = (e) => {
         :value="modelValue"
         :placeholder="placeholder"
         :disabled="disabled"
-        :class="cn(
-          'w-full h-10 pl-4 pr-10 rounded-2xl bg-white border text-main-color placeholder:text-placeholder-color text-base outline-none focus:ring-2 transition shadow-sm',
-          error
-            ? 'border-error-color'
-            : 'border-border-color focus:ring-[#B6A6FF]'
-        )"
-        :style="error && isFocused ? 'box-shadow: 0 0 0 3px rgba(255, 72, 66, 0.3)' : ''"
+        :class="
+          cn(
+            'w-full h-10 pl-4 pr-10 rounded-2xl bg-white border text-main-color placeholder:text-placeholder-color text-base outline-none focus:ring-1 transition shadow-sm',
+            error
+              ? 'border-error-color'
+              : 'border-border-color focus:ring-[#B6A6FF]',
+          )
+        "
+        :style="
+          error && isFocused
+            ? 'box-shadow: 0 0 0 1px rgba(255, 72, 66, 0.3)'
+            : ''
+        "
         @input="emit('update:modelValue', $event.target.value)"
         @keyup.enter="emit('submit')"
         @keydown="emit('keydown', $event)"

@@ -1,13 +1,15 @@
 // src/features/auth/useLoginForm.js
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { login } from '@/features/auth/loginApi.js'
-import { storeToken } from '@/features/auth/storeToken.js'
-import axios from '@/api/axios.js'
-import { useOnboardStore } from '@/features/onboard/store/useOnboardStore'
+import { login, getUserBasicInfo } from '@/features/auth/api.js'
+import { useGoBack } from '@/shared/composable/useGoBack'
+import { useUserInfoStore } from '@/stores/useUserInfoStore'
+import { useAuthStore } from '@/stores/useAuthStore'
+import { setPiniaStorage } from '@/shared/utils/piniaUtils'
 
 export function useLoginForm() {
-  const router = useRouter()
+  const goPathOrBack = useGoBack()
+  const userInfoStore = useUserInfoStore()
+  const { setToken, setStaySignedIn } = useAuthStore()
 
   const email = ref('')
   const password = ref('')
@@ -49,26 +51,23 @@ export function useLoginForm() {
 
     try {
       // 1. 로그인 요청
-      const token = await login({
+      const response = await login({
         email: email.value.trim(),
         password: password.value,
       })
 
       // 2. 토큰 저장
-      storeToken(token, staySignedIn.value)
-      console.log('[토큰 저장 완료]', token)
+      setPiniaStorage(staySignedIn.value)
+      setToken(response.data.token)
+      setStaySignedIn(staySignedIn.value)
 
       // 3. 유저 기본 정보 요청
-      const userRes = await axios.get('/v1/users/basic-info')
+      const userRes = await getUserBasicInfo()
       const user = userRes.data
-      console.log('[유저 기본 정보]', user)
 
-      // 4. Pinia 저장소에 값 저장
-      const onboardStore = useOnboardStore()
-      onboardStore.userName = user.nickname || ''
-      onboardStore.selectedHealth = [...(user.healthStatusKeywords || [])]
-      onboardStore.personalKeyword = [...(user.profileKeywords || [])]
-      onboardStore.speechType = [...(user.communicationTone || [])]
+      userInfoStore.setUserInfoWithDefaults({ ...user })
+
+      // 4. 유저 디바이스 토큰 및 정보 저장
 
       // 5. 라우팅
       const onboardingStatePath = user.onboardingStatePath
@@ -76,17 +75,28 @@ export function useLoginForm() {
         throw new Error('onboardingStatePath가 없습니다.')
       }
 
-      await router.push(onboardingStatePath)
-
+      await goPathOrBack(onboardingStatePath)
     } catch (e) {
       console.error('[로그인 또는 유저 정보 조회 실패]', e)
 
       if (e.response?.status === 401) {
-        loginError.value = e.response.data.message || '아이디 혹은 비밀번호가 일치하지 않습니다.'
+        loginError.value =
+          e.response.data.message || '아이디 혹은 비밀번호가 일치하지 않습니다.'
       }
     }
   }
 
+  const onGoogleLogin = () => {
+    alert('서비스를 준비 중입니다.')
+  }
+
+  const onNaverLogin = () => {
+    alert('서비스를 준비 중입니다.')
+  }
+
+  const onAppleLogin = () => {
+    alert('서비스를 준비 중입니다.')
+  }
 
   return {
     email,
@@ -98,5 +108,8 @@ export function useLoginForm() {
     validateEmail,
     validatePassword,
     onLogin,
+    onGoogleLogin,
+    onNaverLogin,
+    onAppleLogin,
   }
 }

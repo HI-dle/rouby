@@ -1,12 +1,12 @@
 import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useOnboardStore} from '@/features/onboard/store/useOnboardStore.js'
 import { withdrawalOfUser } from '@/features/user/userService.js'
+import { useUserInfoStore } from '@/stores/useUserInfoStore'
 
 export function useMyPageForm() {
   const router = useRouter()
-  const store = useOnboardStore()
-  const nickname = computed(() => store.userName)
+  const store = useUserInfoStore()
+  const nickname = computed(() => store.nickname)
   const showConfirmModal = ref(false)
   const showErrorModal = ref(false)
   const isWithdrawing = ref(false)
@@ -18,7 +18,7 @@ export function useMyPageForm() {
     { label: '내 정보 설정', route: { name: 'mypage' } },
     { label: '비밀번호 변경', route: { name: 'password-reset' } },
     { label: '루비 설정', route: { name: 'rouby-setting' } },
-    { label: '회원탈퇴', action: 'withdraw' }
+    { label: '회원탈퇴', action: 'withdraw' },
   ]
 
   const goTo = (route) => {
@@ -38,9 +38,8 @@ export function useMyPageForm() {
     try {
       const success = await withdrawalOfUser()
       if (success) {
-        goTo({ name: 'login' } )
+        goTo({ name: 'login' })
       }
-
     } catch (err) {
       if (err.fieldErrors) {
         Object.assign(errors, err.fieldErrors)
