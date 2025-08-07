@@ -8,8 +8,26 @@ defineOptions({
   name: 'CreateScheduleView',
 })
 
-const { form, isSubmitting, errors, inputRefs, errorModal, onDateTimeInput, onSubmit } =
-  useScheduleForm()
+const props = defineProps({
+  start: String,
+  end: String,
+  allDay: String,
+})
+
+const {
+  form,
+  isSubmitting,
+  errors,
+  inputRefs,
+  errorModal,
+  onDateTimeInput,
+  onSubmit,
+} = useScheduleForm({
+  start: props.start,
+  end: props.end,
+  allDay: props.allDay === 'true',
+})
+
 const { goBackOrPath } = useGoBack()
 const { autoResize } = useAutoResize()
 

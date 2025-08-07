@@ -1,9 +1,7 @@
 <template>
   <div class="main-container">
-    <div class="sub-main-container">
-      <div class="mt-32">
-        <CalendarForm ref="CalendarFormRef" />
-      </div>
+    <div class="sub-main-container justify-center">
+      <CalendarForm ref="CalendarFormRef" />
 
       <div class="w-full mt-10 pt-10 text-center">
         <button
@@ -18,29 +16,19 @@
 </template>
 
 <script setup>
-import CalendarForm from '@/features/onboard/Components/CalenderForm.vue'
-import { ref } from 'vue'
-import router from '@/router'
-import {
-  updateRoubySetting,
-  completeRoubySetting,
-} from '@/features/onboard/onboardRoubySettingApi.js'
+import CalendarForm from '@/features/onboard/components/CalenderForm.vue'
+import { completeRoubySetting, updateRoubySetting } from '../onboardUserSerivce'
+import { useRouter } from 'vue-router'
 
-const CalendarFormRef = ref(null)
+const router = useRouter()
 
 const onNextLinkClick = async () => {
-  if (!CalendarFormRef.value) return
-
-  const success = await CalendarFormRef.value.onNextClick()
-  if (success) {
-    try {
-      await updateRoubySetting()
-      await completeRoubySetting()
-      await router.push('/')
-    } catch (e) {
-      alert('설정 저장에 실패했어요. 다시 시도해주세요.')
-    }
+  try {
+    await updateRoubySetting()
+    await completeRoubySetting()
+    await router.push('/')
+  } catch (e) {
+    alert('설정 저장에 실패했어요. 다시 시도해주세요.')
   }
 }
 </script>
-

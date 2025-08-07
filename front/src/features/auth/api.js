@@ -12,7 +12,7 @@ export const signup = (payload, token) => {
   return axios.post('/v1/users', payload, {
     headers: {
       Authorization: `${token}`,
-    }
+    },
   })
 }
 
@@ -28,7 +28,18 @@ export const verificationPasswordCode = (payload) => {
   return axios.get('/v1/users/password/reset/validate', {
     params: {
       email: payload.email,
-      token: payload.token
-    }
+      token: payload.token,
+    },
   })
+}
+
+export const login = async ({ email, password }) => {
+  return await axios.post('/v1/auth/login', {
+    email,
+    password,
+  })
+}
+
+export async function getUserBasicInfo() {
+  return await axios.get('/v1/users/basic-info')
 }

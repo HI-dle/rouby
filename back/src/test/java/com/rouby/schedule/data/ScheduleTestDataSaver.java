@@ -29,15 +29,22 @@ public class ScheduleTestDataSaver {
   void createSchedules() {
 
     int batchSize = 100;
-    int maxSize = 1_000_000; // * 3 정도의 데이터 생성됨
+    int maxSize = 1_000; // * 3 정도의 데이터 생성됨
 
     JdbcTestDataRepository repository = new JdbcTestDataRepository(jdbcTemplate, objectMapper);
     List<Schedule> schedules;
+    int totalSize = ScheduleTestDataFactory.getCountSchedules(maxSize);
+
+    List<Long> ids = repository.fetchNextIds(totalSize);
+
+    int idIndex = 0;
 
     for (int i = 0; i < maxSize; i += batchSize) {
       try {
-        schedules = ScheduleTestDataFactory.generateTestSchedules(i, batchSize);
+        schedules = ScheduleTestDataFactory.generateTestSchedules(i, batchSize, ids, idIndex);
         repository.batchInsert(batchSize, schedules);
+        idIndex += ScheduleTestDataFactory.getCountSchedules(Math.min(batchSize, maxSize - i));
+
         System.out.printf("Inserted batch %d-%d%n", i, i + batchSize);
 
       } catch (Exception e) {

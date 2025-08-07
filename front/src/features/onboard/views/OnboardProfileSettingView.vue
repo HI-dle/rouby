@@ -1,15 +1,16 @@
 <template>
   <div class="main-container">
-    <div class="sub-main-container">
+    <div class="sub-main-container justify-center">
       <!-- 키워드 입력 폼 -->
-
-      <div class="mt-32">
-      <PersonalStateForm
-        ref="personalRef"
-        :user-name="userName"
-        :selected-health="selectedHealth"
+      <ProfileSettingForm
+        :user-name="store.nickname"
+        :selected-health="selectedHealthFirst"
+        v-model:keyword="keyword"
+        :keywords="keywords"
+        :keyword-error="keywordError"
+        :handle-submit="handleSubmit"
+        :remove-keyword="removeKeyword"
       />
-      </div>
 
       <!-- 다음 단계 이동 -->
       <div class="w-full mt-10 pt-10 text-center">
@@ -25,25 +26,42 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
-import PersonalStateForm from '@/features/onboard/Components/ProfileSettingForm.vue'
-import { useOnboardStore } from '@/features/onboard/store/useOnboardStore'
 import { useRouter } from 'vue-router'
+import { useUserInfoStore } from '@/stores/useUserInfoStore'
+import { useKeywordForm } from '@/shared/composable/useKeywordForm'
+import { watch } from 'vue'
+import ProfileSettingForm from '@/features/onboard/components/ProfileSettingForm.vue'
 
-const store = useOnboardStore()
-const selectedHealth = computed(() => store.selectedHealth)
-const userName = computed(() => store.userName)
-const exampleKeywords = ref([]) // 유동적으로 받아오기 가능
+const store = useUserInfoStore()
 const router = useRouter()
 
-const personalRef = ref(null)
+// useKeywordForm에 초기값 넣고 최대 10개 제한
+const { keyword, keywordError, keywords, handleSubmit, removeKeyword } =
+  useKeywordForm(store.profileKeywords ?? [], 10)
+
+const selectedHealthFirst = Array.isArray(store.healthStatusKeywords)
+  ? store.healthStatusKeywords[0] || ''
+  : store.healthStatusKeywords || ''
+
+const onNextClick = () => {
+  if (keywords.value.length === 0) {
+    alert('키워드를 최소 1개 이상 입력해주세요.')
+    return false
+  }
+  return true
+}
 
 const onNextLinkClick = () => {
-  if (!personalRef.value) return
-
-  const success = personalRef.value.onNextClick()
-  if (success) {
+  if (onNextClick()) {
     router.push('/onboarding/start-date-setting')
   }
 }
+
+watch(
+  keywords,
+  (newKeywords) => {
+    store.profileKeywords = [...newKeywords]
+  },
+  { deep: true },
+)
 </script>
