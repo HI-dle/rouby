@@ -40,9 +40,9 @@ const isNotCreateOrModify = () => !createOrModify.some((p) => route.path.include
     </RouterLink>
 
     <RouterLink
-      to="/mypage"
+      to="/user/mypage"
       class="flex justify-center items-center"
-      :class="isActive('/mypage') ? 'text-main-color' : 'text-gray-400'"
+      :class="isActive('/user/mypage') ? 'text-main-color' : 'text-gray-400'"
     >
       <User class="w-6 h-6" />
     </RouterLink>

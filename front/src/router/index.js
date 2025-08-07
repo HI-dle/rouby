@@ -9,15 +9,24 @@ const router = createRouter({
       redirect: '/routine/daily',
       children: [
         {
-          path: '/user',
+          path: 'user',
           component: () => import('@/features/user/views/UserLayout.vue'),
           children: [
             {
-              path: 'password/reset',
-              name: 'password-reset',
-              component: () =>
-                import('@/features/user/views/MyPageResetPasswordView.vue'),
+              path: 'mypage',
+              name: 'mypage',
+              component: () => import('@/features/user/views/MyPageView.vue'),
             },
+            {
+              path: 'password',
+              name: 'password-reset',
+              component: () => import('@/features/user/views/MyPageResetPasswordView.vue'),
+            },
+            {
+              path: 'rouby-setting',
+              name: 'rouby-setting',
+              component: () => import('@/features/user/views/MyPageRoubySettingView.vue'),
+            }
           ],
         },
         {
@@ -88,11 +97,6 @@ const router = createRouter({
             },
           ],
         },
-        {
-          path: 'mypage',
-          name: 'mypage',
-          component: () => import('@/features/user/views/MypageView.vue'),
-        },
       ],
     },
     {
@@ -146,15 +150,29 @@ const router = createRouter({
             import('@/features/onboard/views/OnboardProfileSettingView.vue'),
         },
         {
-          path: 'date-setting',
-          name: 'date-setting',
-          component: () =>
-            import('@/features/onboard/views/OnboardDateSettingView.vue'),
+          path: 'start-date-setting',
+          name: 'start-date-setting',
+          component: () => import('@/features/onboard/views/OnboardDateStartSettingView.vue'),
         },
         {
-          path: 'setting/rouby',
-          name: 'rouby-setting',
-          component: () => import('@/features/user/views/MyPageRoubySettingView.vue'),
+          path: 'end-date-setting',
+          name: 'end-date-setting',
+          component: () => import('@/features/onboard/views/OnboardDateEndSettingView.vue'),
+        },
+        {
+          path: 'speech-setting',
+          name: 'speech-setting',
+          component: () => import('@/features/onboard/views/OnboardSpeechSettingView.vue'),
+        },
+        {
+          path: 'alarm-setting',
+          name: 'alarm-setting',
+          component: () => import('@/features/onboard/views/OnboardAlarmSettingView.vue'),
+        },
+        {
+          path: 'calender-setting',
+          name: 'calender-setting',
+          component: () => import('@/features/onboard/views/OnboardCalendarView.vue'),
         },
       ],
     },

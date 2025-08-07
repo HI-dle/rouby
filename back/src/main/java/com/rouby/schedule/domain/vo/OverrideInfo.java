@@ -8,11 +8,13 @@ import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Embeddable
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class OverrideInfo {
 
   @Enumerated(EnumType.STRING)
