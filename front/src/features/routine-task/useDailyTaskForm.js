@@ -68,9 +68,14 @@ export function useDailyTaskForm(task) {
 
   // CHECK용: 짧게 튕겨주는 디바운스
   const debouncedSaveCheck = debounce((value) => {
-    if (uiState.inFlight) uiState.queuedValue = value
-    else actuallySave(value)
-  }, 150, { leading: false, trailing: true, maxWait: 1000 })
+    if (uiState.inFlight) {
+      // 진행 중이면 마지막 토글 상태만 남김
+      uiState.queuedValue = value
+    } else {
+      actuallySave(value)
+    }
+  }, 600, { leading: false, trailing: true, maxWait: 2000 })
+
 
   const scheduleSaveNumeric = (value) => {
     uiState.syncStatus = 'pending'
