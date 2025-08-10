@@ -1,6 +1,8 @@
 package com.rouby.schedule.application.service;
 
 import com.rouby.schedule.application.dto.command.CreateScheduleCommand;
+import com.rouby.schedule.application.exception.ScheduleErrorCode;
+import com.rouby.schedule.application.exception.ScheduleException;
 import com.rouby.schedule.domain.entity.Schedule;
 import com.rouby.schedule.domain.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +16,13 @@ public class ScheduleWriteService {
 
   public Long createSchedule(Long userId, CreateScheduleCommand command) {
 
-    Schedule schedule = command.toEntityWithUserId(userId);
-    scheduleRepository.save(schedule);
+    try {
+      Schedule schedule = command.toEntityWithUserId(userId);
+      scheduleRepository.save(schedule);
+      return schedule.getId();
 
-    return schedule.getId();
+    } catch (IllegalArgumentException e) {
+      throw ScheduleException.of(ScheduleErrorCode.SCHEDULE_INVALID_REQUEST, e.getMessage());
+    }
   }
 }

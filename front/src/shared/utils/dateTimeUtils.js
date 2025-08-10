@@ -45,6 +45,12 @@ export const formatKoreanDatetime = (isoString) => {
   return format(date, 'yyyy.MM.dd a hh:mm', { locale: ko })
 }
 
+export const isMidnight = (date) => {
+  return (
+    date.getHours() === 0 && date.getMinutes() === 0 && date.getSeconds() === 0
+  )
+}
+
 export const formatDateHeader = (dateString) => {
   const date = parseISO(dateString)
   const today = new Date()

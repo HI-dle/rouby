@@ -25,7 +25,8 @@ body {
 
 .sub-main-container {
   padding: 2rem 2rem 6rem 2rem;
-  @apply flex flex-col min-h-full overflow-hidden;
+  @apply flex flex-col min-h-full;
+  /* overflow-hidden; */
 }
 
 @media (hover: hover) {

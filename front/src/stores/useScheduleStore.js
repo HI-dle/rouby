@@ -5,6 +5,7 @@ import {
   buildRRuleString,
   expandSchedulesByDay,
 } from '@/shared/utils/rruleUtils'
+import { getPiniaStorage } from '@/shared/utils/piniaUtils'
 
 export const useScheduleStore = defineStore(
   'schedule',
@@ -66,7 +67,8 @@ export const useScheduleStore = defineStore(
     /**
      * 해당 월 전체 일정 리스트 반환 (flat)
      */
-    const getMonthlySchedules = (monthKey) => {
+    const getSchedulesMonthlyByDate = (date) => {
+      const monthKey = format(date, 'yyyy-MM')
       const monthData = dailySchedules[monthKey]
       if (!monthData) return null
 
@@ -81,6 +83,7 @@ export const useScheduleStore = defineStore(
     const getSchedulesForDate = (date) => {
       const dateKey = format(date, 'yyyy-MM-dd')
       const monthKey = dateKey.slice(0, 7)
+
       return Object.values(dailySchedules[monthKey]?.[dateKey] || {})
     }
 
@@ -106,12 +109,10 @@ export const useScheduleStore = defineStore(
     }
 
     return {
-      dailySchedules,
-      rawSchedules,
       setMonthlySchedules,
       addRawSchedule,
       hasMonth,
-      getMonthlySchedules,
+      getSchedulesMonthlyByDate,
       getSchedulesForDate,
       getScheduleInstanceByKey,
       recalculateMonth,
@@ -119,9 +120,7 @@ export const useScheduleStore = defineStore(
   },
   {
     persist: {
-      storage: JSON.parse(localStorage.getItem('alwaysLogin') || 'false')
-        ? localStorage
-        : sessionStorage,
+      storage: getPiniaStorage(),
     },
   },
 )

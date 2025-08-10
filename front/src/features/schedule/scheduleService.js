@@ -5,7 +5,6 @@ import { format } from 'date-fns'
 
 export const createSchedule = wrapApi(async (form) => {
   const payload = toCreateSchedulePayload(form)
-  console.log(payload)
   const res = await createApi(payload)
   const scheduleId = res.headers['location']?.split('/').filter(Boolean).pop()
   return { id: scheduleId, ...payload }

@@ -1,14 +1,38 @@
+<script setup>
+import { watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { useUserInfoStore } from '@/stores/useUserInfoStore'
+import { useNicknameForm } from '@/features/onboard/useNicknameForm'
+import NicknameSettingForm from '@/features/onboard/components/NicknameSettingForm.vue'
+
+const store = useUserInfoStore()
+const router = useRouter()
+
+const { nickname, nicknameError, isFocused, validateNickname } =
+  useNicknameForm(store.nickname || '')
+
+watch(nickname, (val) => {
+  console.log(val)
+  store.nickname = val
+})
+
+const goNext = () => {
+  const isValid = validateNickname()
+  if (!isValid) return
+  router.push('/onboarding/health-check')
+}
+</script>
+
 <template>
   <div class="main-container">
-    <div class="sub-main-container">
-
-      <div class="mt-32">
-        <NicknameSettingForm
-          ref="nicknameFormRef"
-          v-model="nickname" />
-      </div>
-
-      <!-- 다음 단계 이동 -->
+    <div class="sub-main-container justify-center">
+      <NicknameSettingForm
+        v-model="nickname"
+        :error="nicknameError"
+        :isFocused="isFocused"
+        @update:isFocused="isFocused = $event"
+        @input="validateNickname"
+      />
       <div class="w-full mt-10 pt-10 text-center">
         <button
           @click="goNext"
@@ -20,22 +44,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import NicknameSettingForm from '@/features/onboard/Components/NicknameSettingForm.vue'
-
-const nickname = ref('')
-const nicknameFormRef = ref(null)
-const router = useRouter()
-
-const goNext = () => {
-  // 닉네임 유효성 검사 실패 시 이동 막기
-  const isValid = nicknameFormRef.value?.validate()
-  if (!isValid) return
-
-  // router 이동만 수행
-  router.push('/onboarding/health-check')
-}
-</script>
