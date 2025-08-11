@@ -3,7 +3,7 @@ package com.rouby.routine.daily_task.presentation;
 import com.rouby.routine.daily_task.application.facade.DailyTaskFacade;
 import com.rouby.routine.daily_task.presentation.dto.ProgressDailyTaskRequest;
 import com.rouby.routine.daily_task.presentation.dto.ProgressDailyTaskResponse;
-import com.rouby.user.infrastructure.security.dto.SecurityUser;
+import com.rouby.user.user.infrastructure.security.dto.SecurityUser;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -1,0 +1,13 @@
+POST {{url}}/api/v1/users/devices
+content-type: application/json
+
+{
+  "tokenProvider": "FCM",
+  "deviceToken": "1234",
+  "appType": "WEB",
+  "appVersion": "string",
+  "deviceType": "DESKTOP",
+  "os": "string",
+  "browser": "string",
+  "userAgent": "string"
+}

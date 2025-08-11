@@ -1,3 +1,6 @@
+-- USER_DEVICE
+ALTER TABLE user_device ALTER COLUMN id SET DEFAULT nextval('user_device_seq');
+
 -- SCHEDULE
 ALTER TABLE schedule ALTER COLUMN id SET DEFAULT nextval('schedule_seq');
 DROP INDEX IF EXISTS idx_schedule_parent_not_deleted;

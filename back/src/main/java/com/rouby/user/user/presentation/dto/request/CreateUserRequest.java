@@ -1,0 +1,21 @@
+package com.rouby.user.user.presentation.dto.request;
+
+import com.rouby.user.user.application.dto.command.CreateUserCommand;
+import com.rouby.user.user.presentation.validation.ValidPassword;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import org.hibernate.validator.constraints.Length;
+
+public record CreateUserRequest(
+    @Email @NotBlank @Length(max = 100) String email,
+    @NotBlank @Length(min=8, max=32) @ValidPassword String password
+) {
+
+  public CreateUserCommand toCommand(String token) {
+    return CreateUserCommand.builder()
+        .email(email)
+        .password(password)
+        .token(token)
+        .build();
+  }
+}

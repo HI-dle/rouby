@@ -2,7 +2,7 @@ package com.rouby.routine.routine_task.presentaion;
 
 import com.rouby.routine.routine_task.application.facade.RoutineTaskFacade;
 import com.rouby.routine.routine_task.presentaion.dto.request.CreateRoutineTaskRequest;
-import com.rouby.user.infrastructure.security.dto.SecurityUser;
+import com.rouby.user.user.infrastructure.security.dto.SecurityUser;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
