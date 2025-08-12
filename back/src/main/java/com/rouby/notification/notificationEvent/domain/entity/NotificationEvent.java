@@ -1,4 +1,4 @@
-package com.rouby.notification.notificationlog.domain.entity;
+package com.rouby.notification.notificationEvent.domain.entity;
 
 
 import com.rouby.common.jpa.LogBaseEntity;
@@ -18,9 +18,9 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "notification_log")
+@Table(name = "notification_event")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class NotificationLog extends LogBaseEntity {
+public class NotificationEvent extends LogBaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -28,6 +28,9 @@ public class NotificationLog extends LogBaseEntity {
 
   @Column(nullable = false)
   private Long userId;
+
+  @Embedded
+  private DeviceTokenInfo deviceTokenInfo;
 
   @Embedded
   private NotificationMessage message;
@@ -41,11 +44,13 @@ public class NotificationLog extends LogBaseEntity {
   private SendStatus status;
 
   @Builder
-  private NotificationLog(Long userId, NotificationMessage message, NotificationType type,
-      SendStatus status) {
+  private NotificationEvent(Long userId,
+      DeviceTokenInfo deviceTokenInfo, NotificationMessage message, NotificationType type) {
+
     this.userId = userId;
+    this.deviceTokenInfo = deviceTokenInfo;
     this.message = message;
     this.type = type;
-    this.status = status;
+    this.status = SendStatus.READY;
   }
 }

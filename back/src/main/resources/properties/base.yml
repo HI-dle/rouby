@@ -6,9 +6,10 @@ spring:
       accept-case-insensitive-enums: true
 server:
   port: 8080
-
 app:
   front-url: 'http://localhost:5173'
+  icon-uri: '/assets/header_logo.svg'
+
 
 ---
 # test 환경
@@ -19,3 +20,6 @@ spring:
       accept-case-insensitive-enums: true
 server:
   port: 8080
+app:
+  front-url: 'http://localhost:5173'
+  icon-uri: '/assets/header_logo.svg'

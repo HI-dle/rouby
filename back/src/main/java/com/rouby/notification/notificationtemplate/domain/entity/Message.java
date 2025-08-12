@@ -10,22 +10,22 @@ import org.springframework.util.StringUtils;
 @Getter
 @Embeddable
 @EqualsAndHashCode
-public class NotificationTemplateMessage implements Serializable {
+public class Message implements Serializable {
 
   @Column(columnDefinition = "TEXT", name = "message", nullable = false)
   private String value;
 
-  public static NotificationTemplateMessage of(String value) {
+  public static Message of(String value) {
     if (!StringUtils.hasText(value)) {
       throw new IllegalArgumentException("알림 템플릿 메시지는 비어 있을 수 없습니다.");
     }
-    return new NotificationTemplateMessage(value);
+    return new Message(value);
   }
 
-  private NotificationTemplateMessage(String value) {
+  private Message(String value) {
     this.value = value;
   }
 
-  protected NotificationTemplateMessage() {}
+  protected Message() {}
 
 }

@@ -30,10 +30,10 @@ public class NotificationTemplate extends BaseEntity {
   private NotificationType type;
 
   @Embedded
-  private NotificationTemplateMessage message;
+  private Message message;
 
   @Builder
-  private NotificationTemplate(NotificationType type, NotificationTemplateMessage message) {
+  private NotificationTemplate(NotificationType type, Message message) {
     this.type = type;
     this.message = message;
   }
