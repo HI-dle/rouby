@@ -9,7 +9,7 @@ const router = createRouter({
       redirect: '/schedule/daily/list',
       children: [
         {
-          path: 'user',
+          path: '/user',
           component: () => import('@/features/user/views/UserLayout.vue'),
           children: [
             {
@@ -94,6 +94,14 @@ const router = createRouter({
                 import(
                   '@/features/routine-task/views/CreateRoutineTaskView.vue'
                 ),
+            },
+            {
+              path: 'detail',
+              name: 'routine-task-detail',
+              component: () =>
+                import(
+                  '@/features/routine-task/views/DetailRoutineTaskView.vue'
+                  ),
             },
           ],
         },
