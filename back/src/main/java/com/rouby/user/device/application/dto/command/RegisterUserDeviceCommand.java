@@ -25,10 +25,7 @@ public record RegisterUserDeviceCommand(
 
     return UserDevice.builder()
         .userId(userId)
-        .tokenInfo(DeviceTokenInfo.builder()
-            .tokenProvider(TokenProviderType.valueOf(tokenProvider))
-            .deviceToken(deviceToken)
-            .build())
+        .tokenInfo(buildDeviceTokenInfo())
         .deviceInfo(buildDeviceInfo())
         .build();
   }

@@ -3,7 +3,7 @@ package com.rouby.user.device.domain.repository;
 import com.rouby.user.device.domain.entity.UserDevice;
 import com.rouby.user.device.domain.entity.vo.DeviceInfo;
 import com.rouby.user.device.domain.entity.vo.DeviceTokenInfo;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 public interface UserDeviceRepository {
@@ -12,7 +12,7 @@ public interface UserDeviceRepository {
 
   UserDevice save(UserDevice userDevice);
 
-  int deleteByLastActiveAtBefore(LocalDate threshold);
+  int deleteByLastActiveAtBefore(LocalDateTime threshold);
 
   UserDevice saveAndFlush(UserDevice userDevice);
 

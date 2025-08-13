@@ -17,7 +17,7 @@ public class UserDeviceFixture {
         .build();
   }
 
-  public static RegisterUserDeviceRequest getFailedRequest() {
+  public static RegisterUserDeviceRequest getInvalidDeviceTypeRequest() {
     return RegisterUserDeviceRequest.builder()
         .deviceToken("1234")
         .tokenProvider("FCM")

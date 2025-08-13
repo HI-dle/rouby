@@ -2,6 +2,8 @@ package com.rouby.user.device.presentation;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
@@ -40,6 +42,8 @@ class UserDeviceControllerTest extends ControllerTestSupport {
     );
 
     // then
+    verify(userDeviceFacade).register(any());
+
     resultActions.andExpect(status().isNoContent())
         .andDo(print())
         .andDo(document("register-user-device-204",
@@ -64,7 +68,7 @@ class UserDeviceControllerTest extends ControllerTestSupport {
   void registerUserDevice_failed_request() throws Exception {
 
     // given
-    RegisterUserDeviceRequest request = UserDeviceFixture.getFailedRequest();
+    RegisterUserDeviceRequest request = UserDeviceFixture.getInvalidDeviceTypeRequest();
     String content = objectMapper.writeValueAsString(request);
 
     // when
@@ -76,6 +80,8 @@ class UserDeviceControllerTest extends ControllerTestSupport {
     );
 
     // then
+    verify(userDeviceFacade, never()).register(any());
+
     resultActions.andExpect(status().isBadRequest())
         .andDo(print())
         .andDo(document("register-user-device-invalid-request-400",

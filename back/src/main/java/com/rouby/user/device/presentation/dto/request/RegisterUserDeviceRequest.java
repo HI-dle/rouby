@@ -12,7 +12,7 @@ public record RegisterUserDeviceRequest(
     String tokenProvider,
     @NotBlank @Length(max=500) String deviceToken,
     @NotBlank @Length(max=50)
-    @Length(max=50) @Pattern(regexp = "(?i)^(ANDROID|IOS|WEB)$")
+    @Pattern(regexp = "(?i)^(ANDROID|IOS|WEB)$")
     String appType,
     @NotBlank @Length(max=50) String appVersion,
     @NotBlank @Length(max=50) @Pattern(regexp = "(?i)^(DESKTOP|MOBILE|TABLET|TV|EMBEDDED)$")

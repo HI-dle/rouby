@@ -4,7 +4,7 @@ import com.rouby.user.device.domain.entity.UserDevice;
 import com.rouby.user.device.domain.entity.vo.DeviceInfo;
 import com.rouby.user.device.domain.entity.vo.DeviceTokenInfo;
 import com.rouby.user.device.domain.repository.UserDeviceRepository;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -18,7 +18,7 @@ public interface UserDeviceJpaRepository extends JpaRepository<UserDevice, Long>
   Optional<UserDevice> findByUserIdAndTokenInfo_DeviceToken(Long userId, String deviceToken);
 
   @Override
-  int deleteByLastActiveAtBefore(LocalDate threshold);
+  int deleteByLastActiveAtBefore(LocalDateTime threshold);
 
   @Override
   @Modifying

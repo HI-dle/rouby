@@ -48,10 +48,13 @@ public class UserDevice {
 
   @Builder
   private UserDevice (Long userId,  DeviceTokenInfo tokenInfo, DeviceInfo deviceInfo) {
+    this.userId = userId;
+    this.tokenInfo = tokenInfo;
+    this.deviceInfo = deviceInfo;
   }
 
   public boolean ifDeviceInfoChanged(DeviceInfo deviceInfo) {
-    return this.deviceInfo.equals(deviceInfo);
+    return !this.deviceInfo.equals(deviceInfo);
   }
 
   public void modifyDeviceInfo(DeviceInfo deviceInfo) {

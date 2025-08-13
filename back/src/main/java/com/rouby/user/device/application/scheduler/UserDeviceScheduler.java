@@ -15,7 +15,7 @@ public class UserDeviceScheduler {
   private static final Period STALE_THRESHOLD = Period.ofDays(60);
   private final UserDeviceWriteService userDeviceWriteService;
 
-  @Scheduled(cron = "0 0 4 * * *")
+  @Scheduled(cron = "0 0 4 * * *", zone = "Asia/Seoul")
   public void deleteStaleDeviceTokens() {
 
     try {

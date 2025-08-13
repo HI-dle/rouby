@@ -2,12 +2,12 @@ package com.rouby.user.device.application.service;
 
 import com.rouby.user.device.application.dto.command.RegisterUserDeviceCommand;
 import com.rouby.user.device.domain.repository.UserDeviceRepository;
-import jakarta.transaction.Transactional;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -25,7 +25,9 @@ public class UserDeviceWriteService {
         command.buildDeviceInfo());
   }
 
+  @Transactional
   public int deleteStaleDeviceTokens(Period staleThreshold) {
-    return userDeviceRepository.deleteByLastActiveAtBefore(LocalDate.now().minus(staleThreshold));
+    LocalDateTime threshold = LocalDateTime.now().minus(staleThreshold);
+    return userDeviceRepository.deleteByLastActiveAtBefore(threshold);
   }
 }
