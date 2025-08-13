@@ -1,6 +1,6 @@
 POST {{url}}/api/v1/users/devices
 content-type: application/json
-uthorization: Bearer {{access_token}}
+Authorization: Bearer {{access_token}}
 
 {
   "tokenProvider": "FCM",
