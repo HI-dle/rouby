@@ -33,8 +33,7 @@ public class Prompt extends BaseEntity {
   private Integer version;
 
   @Builder
-  private Prompt(Long id, PromptType promptType, String promptTemplate, Integer version) {
-    this.id = id;
+  private Prompt(PromptType promptType, String promptTemplate, Integer version) {
     this.promptType = promptType;
     this.promptTemplate = promptTemplate;
     this.version = version;
