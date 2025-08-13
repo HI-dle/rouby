@@ -7,11 +7,14 @@ import static com.rouby.user.application.exception.UserErrorCode.USER_NOT_FOUND;
 import com.rouby.user.application.dto.command.LoginCommand;
 import com.rouby.user.application.dto.info.LoginInfo;
 import com.rouby.user.application.dto.info.RoubySettingInfo;
+import com.rouby.user.application.dto.info.UserInfo;
 import com.rouby.user.application.exception.UserException;
 import com.rouby.user.application.service.token.TokenProvider;
 import com.rouby.user.domain.entity.User;
 import com.rouby.user.domain.repository.UserRepository;
 import com.rouby.user.domain.service.UserPasswordEncoder;
+import java.time.LocalTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,4 +62,18 @@ public class UserReadService {
     return RoubySettingInfo.from(userRepository.findByIdAndDeletedAtIsNull(userId)
         .orElseThrow(() -> UserException.from(USER_NOT_FOUND)));
   }
+
+  public List<UserInfo> findUserByBriefingTimeNow(){
+    return userRepository.findActiveUsersWithBriefingNotification(LocalTime.now()).stream()
+        .map(UserInfo::of)
+        .toList();
+  }
+
+  //테스트용
+  public List<UserInfo> findUserByBriefingTimeNow(LocalTime briefingTime){
+    return userRepository.findActiveUsersWithBriefingNotification(briefingTime).stream()
+        .map(UserInfo::of)
+        .toList();
+  }
+
 }
