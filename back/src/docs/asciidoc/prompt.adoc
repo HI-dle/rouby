@@ -1,0 +1,16 @@
+[[PROMPT-API]]
+= PROMPT-API
+
+// --- 프롬프트 생성 API
+== 프롬프트 생성 API
+
+=== 성공: 로그인 성공프롬프트 생성 성공
+
+==== HTTP 요청
+include::{snippets}/prompt-create/http-request.adoc[]
+
+==== 요청 필드
+include::{snippets}/prompt-create/request-fields.adoc[]
+
+==== HTTP 응답 (201 Created)
+include::{snippets}/prompt-create/http-response.adoc[]
