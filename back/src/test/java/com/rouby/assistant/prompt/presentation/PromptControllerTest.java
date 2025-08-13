@@ -1,5 +1,7 @@
 package com.rouby.assistant.prompt.presentation;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
@@ -10,6 +12,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.rouby.assistant.prompt.application.info.PromptInfo;
 import com.rouby.assistant.prompt.domain.enums.PromptType;
 import com.rouby.assistant.prompt.presentation.request.CreatePromptRequest;
 import com.rouby.common.support.ControllerTestSupport;
@@ -30,6 +33,13 @@ class PromptControllerTest extends ControllerTestSupport {
         getPrompt(),
         1
     );
+    given(promptFacade.createPrompt(request.toCommand())) .willReturn(new PromptInfo(
+        1L,
+        request.promptType(),
+        request.promptTemplate(),
+        request.version()
+    ));
+
 
     // when and then
     mockMvc.perform(post("/api/v1/assistants/prompt")
