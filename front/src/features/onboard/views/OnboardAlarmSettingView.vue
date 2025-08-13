@@ -21,16 +21,32 @@
 
 <script setup>
 import AlarmSettingForm from '@/features/onboard/components/AlarmSettingForm.vue'
-import { requestPermissionAndInitFCM } from '@/shared/firebase/config'
+import { requestPermissionAndInitFCM } from '@/shared/utils/notificationUtils'
 
 import { useUserInfoStore } from '@/stores/useUserInfoStore'
+import { watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { registerUserDevice } from '../onboardUserSerivce'
 
 const store = useUserInfoStore()
 const router = useRouter()
 
 const onNextLinkClick = async () => {
-  requestPermissionAndInitFCM()
   await router.push('/onboarding/calender-setting')
 }
+
+watch(
+  () => [
+    store.scheduleNotiEnabled,
+    store.routineNotiEnabled,
+    store.briefingNotiEnabled,
+  ],
+  async (newVals, oldVals) => {
+    const becameTrue = newVals.some((val, idx) => val && !oldVals?.[idx])
+    if (becameTrue) {
+      await requestPermissionAndInitFCM()
+      await registerUserDevice()
+    }
+  },
+)
 </script>
