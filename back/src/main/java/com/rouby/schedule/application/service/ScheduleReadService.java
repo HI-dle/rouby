@@ -1,6 +1,8 @@
 package com.rouby.schedule.application.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rouby.schedule.application.dto.info.SchedulesInfo;
+import com.rouby.schedule.application.dto.info.SchedulesSummaryInfo;
 import com.rouby.schedule.application.dto.query.GetScheduleQuery;
 import com.rouby.schedule.application.exception.ScheduleErrorCode;
 import com.rouby.schedule.application.exception.ScheduleException;
@@ -17,6 +19,14 @@ public class ScheduleReadService {
   public SchedulesInfo findSchedulesBy(GetScheduleQuery query) {
     try {
       return SchedulesInfo.of(scheduleRepository.findSchedulesByCriteria(query.toCriteria()));
+    } catch (IllegalArgumentException e) {
+      throw ScheduleException.of(ScheduleErrorCode.SCHEDULE_INVALID_REQUEST, e.getMessage());
+    }
+  }
+
+  public String findSummarySchedulesJsonBy(GetScheduleQuery query) {
+    try {
+      return SchedulesSummaryInfo.of(scheduleRepository.findSchedulesByCriteria(query.toCriteria())).toJson();
     } catch (IllegalArgumentException e) {
       throw ScheduleException.of(ScheduleErrorCode.SCHEDULE_INVALID_REQUEST, e.getMessage());
     }
