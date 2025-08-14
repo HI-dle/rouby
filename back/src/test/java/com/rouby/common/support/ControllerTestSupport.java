@@ -4,6 +4,8 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rouby.assistant.prompt.application.PromptFacade;
+import com.rouby.assistant.prompt.presentation.PromptController;
 import com.rouby.common.config.WebConfig;
 import com.rouby.common.config.WebMvcConfig;
 import com.rouby.common.exception.GlobalExceptionHandler;
@@ -39,7 +41,8 @@ import org.springframework.test.web.servlet.MockMvc;
         AuthController.class,
         UserController.class,
         RoutineTaskController.class,
-        DailyTaskController.class
+        DailyTaskController.class,
+        PromptController.class
     },
     excludeFilters = {
         @ComponentScan.Filter(
@@ -79,6 +82,9 @@ public abstract class ControllerTestSupport {
 
   @MockitoBean
   protected JwtAuthenticationFilter jwtAuthenticationFilter;
+
+  @MockitoBean
+  protected PromptFacade promptFacade;
 
   protected static ResponseFieldsSnippet getValidationErrorResponseFieldSnippet() {
     return responseFields(

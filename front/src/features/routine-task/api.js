@@ -10,3 +10,16 @@ export const createRoutineTask = (payload) => {
       throw error
     })
 }
+
+export const progressDailyTask = (payload) => {
+  if (!payload || typeof payload !== 'object') {
+    throw new Error('유효한 payload가 필요합니다.')
+  }
+
+  return axios.post('/v1/daily-task/progress', payload)
+  .then(response => response.data)
+  .catch(error => {
+    console.error('데일리 태스크 업데이트 실패:', error)
+    throw error
+  })
+}

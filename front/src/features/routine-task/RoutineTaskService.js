@@ -1,6 +1,13 @@
 // '@/features/routine-task/RoutineTaskService.js'
-import { createRoutineTask as createApi } from './api'
+import {
+  createRoutineTask as createApi,
+  progressDailyTask as progressApi,
+} from './api'
 
 export const createRoutineTask = (payload) => {
   return createApi(payload)
+}
+
+export const progressDailyTask = (payload) => {
+  return progressApi(payload)
 }

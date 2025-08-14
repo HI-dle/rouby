@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="w-full min-h-screen flex flex-col justify-between"
-  >
+  <div class="w-full min-h-screen flex flex-col justify-between">
     <!-- 상단 콘텐츠 -->
     <div class="px-6 pt-14">
       <div class="text-center space-y-2">
@@ -12,9 +10,7 @@
             class="mx-auto h-16 w-auto"
           />
         </figure>
-        <p class="text-2xl font-bold text-main-color">
-          {{ nickname }}님,
-        </p>
+        <p class="text-2xl font-bold text-main-color">{{ nickname }}님,</p>
         <p class="text-sm content-color">
           안녕하세요. 오늘도 루비가 함께 하겠습니다.
         </p>
@@ -50,7 +46,7 @@
 <script setup>
 import MyPageIcon from '@/assets/mypage_icon.svg'
 import BaseModal from '@/components/common/BaseModal.vue'
-import { useMyPageForm } from '@/features/user/useMyPageForm.js'
+import { useMyPageForm } from '@/features/user/useMyPageForm'
 
 const {
   nickname,

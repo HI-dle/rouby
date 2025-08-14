@@ -1,12 +1,38 @@
+<script setup>
+import { watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { useUserInfoStore } from '@/stores/useUserInfoStore'
+import { useNicknameForm } from '@/features/onboard/useNicknameForm'
+import NicknameSettingForm from '@/features/onboard/components/NicknameSettingForm.vue'
+
+const store = useUserInfoStore()
+const router = useRouter()
+
+const { nickname, nicknameError, isFocused, validateNickname } =
+  useNicknameForm(store.nickname || '')
+
+watch(nickname, (val) => {
+  console.log(val)
+  store.nickname = val
+})
+
+const goNext = () => {
+  const isValid = validateNickname()
+  if (!isValid) return
+  router.push('/onboarding/health-check')
+}
+</script>
+
 <template>
   <div class="main-container">
-    <div class="sub-main-container">
-      <div class="mt-32">
-        <NicknameSettingForm
-          ref="nicknameFormRef"
-          v-model="nickname" />
-      </div>
-
+    <div class="sub-main-container justify-center">
+      <NicknameSettingForm
+        v-model="nickname"
+        :error="nicknameError"
+        :isFocused="isFocused"
+        @update:isFocused="isFocused = $event"
+        @input="validateNickname"
+      />
       <div class="w-full mt-10 pt-10 text-center">
         <button
           @click="goNext"
@@ -18,38 +44,3 @@
     </div>
   </div>
 </template>
-
-
-<script setup>
-import { ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
-import NicknameSettingForm from '@/features/onboard/Components/NicknameSettingForm.vue'
-import { useOnboardStore } from '@/features/onboard/store/useOnboardStore'
-
-const store = useOnboardStore()
-const router = useRouter()
-
-const nickname = ref(store.userName)
-
-watch(
-  () => store.userName,
-  (val) => {
-    if (val !== nickname.value) nickname.value = val
-  }
-)
-
-watch(
-  nickname,
-  (val) => {
-    if (val !== store.userName) store.userName = val
-  }
-)
-
-const nicknameFormRef = ref(null)
-
-const goNext = () => {
-  const isValid = nicknameFormRef.value?.validate()
-  if (!isValid) return
-  router.push('/onboarding/health-check')
-}
-</script>
