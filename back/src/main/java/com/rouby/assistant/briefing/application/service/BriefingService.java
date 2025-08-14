@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class BriefingService {
+
   private final BriefingClient briefingClient;
 
   public String sendPromptToAi(String promptTemplate) {
