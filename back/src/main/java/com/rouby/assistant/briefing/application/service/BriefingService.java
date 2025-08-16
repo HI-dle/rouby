@@ -10,7 +10,7 @@ public class BriefingService {
 
   private final BriefingClient briefingClient;
 
-  public String sendPromptToAi(String promptTemplate) {
-    return briefingClient.sentPromptToAi(promptTemplate);
+  public String sendPromptToAi(String prompt) {
+    return briefingClient.sendPromptToAi(prompt);
   }
 }

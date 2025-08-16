@@ -2,7 +2,6 @@ package com.rouby.batch.job.step;
 
 import com.rouby.user.application.dto.info.UserInfo;
 import com.rouby.user.application.service.UserReadService;
-import java.time.LocalTime;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -19,9 +18,8 @@ public class BriefingReader extends ListItemReader<UserInfo> {
   }
 
   private static List<UserInfo> fetchUsers(UserReadService userReadService) {
-    LocalTime targetTime = LocalTime.of(8, 0); // 오전 8시
-    log.info("Fetching users");
-    List<UserInfo> userInfos = userReadService.findUserByBriefingTimeNow(targetTime);
+    //LocalTime targetTime = LocalTime.of(8, 0); // 테스트 용
+    List<UserInfo> userInfos = userReadService.findUsersByBriefingTimeNow();
     log.info("Found {} users", userInfos.size());
     return userInfos;
   }

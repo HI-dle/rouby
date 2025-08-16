@@ -11,6 +11,7 @@ import com.rouby.schedule.application.service.ScheduleReadService;
 import com.rouby.user.application.dto.info.UserInfo;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,7 +25,9 @@ public class BriefingFacade {
   private final BriefingService briefingService;
   private final ScheduleReadService scheduleReadService;
   private final PromptReadService promptReadService;
-  private final int promptVersion = 1;
+
+  @Value("${prompt.version}")
+  private int PROMPT_VERSION = 1;
 
   public Briefing createBriefing(UserInfo userInfo) {
     LocalDateTime today = LocalDateTime.now();
@@ -35,7 +38,7 @@ public class BriefingFacade {
             .toAt(today.plusDays(7L))
             .build());
 
-    PromptInfo promptInfo = promptReadService.findByPromptTypeAndVersion(BRIEFING, promptVersion);
+    PromptInfo promptInfo = promptReadService.findByPromptTypeAndVersion(BRIEFING, PROMPT_VERSION);
 
     String prompt = promptReadService.generateBriefingPrompt(userInfo, schedulesInfoJson, promptInfo.promptTemplate()) ;
 

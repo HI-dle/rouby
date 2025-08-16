@@ -2,7 +2,9 @@ package com.rouby.batch;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
+@DisallowConcurrentExecution
 @RequiredArgsConstructor
 public class QuartzBriefingJob implements org.quartz.Job {
 
@@ -18,7 +21,7 @@ public class QuartzBriefingJob implements org.quartz.Job {
   private final Job briefingJob;
 
   @Override
-  public void execute(JobExecutionContext context) {
+  public void execute(JobExecutionContext context) throws JobExecutionException {
     try {
       JobParameters jobParameters = new JobParametersBuilder()
           .addLong("timestamp", System.currentTimeMillis())
@@ -29,6 +32,7 @@ public class QuartzBriefingJob implements org.quartz.Job {
       log.info("✅ Briefing job completed by Quartz");
     } catch (Exception e) {
       log.error("❌ Briefing job failed", e);
+      throw new JobExecutionException(e);
     }
   }
 

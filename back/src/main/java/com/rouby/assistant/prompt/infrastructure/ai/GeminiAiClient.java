@@ -2,6 +2,7 @@ package com.rouby.assistant.prompt.infrastructure.ai;
 
 import com.rouby.assistant.prompt.application.client.BriefingClient;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -9,12 +10,13 @@ import org.springframework.ai.chat.model.Generation;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class GeminiAiClient implements BriefingClient {
   private final ChatClient chatClient;
 
   @Override
-  public String sentPromptToAi(String prompt) {
+  public String sendPromptToAi(String prompt) {
     try {
       ChatResponse chatResponse = chatClient.prompt(prompt).call().chatResponse();
 

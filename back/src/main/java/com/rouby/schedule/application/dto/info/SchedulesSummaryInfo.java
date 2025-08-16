@@ -19,11 +19,16 @@ public record SchedulesSummaryInfo(
   private static final ObjectMapper objectMapper = new ObjectMapper();
 
   public static SchedulesSummaryInfo of(List<ScheduleWithOverrides> schedules) {
+
     return SchedulesSummaryInfo.builder()
-        .schedules(schedules.stream()
+        .schedules(safeList(schedules).stream()
             .map(SchedulesSummaryInfo::mapToScheduleSummary)
             .collect(Collectors.toList()))
         .build();
+  }
+
+  public static <T> List<T> safeList(List<T> list) {
+    return (list == null) ? List.of() : list;
   }
 
   private static ScheduleSummaryInfo mapToScheduleSummary(ScheduleWithOverrides schedule) {
@@ -35,9 +40,9 @@ public record SchedulesSummaryInfo(
         .recurrenceRule(
             schedule.recurrenceRule() != null ? schedule.recurrenceRule().toRruleString() : "NONE")
         .overrides(
-            schedule.scheduleOverrides().stream()
+            safeList(schedule.scheduleOverrides()).stream()
                 .map(SchedulesSummaryInfo::mapToScheduleOverrideSummary)
-                .collect(Collectors.toList())
+                .toList()
         )
         .build();
   }
@@ -46,8 +51,6 @@ public record SchedulesSummaryInfo(
     try {
       return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
     } catch (JsonProcessingException e) {
-      e.printStackTrace();
-      System.out.println(e.getMessage());
       throw new RuntimeException("Failed to serialize SchedulesSummaryInfo to JSON", e);
     }
   }

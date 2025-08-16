@@ -10,7 +10,8 @@ spring:
           model: "gemini-2.0-flash-lite"
           temperature: 0.0
         completions-path: "/chat/completions"
-
+prompt:
+  version: 1
 
 ---
 # test 환경
@@ -25,3 +26,5 @@ spring:
           model: "gemini-2.0-flash-lite"
           temperature: 0.0
         completions-path: "/chat/completions"
+prompt:
+  version: 1

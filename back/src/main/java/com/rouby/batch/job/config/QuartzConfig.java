@@ -1,6 +1,7 @@
 package com.rouby.batch.job.config;
 
 import com.rouby.batch.QuartzBriefingJob;
+import java.util.TimeZone;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -22,7 +23,10 @@ public class QuartzConfig {
 
   @Bean
   public Trigger briefingJobTrigger() {
-    CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule("0 4 * * * ?");
+    CronScheduleBuilder scheduleBuilder = CronScheduleBuilder
+        .cronSchedule("0 0 * * * ?")
+        .inTimeZone(TimeZone.getTimeZone("Asia/Seoul"))
+        .withMisfireHandlingInstructionIgnoreMisfires();
 
     return TriggerBuilder.newTrigger()
         .forJob(briefingJobDetail())

@@ -63,14 +63,16 @@ public class UserReadService {
         .orElseThrow(() -> UserException.from(USER_NOT_FOUND)));
   }
 
-  public List<UserInfo> findUserByBriefingTimeNow(){
+  @Transactional(readOnly = true)
+  public List<UserInfo> findUsersByBriefingTimeNow() {
     return userRepository.findActiveUsersWithBriefingNotification(LocalTime.now()).stream()
         .map(UserInfo::of)
         .toList();
   }
 
   //테스트용
-  public List<UserInfo> findUserByBriefingTimeNow(LocalTime briefingTime){
+  @Transactional(readOnly = true)
+  public List<UserInfo> findUsersByBriefingTimeNow(LocalTime briefingTime) {
     return userRepository.findActiveUsersWithBriefingNotification(briefingTime).stream()
         .map(UserInfo::of)
         .toList();
