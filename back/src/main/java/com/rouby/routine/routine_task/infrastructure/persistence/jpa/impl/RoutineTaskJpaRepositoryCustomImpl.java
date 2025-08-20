@@ -10,7 +10,6 @@ import com.rouby.routine.routine_task.domain.repository.search.GetRoutineTaskCri
 import com.rouby.routine.routine_task.domain.repository.search.RoutineTaskOverride;
 import com.rouby.routine.routine_task.domain.repository.search.RoutineTaskWithOverrides;
 import com.rouby.routine.routine_task.infrastructure.persistence.jpa.RoutineTaskJpaRepositoryCustom;
-import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -68,15 +67,15 @@ public class RoutineTaskJpaRepositoryCustomImpl implements RoutineTaskJpaReposit
 
   private BooleanBuilder recurringCriteria(QRoutineTask rt, GetRoutineTaskCriteria criteria) {
     return new BooleanBuilder(rt.recurrenceRule.isNotNull())
-        .and(rt.routineTimeInfo.startDate.loe(criteria.toDate().toLocalDate()))
+        .and(rt.routineTimeInfo.startDate.loe(criteria.toDate()))
         .and(rt.recurrenceRule.until.isNull()
-            .or(rt.recurrenceRule.until.goe(criteria.fromDate().with(LocalTime.MIN))));
+            .or(rt.recurrenceRule.until.goe(criteria.fromDate().atStartOfDay())));
   }
 
   private BooleanBuilder singleCriteria(QRoutineTask rt, GetRoutineTaskCriteria criteria) {
     return new BooleanBuilder(rt.recurrenceRule.isNull())
-        .and(rt.routineTimeInfo.startDate.loe(criteria.toDate().toLocalDate()))
-        .and(rt.routineTimeInfo.until.goe(criteria.fromDate().toLocalDate()));
+        .and(rt.routineTimeInfo.startDate.loe(criteria.toDate()))
+        .and(rt.routineTimeInfo.until.goe(criteria.fromDate()));
   }
 
   private BooleanBuilder eqUserId(QRoutineTask rt, Long userId) {

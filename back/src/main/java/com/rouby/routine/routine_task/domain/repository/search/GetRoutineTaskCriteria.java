@@ -1,6 +1,6 @@
 package com.rouby.routine.routine_task.domain.repository.search;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import lombok.Builder;
 
 /**
@@ -9,7 +9,7 @@ import lombok.Builder;
  */
 @Builder
 public record GetRoutineTaskCriteria(Long userId,
-                                     LocalDateTime fromDate,
-                                     LocalDateTime toDate) {
+                                     LocalDate fromDate,
+                                     LocalDate toDate) {
 
 }

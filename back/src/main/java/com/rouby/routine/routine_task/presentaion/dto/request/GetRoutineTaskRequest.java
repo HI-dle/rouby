@@ -2,14 +2,14 @@ package com.rouby.routine.routine_task.presentaion.dto.request;
 
 import com.rouby.routine.routine_task.application.dto.command.GetRoutineTaskCommand;
 import jakarta.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
  * @author : hanjihoon
  * @Date : 2025. 08. 03.
  */
-public record GetRoutineTaskRequest(@NotNull LocalDateTime fromDate,
-                                    @NotNull LocalDateTime toDate
+public record GetRoutineTaskRequest(@NotNull LocalDate fromDate,
+                                    @NotNull LocalDate toDate
                                     ) {
 
   public GetRoutineTaskCommand toCommand(Long userId) {

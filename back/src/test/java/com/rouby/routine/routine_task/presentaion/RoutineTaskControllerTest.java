@@ -85,8 +85,8 @@ class RoutineTaskControllerTest extends ControllerTestSupport {
   @DisplayName("루틴 태스크 조회 API - 성공 200")
   void getRoutineTask() throws Exception {
     // given
-    LocalDateTime fromDate = LocalDateTime.of(2025, 8, 1, 0, 0);
-    LocalDateTime toDate = LocalDateTime.of(2025, 8, 30, 23, 59);
+    LocalDate fromDate = LocalDate.of(2025, 8, 1);
+    LocalDate toDate = LocalDate.of(2025, 8, 30);
 
     GetRoutineTaskRequest request = new GetRoutineTaskRequest(fromDate, toDate);
 

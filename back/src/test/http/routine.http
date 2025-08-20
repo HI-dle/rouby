@@ -11,29 +11,124 @@ Authorization: {{access_token}}
   "startDate": "2025-07-15",
   "time": "07:30",
   "byDays": ["MO", "WE", "FR"],
-  "until": "2025-08-16T07:30:00+09:00"
+  "until": "2025-08-16T07:30:00"
 }
 
 
 ### 데일리 테스크 생성
-PUT {{url}}/api/v1/daily-task/progress
+POST {{url}}/api/v1/daily-task/progress
 Content-Type: application/json
 Authorization: {{access_token}}
 
 {
   "currentValue": 1,
-  "routineTaskId": 1,
-  "taskDate": "2025-07-18"
+  "routineTaskId": 74840,
+  "taskDate": "2025-08-18"
 }
 
 ### 데일리 테스크 수정
-PUT {{url}}/api/v1/daily-task/progress
+POST {{url}}/api/v1/daily-task/progress
 Content-Type: application/json
 Authorization: {{access_token}}
 
 {
   "id": 1,
   "currentValue": 3,
-  "routineTaskId": 1,
+  "routineTaskId": 74840,
   "taskDate": "2025-07-18"
 }
+
+
+### 루틴 테스크 조회
+GET {{url}}/api/v1/routine-task?fromDate=2025-08-01&toDate=2025-08-31
+Content-Type: application/json
+Authorization: {{access_token}}
+
+//{
+//  "routineTasks": [
+//    {
+//      "id": 74837,
+//      "userId": 1,
+//      "title": "루틴 태스크 2",
+//      "taskType": "COUNT",
+//      "alarmOffsetMinutes": 5,
+//      "routineTimeInfo": {
+//        "startDate": "2025-08-01",
+//        "until": "2025-08-30",
+//        "time": "10:00:00",
+//        "weekdays": [
+//          "SA",
+//          "WE"
+//        ]
+//      },
+//      "recurrenceRule": {
+//        "freq": "WEEKLY",
+//        "byDay": [
+//          "SU",
+//          "FR",
+//          "SA"
+//        ],
+//        "interval": 1,
+//        "until": "2025-08-30",
+//        "rruleStr": "FREQ=WEEKLY;BYDAY=SA,FR,SU;INTERVAL=1;UNTIL=20250830T000001;"
+//      },
+//      "routineOverrides": []
+//    },
+//    {
+//      "id": 74836,
+//      "userId": 1,
+//      "title": "루틴 태스크 1",
+//      "taskType": "COUNT",
+//      "alarmOffsetMinutes": 5,
+//      "routineTimeInfo": {
+//        "startDate": "2025-08-01",
+//        "until": "2025-08-30",
+//        "time": "09:00:00",
+//        "weekdays": [
+//          "SA",
+//          "WE"
+//        ]
+//      },
+//      "recurrenceRule": {
+//        "freq": "WEEKLY",
+//        "byDay": [
+//          "SU",
+//          "FR",
+//          "SA"
+//        ],
+//        "interval": 1,
+//        "until": "2025-08-30",
+//        "rruleStr": "FREQ=WEEKLY;BYDAY=SA,FR,SU;INTERVAL=1;UNTIL=20250830T000001;"
+//      },
+//      "routineOverrides": []
+//    },
+//    {
+//      "id": 74838,
+//      "userId": 1,
+//      "title": "루틴 태스크 3",
+//      "taskType": "COUNT",
+//      "alarmOffsetMinutes": 5,
+//      "routineTimeInfo": {
+//        "startDate": "2025-08-01",
+//        "until": "2025-08-30",
+//        "time": "11:00:00",
+//        "weekdays": [
+//          "SA",
+//          "WE"
+//        ]
+//      },
+//      "recurrenceRule": {
+//        "freq": "WEEKLY",
+//        "byDay": [
+//          "SU",
+//          "FR",
+//          "SA"
+//        ],
+//        "interval": 1,
+//        "until": "2025-08-30",
+//        "rruleStr": "FREQ=WEEKLY;BYDAY=SA,FR,SU;INTERVAL=1;UNTIL=20250830T000001;"
+//      },
+//      "routineOverrides": []
+//    }
+//  ]
+//}
