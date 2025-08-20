@@ -1,7 +1,6 @@
 <script setup>
-import { ref, computed, watch } from 'vue'
-import { addMonths, addWeeks, format, subMonths, subWeeks } from 'date-fns'
-import { ko } from 'date-fns/locale'
+import { ref, watch } from 'vue'
+import { addMonths, addWeeks, subMonths, subWeeks } from 'date-fns'
 import { CalendarArrowDown, CalendarArrowUp } from 'lucide-vue-next'
 import Weekly from './Weekly.vue'
 import Monthly from './Monthly.vue'
@@ -43,7 +42,7 @@ const nextWeek = () => (baseDate.value = addWeeks(baseDate.value, 1))
 const prevMonth = () => (baseDate.value = subMonths(baseDate.value, 1))
 const nextMonth = () => (baseDate.value = addMonths(baseDate.value, 1))
 
-const { onTouchStart, onTouchEnd } = useDatePickerGestures({
+const { onTouchStart, onTouchMove, onTouchEnd } = useDatePickerGestures({
   isMonthly,
   prevWeek,
   nextWeek,
@@ -53,11 +52,15 @@ const { onTouchStart, onTouchEnd } = useDatePickerGestures({
 </script>
 
 <template>
-  <div @touchstart.passive="onTouchStart" @touchend.passive="onTouchEnd">
+  <div
+    @touchstart="onTouchStart"
+    @touchend="onTouchEnd"
+    @touchmove.prevent="onTouchMove"
+  >
     <div class="flex justify-center items-center gap-2 mb-2">
       <BaseButton
         @click="() => (isMonthly = !isMonthly)"
-        class="hidden md:flex w-6 h-6 justify-center items-center bg-none text-base text-main-color"
+        class="hidden sm:flex w-6 h-6 justify-center items-center bg-none text-base text-main-color"
         :aria-label="isMonthly ? '주간 보기로 전환' : '월간 보기로 전환'"
         :title="isMonthly ? '주간 보기로 전환' : '월간 보기로 전환'"
       >

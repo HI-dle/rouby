@@ -5,11 +5,21 @@ export const useGoBack = () => {
 
   const goBackOrPath = async (path = '/') => {
     if (window.history.length > 1) {
-      await router.back()
+      router.back()
     } else {
       await router.push(path)
     }
   }
 
-  return { goBackOrPath }
+  const goPathOrBack = async (path = '/') => {
+    if (path != '/') {
+      await router.push(path)
+    } else if (window.history.length > 1) {
+      router.back()
+    } else {
+      await router.push(path)
+    }
+  }
+
+  return { goBackOrPath, goPathOrBack }
 }

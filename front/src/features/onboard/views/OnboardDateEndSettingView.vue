@@ -1,14 +1,14 @@
 <template>
   <div class="main-container">
-    <div class="sub-main-container">
-
-      <div class="mt-32">
-        <DateEndSettingForm
-          ref="dateSettingFormRef"
-          :user-name="userName"
-          :start-day-time="startOfDayTime"
-        />
-      </div>
+    <div class="sub-main-container justify-center">
+      <DateEndSettingForm
+        :user-name="store.nickname"
+        :start-day-time="store.startOfDayTime"
+        v-model:period="form.period"
+        v-model:hour="form.hour"
+        :period-options="periodOptions"
+        :hour-options="hourOptions"
+      />
 
       <!-- 다음 단계 이동 -->
       <div class="w-full mt-10 pt-10 text-center">
@@ -23,30 +23,40 @@
   </div>
 </template>
 
-
 <script setup>
-import { computed, ref } from 'vue'
-import DateEndSettingForm from '@/features/onboard/Components/DateEndSettingForm.vue'
-import { useOnboardStore } from '@/features/onboard/store/useOnboardStore'
+import { ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
-import { updateUserInfo, completeUserSetting } from '@/features/onboard/onboardUserSettingApi.js'
+import DateEndSettingForm from '@/features/onboard/components/DateEndSettingForm.vue'
+import { useUserInfoStore } from '@/stores/useUserInfoStore'
+import { useDateSettingForm } from '../useDateSettingForm'
+import {
+  updateUserInfo,
+  completeUserSetting,
+} from '@/features/onboard/onboardUserSerivce.js'
 
-const store = useOnboardStore()
-const startOfDayTime = computed(() => store.startOfDayTime)
-const userName = computed(() => store.userName)
 const router = useRouter()
+const store = useUserInfoStore()
 
-const dateSettingFormRef = ref(null)
+const { form, periodOptions, hourOptions, selectedTime } = useDateSettingForm(
+  store.endOfDayTime,
+  'end',
+)
+
+const timeError = ref('')
+const onNextClick = () => {
+  timeError.value = ''
+
+  if (!form.value.hour || !form.value.period) {
+    timeError.value = '시간을 선택해주세요!'
+    return false
+  }
+  return true
+}
 
 const onNextLinkClick = async () => {
-  if (!dateSettingFormRef.value) return
-
-
-  const success = dateSettingFormRef.value.onNextClick()
-  if (!success) return
+  if (!onNextClick()) return
 
   try {
-
     await updateUserInfo()
     await completeUserSetting()
     await router.push('/onboarding/speech-setting')
@@ -55,5 +65,10 @@ const onNextLinkClick = async () => {
     console.error(e)
   }
 }
-</script>
 
+watchEffect(() => {
+  if (form.value.period && form.value.hour) {
+    store.endOfDayTime = selectedTime.value
+  }
+})
+</script>

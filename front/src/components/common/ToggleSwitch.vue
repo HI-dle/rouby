@@ -12,7 +12,12 @@ defineEmits(['update:modelValue'])
 </script>
 
 <template>
-  <label :class="['inline-flex items-center cursor-pointer relative', props.wrapperClass]">
+  <label
+    :class="[
+      'inline-flex items-center cursor-pointer relative',
+      props.wrapperClass,
+    ]"
+  >
     <input
       type="checkbox"
       class="sr-only peer"
