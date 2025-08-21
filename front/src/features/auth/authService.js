@@ -1,6 +1,8 @@
-import {wrapApi} from '@/shared/utils/errorUtils.js'
+import { wrapApi } from '@/shared/utils/errorUtils.js'
 import {
   findPassword as findPasswordApi,
+  getUserBasicInfo,
+  login,
   requestEmailVerification as requestEmailVerificationApi,
   resetPassword as resetPasswordApi,
   signup as signupApi,
@@ -12,8 +14,11 @@ import {
   toResetPasswordPayload,
   toSignupPayload,
   toVerifyCodePayload,
-  toVerifyPasswordCodePayload
+  toVerifyPasswordCodePayload,
 } from './dto.js'
+import { useUserInfoStore } from '@/stores/useUserInfoStore.js'
+import { setPiniaStorage } from '@/shared/utils/piniaUtils.js'
+import { useAuthStore } from '@/stores/useAuthStore.js'
 
 export const requestEmailVerification = wrapApi(
   (email) => requestEmailVerificationApi(toEmailVerificationPayload(email)),
@@ -74,3 +79,29 @@ export const verificationPasswordCode = wrapApi(
     fallbackMessage: '인증 코드 검증에 실패했습니다.',
   },
 )
+
+export const loginAndBootstrap = async (email, password, staySignedIn) => {
+  const userInfoStore = useUserInfoStore()
+  const authStore = useAuthStore()
+
+  // 1. 로그인 요청
+  const response = await login({
+    email: email.trim(),
+    password: password,
+  })
+
+  // 2. 토큰 저장
+  setPiniaStorage(staySignedIn)
+  authStore.setToken(response.data.token)
+  authStore.setStaySignedIn(staySignedIn)
+
+  // 3. 유저 기본 정보 요청
+  const userRes = await getUserBasicInfo()
+  const user = userRes.data
+
+  userInfoStore.setUserInfoWithDefaults({ ...user })
+
+  // 5. 라우팅 정보
+  const nextPath = user.onboardingStatePath
+  return nextPath
+}
