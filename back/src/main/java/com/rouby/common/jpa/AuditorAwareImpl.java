@@ -1,6 +1,6 @@
 package com.rouby.common.jpa;
 
-import com.rouby.user.infrastructure.security.dto.SecurityUser;
+import com.rouby.user.user.infrastructure.security.dto.SecurityUser;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

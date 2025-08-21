@@ -1,7 +1,7 @@
 package com.rouby.common.security;
 
 
-import com.rouby.user.infrastructure.security.dto.SecurityUser;
+import com.rouby.user.user.infrastructure.security.dto.SecurityUser;
 import java.util.Collections;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
