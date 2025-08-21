@@ -1,0 +1,12 @@
+POST {{url}}/test/notification-events
+Content-Type: application/json
+
+{
+  "userId": 0,
+  "tokenProviderType": "FCM",
+  "deviceToken": "",
+  "title": "샘플 알림 제목",
+  "body": "샘플 알림 본문 내용입니다.",
+  "url": "http://localhost:5173",
+  "notificationType": "BRIEFING"
+}
