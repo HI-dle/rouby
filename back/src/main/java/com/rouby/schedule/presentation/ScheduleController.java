@@ -4,7 +4,7 @@ import com.rouby.schedule.application.facade.ScheduleFacade;
 import com.rouby.schedule.presentation.dto.request.CreateScheduleRequest;
 import com.rouby.schedule.presentation.dto.request.GetScheduleRequest;
 import com.rouby.schedule.presentation.dto.response.SchedulesResponse;
-import com.rouby.user.infrastructure.security.dto.SecurityUser;
+import com.rouby.user.user.infrastructure.security.dto.SecurityUser;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -19,9 +19,9 @@
 
       <!-- 로그인 폼 -->
       <LoginForm
-        :email="email"
-        :password="password"
-        :staySignedIn="staySignedIn"
+        v-model:email="email"
+        v-model:password="password"
+        v-model:staySignedIn="staySignedIn"
         :emailError="emailError"
         :passwordError="passwordError"
         :loginError="loginError"

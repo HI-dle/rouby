@@ -57,6 +57,9 @@ dependencies {
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
+    // Firebase Admin SDK
+    implementation 'com.google.firebase:firebase-admin:7.3.0'
+
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
@@ -147,7 +150,10 @@ jacocoTestReport {
     finalizedBy 'jacocoTestCoverageVerification'
 }
 
-processResources.dependsOn('copyEnv')
+tasks.named('processResources') {
+    dependsOn 'copyFcmKey'
+    dependsOn 'copyEnv'
+}
 
 tasks.register('copyEnv') {
     doLast {
@@ -158,4 +164,9 @@ tasks.register('copyEnv') {
             }
         }
     }
+}
+
+tasks.register('copyFcmKey', Copy) {
+    from("rouby-secret/rouby-firebase-adminsdk-key.json")
+    into("src/main/resources/firebase/")
 }
