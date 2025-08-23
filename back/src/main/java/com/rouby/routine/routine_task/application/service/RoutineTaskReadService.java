@@ -8,6 +8,8 @@ import com.rouby.routine.routine_task.application.dto.info.GetRoutineTaskInfo;
 import com.rouby.routine.routine_task.application.exception.RoutineTaskException;
 import com.rouby.routine.routine_task.domain.RoutineTask;
 import com.rouby.routine.routine_task.domain.repository.RoutineTaskRepository;
+import com.rouby.routine.routine_task.domain.repository.search.RoutineTaskWithOverrides;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,5 +33,10 @@ public class RoutineTaskReadService {
   @Transactional(readOnly = true)
   public GetRoutineTaskInfo getRoutineTask(GetRoutineTaskCommand command) {
     return GetRoutineTaskInfo.of(routineTaskRepository.findRoutineTaskByCriteria(command.toCriteria()));
+  }
+
+  @Transactional(readOnly = true)
+  public List<RoutineTaskWithOverrides> getRoutineTasksWithOverrides(GetRoutineTaskCommand command) {
+    return routineTaskRepository.findRoutineTaskByCriteria(command.toCriteria());
   }
 }

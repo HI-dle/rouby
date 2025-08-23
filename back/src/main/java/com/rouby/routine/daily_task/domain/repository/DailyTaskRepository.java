@@ -15,4 +15,7 @@ public interface DailyTaskRepository {
 
   //테스트
   <S extends DailyTask> List<S> saveAll(Iterable<S> entities);
+
+  List<DailyTask> findByRoutineTaskIdInAndTaskDateBetween(
+      List<Long> routineTaskIds, LocalDate fromDate, LocalDate toDate);
 }

@@ -49,8 +49,7 @@ public class RoutineTaskController {
       @Valid @ModelAttribute GetRoutineTaskRequest getRoutineTaskRequest
   ) {
     return ResponseEntity.ok(GetRoutineTaskResponse.of(
-        routineTaskFacade.getRoutineTask(
+        routineTaskFacade.getRoutineTaskWithProgress(
             getRoutineTaskRequest.toCommand(securityUser.getId()))));
   }
-
 }

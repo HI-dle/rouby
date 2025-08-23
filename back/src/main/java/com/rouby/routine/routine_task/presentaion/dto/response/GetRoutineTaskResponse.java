@@ -1,6 +1,7 @@
 package com.rouby.routine.routine_task.presentaion.dto.response;
 
 import com.rouby.routine.routine_task.application.dto.info.GetRoutineTaskInfo;
+import com.rouby.routine.routine_task.application.dto.info.GetRoutineTaskInfo.DailyProgressDto;
 import com.rouby.routine.routine_task.application.dto.info.GetRoutineTaskInfo.RecurrenceRuleDto;
 import com.rouby.routine.routine_task.application.dto.info.GetRoutineTaskInfo.RoutineTask;
 import com.rouby.routine.routine_task.application.dto.info.GetRoutineTaskInfo.RoutineTaskOverrideDto;
@@ -36,6 +37,11 @@ public record GetRoutineTaskResponse(
         .routineOverrides(
             task.routineOverrides().stream()
                 .map(GetRoutineTaskResponse::mapToOverride)
+                .toList()
+        )
+        .dailyProgress(
+            task.dailyProgress().stream()
+                .map(GetRoutineTaskResponse::mapToDailyProgress)
                 .toList()
         )
         .build();
@@ -75,6 +81,14 @@ public record GetRoutineTaskResponse(
         .build();
   }
 
+  private static DailyProgressResponse mapToDailyProgress(DailyProgressDto dto) {
+    return DailyProgressResponse.builder()
+        .DailyTaskId(dto.DailyTaskId())
+        .taskDate(dto.taskDate())
+        .currentValue(dto.currentValue())
+        .build();
+  }
+
   @Builder
   public record RoutineTaskResponse(
       Long id,
@@ -84,7 +98,15 @@ public record GetRoutineTaskResponse(
       Integer alarmOffsetMinutes,
       RoutineTimeInfoResponse routineTimeInfo,
       RecurrenceRuleResponse recurrenceRule,
-      List<RoutineTaskOverrideResponse> routineOverrides
+      List<RoutineTaskOverrideResponse> routineOverrides,
+      List<DailyProgressResponse> dailyProgress
+  ) {
+  }
+  @Builder
+  public record DailyProgressResponse(
+      Long DailyTaskId,
+      LocalDate taskDate,
+      Integer currentValue
   ) {
   }
 

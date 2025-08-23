@@ -21,9 +21,9 @@ Content-Type: application/json
 Authorization: {{access_token}}
 
 {
-  "currentValue": 1,
+  "currentValue": 3,
   "routineTaskId": 74840,
-  "taskDate": "2025-08-18"
+  "taskDate": "2025-08-08"
 }
 
 ### 데일리 테스크 수정
@@ -32,10 +32,10 @@ Content-Type: application/json
 Authorization: {{access_token}}
 
 {
-  "id": 1,
-  "currentValue": 3,
+  "id": 1047666,
+  "currentValue": 10,
   "routineTaskId": 74840,
-  "taskDate": "2025-07-18"
+  "taskDate": "2025-08-18"
 }
 
 

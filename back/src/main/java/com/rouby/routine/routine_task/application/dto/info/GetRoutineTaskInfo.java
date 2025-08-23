@@ -1,5 +1,8 @@
 package com.rouby.routine.routine_task.application.dto.info;
 
+import static java.util.stream.Collectors.groupingBy;
+
+import com.rouby.routine.daily_task.domain.DailyTask;
 import com.rouby.routine.routine_task.domain.RecurrenceRule;
 import com.rouby.routine.routine_task.domain.RoutineTimeInfo;
 import com.rouby.routine.routine_task.domain.enums.Weekday;
@@ -7,7 +10,10 @@ import com.rouby.routine.routine_task.domain.repository.search.RoutineTaskOverri
 import com.rouby.routine.routine_task.domain.repository.search.RoutineTaskWithOverrides;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Builder;
@@ -22,6 +28,54 @@ public record GetRoutineTaskInfo(
         .routines(routineTasks.stream()
             .map(GetRoutineTaskInfo::mapToRoutineTask)
             .toList())
+        .build();
+  }
+
+  public static GetRoutineTaskInfo ofWithProgress(
+      List<RoutineTaskWithOverrides> routineTasks,
+      List<DailyTask> dailyTasks) {
+
+    Map<Long, List<DailyTask>> dailyTaskMap = dailyTasks.stream()
+        .collect(groupingBy(DailyTask::getRoutineTaskId));
+
+    return GetRoutineTaskInfo.builder()
+        .routines(routineTasks.stream()
+            .map(task -> mapToRoutineTaskWithProgress(task, dailyTaskMap.get(task.id())))
+            .toList())
+        .build();
+  }
+
+  private static RoutineTask mapToRoutineTaskWithProgress(
+      RoutineTaskWithOverrides task,
+      List<DailyTask> dailyTasks) {
+
+    return RoutineTask.builder()
+        .id(task.id())
+        .userId(task.userId())
+        .title(task.title())
+        .taskType(task.taskType().name())
+        .alarmOffsetMinutes(task.alarmOffsetType() == null ? null : task.alarmOffsetType().getMinutes())
+        .routineTimeInfo(mapToRoutineTimeInfo(task.routineTimeInfo()))
+        .recurrenceRule(mapToRecurrenceRule(task.recurrenceRule()))
+        .routineOverrides(
+            task.overrides().stream()
+                .map(GetRoutineTaskInfo::mapToRoutineOverride)
+                .toList()
+        )
+        .dailyProgress(dailyTasks != null
+            ? dailyTasks.stream()
+            .map(GetRoutineTaskInfo::mapToDailyProgress)
+            .sorted(Comparator.comparing(DailyProgressDto::taskDate))
+            .toList()
+            : Collections.emptyList())
+        .build();
+  }
+
+  private static DailyProgressDto mapToDailyProgress(DailyTask dailyTask) {
+    return DailyProgressDto.builder()
+        .DailyTaskId(dailyTask.getId())
+        .taskDate(dailyTask.getTaskDate())
+        .currentValue(dailyTask.getCurrentValue())
         .build();
   }
 
@@ -85,6 +139,7 @@ public record GetRoutineTaskInfo(
   }
 
 
+
   @Builder
   public record RoutineTask(
       Long id,
@@ -94,7 +149,8 @@ public record GetRoutineTaskInfo(
       Integer alarmOffsetMinutes,
       RoutineTimeInfoDto routineTimeInfo,
       RecurrenceRuleDto recurrenceRule,
-      List<RoutineTaskOverrideDto> routineOverrides
+      List<RoutineTaskOverrideDto> routineOverrides,
+      List<DailyProgressDto> dailyProgress
   ) {
   }
 
@@ -125,6 +181,14 @@ public record GetRoutineTaskInfo(
       String overrideType,
       String overrideTypeDesc,
       LocalDate overrideDate
+  ) {
+  }
+
+  @Builder
+  public record DailyProgressDto(
+      Long DailyTaskId,
+      LocalDate taskDate,
+      Integer currentValue
   ) {
   }
 }
