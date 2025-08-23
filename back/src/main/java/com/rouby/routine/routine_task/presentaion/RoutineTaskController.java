@@ -2,13 +2,18 @@ package com.rouby.routine.routine_task.presentaion;
 
 import com.rouby.routine.routine_task.application.facade.RoutineTaskFacade;
 import com.rouby.routine.routine_task.presentaion.dto.request.CreateRoutineTaskRequest;
+import com.rouby.routine.routine_task.presentaion.dto.request.GetRoutineTaskRequest;
+import com.rouby.routine.routine_task.presentaion.dto.response.GetRoutineTaskResponse;
 import com.rouby.user.user.infrastructure.security.dto.SecurityUser;
+import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,5 +39,17 @@ public class RoutineTaskController {
         .buildAndExpand(routineTaskId)
         .toUri();
     return ResponseEntity.created(location).build();
+  }
+
+
+  @PreAuthorize("hasAnyRole('USER')")
+  @GetMapping
+  public ResponseEntity<GetRoutineTaskResponse> getRoutine(
+      @AuthenticationPrincipal SecurityUser securityUser,
+      @Valid @ModelAttribute GetRoutineTaskRequest getRoutineTaskRequest
+  ) {
+    return ResponseEntity.ok(GetRoutineTaskResponse.of(
+        routineTaskFacade.getRoutineTaskWithProgress(
+            getRoutineTaskRequest.toCommand(securityUser.getId()))));
   }
 }
