@@ -1,15 +1,10 @@
 // src/features/auth/useLoginForm.js
 import { ref } from 'vue'
-import { login, getUserBasicInfo } from '@/features/auth/api.js'
 import { useGoBack } from '@/shared/composable/useGoBack'
-import { useUserInfoStore } from '@/stores/useUserInfoStore'
-import { useAuthStore } from '@/stores/useAuthStore'
-import { setPiniaStorage } from '@/shared/utils/piniaUtils'
+import { loginAndBootstrap } from './authService'
 
 export function useLoginForm() {
-  const goPathOrBack = useGoBack()
-  const userInfoStore = useUserInfoStore()
-  const { setToken, setStaySignedIn } = useAuthStore()
+  const { goPathOrBack } = useGoBack()
 
   const email = ref('')
   const password = ref('')
@@ -50,32 +45,13 @@ export function useLoginForm() {
     if (emailError.value || passwordError.value) return
 
     try {
-      // 1. 로그인 요청
-      const response = await login({
-        email: email.value.trim(),
-        password: password.value,
-      })
+      const nextPath = await loginAndBootstrap(
+        email.value,
+        password.value,
+        staySignedIn.value,
+      )
 
-      // 2. 토큰 저장
-      setPiniaStorage(staySignedIn.value)
-      setToken(response.data.token)
-      setStaySignedIn(staySignedIn.value)
-
-      // 3. 유저 기본 정보 요청
-      const userRes = await getUserBasicInfo()
-      const user = userRes.data
-
-      userInfoStore.setUserInfoWithDefaults({ ...user })
-
-      // 4. 유저 디바이스 토큰 및 정보 저장
-
-      // 5. 라우팅
-      const onboardingStatePath = user.onboardingStatePath
-      if (!onboardingStatePath) {
-        throw new Error('onboardingStatePath가 없습니다.')
-      }
-
-      await goPathOrBack(onboardingStatePath)
+      await goPathOrBack(nextPath || '/')
     } catch (e) {
       console.error('[로그인 또는 유저 정보 조회 실패]', e)
 

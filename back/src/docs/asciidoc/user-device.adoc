@@ -1,0 +1,28 @@
+[[USER-DEVICE-API]]
+= User-Device-API
+
+[[Register-UserDevice]]
+== 유저 기기 정보 등록 API
+
+=== 성공: 유저 기기 정보 등록 요청
+
+==== HTTP 요청
+include::{snippets}/register-user-device-204/http-request.adoc[]
+
+==== 요청 필드
+include::{snippets}/register-user-device-204/request-fields.adoc[]
+
+==== HTTP 응답 (204 No Content)
+include::{snippets}/register-user-device-204/http-response.adoc[]
+
+=== 실패: 유효성 검증 오류
+
+==== 기기 종류 정보 오류
+
+===== HTTP 요청
+include::{snippets}/register-user-device-invalid-request-400/http-request.adoc[]
+
+===== HTTP 응답 (400 Bad Request)
+include::{snippets}/register-user-device-invalid-request-400/http-response.adoc[]
+
+---

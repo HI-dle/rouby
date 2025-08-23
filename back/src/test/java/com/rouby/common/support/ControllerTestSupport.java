@@ -16,10 +16,12 @@ import com.rouby.routine.routine_task.application.facade.RoutineTaskFacade;
 import com.rouby.routine.routine_task.presentaion.RoutineTaskController;
 import com.rouby.schedule.application.facade.ScheduleFacade;
 import com.rouby.schedule.presentation.ScheduleController;
-import com.rouby.user.application.UserFacade;
-import com.rouby.user.infrastructure.security.filter.JwtAuthenticationFilter;
-import com.rouby.user.presentation.AuthController;
-import com.rouby.user.presentation.UserController;
+import com.rouby.user.device.application.facade.UserDeviceFacade;
+import com.rouby.user.device.presentation.UserDeviceController;
+import com.rouby.user.user.application.UserFacade;
+import com.rouby.user.user.infrastructure.security.filter.JwtAuthenticationFilter;
+import com.rouby.user.user.presentation.AuthController;
+import com.rouby.user.user.presentation.UserController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -42,7 +44,9 @@ import org.springframework.test.web.servlet.MockMvc;
         UserController.class,
         RoutineTaskController.class,
         DailyTaskController.class,
+        UserDeviceController.class,
         PromptController.class
+
     },
     excludeFilters = {
         @ComponentScan.Filter(
@@ -70,6 +74,9 @@ public abstract class ControllerTestSupport {
 
   @MockitoBean
   protected UserFacade userFacade;
+
+  @MockitoBean
+  protected UserDeviceFacade userDeviceFacade;
 
   @MockitoBean
   protected RoutineTaskFacade routineTaskFacade;

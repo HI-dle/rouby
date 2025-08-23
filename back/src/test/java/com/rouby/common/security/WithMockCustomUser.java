@@ -1,6 +1,6 @@
 package com.rouby.common.security;
 
-import com.rouby.user.domain.entity.UserRole;
+import com.rouby.user.user.domain.entity.UserRole;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import org.springframework.security.test.context.support.WithSecurityContext;
