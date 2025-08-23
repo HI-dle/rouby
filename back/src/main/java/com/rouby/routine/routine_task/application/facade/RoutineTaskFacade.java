@@ -24,10 +24,6 @@ public class RoutineTaskFacade {
     return routineTaskWriteService.createRoutineTask(command);
   }
 
-  public GetRoutineTaskInfo getRoutineTask(GetRoutineTaskCommand command) {
-    return routineTaskReadService.getRoutineTask(command);
-  }
-
   public GetRoutineTaskInfo getRoutineTaskWithProgress(GetRoutineTaskCommand command) {
     List<RoutineTaskWithOverrides> routines = routineTaskReadService
         .getRoutineTasksWithOverrides(command);

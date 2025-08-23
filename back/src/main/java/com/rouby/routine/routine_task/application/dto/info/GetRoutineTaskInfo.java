@@ -73,7 +73,7 @@ public record GetRoutineTaskInfo(
 
   private static DailyProgressDto mapToDailyProgress(DailyTask dailyTask) {
     return DailyProgressDto.builder()
-        .DailyTaskId(dailyTask.getId())
+        .dailyTaskId(dailyTask.getId())
         .taskDate(dailyTask.getTaskDate())
         .currentValue(dailyTask.getCurrentValue())
         .build();
@@ -186,7 +186,7 @@ public record GetRoutineTaskInfo(
 
   @Builder
   public record DailyProgressDto(
-      Long DailyTaskId,
+      Long dailyTaskId,
       LocalDate taskDate,
       Integer currentValue
   ) {

@@ -83,7 +83,7 @@ public record GetRoutineTaskResponse(
 
   private static DailyProgressResponse mapToDailyProgress(DailyProgressDto dto) {
     return DailyProgressResponse.builder()
-        .DailyTaskId(dto.DailyTaskId())
+        .dailyTaskId(dto.dailyTaskId())
         .taskDate(dto.taskDate())
         .currentValue(dto.currentValue())
         .build();
@@ -104,7 +104,7 @@ public record GetRoutineTaskResponse(
   }
   @Builder
   public record DailyProgressResponse(
-      Long DailyTaskId,
+      Long dailyTaskId,
       LocalDate taskDate,
       Integer currentValue
   ) {

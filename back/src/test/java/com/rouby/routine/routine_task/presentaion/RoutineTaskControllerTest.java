@@ -106,6 +106,24 @@ class RoutineTaskControllerTest extends ControllerTestSupport {
         .overrideDate(LocalDate.of(2025, 8, 6))
         .build();
 
+    GetRoutineTaskInfo.DailyProgressDto dailyProgress1 = GetRoutineTaskInfo.DailyProgressDto.builder()
+        .dailyTaskId(1L)
+        .taskDate(LocalDate.of(2025, 8, 1))
+        .currentValue(80)
+        .build();
+
+    GetRoutineTaskInfo.DailyProgressDto dailyProgress2 = GetRoutineTaskInfo.DailyProgressDto.builder()
+        .dailyTaskId(2L)
+        .taskDate(LocalDate.of(2025, 8, 3))
+        .currentValue(100)
+        .build();
+
+    GetRoutineTaskInfo.DailyProgressDto dailyProgress3 = GetRoutineTaskInfo.DailyProgressDto.builder()
+        .dailyTaskId(3L)
+        .taskDate(LocalDate.of(2025, 8, 5))
+        .currentValue(50)
+        .build();
+
     GetRoutineTaskInfo.RoutineTask routineTaskDto = GetRoutineTaskInfo.RoutineTask.builder()
         .id(1L)
         .userId(1L)
@@ -130,13 +148,14 @@ class RoutineTaskControllerTest extends ControllerTestSupport {
                 .build()
         )
         .routineOverrides(List.of(overrideDto))
+        .dailyProgress(List.of(dailyProgress1, dailyProgress2, dailyProgress3))
         .build();
 
     GetRoutineTaskInfo mockResponse = GetRoutineTaskInfo.builder()
         .routines(List.of(routineTaskDto))
         .build();
 
-    given(routineTaskFacade.getRoutineTask(any())).willReturn(mockResponse);
+    given(routineTaskFacade.getRoutineTaskWithProgress(any())).willReturn(mockResponse);
 
     // when
     ResultActions result = mockMvc.perform(get("/api/v1/routine-task")
@@ -145,7 +164,6 @@ class RoutineTaskControllerTest extends ControllerTestSupport {
         .contentType(MediaType.APPLICATION_JSON)
         .header("Authorization", "Bearer ACCESS_TOKEN")
     );
-
 
     // then
     result.andExpect(status().isOk())
@@ -178,9 +196,12 @@ class RoutineTaskControllerTest extends ControllerTestSupport {
                 fieldWithPath("routineTasks[].routineOverrides[].routineTimeInfo.startDate").description("오버라이드 시작일"),
                 fieldWithPath("routineTasks[].routineOverrides[].routineTimeInfo.until").description("오버라이드 종료일"),
                 fieldWithPath("routineTasks[].routineOverrides[].routineTimeInfo.time").description("오버라이드 수행 시간"),
-                fieldWithPath("routineTasks[].routineOverrides[].routineTimeInfo.weekdays").description("오버라이드 반복 요일")
+                fieldWithPath("routineTasks[].routineOverrides[].routineTimeInfo.weekdays").description("오버라이드 반복 요일"),
+                fieldWithPath("routineTasks[].dailyProgress").description("일일 진행 목록"),
+                fieldWithPath("routineTasks[].dailyProgress[].dailyTaskId").description("데일리 태스크 ID"),
+                fieldWithPath("routineTasks[].dailyProgress[].taskDate").description("진행 기록 날짜"),
+                fieldWithPath("routineTasks[].dailyProgress[].currentValue").description("현재 진행 값")
             )
         ));
   }
-
 }
