@@ -50,7 +50,7 @@ public class RoutineTaskJdbcRepository {
         ps.setLong(1, id);
         ps.setLong(2, task.getUserId());
         ps.setString(3, task.getTitle());
-        ps.setString(4, task.getTaskType().name()); // String으로 설정
+        ps.setString(4, task.getTaskType().name());
         ps.setInt(5, task.getTargetValue());
 
         // RoutineTimeInfo
@@ -91,19 +91,16 @@ public class RoutineTaskJdbcRepository {
           throw new RuntimeException(e);
         }
 
-        // AlarmOffsetType - String으로 설정
         ps.setString(11, task.getAlarmOffsetType() != null ?
             task.getAlarmOffsetType().name() : null);
 
-        // OverrideInfo - String으로 설정
         ps.setString(12, task.getOverrideInfo() != null ?
             task.getOverrideInfo().getOverrideType().name() : null);
         ps.setDate(13, task.getOverrideInfo() != null ?
             java.sql.Date.valueOf(task.getOverrideInfo().getOverrideDate()) : null);
 
-        // Audit fields
         ps.setTimestamp(14, Timestamp.valueOf(LocalDateTime.now()));
-        ps.setLong(15, task.getUserId()); // created_by
+        ps.setLong(15, task.getUserId());
       }
 
       @Override

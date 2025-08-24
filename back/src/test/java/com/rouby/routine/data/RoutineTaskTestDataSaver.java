@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-//@Disabled("필요한 경우 해당 어노테이션을 주석 처리하고 사용해주세요.")
+@Disabled("필요한 경우 해당 어노테이션을 주석 처리하고 사용해주세요.")
 @SpringBootTest
 public class RoutineTaskTestDataSaver {
 
@@ -79,15 +79,12 @@ public class RoutineTaskTestDataSaver {
       try {
         int currentBatchSize = Math.min(batchSize, maxSize - i);
 
-        // 배치별로 ID 생성
-        List<Long> ids = repository.fetchNextDailyTaskIds(currentBatchSize);
-
         List<DailyTask> dailyTasks = DailyTaskTestDataFactory
-            .generateTestDailyTasks(routineTaskIds, currentBatchSize, ids);
+            .generateTestDailyTasks(routineTaskIds, currentBatchSize);
 
         repository.batchInsertDailyTasks(dailyTasks);
 
-        if (i % 10000 == 0) {  // 1만건마다 진행상황 출력
+        if (i % 10000 == 0) {
           System.out.printf("Progress: %d/%d (%.1f%%)%n",
               i, maxSize, (double)i/maxSize*100);
         }

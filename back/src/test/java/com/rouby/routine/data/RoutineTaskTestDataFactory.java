@@ -54,7 +54,6 @@ public class RoutineTaskTestDataFactory {
     RoutineTimeInfo routineTimeInfo = createRandomRoutineTimeInfo();
     RecurrenceRule recurrenceRule = createRandomRecurrenceRule();
 
-    // 10% 확률로 오버라이드 정보 추가 (특정 날짜 수정/취소)
     OverrideInfo overrideInfo = null;
     if (random.nextDouble() < 0.1) {
       overrideInfo = OverrideInfo.builder()
@@ -80,7 +79,6 @@ public class RoutineTaskTestDataFactory {
     LocalDate until = startDate.plusDays(30 + random.nextInt(60));
     LocalTime time = LocalTime.of(6 + random.nextInt(18), random.nextInt(4) * 15);
 
-    // 다양한 요일 패턴
     Set<Weekday> weekdays;
     int pattern = random.nextInt(4);
     switch (pattern) {
@@ -107,7 +105,7 @@ public class RoutineTaskTestDataFactory {
 
   private static Set<Weekday> generateRandomWeekdays() {
     Set<Weekday> weekdays = new HashSet<>();
-    int count = random.nextInt(5) + 1; // 1~5개 요일
+    int count = random.nextInt(5) + 1;
 
     while (weekdays.size() < count) {
       weekdays.add(Weekday.values()[random.nextInt(7)]);
@@ -118,7 +116,7 @@ public class RoutineTaskTestDataFactory {
 
   private static RecurrenceRule createRandomRecurrenceRule() {
     Freq freq = Freq.values()[random.nextInt(Freq.values().length)];
-    Integer interval = random.nextInt(3) + 1; // 1~3
+    Integer interval = random.nextInt(3) + 1;
 
     Set<Weekday> byDay = null;
     if (freq == Freq.WEEKLY && random.nextBoolean()) {
