@@ -7,9 +7,10 @@ import com.rouby.routine.routine_task.domain.enums.AlarmOffsetType;
 import com.rouby.routine.routine_task.domain.enums.TaskType;
 import com.rouby.routine.routine_task.domain.enums.Weekday;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZonedDateTime;
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.Builder;
 
 @Builder
@@ -21,8 +22,8 @@ public record CreateRoutineTaskCommand(
     Integer alarmOffsetMinutes,
     LocalDate startDate,
     LocalTime time,
-    List<CommandWeekday> byDays,
-    ZonedDateTime until
+    Set<CommandWeekday> byDays,
+    LocalDateTime until
 ) {
 
   public RoutineTask toEntity(){
@@ -33,14 +34,14 @@ public record CreateRoutineTaskCommand(
         .targetValue(targetValue)
         .alarmOffsetType(AlarmOffsetType.parse(alarmOffsetMinutes))
         .recurrenceRule(RecurrenceRule.builder()
-            .byDays(byDays.stream().map(x -> Weekday.valueOf(x.name())).toList())
+            .byDay(byDays.stream().map(x -> Weekday.valueOf(x.name())).collect(Collectors.toSet()))
             .until(until)
             .build())
         .routineTimeInfo(RoutineTimeInfo.builder()
             .startDate(startDate)
             .until(until.toLocalDate())
             .time(time)
-            .weekdays(byDays.stream().map(x -> Weekday.valueOf(x.name())).toList())
+            .weekdays(byDays.stream().map(x -> Weekday.valueOf(x.name())).collect(Collectors.toSet()))
             .build())
         .build();
   }

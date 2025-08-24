@@ -8,7 +8,6 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
@@ -34,10 +33,10 @@ public class RoutineTimeInfo implements Serializable {
 
   @JdbcTypeCode(SqlTypes.JSON)
   @Column(name = "weekdays", columnDefinition = "jsonb", nullable = false)
-  private List<Weekday> weekdays;
+  private Set<Weekday> weekdays;
 
   @Builder
-  private RoutineTimeInfo(LocalDate startDate, LocalDate until, LocalTime time, List<Weekday> weekdays) {
+  private RoutineTimeInfo(LocalDate startDate, LocalDate until, LocalTime time, Set<Weekday> weekdays) {
     validate(startDate, until, time, weekdays);
     this.startDate = startDate;
     this.until = until;
@@ -45,7 +44,7 @@ public class RoutineTimeInfo implements Serializable {
     this.weekdays = weekdays;
   }
 
-  private void validate(LocalDate startDate, LocalDate until, LocalTime time, List<Weekday> weekdays) {
+  private void validate(LocalDate startDate, LocalDate until, LocalTime time, Set<Weekday> weekdays) {
     if (startDate == null) {
       throw new IllegalArgumentException("startDate는 필수입니다.");
     }
@@ -65,7 +64,7 @@ public class RoutineTimeInfo implements Serializable {
     validateWeekdays(startDate, until, weekdays);
   }
 
-  private void validateWeekdays(LocalDate startDate, LocalDate until, List<Weekday> weekdays) {
+  private void validateWeekdays(LocalDate startDate, LocalDate until, Set<Weekday> weekdays) {
     if (weekdays == null || weekdays.isEmpty()) {
       throw new IllegalArgumentException("반복 요일은 1개 이상 선택해야 합니다.");
     }
@@ -78,9 +77,9 @@ public class RoutineTimeInfo implements Serializable {
           .map(LocalDate::getDayOfWeek)
           .collect(Collectors.toSet());
 
-      List<Weekday> invalid = weekdays.stream()
+      Set<Weekday> invalid = weekdays.stream()
           .filter(w -> !validDays.contains(w.getDayOfWeek()))
-          .toList();
+          .collect(Collectors.toSet());
 
       if (!invalid.isEmpty()) {
         String invalidStr = invalid.stream()
