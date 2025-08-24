@@ -12,6 +12,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -24,7 +25,12 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 @Entity
-@Table(name = "routine_tasks")
+@Table(name = "routine_tasks", indexes = {
+    @Index(name = "idx_rt_user_active_override_start",
+        columnList = "user_id, deleted_at, override_type, start_date"),
+    @Index(name = "idx_rt_user_active_override_until",
+        columnList = "user_id, deleted_at, override_type, until")
+})
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
