@@ -18,12 +18,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class RoutineTaskTestDataSaver {
 
   @Autowired
-  private RoutineTaskRepository routineTaskRepository;
-
-  @Autowired
-  private DailyTaskRepository dailyTaskRepository;
-
-  @Autowired
   private JdbcTemplate jdbcTemplate;
 
   @Autowired
@@ -34,25 +28,22 @@ public class RoutineTaskTestDataSaver {
   void createRoutineTasks() {
     int batchSize = 500;
     int maxSize = 100_000;
+    int currentBatchSize = 500;
 
     RoutineTaskJdbcRepository repository = new RoutineTaskJdbcRepository(jdbcTemplate, objectMapper);
     List<RoutineTask> routineTasks;
 
-    List<Long> ids = repository.fetchNextRoutineTaskIds(maxSize);
-
     for (int i = 0; i < maxSize; i += batchSize) {
       try {
-        int currentBatchSize = Math.min(batchSize, maxSize - i);
-        routineTasks = RoutineTaskTestDataFactory.generateTestRoutineTasks(
-            i, currentBatchSize, ids.subList(i, i + currentBatchSize));
-
-        repository.batchInsertRoutineTasks(routineTasks, ids.subList(i, i + currentBatchSize));
-
+        currentBatchSize = Math.min(batchSize, maxSize - i);
+        List<Long> ids = repository.fetchNextRoutineTaskIds(currentBatchSize);
+        routineTasks = RoutineTaskTestDataFactory.generateTestRoutineTasks(i, currentBatchSize, ids);
+        repository.batchInsertRoutineTasks(routineTasks, ids);
         System.out.printf("Inserted routine task batch %d-%d%n", i, i + currentBatchSize);
 
       } catch (Exception e) {
         System.err.printf("Failed to insert routine task batch %d-%d: %s%n",
-            i, i + batchSize, e.getMessage());
+            i, i + currentBatchSize, e.getMessage());
         e.printStackTrace();
         break;
       }
@@ -86,7 +77,7 @@ public class RoutineTaskTestDataSaver {
 
         if (i % 10000 == 0) {
           System.out.printf("Progress: %d/%d (%.1f%%)%n",
-              i, maxSize, (double)i/maxSize*100);
+              i + currentBatchSize, maxSize, (double)(i + currentBatchSize)/maxSize*100);
         }
 
       } catch (Exception e) {

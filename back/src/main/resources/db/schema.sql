@@ -9,13 +9,13 @@ CREATE INDEX idx_schedule_parent_not_deleted
     WHERE deleted_at IS NULL;
 
 -- ROUTINE_TASKS
-DROP INDEX IF EXISTS idx_rt_child_parent_active;
+DROP INDEX CONCURRENTLY IF EXISTS idx_rt_child_parent_active;
 CREATE INDEX CONCURRENTLY idx_rt_child_parent_active
     ON routine_tasks(parent_routine_task_id)
     WHERE deleted_at IS NULL;
 
 -- DAILY_TASKS
-DROP INDEX IF EXISTS idx_daily_tasks_date_task_cover;
-CREATE INDEX CONCURRENTLY idx_daily_tasks_date_task_cover
-    ON daily_tasks(task_date, routine_task_id)
+DROP INDEX CONCURRENTLY IF EXISTS idx_daily_tasks_date_task_cover;
+CREATE INDEX CONCURRENTLY idx_daily_tasks_task_rid_date_cover
+    ON daily_tasks(routine_task_id, task_date)
     INCLUDE (current_value);

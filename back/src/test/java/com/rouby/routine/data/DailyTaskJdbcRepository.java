@@ -3,8 +3,6 @@ package com.rouby.routine.data;
 import com.rouby.routine.daily_task.domain.DailyTask;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,17 +15,11 @@ public class DailyTaskJdbcRepository {
     this.jdbcTemplate = jdbcTemplate;
   }
 
-  public List<Long> fetchNextDailyTaskIds(int count) {
-    return jdbcTemplate.queryForList(
-        "SELECT nextval('daily_tasks_id_seq') FROM generate_series(1, ?)",
-        Long.class, count);
-  }
-
   public void batchInsertDailyTasks(List<DailyTask> dailyTasks) {
     String sql = """
         INSERT INTO daily_tasks (
             id, routine_task_id, task_date, current_value, created_at, created_by
-        ) VALUES (?, ?, ?, ?, ?, ?)
+        ) VALUES (DEFAULT, ?, ?, ?, now(), ?)
         ON CONFLICT (routine_task_id, task_date) DO NOTHING
         """;
 
@@ -35,15 +27,11 @@ public class DailyTaskJdbcRepository {
       @Override
       public void setValues(PreparedStatement ps, int i) throws SQLException {
         DailyTask task = dailyTasks.get(i);
-        Long generatedId = jdbcTemplate.queryForObject(
-            "SELECT nextval('daily_tasks_id_seq')", Long.class);
 
-        ps.setLong(1, generatedId);
-        ps.setLong(2, task.getRoutineTaskId());
-        ps.setDate(3, java.sql.Date.valueOf(task.getTaskDate()));
-        ps.setInt(4, task.getCurrentValue());
-        ps.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
-        ps.setLong(6, 1L); // created_by
+        ps.setLong(1, task.getRoutineTaskId());
+        ps.setDate(2, java.sql.Date.valueOf(task.getTaskDate()));
+        ps.setInt(3, task.getCurrentValue());
+        ps.setLong(4, 1L);
       }
 
       @Override
