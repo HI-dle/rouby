@@ -6,7 +6,7 @@ import com.rouby.assistant.prompt.application.exception.PromptException;
 import com.rouby.assistant.prompt.application.info.PromptInfo;
 import com.rouby.assistant.prompt.domain.PromptRepository;
 import com.rouby.assistant.prompt.domain.enums.PromptType;
-import com.rouby.user.application.dto.info.UserInfo;
+import com.rouby.user.user.application.dto.info.UserInfo;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

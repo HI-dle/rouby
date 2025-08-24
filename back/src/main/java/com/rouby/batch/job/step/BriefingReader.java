@@ -1,7 +1,8 @@
 package com.rouby.batch.job.step;
 
-import com.rouby.user.application.dto.info.UserInfo;
-import com.rouby.user.application.service.UserReadService;
+
+import com.rouby.user.user.application.dto.info.UserInfo;
+import com.rouby.user.user.application.service.UserReadService;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.StepScope;

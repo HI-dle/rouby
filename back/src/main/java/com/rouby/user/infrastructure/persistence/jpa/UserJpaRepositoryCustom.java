@@ -1,6 +1,7 @@
 package com.rouby.user.infrastructure.persistence.jpa;
 
-import com.rouby.user.domain.entity.User;
+
+import com.rouby.user.user.domain.entity.User;
 import java.time.LocalTime;
 import java.util.List;
 

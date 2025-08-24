@@ -1,7 +1,8 @@
-package com.rouby.user.application.dto.info;
+package com.rouby.user.user.application.dto.info;
 
-import com.rouby.user.domain.entity.NotificationType;
-import com.rouby.user.domain.entity.User;
+
+import com.rouby.user.user.domain.entity.NotificationType;
+import com.rouby.user.user.domain.entity.User;
 import java.util.Set;
 import java.util.stream.Collectors;
 

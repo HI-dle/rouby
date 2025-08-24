@@ -1,9 +1,8 @@
 package com.rouby.user.user.domain.repository;
 
-import com.rouby.user.domain.entity.User;
+import com.rouby.user.user.domain.entity.User;
 import java.time.LocalTime;
 import java.util.List;
-import com.rouby.user.user.domain.entity.User;
 import java.util.Optional;
 
 public interface UserRepository {

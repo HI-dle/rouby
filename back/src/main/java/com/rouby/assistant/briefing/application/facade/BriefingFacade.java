@@ -8,7 +8,7 @@ import com.rouby.assistant.prompt.application.info.PromptInfo;
 import com.rouby.assistant.prompt.application.service.PromptReadService;
 import com.rouby.schedule.application.dto.query.GetScheduleQuery;
 import com.rouby.schedule.application.service.ScheduleReadService;
-import com.rouby.user.application.dto.info.UserInfo;
+import com.rouby.user.user.application.dto.info.UserInfo;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

@@ -4,7 +4,7 @@ import com.rouby.assistant.briefing.domain.Briefing;
 import com.rouby.batch.job.step.BriefingProcessor;
 import com.rouby.batch.job.step.BriefingReader;
 import com.rouby.batch.job.step.BriefingWriter;
-import com.rouby.user.application.dto.info.UserInfo;
+import com.rouby.user.user.application.dto.info.UserInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
