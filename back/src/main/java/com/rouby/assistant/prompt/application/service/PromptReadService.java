@@ -22,13 +22,14 @@ public class PromptReadService {
         .orElseThrow(() -> PromptException.from(PROMPT_NOT_FOUND)));
   }
 
-  public String generateBriefingPrompt(UserInfo user, String schedulesJson, String promptTemplate) {
+  public String generateBriefingPrompt(UserInfo user, String schedulesJson, String routineJson,
+      String promptTemplate) {
     String userName = user.nickname();
     String tone = String.join(", ", user.communicationTone().tones());
     String profile = String.join(", ", user.profileKeywords().keywords());
     String health = String.join(", ", user.healthStatusKeywords().keywords());
 
     return String.format(promptTemplate, LocalDate.now(), userName, tone, profile, health,
-        schedulesJson);
+        schedulesJson, routineJson);
   }
 }

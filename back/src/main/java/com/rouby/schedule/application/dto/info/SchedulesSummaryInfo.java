@@ -9,7 +9,6 @@ import com.rouby.schedule.domain.repository.info.ScheduleWithOverrides;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.Builder;
 
 @Builder
@@ -23,7 +22,7 @@ public record SchedulesSummaryInfo(
     return SchedulesSummaryInfo.builder()
         .schedules(safeList(schedules).stream()
             .map(SchedulesSummaryInfo::mapToScheduleSummary)
-            .collect(Collectors.toList()))
+            .toList())
         .build();
   }
 

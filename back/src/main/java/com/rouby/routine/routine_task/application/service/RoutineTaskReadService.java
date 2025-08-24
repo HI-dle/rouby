@@ -5,6 +5,7 @@ import static com.rouby.routine.routine_task.application.exception.RoutineTaskEr
 
 import com.rouby.routine.routine_task.application.dto.command.GetRoutineTaskCommand;
 import com.rouby.routine.routine_task.application.dto.info.GetRoutineTaskInfo;
+import com.rouby.routine.routine_task.application.dto.info.RoutineTaskSummaryInfo;
 import com.rouby.routine.routine_task.application.exception.RoutineTaskException;
 import com.rouby.routine.routine_task.domain.RoutineTask;
 import com.rouby.routine.routine_task.domain.repository.RoutineTaskRepository;
@@ -38,5 +39,11 @@ public class RoutineTaskReadService {
   @Transactional(readOnly = true)
   public List<RoutineTaskWithOverrides> getRoutineTasksWithOverrides(GetRoutineTaskCommand command) {
     return routineTaskRepository.findRoutineTaskByCriteria(command.toCriteria());
+  }
+
+  public String findSummaryRoutineTaskJsonBy(GetRoutineTaskCommand command) {
+    return RoutineTaskSummaryInfo.of(
+            routineTaskRepository.findRoutineTaskByCriteria(command.toCriteria()))
+        .toJson();
   }
 }

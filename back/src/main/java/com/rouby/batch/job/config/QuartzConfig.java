@@ -24,7 +24,7 @@ public class QuartzConfig {
   @Bean
   public Trigger briefingJobTrigger() {
     CronScheduleBuilder scheduleBuilder = CronScheduleBuilder
-        .cronSchedule("0 0 * * * ?")
+        .cronSchedule("0 26 * * * ?")
         .inTimeZone(TimeZone.getTimeZone("Asia/Seoul"))
         .withMisfireHandlingInstructionIgnoreMisfires();
 
