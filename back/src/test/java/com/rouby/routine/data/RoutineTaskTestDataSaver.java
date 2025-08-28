@@ -2,9 +2,7 @@ package com.rouby.routine.data;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rouby.routine.daily_task.domain.DailyTask;
-import com.rouby.routine.daily_task.domain.repository.DailyTaskRepository;
 import com.rouby.routine.routine_task.domain.RoutineTask;
-import com.rouby.routine.routine_task.domain.repository.RoutineTaskRepository;
 import java.util.List;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -37,7 +35,7 @@ public class RoutineTaskTestDataSaver {
       try {
         currentBatchSize = Math.min(batchSize, maxSize - i);
         List<Long> ids = repository.fetchNextRoutineTaskIds(currentBatchSize);
-        routineTasks = RoutineTaskTestDataFactory.generateTestRoutineTasks(i, currentBatchSize, ids);
+        routineTasks = RoutineTaskTestDataFactory.generateTestRoutineTasks(currentBatchSize, ids);
         repository.batchInsertRoutineTasks(routineTasks, ids);
         System.out.printf("Inserted routine task batch %d-%d%n", i, i + currentBatchSize);
 
@@ -51,10 +49,10 @@ public class RoutineTaskTestDataSaver {
   }
 
   @Test
-  @DisplayName("데일리 태스크 대용량 데이터 생성 (100만건)")
+  @DisplayName("데일리 태스크 대용량 데이터 생성 (천건 )")
   void createLargeDailyTasks() {
     int batchSize = 500;
-    int maxSize = 1_000_000;
+    int maxSize = 1_000;
 
     List<Long> routineTaskIds = jdbcTemplate.queryForList(
         "SELECT id FROM routine_tasks WHERE deleted_at IS NULL LIMIT 100", Long.class);

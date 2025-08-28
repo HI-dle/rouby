@@ -4,14 +4,11 @@ import com.rouby.routine.daily_task.domain.DailyTask;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class DailyTaskTestDataFactory {
 
-  private static final Random random = new Random();
-
-  public static List<DailyTask> generateTestDailyTasks(
-      List<Long> routineTaskIds, int count) {
+  public static List<DailyTask> generateTestDailyTasks(List<Long> routineTaskIds, int count) {
 
     List<DailyTask> dailyTasks = new ArrayList<>();
 
@@ -23,18 +20,20 @@ public class DailyTaskTestDataFactory {
   }
 
   private static DailyTask createRandomDailyTask(List<Long> routineTaskIds) {
-    Long routineTaskId = routineTaskIds.get(random.nextInt(routineTaskIds.size()));
-    LocalDate taskDate = LocalDate.now().minusDays(random.nextInt(60));
+    ThreadLocalRandom tlr = ThreadLocalRandom.current();
+    Long routineTaskId = routineTaskIds.get(tlr.nextInt(routineTaskIds.size()));
+    LocalDate taskDate = LocalDate.now().minusDays(tlr.nextInt(150));
     Integer currentValue = generateRealisticProgress();
 
     return DailyTask.create(routineTaskId, taskDate, currentValue);
   }
 
   private static Integer generateRealisticProgress() {
-    double rand = random.nextDouble();
+    ThreadLocalRandom tlr = ThreadLocalRandom.current();
+    double rand = tlr.nextDouble();
     if (rand < 0.3) return 10;
-    if (rand < 0.5) return random.nextInt(2);
-    if (rand < 0.8) return 50 + random.nextInt(4);
-    return random.nextInt(5);
+    if (rand < 0.5) return tlr.nextInt(2);
+    if (rand < 0.8) return 50 + tlr.nextInt(4);
+    return tlr.nextInt(5);
   }
 }

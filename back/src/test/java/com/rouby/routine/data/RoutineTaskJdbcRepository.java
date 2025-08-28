@@ -26,7 +26,7 @@ public class RoutineTaskJdbcRepository {
 
   public List<Long> fetchNextRoutineTaskIds(int count) {
     return jdbcTemplate.queryForList(
-        "SELECT nextval('routine_tasks_id_seq') FROM generate_series(1, ?)",
+        "SELECT nextval('routine_tasks_id_seq') FROM generate_series(1, CAST(? AS INT))",
         Long.class, count);
   }
 
@@ -40,7 +40,7 @@ public class RoutineTaskJdbcRepository {
             created_at, created_by
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?::jsonb, ?::jsonb, ?, ?, ?, ?, ?)
         """;
-
+    final Timestamp createdAt = Timestamp.valueOf(LocalDateTime.now());
     jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
       @Override
       public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -99,7 +99,7 @@ public class RoutineTaskJdbcRepository {
         ps.setDate(13, task.getOverrideInfo() != null ?
             java.sql.Date.valueOf(task.getOverrideInfo().getOverrideDate()) : null);
 
-        ps.setTimestamp(14, Timestamp.valueOf(LocalDateTime.now()));
+        ps.setTimestamp(14, createdAt);
         ps.setLong(15, task.getUserId());
       }
 

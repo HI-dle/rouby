@@ -31,7 +31,7 @@ public class RoutineTaskTestDataFactory {
 
   private static final Long[] USER_IDS = {1L, 2L, 3L, 4L, 5L, 10L, 11L, 12L};
 
-  public static List<RoutineTask> generateTestRoutineTasks(int startIndex, int count, List<Long> ids) {
+  public static List<RoutineTask> generateTestRoutineTasks(int count, List<Long> ids) {
     List<RoutineTask> routineTasks = new ArrayList<>();
 
     for (int i = 0; i < count; i++) {
