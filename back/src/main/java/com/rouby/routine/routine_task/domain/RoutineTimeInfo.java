@@ -25,8 +25,8 @@ public class RoutineTimeInfo implements Serializable {
   @Column(name = "start_date", nullable = false)
   private LocalDate startDate;
 
-  @Column(name = "until", nullable = false)
-  private LocalDate until;
+  @Column(name = "until_date", nullable = false)
+  private LocalDate untilDate;
 
   @Column(name = "time", nullable = false)
   private LocalTime time;
@@ -36,10 +36,10 @@ public class RoutineTimeInfo implements Serializable {
   private Set<Weekday> weekdays;
 
   @Builder
-  private RoutineTimeInfo(LocalDate startDate, LocalDate until, LocalTime time, Set<Weekday> weekdays) {
-    validate(startDate, until, time, weekdays);
+  private RoutineTimeInfo(LocalDate startDate, LocalDate untilDate, LocalTime time, Set<Weekday> weekdays) {
+    validate(startDate, untilDate, time, weekdays);
     this.startDate = startDate;
-    this.until = until;
+    this.untilDate = untilDate;
     this.time = time;
     this.weekdays = weekdays;
   }

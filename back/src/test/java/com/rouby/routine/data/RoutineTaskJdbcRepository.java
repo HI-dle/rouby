@@ -34,7 +34,7 @@ public class RoutineTaskJdbcRepository {
     String sql = """
         INSERT INTO routine_tasks (
             id, user_id, title, task_type, target_value,
-            start_date, until, time, weekdays,
+            start_date, until_date, time, weekdays,
             recurrence_rule, alarm_offset_type,
             override_type, override_date,
             created_at, created_by
@@ -55,7 +55,7 @@ public class RoutineTaskJdbcRepository {
 
         // RoutineTimeInfo
         ps.setDate(6, java.sql.Date.valueOf(task.getRoutineTimeInfo().getStartDate()));
-        ps.setDate(7, java.sql.Date.valueOf(task.getRoutineTimeInfo().getUntil()));
+        ps.setDate(7, java.sql.Date.valueOf(task.getRoutineTimeInfo().getUntilDate()));
         ps.setTime(8, java.sql.Time.valueOf(task.getRoutineTimeInfo().getTime()));
 
         // JSON 변환

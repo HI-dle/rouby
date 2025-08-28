@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-@Disabled("필요한 경우 해당 어노테이션을 주석 처리하고 사용해주세요.")
+//@Disabled("필요한 경우 해당 어노테이션을 주석 처리하고 사용해주세요.")
 @SpringBootTest
 public class RoutineTaskTestDataSaver {
 
@@ -25,7 +25,7 @@ public class RoutineTaskTestDataSaver {
   @DisplayName("루틴 태스크 기본 데이터 생성")
   void createRoutineTasks() {
     int batchSize = 500;
-    int maxSize = 100_000;
+    int maxSize = 1_000;
     int currentBatchSize = 500;
 
     RoutineTaskJdbcRepository repository = new RoutineTaskJdbcRepository(jdbcTemplate, objectMapper);

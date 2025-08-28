@@ -76,7 +76,7 @@ class RoutineTaskControllerTest extends ControllerTestSupport {
                 fieldWithPath("startDate").description("루틴 시작일 (예: 2025-07-15)"),
                 fieldWithPath("time").description("루틴 실행 시간 (예: 08:00:00)"),
                 fieldWithPath("byDays").description("루틴 반복 요일 리스트 (예: [MO, WE, FR])"),
-                fieldWithPath("until").description("루틴 종료일 (예: 2025-08-15T22:30:00+09:00[Asia/Seoul])")
+                fieldWithPath("untilDate").description("루틴 종료일 (예: 2025-08-15T22:30:00+09:00[Asia/Seoul])")
             )
         ));
   }
@@ -96,7 +96,7 @@ class RoutineTaskControllerTest extends ControllerTestSupport {
         .routineTimeInfo(
             GetRoutineTaskInfo.RoutineTimeInfoDto.builder()
                 .startDate(LocalDate.of(2025, 8, 5))
-                .until(LocalDate.of(2025, 8, 10))
+                .untilDate(LocalDate.of(2025, 8, 10))
                 .time(LocalTime.of(9, 30))
                 .weekdays(Set.of("MO", "WE"))
                 .build()
@@ -133,7 +133,7 @@ class RoutineTaskControllerTest extends ControllerTestSupport {
         .routineTimeInfo(
             GetRoutineTaskInfo.RoutineTimeInfoDto.builder()
                 .startDate(LocalDate.of(2025, 8, 1))
-                .until(LocalDate.of(2025, 8, 30))
+                .untilDate(LocalDate.of(2025, 8, 30))
                 .time(LocalTime.of(8, 0))
                 .weekdays(Set.of("MO", "WE", "FR"))
                 .build()
@@ -179,13 +179,13 @@ class RoutineTaskControllerTest extends ControllerTestSupport {
                 fieldWithPath("routineTasks[].taskType").description("루틴 타입 (COUNT, CHECK 등)"),
                 fieldWithPath("routineTasks[].alarmOffsetMinutes").description("알람 옵셋 분 (예: 5분 전 알림)"),
                 fieldWithPath("routineTasks[].routineTimeInfo.startDate").description("루틴 시작일"),
-                fieldWithPath("routineTasks[].routineTimeInfo.until").description("루틴 종료일"),
+                fieldWithPath("routineTasks[].routineTimeInfo.untilDate").description("루틴 종료일"),
                 fieldWithPath("routineTasks[].routineTimeInfo.time").description("루틴 수행 시간"),
                 fieldWithPath("routineTasks[].routineTimeInfo.weekdays").description("반복 요일 (예: [MO, TU, WE])"),
                 fieldWithPath("routineTasks[].recurrenceRule.freq").description("반복 빈도 (예: DAILY, WEEKLY)"),
                 fieldWithPath("routineTasks[].recurrenceRule.byDay").description("반복 요일 (예: [MO, TU])"),
                 fieldWithPath("routineTasks[].recurrenceRule.interval").description("반복 간격"),
-                fieldWithPath("routineTasks[].recurrenceRule.until").description("반복 종료일"),
+                fieldWithPath("routineTasks[].recurrenceRule.untilDate").description("반복 종료일"),
                 fieldWithPath("routineTasks[].recurrenceRule.rruleStr").description("RRULE 문자열"),
                 fieldWithPath("routineTasks[].routineOverrides").description("오버라이드 목록"),
                 fieldWithPath("routineTasks[].routineOverrides[].id").description("오버라이드 ID"),
@@ -194,7 +194,7 @@ class RoutineTaskControllerTest extends ControllerTestSupport {
                 fieldWithPath("routineTasks[].routineOverrides[].overrideTypeDesc").description("오버라이드 타입 설명"),
                 fieldWithPath("routineTasks[].routineOverrides[].overrideDate").description("오버라이드 날짜"),
                 fieldWithPath("routineTasks[].routineOverrides[].routineTimeInfo.startDate").description("오버라이드 시작일"),
-                fieldWithPath("routineTasks[].routineOverrides[].routineTimeInfo.until").description("오버라이드 종료일"),
+                fieldWithPath("routineTasks[].routineOverrides[].routineTimeInfo.untilDate").description("오버라이드 종료일"),
                 fieldWithPath("routineTasks[].routineOverrides[].routineTimeInfo.time").description("오버라이드 수행 시간"),
                 fieldWithPath("routineTasks[].routineOverrides[].routineTimeInfo.weekdays").description("오버라이드 반복 요일"),
                 fieldWithPath("routineTasks[].dailyProgress").description("일일 진행 목록"),

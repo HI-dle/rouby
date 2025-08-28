@@ -75,7 +75,7 @@ public class RoutineTaskJpaRepositoryCustomImpl implements RoutineTaskJpaReposit
   private BooleanBuilder singleCriteria(QRoutineTask rt, GetRoutineTaskCriteria criteria) {
     return new BooleanBuilder(rt.recurrenceRule.isNull())
         .and(rt.routineTimeInfo.startDate.loe(criteria.toDate()))
-        .and(rt.routineTimeInfo.until.goe(criteria.fromDate()));
+        .and(rt.routineTimeInfo.untilDate.goe(criteria.fromDate()));
   }
 
   private BooleanBuilder eqUserId(QRoutineTask rt, Long userId) {

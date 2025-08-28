@@ -84,7 +84,7 @@ class RecurrenceRuleTest {
       );
     }
     @MethodSource("rruleStrWithInvalidUntil")
-    @DisplayName("잘못된 until 포맷으로 인한 예외 발생")
+    @DisplayName("잘못된 untilDate 포맷으로 인한 예외 발생")
     @ParameterizedTest(name = "{0}")
     void fromWithInvalidUntilData(String rruleStr) {
 

@@ -97,7 +97,7 @@ public class RoutineTaskTestDataFactory {
 
     return RoutineTimeInfo.builder()
         .startDate(startDate)
-        .until(until)
+        .untilDate(until)
         .time(time)
         .weekdays(weekdays)
         .build();

@@ -29,7 +29,7 @@ import org.hibernate.type.SqlTypes;
     @Index(name = "idx_rt_user_active_override_start",
         columnList = "user_id, override_type, start_date, deleted_at"),
     @Index(name = "idx_rt_user_active_override_until",
-        columnList = "user_id, override_type, until, deleted_at")
+        columnList = "user_id, override_type, until_date, deleted_at")
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
