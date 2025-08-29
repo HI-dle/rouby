@@ -26,10 +26,8 @@ import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "routine_tasks", indexes = {
-    @Index(name = "idx_rt_user_active_override_start",
-        columnList = "user_id, override_type, start_date, deleted_at"),
-    @Index(name = "idx_rt_user_active_override_until",
-        columnList = "user_id, override_type, until_date, deleted_at")
+    @Index(name = "idx_rt_user_active_override_start_until",
+        columnList = "user_id, override_type, start_date, until_date, deleted_at"),
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
