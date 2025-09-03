@@ -61,7 +61,7 @@ public class RoutineTestDataRunner {
           .recurrenceRule(recurrenceRule)
           .routineTimeInfo(RoutineTimeInfo.builder()
               .startDate(startDate)
-              .until(endDate)
+              .untilDate(endDate)
               .time(LocalTime.of(8 + i, 0)) // 8:00, 9:00, 10:00 등
               .weekdays(Set.of(Weekday.WE, Weekday.SA))
               .build())

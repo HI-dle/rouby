@@ -24,7 +24,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
-//반복에 대한 정보를 담음 반복 일자와 언제까지인지는 until
+//반복에 대한 정보를 담음 반복 일자와 언제까지인지는 untilDate
   // freq 필요
 @Getter
 @EqualsAndHashCode
