@@ -40,6 +40,7 @@ export function useMyPageForm() {
       const success = await withdrawalOfUser()
       if (success) {
         resetAllStores()
+        removeStorageFlagForPinia()
         goTo({ name: 'login' })
       }
     } catch (err) {
