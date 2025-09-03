@@ -1,8 +1,33 @@
 spring:
+  config.activate.on-profile: local
   quartz:
     job-store-type: jdbc
     jdbc:
       initialize-schema: never
+    properties:
+      org:
+        quartz:
+          jobStore:
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+            tablePrefix: QRTZ_
+            isClustered: true
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 5
+app:
+  quartz:
+    briefingJob:
+      cron: "0 50 * * * ?"
+      time-zone: "Asia/Seoul"
+
+---
+# test 환경
+spring:
+  config.activate.on-profile: test
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: always
     properties:
       org:
         quartz:
