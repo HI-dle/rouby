@@ -12,3 +12,19 @@ Authorization: Bearer {{access_token}}
   "browser": "string",
   "userAgent": "string"
 }
+
+
+###
+PATCH {{url}}/api/v1/users/devices/delete
+content-type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "tokenProvider": "FCM",
+  "deviceToken": "1234"
+}
+
+
+###
+PATCH {{url}}/api/v1/users/devices/delete/all
+Authorization: Bearer {{access_token}}

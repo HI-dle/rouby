@@ -19,7 +19,7 @@ public class UserDeviceScheduler {
   public void deleteStaleDeviceTokens() {
 
     try {
-      int deletedCnt = userDeviceWriteService.deleteStaleDeviceTokens(STALE_THRESHOLD);
+      int deletedCnt = userDeviceWriteService.hardDeleteStaleDeviceTokens(STALE_THRESHOLD);
       log.info("::stale device tokens:: {} 건 삭제되었습니다.", deletedCnt);
     } catch (Exception e) {
       log.error(e.getMessage(), e);
