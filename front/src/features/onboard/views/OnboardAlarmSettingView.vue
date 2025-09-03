@@ -20,13 +20,12 @@
 </template>
 
 <script setup>
-import AlarmSettingForm from '@/features/onboard/components/AlarmSettingForm.vue'
-import { requestPermissionAndInitFCM } from '@/shared/utils/notificationUtils'
-
-import { useUserInfoStore } from '@/stores/useUserInfoStore'
 import { watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { registerUserDevice } from '../onboardUserSerivce'
+import { useUserInfoStore } from '@/stores/useUserInfoStore'
+import { requestPermissionAndInitFCM } from '@/shared/utils/notificationUtils'
+import AlarmSettingForm from '@/features/onboard/components/AlarmSettingForm.vue'
+import { registerUserDevice } from '@/features/user/userService'
 
 const store = useUserInfoStore()
 const router = useRouter()
@@ -42,8 +41,9 @@ watch(
     store.briefingNotiEnabled,
   ],
   async (newVals, oldVals) => {
+    const allWasFalse = oldVals.every((val) => !val)
     const becameTrue = newVals.some((val, idx) => val && !oldVals?.[idx])
-    if (becameTrue) {
+    if (allWasFalse && becameTrue) {
       await requestPermissionAndInitFCM()
       await registerUserDevice()
     }
