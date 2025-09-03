@@ -16,6 +16,7 @@ spring:
       - classpath:properties/crypto.yml
       - classpath:properties/firebase.yml
       - classpath:properties/setting.yml
+      - classpath:properties/quartz.yml
   profiles:
     group:
       local: local
