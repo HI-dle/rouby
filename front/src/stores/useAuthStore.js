@@ -1,4 +1,4 @@
-import { getPiniaStorage } from '@/shared/utils/piniaUtils'
+import { getPiniaStorage } from '@/shared/utils/piniaPersistUtils'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
@@ -20,6 +20,10 @@ export const useAuthStore = defineStore(
     const getToken = () => {
       return token.value
     }
+    const reset = () => {
+      staySignedIn.value = false
+      token.value = ''
+    }
 
     return {
       token,
@@ -27,6 +31,7 @@ export const useAuthStore = defineStore(
       setToken,
       setStaySignedIn,
       getToken,
+      reset,
     }
   },
   {

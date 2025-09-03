@@ -2,6 +2,7 @@ import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { withdrawalOfUser } from '@/features/user/userService.js'
 import { useUserInfoStore } from '@/stores/useUserInfoStore'
+import { resetAllStores } from '@/shared/utils/piniaUtils'
 
 export function useMyPageForm() {
   const router = useRouter()
@@ -38,6 +39,7 @@ export function useMyPageForm() {
     try {
       const success = await withdrawalOfUser()
       if (success) {
+        resetAllStores()
         goTo({ name: 'login' })
       }
     } catch (err) {
