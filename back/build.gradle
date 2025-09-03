@@ -158,7 +158,7 @@ tasks.register('copyEnv') {
     doLast {
         ['../', './'].each { dest ->
             copy {
-                from 'rouby-secret/.env'
+                from '../rouby-secret/.env'
                 into dest
             }
         }
@@ -166,6 +166,6 @@ tasks.register('copyEnv') {
 }
 
 tasks.register('copyFcmKey', Copy) {
-    from("rouby-secret/rouby-firebase-adminsdk-key.json")
+    from("../rouby-secret/rouby-firebase-adminsdk-key.json")
     into("src/main/resources/firebase/")
 }
