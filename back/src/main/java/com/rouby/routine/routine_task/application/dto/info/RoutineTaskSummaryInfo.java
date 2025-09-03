@@ -1,7 +1,5 @@
 package com.rouby.routine.routine_task.application.dto.info;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
@@ -20,9 +18,6 @@ import lombok.Builder;
 public record RoutineTaskSummaryInfo(
     List<RoutineSummaryInfo> routines
 ) {
-
-  private static final ObjectMapper objectMapper = new ObjectMapper();
-
   public static RoutineTaskSummaryInfo of(List<RoutineTaskWithOverrides> routineTasks) {
     return RoutineTaskSummaryInfo.builder()
         .routines(safeList(routineTasks).stream()
@@ -71,14 +66,6 @@ public record RoutineTaskSummaryInfo(
             ? info.getWeekdays().stream().map(Weekday::name).collect(Collectors.toSet())
             : null)
         .build();
-  }
-
-  public String toJson() {
-    try {
-      return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException("Failed to serialize RoutinesSummaryInfo to JSON", e);
-    }
   }
 
   @Builder

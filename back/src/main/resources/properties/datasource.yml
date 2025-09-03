@@ -16,7 +16,7 @@ spring:
       mode: always
       schema-locations:
         - classpath:db/schema.sql
-        - classpath:db/quartz-schema.sql
+      #        - classpath:db/quartz-schema.sql
       #data-locations: classpath:db/data.sql
 
 ---

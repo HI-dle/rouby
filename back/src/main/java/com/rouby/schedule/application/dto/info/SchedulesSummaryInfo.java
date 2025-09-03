@@ -1,8 +1,6 @@
 package com.rouby.schedule.application.dto.info;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
@@ -16,8 +14,6 @@ import lombok.Builder;
 public record SchedulesSummaryInfo(
     List<ScheduleSummaryInfo> schedules
 ) {
-  private static final ObjectMapper objectMapper = new ObjectMapper();
-
   public static SchedulesSummaryInfo of(List<ScheduleWithOverrides> schedules) {
 
     return SchedulesSummaryInfo.builder()
@@ -47,13 +43,6 @@ public record SchedulesSummaryInfo(
         .build();
   }
 
-  public String toJson() {
-    try {
-      return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException("Failed to serialize SchedulesSummaryInfo to JSON", e);
-    }
-  }
   @Builder
   @JsonInclude(JsonInclude.Include.NON_NULL)
   public record ScheduleSummaryInfo(

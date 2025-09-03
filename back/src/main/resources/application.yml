@@ -17,6 +17,7 @@ spring:
       - classpath:properties/firebase.yml
       - classpath:properties/setting.yml
       - classpath:properties/quartz.yml
+      - classpath:properties/batch.yml
   profiles:
     group:
       local: local

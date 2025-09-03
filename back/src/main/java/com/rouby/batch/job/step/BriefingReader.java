@@ -20,8 +20,8 @@ public class BriefingReader extends ListItemReader<UserInfo> {
   }
 
   private static List<UserInfo> fetchUsers(UserReadService userReadService) {
-    LocalTime targetTime = LocalTime.of(8, 0); // 테스트 용
-    List<UserInfo> userInfos = userReadService.findUsersByBriefingTimeNow(targetTime);
+    LocalTime targetTime = LocalTime.now().minusHours(1);
+    List<UserInfo> userInfos = userReadService.findUsersByBriefingTime(targetTime);
     log.info("Found {} users", userInfos.size());
     return userInfos;
   }

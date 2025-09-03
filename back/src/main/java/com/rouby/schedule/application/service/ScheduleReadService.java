@@ -1,5 +1,6 @@
 package com.rouby.schedule.application.service;
 
+import com.rouby.common.utils.JsonHelper;
 import com.rouby.schedule.application.dto.info.SchedulesInfo;
 import com.rouby.schedule.application.dto.info.SchedulesSummaryInfo;
 import com.rouby.schedule.application.dto.query.GetScheduleQuery;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 public class ScheduleReadService {
 
   private final ScheduleRepository scheduleRepository;
+  private final JsonHelper jsonHelper;
 
   public SchedulesInfo findSchedulesBy(GetScheduleQuery query) {
     try {
@@ -25,8 +27,8 @@ public class ScheduleReadService {
 
   public String findSummarySchedulesJsonBy(GetScheduleQuery query) {
     try {
-      return SchedulesSummaryInfo.of(scheduleRepository.findSchedulesByCriteria(query.toCriteria()))
-          .toJson();
+      return jsonHelper.toJson(
+          SchedulesSummaryInfo.of(scheduleRepository.findSchedulesByCriteria(query.toCriteria())));
     } catch (IllegalArgumentException e) {
       throw ScheduleException.of(ScheduleErrorCode.SCHEDULE_INVALID_REQUEST, e.getMessage());
     }

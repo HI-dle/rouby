@@ -64,15 +64,7 @@ public class UserReadService {
   }
 
   @Transactional(readOnly = true)
-  public List<UserInfo> findUsersByBriefingTimeNow() {
-    return userRepository.findActiveUsersWithBriefingNotification(LocalTime.now()).stream()
-        .map(UserInfo::of)
-        .toList();
-  }
-
-  //테스트용
-  @Transactional(readOnly = true)
-  public List<UserInfo> findUsersByBriefingTimeNow(LocalTime briefingTime) {
+  public List<UserInfo> findUsersByBriefingTime(LocalTime briefingTime) {
     return userRepository.findActiveUsersWithBriefingNotification(briefingTime).stream()
         .map(UserInfo::of)
         .toList();
