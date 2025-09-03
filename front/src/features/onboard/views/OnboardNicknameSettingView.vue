@@ -12,7 +12,6 @@ const { nickname, nicknameError, isFocused, validateNickname } =
   useNicknameForm(store.nickname || '')
 
 watch(nickname, (val) => {
-  console.log(val)
   store.nickname = val
 })
 

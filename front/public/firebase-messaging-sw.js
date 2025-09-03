@@ -1,8 +1,13 @@
+self.addEventListener('install', () => self.skipWaiting())
+self.addEventListener('activate', (event) => {
+  event.waitUntil(self.clients.claim())
+})
+
 importScripts(
-  'https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js',
+  'https://www.gstatic.com/firebasejs/12.2.1/firebase-app-compat.js',
 )
 importScripts(
-  'https://www.gstatic.com/firebasejs/12.0.0/firebase-messaging-compat.js',
+  'https://www.gstatic.com/firebasejs/12.2.1/firebase-messaging-compat.js',
 )
 const firebaseConfig = {
   apiKey: 'AIzaSyDxNRABjbRUDDqQiplpwYxzp5TUu8Z_cUw',
@@ -16,30 +21,27 @@ const firebaseConfig = {
 const app = firebase.initializeApp(firebaseConfig)
 const messaging = firebase.messaging()
 
+messaging.onBackgroundMessage((payload) => {
+  if (payload && payload.notification) {
+    return
+  }
+
+  const data = payload?.data || {}
+  const title = data.title || '알림'
+  const options = {
+    body: data.body || '',
+    icon: data.icon || '/assets/header_logo.svg',
+    data: { url: data.url || '/' },
+  }
+
+  self.registration.showNotification(title, options)
+})
+
 self.addEventListener('notificationclick', (event) => {
-  console.log('알림 클릭 이벤트 발생:', event)
   event.notification.close()
 
   const urlToNavigate = event.notification.data.url
   if (!urlToNavigate) return
 
-  event.waitUntil(
-    (async () => {
-      const clientsList = await clients.matchAll({
-        type: 'window',
-        includeUncontrolled: true,
-      })
-
-      const sameOriginClient = clientsList.find((client) =>
-        client.url.startsWith(self.location.origin),
-      )
-
-      if (sameOriginClient) {
-        await sameOriginClient.focus()
-        await sameOriginClient.navigate(urlToNavigate)
-      } else {
-        await clients.openWindow(urlToNavigate)
-      }
-    })(),
-  )
+  event.waitUntil(self.clients.openWindow(urlToNavigate))
 })
