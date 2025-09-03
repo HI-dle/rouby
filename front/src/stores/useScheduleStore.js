@@ -109,8 +109,8 @@ export const useScheduleStore = defineStore(
     }
 
     const reset = () => {
-      dailySchedules.values = {}
-      rawSchedules.values = {}
+      for (const k in dailySchedules) delete dailySchedules[k]
+      for (const k in rawSchedules) delete rawSchedules[k]
     }
 
     return {

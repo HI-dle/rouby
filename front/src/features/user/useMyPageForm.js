@@ -37,10 +37,11 @@ export function useMyPageForm() {
   const onConfirmWithdraw = async () => {
     isWithdrawing.value = true
     try {
+      resetAllStores()
+      removeStorageFlagForPinia()
+
       const success = await withdrawalOfUser()
       if (success) {
-        resetAllStores()
-        removeStorageFlagForPinia()
         goTo({ name: 'login' })
       }
     } catch (err) {

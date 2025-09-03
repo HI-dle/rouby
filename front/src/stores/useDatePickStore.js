@@ -34,7 +34,7 @@ export const useDatePickStore = defineStore(
 
     const reset = () => {
       weeklySelected.value = {}
-      monthlySelected.value = []
+      monthlySelected.value = {}
       selectedDate.value = null
     }
 
