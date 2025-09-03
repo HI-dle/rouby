@@ -24,7 +24,22 @@ public class FcmMessageHelper {
     this.iconUri = iconUri;
   }
 
-  public Message buildMessage(NotificationEvent event) {
+  public Message buildCustomMessage(NotificationEvent event) {
+
+    return Message.builder()
+        .setToken(event.getDeviceTokenInfo().getDeviceToken())
+        .putData("title", event.getMessage().getTitle())
+        .putData("body",  event.getMessage().getBody())
+        .putData("icon",  appUrl + iconUri)
+        .putData("url", event.getMessage().getUrl())
+        .setWebpushConfig(
+            WebpushConfig.builder()
+            .putHeader("TTL", String.valueOf(Duration.ofHours(1).toSeconds()))
+            .build())
+        .build();
+  }
+
+  public Message buildBasicNotificationMessage(NotificationEvent event) {
 
     Notification notification = buildNotification(event);
     WebpushConfig webpushConfig = buildWebpushConfig(event);
@@ -32,7 +47,6 @@ public class FcmMessageHelper {
     return Message.builder()
         .setToken(event.getDeviceTokenInfo().getDeviceToken())
         .setNotification(notification)
-        .putData("url", event.getMessage().getUrl())
         .setWebpushConfig(webpushConfig)
         .build();
   }
@@ -54,6 +68,7 @@ public class FcmMessageHelper {
   }
 
   private WebpushFcmOptions buildFcmOptions(NotificationEvent event) {
+
     return WebpushFcmOptions.builder()
         .setLink(event.getMessage().getUrl())
         .build();
@@ -65,6 +80,7 @@ public class FcmMessageHelper {
         .setTitle(event.getMessage().getTitle())
         .setBody(event.getMessage().getBody())
         .setIcon(appUrl + iconUri)
+        .putCustomData("url", event.getMessage().getUrl())
         .build();
   }
 }

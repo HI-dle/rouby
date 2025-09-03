@@ -22,7 +22,7 @@ public class FirebaseNotificationSender implements NotificationSender {
   @Override
   public void send(NotificationEvent event) {
 
-    Message message = fcmMessageHelper.buildMessage(event);
+    Message message = fcmMessageHelper.buildCustomMessage(event);
 
     try {
       firebaseMessaging.send(message);

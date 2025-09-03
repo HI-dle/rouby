@@ -3,6 +3,7 @@ package com.rouby.user.device.domain.entity;
 import com.rouby.user.device.domain.entity.vo.DeviceInfo;
 import com.rouby.user.device.domain.entity.vo.DeviceTokenInfo;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -36,8 +37,10 @@ public class UserDevice {
   @Column(nullable = false)
   private Long userId;
 
+  @Embedded
   private DeviceTokenInfo tokenInfo;
 
+  @Embedded
   private DeviceInfo deviceInfo;
 
   @CreatedDate

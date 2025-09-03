@@ -10,7 +10,6 @@ app:
   front-url: 'http://localhost:5173'
   icon-uri: '/assets/header_logo.svg'
 
-
 ---
 # test 환경
 spring:
@@ -23,3 +22,4 @@ server:
 app:
   front-url: 'http://localhost:5173'
   icon-uri: '/assets/header_logo.svg'
+
