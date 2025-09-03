@@ -55,9 +55,6 @@ public record RoutineTaskSummaryInfo(
   }
 
   private static RoutineTimeInfoSummary mapToRoutineTimeInfo(RoutineTimeInfo info) {
-    if (info == null) {
-      return null;
-    }
     return RoutineTimeInfoSummary.builder()
         .startDate(info.getStartDate())
         .until(info.getUntil())
