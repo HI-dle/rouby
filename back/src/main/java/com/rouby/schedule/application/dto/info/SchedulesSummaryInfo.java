@@ -1,5 +1,6 @@
 package com.rouby.schedule.application.dto.info;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -54,6 +55,7 @@ public record SchedulesSummaryInfo(
     }
   }
   @Builder
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   public record ScheduleSummaryInfo(
       String title,
       String memo,

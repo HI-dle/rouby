@@ -7,11 +7,18 @@ import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class QuartzConfig {
+
+  @Value("${app.quartz.briefingJob.cron}")
+  private String briefingCron;
+
+  @Value("${app.quartz.briefingJob.time-zone}")
+  private String briefingTimeZone;
 
   @Bean
   public JobDetail briefingJobDetail() {
@@ -23,15 +30,14 @@ public class QuartzConfig {
 
   @Bean
   public Trigger briefingJobTrigger() {
-    CronScheduleBuilder scheduleBuilder = CronScheduleBuilder
-        .cronSchedule("0 26 * * * ?")
-        .inTimeZone(TimeZone.getTimeZone("Asia/Seoul"))
-        .withMisfireHandlingInstructionIgnoreMisfires();
-
     return TriggerBuilder.newTrigger()
         .forJob(briefingJobDetail())
         .withIdentity("briefingJobTrigger")
-        .withSchedule(scheduleBuilder)
+        .withSchedule(
+            CronScheduleBuilder.cronSchedule(briefingCron)
+                .inTimeZone(TimeZone.getTimeZone(briefingTimeZone))
+                .withMisfireHandlingInstructionIgnoreMisfires()
+        )
         .build();
   }
 }

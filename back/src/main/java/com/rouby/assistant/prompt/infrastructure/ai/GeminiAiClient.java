@@ -37,7 +37,7 @@ public class GeminiAiClient implements BriefingClient {
       return output.getText();
 
     } catch (Exception e) {
-
+      log.error("AI 응답 처리 중 오류 발생: {}", e.getMessage(), e);
       throw new RuntimeException("AI 응답 처리 중 오류 발생", e);
     }
   }
