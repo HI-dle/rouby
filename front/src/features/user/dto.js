@@ -2,15 +2,15 @@ export function toMyPageResetPasswordPayload(form) {
   return {
     currentPassword: form.password,
     newPassword: form.newPassword,
-    token: form.token?.trim()
-  };
+    token: form.token?.trim(),
+  }
 }
 
 export function toMyPageRoubySettingPayload(form) {
   return {
     communicationTone: form.communicationTone,
     notificationSettings: form.notificationSettings,
-  };
+  }
 }
 
 export function toMyPageUserInfoPayload(form) {
@@ -20,5 +20,13 @@ export function toMyPageUserInfoPayload(form) {
     profileKeywords: form.profileKeywords,
     dailyStartTime: form.dailyStartTime,
     dailyEndTime: form.dailyEndTime,
-  };
+  }
+}
+
+export function toRegisterUserDevice(token, deviceInfo) {
+  return {
+    tokenProvider: 'FCM',
+    deviceToken: token,
+    ...deviceInfo,
+  }
 }

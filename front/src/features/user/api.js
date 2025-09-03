@@ -23,3 +23,7 @@ export const myPageUpdateUserInfo = (payload) => {
 export const myPageWithdrawalOfUser = () => {
   return axios.patch('/v1/users/delete')
 }
+
+export const registerUserDevice = (payload) => {
+  return axios.post('/v1/users/devices', payload)
+}

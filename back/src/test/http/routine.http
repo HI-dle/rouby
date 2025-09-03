@@ -54,7 +54,7 @@ Authorization: {{access_token}}
 //      "alarmOffsetMinutes": 5,
 //      "routineTimeInfo": {
 //        "startDate": "2025-08-01",
-//        "until": "2025-08-30",
+//        "untilDate": "2025-08-30",
 //        "time": "10:00:00",
 //        "weekdays": [
 //          "SA",
@@ -69,7 +69,7 @@ Authorization: {{access_token}}
 //          "SA"
 //        ],
 //        "interval": 1,
-//        "until": "2025-08-30",
+//        "untilDate": "2025-08-30",
 //        "rruleStr": "FREQ=WEEKLY;BYDAY=SA,FR,SU;INTERVAL=1;UNTIL=20250830T000001;"
 //      },
 //      "routineOverrides": []
@@ -82,7 +82,7 @@ Authorization: {{access_token}}
 //      "alarmOffsetMinutes": 5,
 //      "routineTimeInfo": {
 //        "startDate": "2025-08-01",
-//        "until": "2025-08-30",
+//        "untilDate": "2025-08-30",
 //        "time": "09:00:00",
 //        "weekdays": [
 //          "SA",
@@ -97,7 +97,7 @@ Authorization: {{access_token}}
 //          "SA"
 //        ],
 //        "interval": 1,
-//        "until": "2025-08-30",
+//        "untilDate": "2025-08-30",
 //        "rruleStr": "FREQ=WEEKLY;BYDAY=SA,FR,SU;INTERVAL=1;UNTIL=20250830T000001;"
 //      },
 //      "routineOverrides": []
@@ -110,7 +110,7 @@ Authorization: {{access_token}}
 //      "alarmOffsetMinutes": 5,
 //      "routineTimeInfo": {
 //        "startDate": "2025-08-01",
-//        "until": "2025-08-30",
+//        "untilDate": "2025-08-30",
 //        "time": "11:00:00",
 //        "weekdays": [
 //          "SA",
@@ -125,7 +125,7 @@ Authorization: {{access_token}}
 //          "SA"
 //        ],
 //        "interval": 1,
-//        "until": "2025-08-30",
+//        "untilDate": "2025-08-30",
 //        "rruleStr": "FREQ=WEEKLY;BYDAY=SA,FR,SU;INTERVAL=1;UNTIL=20250830T000001;"
 //      },
 //      "routineOverrides": []

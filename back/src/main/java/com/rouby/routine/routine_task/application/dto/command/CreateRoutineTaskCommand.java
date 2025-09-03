@@ -39,7 +39,7 @@ public record CreateRoutineTaskCommand(
             .build())
         .routineTimeInfo(RoutineTimeInfo.builder()
             .startDate(startDate)
-            .until(until.toLocalDate())
+            .untilDate(until.toLocalDate())
             .time(time)
             .weekdays(byDays.stream().map(x -> Weekday.valueOf(x.name())).collect(Collectors.toSet()))
             .build())

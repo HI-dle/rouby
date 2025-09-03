@@ -52,7 +52,7 @@ public record GetRoutineTaskResponse(
 
     return RoutineTimeInfoResponse.builder()
         .startDate(info.startDate())
-        .until(info.until())
+        .untilDate(info.untilDate())
         .time(info.time())
         .weekdays(info.weekdays())
         .build();
@@ -113,7 +113,7 @@ public record GetRoutineTaskResponse(
   @Builder
   public record RoutineTimeInfoResponse(
       LocalDate startDate,
-      LocalDate until,
+      LocalDate untilDate,
       LocalTime time,
       Set<String> weekdays
   ) {

@@ -101,7 +101,7 @@ public record GetRoutineTaskInfo(
 
     return RoutineTimeInfoDto.builder()
         .startDate(info.getStartDate())
-        .until(info.getUntil())
+        .untilDate(info.getUntilDate())
         .time(info.getTime())
         .weekdays(info.getWeekdays() != null
             ? info.getWeekdays().stream()
@@ -157,7 +157,7 @@ public record GetRoutineTaskInfo(
   @Builder
   public record RoutineTimeInfoDto(
       LocalDate startDate,
-      LocalDate until,
+      LocalDate untilDate,
       LocalTime time,
       Set<String> weekdays
   ) {
