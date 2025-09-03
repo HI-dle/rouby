@@ -57,7 +57,7 @@ public record RoutineTaskSummaryInfo(
   private static RoutineTimeInfoSummary mapToRoutineTimeInfo(RoutineTimeInfo info) {
     return RoutineTimeInfoSummary.builder()
         .startDate(info.getStartDate())
-        .until(info.getUntil())
+        .until(info.getUntilDate())
         .time(info.getTime())
         .weekdays(info.getWeekdays() != null
             ? info.getWeekdays().stream().map(Weekday::name).collect(Collectors.toSet())
