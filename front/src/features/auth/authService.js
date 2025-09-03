@@ -19,6 +19,8 @@ import {
 import { useUserInfoStore } from '@/stores/useUserInfoStore.js'
 import { setPiniaStorage } from '@/shared/utils/piniaUtils.js'
 import { useAuthStore } from '@/stores/useAuthStore.js'
+import { registerUserDevice } from '../user/userService.js'
+import { requestPermissionAndInitFCM } from '@/shared/utils/notificationUtils.js'
 
 export const requestEmailVerification = wrapApi(
   (email) => requestEmailVerificationApi(toEmailVerificationPayload(email)),
@@ -100,6 +102,10 @@ export const loginAndBootstrap = async (email, password, staySignedIn) => {
   const user = userRes.data
 
   userInfoStore.setUserInfoWithDefaults({ ...user })
+
+  // 4. 알림 퍼미션 확인 및 사용자 토큰 정보 등록
+  await requestPermissionAndInitFCM()
+  await registerUserDevice()
 
   // 5. 라우팅 정보
   const nextPath = user.onboardingStatePath

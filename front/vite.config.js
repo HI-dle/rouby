@@ -11,9 +11,11 @@ function copyEnvFromSecret() {
     name: 'copy-env-from-secret',
     enforce: 'pre',
     apply: () => true,
-    configResolved(config) {
-      const mode = config.mode || 'development'
-      const root = config.root
+    config(userConfig, env) {
+      const mode = env?.mode || 'development'
+      const root = userConfig?.root
+        ? path.resolve(userConfig.root)
+        : process.cwd()
       const candidates = [
         path.join(root, '../rouby-secret', `.env.${mode}.front`),
         path.join(root, '../rouby-secret', `.env.front`),
@@ -21,11 +23,20 @@ function copyEnvFromSecret() {
       const target = path.join(root, `.env.${mode}`)
       const src = candidates.find((p) => existsSync(p))
       if (src) {
-        cpSync(src, target)
-        console.log(`[vite] copied ${path.basename(src)} -> .env.${mode}`)
+        if (existsSync(target)) {
+          console.log(
+            `[vite] skip copy: ${path.basename(target)} already exists`,
+          )
+        } else {
+          cpSync(src, target, { force: false, errorOnExist: true })
+          console.log(`[vite] copied ${path.basename(src)} -> .env.${mode}`)
+        }
       } else {
-        console.warn(`[vite] no .env found in ./secret for mode=${mode}`)
+        console.warn(
+          `[vite] no env file found in ../rouby-secret for mode=${mode}`,
+        )
       }
+      return null
     },
   }
 }

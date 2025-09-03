@@ -1,11 +1,5 @@
 import axios from '@/api/axios'
 import { useUserInfoStore } from '@/stores/useUserInfoStore'
-import { registerUserDevice as registerUserDeviceApi } from './api'
-import { toRegisterUserDevice } from './dto'
-import {
-  extractDeviceInfo,
-  getDeviceToken,
-} from '@/shared/utils/notificationUtils'
 
 function formatTimeToLocalTimeString(timeStr) {
   // timeStr이 예: "08:00" 또는 "8:00"이라면 "08:00:00"으로 변환
@@ -84,22 +78,5 @@ export async function completeRoubySetting() {
   } catch (error) {
     console.error('루비 온보딩 완료 실패:', error)
     throw error
-  }
-}
-
-// todo 로그인 후에도 등록 필요, 상태 설정 페이지에서도 등록 필요
-export const registerUserDevice = async () => {
-  try {
-    if (Notification.permission !== 'granted') return
-
-    const token = await getDeviceToken()
-    const deviceInfo = extractDeviceInfo()
-
-    const res = await registerUserDeviceApi(
-      toRegisterUserDevice(token, deviceInfo),
-    )
-    return res.data
-  } catch (e) {
-    console.error('FCM 토큰 등록 실패', e)
   }
 }
