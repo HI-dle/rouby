@@ -38,7 +38,14 @@ function iconClass(variant) {
           :key="t.id"
           class="mx-4 pointer-events-auto rounded-2xl shadow-lg border p-4 bg-white/95 backdrop-blur dark:bg-neutral-900/95 dark:border-neutral-800"
         >
-          <button class="w-full text-left" @click="handleClick(t)">
+          <div
+            class="w-full text-left"
+            role="button"
+            tabindex="0"
+            @click="handleClick(t)"
+            @keydown.enter.prevent="handleClick(t)"
+            @keydown.space.prevent="handleClick(t)"
+          >
             <div class="flex items-start gap-3">
               <div class="mt-0.5">
                 <span :class="iconClass(t.variant)"><Gem /></span>
@@ -52,6 +59,7 @@ function iconClass(variant) {
                 </p>
               </div>
               <button
+                type="button"
                 aria-label="Dismiss"
                 class="text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200"
                 @click.stop="dismiss(t.id)"
@@ -59,7 +67,7 @@ function iconClass(variant) {
                 <X />
               </button>
             </div>
-          </button>
+          </div>
         </div>
       </TransitionGroup>
     </div>
@@ -74,6 +82,8 @@ function iconClass(variant) {
 }
 .toast-enter-active,
 .toast-leave-active {
-  transition: all 0.18s ease;
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
 }
 </style>

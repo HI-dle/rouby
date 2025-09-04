@@ -1,6 +1,10 @@
-import { getApps, initializeApp } from 'firebase/app'
+import { getApp, getApps, initializeApp } from 'firebase/app'
 import { getMessaging, onMessage } from 'firebase/messaging'
 import { useToast } from '../composable/useToast'
+import { safeNavigate } from '../utils/linkUtils'
+
+const DEFAULT_ICON_PATH = '/assets/header_logo.svg'
+const DEFAULT_BADGE_PATH = '/assets/header_logo.svg'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyDxNRABjbRUDDqQiplpwYxzp5TUu8Z_cUw',
@@ -45,9 +49,11 @@ export async function ensureSw() {
 }
 
 if (!globalThis.__firebaseApp__) {
-  globalThis.__firebaseApp__ = getApps().length
-    ? getApp()
-    : initializeApp(firebaseConfig)
+  try {
+    globalThis.__firebaseApp__ = getApp()
+  } catch (error) {
+    globalThis.__firebaseApp__ = initializeApp(firebaseConfig)
+  }
 }
 export const app = globalThis.__firebaseApp__
 export const regSw = await ensureSw()
@@ -58,6 +64,7 @@ export const listenForeground = () => {
   if (!app || isForegroundListenerRegistered) {
     return
   }
+
   const messaging = getMessaging(app)
   onMessage(messaging, async (payload) => {
     const title = payload.notification?.title ?? payload.data?.title ?? '알림'
@@ -73,8 +80,8 @@ export const listenForeground = () => {
           icon:
             payload.notification?.icon ||
             payload.data?.icon ||
-            '/assets/header_logo.svg',
-          badge: '/assets/header_logo.svg',
+            DEFAULT_ICON_PATH,
+          badge: DEFAULT_BADGE_PATH,
           data: { url },
           tag: payload.data?.tag ?? 'rouby',
           renotify: true,
@@ -89,9 +96,7 @@ export const listenForeground = () => {
       message: body || title,
       variant: 'notification',
       duration: 8000,
-      onClick: () => {
-        if (url) window.location.href = url
-      },
+      onClick: () => rawUrl && safeNavigate(rawUrl),
     })
   })
   isForegroundListenerRegistered = true
