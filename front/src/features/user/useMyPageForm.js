@@ -2,6 +2,7 @@ import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { withdrawalOfUser } from '@/features/user/userService.js'
 import { useUserInfoStore } from '@/stores/useUserInfoStore'
+import { resetAllStores } from '@/shared/utils/piniaUtils'
 
 export function useMyPageForm() {
   const router = useRouter()
@@ -36,6 +37,9 @@ export function useMyPageForm() {
   const onConfirmWithdraw = async () => {
     isWithdrawing.value = true
     try {
+      resetAllStores()
+      removeStorageFlagForPinia()
+
       const success = await withdrawalOfUser()
       if (success) {
         goTo({ name: 'login' })

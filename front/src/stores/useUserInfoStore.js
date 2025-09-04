@@ -1,6 +1,6 @@
-import { getPiniaStorage } from '@/shared/utils/piniaUtils'
-import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { defineStore } from 'pinia'
+import { getPiniaStorage } from '@/shared/utils/piniaPersistUtils'
 
 export const useUserInfoStore = defineStore(
   'userInfo',
@@ -78,6 +78,20 @@ export const useUserInfoStore = defineStore(
           : briefingNotiEnabled.value
     }
 
+    const reset = () => {
+      id.value = null
+      email.value = ''
+      nickname.value = ''
+      healthStatusKeywords.value = []
+      profileKeywords.value = []
+      communicationTone.value = []
+      startOfDayTime.value = ''
+      endOfDayTime.value = ''
+      scheduleNotiEnabled.value = false
+      routineNotiEnabled.value = false
+      briefingNotiEnabled.value = false
+    }
+
     return {
       id,
       email,
@@ -92,6 +106,7 @@ export const useUserInfoStore = defineStore(
       briefingNotiEnabled,
       setUserInfo,
       setUserInfoWithDefaults,
+      reset,
     }
   },
   {
