@@ -39,13 +39,13 @@ export const getDeviceToken = async () => {
 }
 
 export const removeDeviceToken = async () => {
-  if (!app || !regSw) {
+  if (!app) {
     console.error('Firebase 앱 또는 서비스 워커가 초기화되지 않았습니다.')
     return
   }
   const messaging = getMessaging(app)
   try {
-    const deleted = await deleteToken(messaging)
+    await deleteToken(messaging)
   } catch (error) {
     console.error('FCM 토큰 삭제 중 오류 발생:', error)
   }

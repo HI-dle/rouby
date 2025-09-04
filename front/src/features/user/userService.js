@@ -72,7 +72,10 @@ export const withdrawalOfUser = wrapApi(() => myPageWithdrawalOfUserApi(), {
 
 export const registerUserDevice = async () => {
   try {
-    if (Notification.permission !== 'granted') {
+    if (
+      typeof Notification === 'undefined' ||
+      Notification.permission !== 'granted'
+    ) {
       return
     }
 

@@ -40,12 +40,16 @@ watch(
     store.routineNotiEnabled,
     store.briefingNotiEnabled,
   ],
-  async (newVals, oldVals) => {
+  async (newVals, oldVals = [false, false, false]) => {
     const allWasFalse = oldVals.every((val) => !val)
     const becameTrue = newVals.some((val, idx) => val && !oldVals?.[idx])
     if (allWasFalse && becameTrue) {
-      await requestPermissionAndInitFCM()
-      await registerUserDevice()
+      try {
+        await requestPermissionAndInitFCM()
+        await registerUserDevice()
+      } catch (e) {
+        console.error('디바이스 등록 실패', e)
+      }
     }
   },
 )

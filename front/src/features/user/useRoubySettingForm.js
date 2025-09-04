@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import {
   readRoubySetting,
@@ -124,13 +124,18 @@ export function useRoubySettingForm() {
   }
 
   watch(
-    () => [notifyMorningBriefing, notifyMorningBriefing, notifyMorningBriefing],
-    async (newVals, oldVals) => {
-      const allWasFalse = oldVals.every((val) => !val)
-      const becameTrue = newVals.some((val, idx) => val && !oldVals?.[idx])
+    [notifyMorningBriefing, notifyBeforeSchedule, notifyBeforeRoutine],
+    async (newVals, oldVals = [false, false, false]) => {
+      const allWasFalse = oldVals.every((v) => !v)
+      const becameTrue = newVals.some((v, i) => v && !oldVals[i])
+
       if (allWasFalse && becameTrue) {
-        await requestPermissionAndInitFCM()
-        await registerUserDevice()
+        try {
+          await requestPermissionAndInitFCM()
+          await registerUserDevice()
+        } catch (e) {
+          console.error('디바이스 등록 실패', e)
+        }
       }
     },
   )
