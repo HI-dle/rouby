@@ -18,6 +18,7 @@ spring:
       - classpath:properties/setting.yml
       - classpath:properties/quartz.yml
       - classpath:properties/batch.yml
+      - classpath:properties/schedule.yml
   profiles:
     group:
       local: local

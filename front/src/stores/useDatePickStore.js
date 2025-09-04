@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { format, startOfWeek } from 'date-fns'
 import { computed, ref } from 'vue'
-import { getPiniaStorage } from '@/shared/utils/piniaUtils'
+import { getPiniaStorage } from '@/shared/utils/piniaPersistUtils'
 
 export const useDatePickStore = defineStore(
   'date-pick',
@@ -32,6 +32,12 @@ export const useDatePickStore = defineStore(
       return selectedDate.value ?? format(new Date(), 'yyyy-MM-dd')
     })
 
+    const reset = () => {
+      weeklySelected.value = {}
+      monthlySelected.value = {}
+      selectedDate.value = null
+    }
+
     return {
       // state
       weeklySelected,
@@ -44,6 +50,9 @@ export const useDatePickStore = defineStore(
 
       // getters
       lastSelectedDate,
+
+      // reset
+      reset,
     }
   },
   {

@@ -1,0 +1,10 @@
+# local 환경
+spring:
+  config.activate.on-profile: local
+user-device:
+  stale-threshold-days: 60
+
+---
+# test 환경
+spring:
+  config.activate.on-profile: test

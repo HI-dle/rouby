@@ -1,32 +1,16 @@
-const PINIA_STATE_KEY = 'pinia-state'
+import { useAuthStore } from '@/stores/useAuthStore'
+import { useDatePickStore } from '@/stores/useDatePickStore'
+import { useScheduleStore } from '@/stores/useScheduleStore'
+import { useUserInfoStore } from '@/stores/useUserInfoStore'
 
-export function getPiniaStorage() {
-  try {
-    const raw =
-      localStorage.getItem(PINIA_STATE_KEY) ||
-      sessionStorage.getItem(PINIA_STATE_KEY)
-    const parsed = raw ? JSON.parse(raw) : {}
-    const saved = parsed?.staySignedIn
+export const resetAllStores = () => {
+  const authStore = useAuthStore()
+  const datePickStore = useDatePickStore()
+  const scheduleStore = useScheduleStore()
+  const userInfoStore = useUserInfoStore()
 
-    return saved ? localStorage : sessionStorage
-  } catch (e) {
-    console.warn('Pinia storage fallback to sessionStorage due to error:', e)
-    return sessionStorage
-  }
-}
-
-export function setPiniaStorage(staySignedIn) {
-  try {
-    const storage = staySignedIn ? localStorage : sessionStorage
-
-    localStorage.removeItem(PINIA_STATE_KEY)
-    sessionStorage.removeItem(PINIA_STATE_KEY)
-
-    storage.setItem(
-      PINIA_STATE_KEY,
-      JSON.stringify({ staySignedIn: staySignedIn }),
-    )
-  } catch (e) {
-    console.error('Failed to set Pinia storage:', e)
-  }
+  authStore.reset()
+  datePickStore.reset()
+  scheduleStore.reset()
+  userInfoStore.reset()
 }

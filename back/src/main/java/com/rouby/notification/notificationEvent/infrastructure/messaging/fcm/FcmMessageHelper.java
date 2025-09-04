@@ -7,11 +7,14 @@ import com.google.firebase.messaging.WebpushFcmOptions;
 import com.google.firebase.messaging.WebpushNotification;
 import com.rouby.notification.notificationEvent.domain.entity.NotificationEvent;
 import java.time.Duration;
+import java.util.Objects;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class FcmMessageHelper {
+
+  private static final String TTL_SECONDS = String.valueOf(Duration.ofHours(1).toSeconds());
 
   private final String appUrl;
   private final String iconUri;
@@ -24,7 +27,21 @@ public class FcmMessageHelper {
     this.iconUri = iconUri;
   }
 
-  public Message buildMessage(NotificationEvent event) {
+  public Message buildCustomMessage(NotificationEvent event) {
+
+    return Message.builder()
+        .setToken(event.getDeviceTokenInfo().getDeviceToken())
+        .putData("title", Objects.toString(event.getMessage().getTitle(), ""))
+        .putData("body",  Objects.toString(event.getMessage().getBody(), ""))
+        .putData("icon",  (iconUri.startsWith("http")
+            ? iconUri
+            : appUrl + (iconUri.startsWith("/") ? iconUri : ("/" + iconUri))))
+        .putData("url",   Objects.toString(event.getMessage().getUrl(), ""))
+        .setWebpushConfig(buildWebpushConfig())
+        .build();
+  }
+
+  public Message buildBasicNotificationMessage(NotificationEvent event) {
 
     Notification notification = buildNotification(event);
     WebpushConfig webpushConfig = buildWebpushConfig(event);
@@ -32,15 +49,20 @@ public class FcmMessageHelper {
     return Message.builder()
         .setToken(event.getDeviceTokenInfo().getDeviceToken())
         .setNotification(notification)
-        .putData("url", event.getMessage().getUrl())
         .setWebpushConfig(webpushConfig)
+        .build();
+  }
+
+  private WebpushConfig buildWebpushConfig() {
+    return WebpushConfig.builder()
+        .putHeader("TTL", TTL_SECONDS)
         .build();
   }
 
   private WebpushConfig buildWebpushConfig(NotificationEvent event) {
     return WebpushConfig.builder()
         .setNotification(buildWebpushNotification(event))
-        .putHeader("TTL", String.valueOf(Duration.ofHours(1).toSeconds()))
+        .putHeader("TTL", TTL_SECONDS)
         .setFcmOptions(buildFcmOptions(event))
         .build();
   }
@@ -54,6 +76,7 @@ public class FcmMessageHelper {
   }
 
   private WebpushFcmOptions buildFcmOptions(NotificationEvent event) {
+
     return WebpushFcmOptions.builder()
         .setLink(event.getMessage().getUrl())
         .build();
@@ -65,6 +88,7 @@ public class FcmMessageHelper {
         .setTitle(event.getMessage().getTitle())
         .setBody(event.getMessage().getBody())
         .setIcon(appUrl + iconUri)
+        .putCustomData("url", event.getMessage().getUrl())
         .build();
   }
 }

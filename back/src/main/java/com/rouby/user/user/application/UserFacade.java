@@ -9,6 +9,7 @@ import com.rouby.common.props.URIProperty;
 import com.rouby.common.utils.CodeGenerator;
 import com.rouby.notification.email.application.exception.EmailException;
 import com.rouby.notification.email.application.service.EmailService;
+import com.rouby.user.device.application.service.UserDeviceWriteService;
 import com.rouby.user.user.application.dto.command.CreateUserCommand;
 import com.rouby.user.user.application.dto.command.FindPasswordCommand;
 import com.rouby.user.user.application.dto.command.LoginCommand;
@@ -34,6 +35,7 @@ public class UserFacade {
 
   private final UserReadService userReadService;
   private final UserWriteService userWriteService;
+  private final UserDeviceWriteService userDeviceWriteService;
   private final EmailService emailService;
   private final URIProperty uriProperty;
 
@@ -117,5 +119,6 @@ public class UserFacade {
   }
   public void delete(Long userId) {
     userWriteService.delete(userId);
+    userDeviceWriteService.hardDeleteAllByUser(userId);
   }
 }

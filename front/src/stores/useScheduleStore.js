@@ -5,7 +5,7 @@ import {
   buildRRuleString,
   expandSchedulesByDay,
 } from '@/shared/utils/rruleUtils'
-import { getPiniaStorage } from '@/shared/utils/piniaUtils'
+import { getPiniaStorage } from '@/shared/utils/piniaPersistUtils'
 
 export const useScheduleStore = defineStore(
   'schedule',
@@ -108,6 +108,11 @@ export const useScheduleStore = defineStore(
       }
     }
 
+    const reset = () => {
+      for (const k in dailySchedules) delete dailySchedules[k]
+      for (const k in rawSchedules) delete rawSchedules[k]
+    }
+
     return {
       setMonthlySchedules,
       addRawSchedule,
@@ -116,6 +121,7 @@ export const useScheduleStore = defineStore(
       getSchedulesForDate,
       getScheduleInstanceByKey,
       recalculateMonth,
+      reset,
     }
   },
   {
