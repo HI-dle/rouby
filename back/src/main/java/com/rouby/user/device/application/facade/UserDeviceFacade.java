@@ -16,11 +16,11 @@ public class UserDeviceFacade {
     userDeviceWriteService.register(command);
   }
 
-  public void delete(DeleteUserDeviceCommand command) {
+  public void hardDelete(DeleteUserDeviceCommand command) {
     userDeviceWriteService.hardDelete(command);
   }
 
-  public void deleteAllByUser(Long userId) {
+  public void hardDeleteAllByUser(Long userId) {
     userDeviceWriteService.hardDeleteAllByUser(userId);
   }
 }

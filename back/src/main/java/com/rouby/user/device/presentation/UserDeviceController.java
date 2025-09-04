@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,22 +34,22 @@ public class UserDeviceController {
   }
 
   @PreAuthorize("hasAnyRole('USER')")
-  @PatchMapping("/delete")
+  @DeleteMapping
   public ResponseEntity<Void> deleteUserDevice(
       @AuthenticationPrincipal SecurityUser securityUser,
-      @RequestBody @Validated DeleteUserDeviceRequest request) {
+      @Validated DeleteUserDeviceRequest request) {
 
-    userDeviceFacade.delete(request.toCommand(securityUser.getId()));
+    userDeviceFacade.hardDelete(request.toCommand(securityUser.getId()));
 
     return ResponseEntity.noContent().build();
   }
 
   @PreAuthorize("hasAnyRole('USER')")
-  @PatchMapping("/delete/all")
-  public ResponseEntity<Void> deleteUserDevice(
+  @DeleteMapping("/all")
+  public ResponseEntity<Void> deleteAllUserDevice(
       @AuthenticationPrincipal SecurityUser securityUser) {
 
-    userDeviceFacade.deleteAllByUser(securityUser.getId());
+    userDeviceFacade.hardDeleteAllByUser(securityUser.getId());
 
     return ResponseEntity.noContent().build();
   }

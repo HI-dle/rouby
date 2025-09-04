@@ -15,16 +15,10 @@ Authorization: Bearer {{access_token}}
 
 
 ###
-PATCH {{url}}/api/v1/users/devices/delete
-content-type: application/json
+DELETE {{url}}/api/v1/users/devices?tokenProvider=FCM&deviceToken=1234
 Authorization: Bearer {{access_token}}
-
-{
-  "tokenProvider": "FCM",
-  "deviceToken": "1234"
-}
 
 
 ###
-PATCH {{url}}/api/v1/users/devices/delete/all
+DELETE {{url}}/api/v1/users/devices/all
 Authorization: Bearer {{access_token}}

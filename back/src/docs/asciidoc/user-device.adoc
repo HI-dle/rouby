@@ -26,3 +26,47 @@ include::{snippets}/register-user-device-invalid-request-400/http-request.adoc[]
 include::{snippets}/register-user-device-invalid-request-400/http-response.adoc[]
 
 ---
+
+
+[[Delete-UserDevice]]
+== 유저 기기 정보 삭제 API
+
+=== 성공: 유저 기기 정보 삭제 요청
+
+==== HTTP 요청
+include::{snippets}/delete-user-device-204/http-request.adoc[]
+
+==== 요청 필드
+include::{snippets}/delete-user-device-204/request-fields.adoc[]
+
+==== HTTP 응답 (204 No Content)
+include::{snippets}/delete-user-device-204/http-response.adoc[]
+
+=== 실패: 유효성 검증 오류
+
+==== 토큰 제공자 정보 오류
+
+===== HTTP 요청
+include::{snippets}/delete-user-device-invalid-request-400/http-request.adoc[]
+
+===== HTTP 응답 (400 Bad Request)
+include::{snippets}/delete-user-device-invalid-request-400/http-response.adoc[]
+
+---
+
+
+[[Delete-All-UserDevice]]
+== 유저 기기 정보 전체 삭제 API
+
+=== 성공: 유저 기기 정보 전체 삭제 요청
+
+==== HTTP 요청
+include::{snippets}/delete-all-user-device-204/http-request.adoc[]
+
+==== 요청 필드
+include::{snippets}/delete-all-user-device-204/request-fields.adoc[]
+
+==== HTTP 응답 (204 No Content)
+include::{snippets}/delete-all-user-device-204/http-response.adoc[]
+
+---

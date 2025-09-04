@@ -22,5 +22,5 @@ public interface UserDeviceRepository {
   int deleteByUserIdAndTokenInfo_deviceTokenAndTokenInfo_tokenProvider(
       Long userId, String deviceToken, TokenProviderType tokenProvider);
 
-  void deleteAllByUserId(Long userId);
+  int deleteAllByUserId(Long userId);
 }
