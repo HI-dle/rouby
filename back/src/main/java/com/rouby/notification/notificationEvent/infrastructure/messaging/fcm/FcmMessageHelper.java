@@ -7,11 +7,14 @@ import com.google.firebase.messaging.WebpushFcmOptions;
 import com.google.firebase.messaging.WebpushNotification;
 import com.rouby.notification.notificationEvent.domain.entity.NotificationEvent;
 import java.time.Duration;
+import java.util.Objects;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class FcmMessageHelper {
+
+  private static final String TTL_SECONDS = String.valueOf(Duration.ofHours(1).toSeconds());
 
   private final String appUrl;
   private final String iconUri;
@@ -28,14 +31,13 @@ public class FcmMessageHelper {
 
     return Message.builder()
         .setToken(event.getDeviceTokenInfo().getDeviceToken())
-        .putData("title", event.getMessage().getTitle())
-        .putData("body",  event.getMessage().getBody())
-        .putData("icon",  appUrl + iconUri)
-        .putData("url", event.getMessage().getUrl())
-        .setWebpushConfig(
-            WebpushConfig.builder()
-            .putHeader("TTL", String.valueOf(Duration.ofHours(1).toSeconds()))
-            .build())
+        .putData("title", Objects.toString(event.getMessage().getTitle(), ""))
+        .putData("body",  Objects.toString(event.getMessage().getBody(), ""))
+        .putData("icon",  (iconUri.startsWith("http")
+            ? iconUri
+            : appUrl + (iconUri.startsWith("/") ? iconUri : ("/" + iconUri))))
+        .putData("url",   Objects.toString(event.getMessage().getUrl(), ""))
+        .setWebpushConfig(buildWebpushConfig())
         .build();
   }
 
@@ -51,10 +53,16 @@ public class FcmMessageHelper {
         .build();
   }
 
+  private WebpushConfig buildWebpushConfig() {
+    return WebpushConfig.builder()
+        .putHeader("TTL", TTL_SECONDS)
+        .build();
+  }
+
   private WebpushConfig buildWebpushConfig(NotificationEvent event) {
     return WebpushConfig.builder()
         .setNotification(buildWebpushNotification(event))
-        .putHeader("TTL", String.valueOf(Duration.ofHours(1).toSeconds()))
+        .putHeader("TTL", TTL_SECONDS)
         .setFcmOptions(buildFcmOptions(event))
         .build();
   }
