@@ -1,6 +1,7 @@
 package com.rouby.user.device.domain.repository;
 
 import com.rouby.user.device.domain.entity.UserDevice;
+import com.rouby.user.device.domain.entity.enums.TokenProviderType;
 import com.rouby.user.device.domain.entity.vo.DeviceInfo;
 import com.rouby.user.device.domain.entity.vo.DeviceTokenInfo;
 import java.time.LocalDateTime;
@@ -17,4 +18,9 @@ public interface UserDeviceRepository {
   UserDevice saveAndFlush(UserDevice userDevice);
 
   int upsertUserDevice(Long userId, DeviceTokenInfo tokenInfo, DeviceInfo info);
+
+  int deleteByUserIdAndTokenInfo_deviceTokenAndTokenInfo_tokenProvider(
+      Long userId, String deviceToken, TokenProviderType tokenProvider);
+
+  int deleteAllByUserId(Long userId);
 }
