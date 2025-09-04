@@ -7,11 +7,14 @@ import static com.rouby.user.user.application.exception.UserErrorCode.USER_NOT_F
 import com.rouby.user.user.application.dto.command.LoginCommand;
 import com.rouby.user.user.application.dto.info.LoginInfo;
 import com.rouby.user.user.application.dto.info.RoubySettingInfo;
+import com.rouby.user.user.application.dto.info.UserInfo;
 import com.rouby.user.user.application.exception.UserException;
 import com.rouby.user.user.application.service.token.TokenProvider;
 import com.rouby.user.user.domain.entity.User;
 import com.rouby.user.user.domain.repository.UserRepository;
 import com.rouby.user.user.domain.service.UserPasswordEncoder;
+import java.time.LocalTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,4 +62,12 @@ public class UserReadService {
     return RoubySettingInfo.from(userRepository.findByIdAndDeletedAtIsNull(userId)
         .orElseThrow(() -> UserException.from(USER_NOT_FOUND)));
   }
+
+  @Transactional(readOnly = true)
+  public List<UserInfo> findUsersByBriefingTime(LocalTime briefingTime) {
+    return userRepository.findActiveUsersWithBriefingNotification(briefingTime).stream()
+        .map(UserInfo::of)
+        .toList();
+  }
+
 }

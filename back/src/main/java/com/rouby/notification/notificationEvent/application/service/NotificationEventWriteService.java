@@ -1,6 +1,7 @@
 package com.rouby.notification.notificationEvent.application.service;
 
 import com.rouby.notification.notificationEvent.application.dto.CreateNotificationEventCommand;
+import com.rouby.notification.notificationEvent.domain.entity.NotificationEvent;
 import com.rouby.notification.notificationEvent.domain.sender.NotificationSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,5 +13,9 @@ public class NotificationEventWriteService {
 
   public void sendNotification(CreateNotificationEventCommand command) {
     this.notificationSender.send(command.toEntity());
+  }
+
+  public NotificationEvent create(CreateNotificationEventCommand command) {
+    return command.toEntity();
   }
 }

@@ -1,6 +1,8 @@
 package com.rouby.user.user.domain.repository;
 
 import com.rouby.user.user.domain.entity.User;
+import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository {
@@ -12,5 +14,7 @@ public interface UserRepository {
   User save(User user);
 
   Optional<User> findByIdAndDeletedAtIsNull(Long userId);
+
+  List<User> findActiveUsersWithBriefingNotification(LocalTime dailyStartTime);
 
 }

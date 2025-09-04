@@ -1,0 +1,13 @@
+spring:
+  config.activate.on-profile: local
+  batch:
+    jdbc:
+      schema: classpath:org/springframework/batch/core/schema-postgresql.sql
+      initialize-schema: always
+---
+spring:
+  config.activate.on-profile: test
+  batch:
+    jdbc:
+      initialize-schema: always
+      schema: classpath:org/springframework/batch/core/schema-postgresql.sql
