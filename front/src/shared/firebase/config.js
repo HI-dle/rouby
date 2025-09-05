@@ -96,7 +96,7 @@ export const listenForeground = () => {
       message: body || title,
       variant: 'notification',
       duration: 8000,
-      onClick: () => rawUrl && safeNavigate(rawUrl),
+      onClick: () => url && safeNavigate(url),
     })
   })
   isForegroundListenerRegistered = true

@@ -45,6 +45,7 @@ function iconClass(variant) {
             @click="handleClick(t)"
             @keydown.enter.prevent="handleClick(t)"
             @keydown.space.prevent="handleClick(t)"
+            @keydown.esc.prevent="dismiss(t.id)"
           >
             <div class="flex items-start gap-3">
               <div class="mt-0.5">

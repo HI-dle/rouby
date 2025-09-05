@@ -29,7 +29,7 @@ export const useToast = () => {
   function dismiss(id) {
     const h = timers.get(id)
 
-    if (h) {
+    if (h !== undefined) {
       clearTimeout(h)
       timers.delete(id)
     }
