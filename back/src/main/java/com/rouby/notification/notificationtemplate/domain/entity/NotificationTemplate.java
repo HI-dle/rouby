@@ -37,4 +37,8 @@ public class NotificationTemplate extends BaseEntity {
     this.type = type;
     this.message = message;
   }
+
+  public String generateMessageBody(String username) {
+    return message.getBody().replace("{username}", username);
+  }
 }
