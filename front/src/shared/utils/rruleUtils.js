@@ -7,7 +7,9 @@ import {
   isAfter,
   isSameDay,
   startOfDay,
+  isBefore,
 } from 'date-fns'
+import { isAllDay } from './dateUtils'
 
 function getMonthRange(monthKey) {
   const base = new Date(`${monthKey}-01`)
@@ -27,14 +29,13 @@ function createIcalComponent(rruleStr, dtstart) {
   return event
 }
 
-function expandMultiDaySchedule(base, start, end, rangeEnd) {
+function expandMultiDaySchedule(base, start, end, rangeStart, rangeEnd) {
   const result = []
 
-  for (
-    let d = startOfDay(new Date(start));
-    d < end;
-    d.setDate(d.getDate() + 1)
-  ) {
+  let startDate = new Date(start)
+  if (isBefore(startDate, rangeStart)) startDate = rangeStart
+
+  for (let d = startOfDay(startDate); d < end; d.setDate(d.getDate() + 1)) {
     const dCopy = new Date(d)
     if (isAfter(dCopy, rangeEnd)) break
 
@@ -51,22 +52,14 @@ function expandMultiDaySchedule(base, start, end, rangeEnd) {
   return result
 }
 
-export function expandRecurringSchedule(schedule, monthKey) {
+function expandRecurringSchedule(schedule, monthKey) {
   const recurrence = schedule.recurrenceRule
   const startDate = parseISO(schedule.startAt)
   const endDate = parseISO(schedule.endAt)
   const durationMs = endDate.getTime() - startDate.getTime()
   const { rangeStart, rangeEnd } = getMonthRange(monthKey)
 
-  const overrideMap = new Map(
-    (schedule.scheduleOverrides || []).map((o) => [
-      format(parseISO(o.overrideDate), 'yyyy-MM-dd'),
-      o,
-    ]),
-  )
-
-  const result = []
-
+  // 반복이 없는 경우
   if (!recurrence || !recurrence.rruleStr) {
     return expandMultiDaySchedule(
       {
@@ -75,59 +68,106 @@ export function expandRecurringSchedule(schedule, monthKey) {
       },
       startDate,
       endDate,
+      rangeStart,
       rangeEnd,
     )
   }
+
+  // 반복이 있는 경우
+  const overrideDates = new Set(
+    (schedule.scheduleOverrides || []).map((o) =>
+      format(parseISO(o.overrideDate), 'yyyy-MM-dd'),
+    ),
+  )
 
   const event = createIcalComponent(
     recurrence.rruleStr,
     recurrence.dtstart || schedule.startAt,
   )
-  const iterator = event.iterator()
+  const iterator = event.iterator(ICAL.Time.fromJSDate(rangeStart, false))
 
+  const result = []
   let next
   while ((next = iterator.next())) {
     const nextDate = next.toJSDate()
     if (nextDate > rangeEnd) break
-    if (nextDate < rangeStart) continue
 
     const dateKey = format(nextDate, 'yyyy-MM-dd')
 
-    if (overrideMap.has(dateKey)) {
-      const override = overrideMap.get(dateKey)
-      const oStart = parseISO(override.startAt)
-      const oEnd = parseISO(override.endAt)
+    if (overrideDates.has(dateKey)) continue // 오버라이드는 아래 따로 추가
 
-      result.push(
-        ...expandMultiDaySchedule(
-          {
-            ...override,
-            originId: schedule.id,
-          },
-          oStart,
-          oEnd,
-          rangeEnd,
-        ),
-      )
-    } else {
-      const start = new Date(nextDate)
-      const end = new Date(start.getTime() + durationMs)
+    const start = new Date(nextDate)
+    const end = new Date(start.getTime() + durationMs)
 
-      result.push(
-        ...expandMultiDaySchedule(
-          {
-            ...schedule,
-            originId: schedule.id,
-          },
-          start,
-          end,
-          rangeEnd,
-        ),
-      )
-    }
+    result.push(
+      ...expandMultiDaySchedule(
+        {
+          ...schedule,
+          originId: schedule.id,
+        },
+        start,
+        end,
+        rangeStart,
+        rangeEnd,
+      ),
+    )
   }
 
+  // 오버라이드 된 일정 추가
+  for (const override of schedule.scheduleOverrides || []) {
+    const oStart = parseISO(override.startAt)
+    const oEnd = parseISO(override.endAt)
+
+    result.push(
+      ...expandMultiDaySchedule(
+        {
+          ...override,
+          originId: schedule.id,
+        },
+        oStart,
+        oEnd,
+        rangeStart,
+        rangeEnd,
+      ),
+    )
+  }
   return result
+}
+
+const compareSchedule = (a, b) => {
+  // 1) 여러날 일정 우선
+  if (a.isContinued !== b.isContinued) return a.isContinued ? -1 : 1
+
+  // 2) 하루종일(>=24h) 우선
+  const aAll = isAllDay(a.startAt, a.endAt)
+  const bAll = isAllDay(b.startAt, b.endAt)
+  if (aAll !== bAll) return aAll ? -1 : 1
+
+  // 3) 시작시간 오름차순
+  const as = new Date(a.startAt)
+  const bs = new Date(b.startAt)
+  if (as && bs) {
+    if (isBefore(as, bs)) return -1
+    if (isBefore(bs, as)) return 1
+  } else if (as || bs) {
+    // 시작시간 없는 건 뒤로
+    return as ? -1 : 1
+  }
+
+  // 4) 동률이면 종료시간 → 제목 → id로 안정적 타이브레이크
+  const ae = new Date(a.endAt)
+  const be = new Date(b.endAt)
+  if (ae && be) {
+    if (isBefore(ae, be)) return -1
+    if (isBefore(be, ae)) return 1
+  } else if (ae || be) {
+    return ae ? -1 : 1
+  }
+
+  return (
+    String(a.title ?? '').localeCompare(String(b.title ?? '')) ||
+    String(a.id ?? '').localeCompare(String(b.id ?? ''))
+  )
 }
 
 export function expandSchedulesByDay(schedules, monthKey) {
@@ -139,7 +179,7 @@ export function expandSchedulesByDay(schedules, monthKey) {
 
     const instances = expandRecurringSchedule(schedule, monthKey)
 
-    instances.forEach((instance) => {
+    instances.sort(compareSchedule).forEach((instance) => {
       const dateKey = instance.instanceDate
       const instanceKey = `${instance.id}@${dateKey}`
 

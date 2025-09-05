@@ -26,8 +26,9 @@ export const useAuthStore = defineStore(
     }
 
     return {
-      token,
       staySignedIn,
+      token,
+
       setToken,
       setStaySignedIn,
       getToken,

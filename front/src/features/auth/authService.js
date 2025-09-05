@@ -17,10 +17,10 @@ import {
   toVerifyPasswordCodePayload,
 } from './dto.js'
 import { useUserInfoStore } from '@/stores/useUserInfoStore.js'
-import { setPiniaStorage } from '@/shared/utils/piniaUtils.js'
 import { useAuthStore } from '@/stores/useAuthStore.js'
 import { registerUserDevice } from '../user/userService.js'
 import { requestPermissionAndInitFCM } from '@/shared/utils/notificationUtils.js'
+import { setPiniaStorage } from '@/shared/utils/piniaPersistUtils.js'
 
 export const requestEmailVerification = wrapApi(
   (email) => requestEmailVerificationApi(toEmailVerificationPayload(email)),
