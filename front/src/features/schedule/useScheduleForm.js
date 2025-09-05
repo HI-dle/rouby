@@ -10,18 +10,20 @@ import { createSchedule } from './scheduleService'
 import { useScheduleStore } from '@/stores/useScheduleStore'
 import { useDatePickStore } from '@/stores/useDatePickStore'
 
-const { selectedDate, setSelectedDate } = useDatePickStore()
-const { addRawSchedule } = useScheduleStore()
-
 export const useScheduleForm = (initValues = {}) => {
+  const datePickStore = useDatePickStore()
+  const scheduleStore = useScheduleStore()
+
   const createInitialForm = () => {
     let baseDate = new Date()
 
     if (initValues.start) {
       baseDate = new Date(initValues.start)
-      setSelectedDate(baseDate)
-    } else if (selectedDate) {
-      const [year, month, day] = selectedDate.split('-').map(Number)
+      datePickStore.setSelectedDate(baseDate)
+    } else if (datePickStore.selectedDate) {
+      const [year, month, day] = datePickStore.selectedDate
+        .split('-')
+        .map(Number)
       baseDate = new Date(
         year,
         month - 1,
@@ -70,6 +72,19 @@ export const useScheduleForm = (initValues = {}) => {
     }
   }
 
+  const refetchSchedulesByPeriod = async () => {
+    scheduleStore.reset()
+
+    const monthRange = datePickStore.monthRange
+    await scheduleStore.loadMonthlySchedulesIfNeeded(
+      monthRange.rangeStart,
+      monthRange.rangeEnd,
+    )
+    schedulesForSelectedMonth.value = scheduleStore.getSchedulesMonthlyByDate(
+      selectedDate.value,
+    )
+  }
+
   const onSubmit = async (onSuccess, onError) => {
     if (isSubmitting.value) return
 
@@ -81,7 +96,7 @@ export const useScheduleForm = (initValues = {}) => {
     isSubmitting.value = true
     try {
       const schedule = await createSchedule(form)
-      addRawSchedule(schedule)
+      refetchSchedulesByPeriod()
 
       await nextTick()
       onSuccess?.(schedule.id)
