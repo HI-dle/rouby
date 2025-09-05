@@ -14,6 +14,7 @@ export function useRoubySettingForm() {
   const keywordError = ref('') // 에러 메시지
   const router = useRouter()
 
+  const initialized = ref(false)
   const notifyMorningBriefing = ref(false)
   const notifyBeforeSchedule = ref(false)
   const notifyBeforeRoutine = ref(false)
@@ -57,6 +58,8 @@ export function useRoubySettingForm() {
       }
     } catch (err) {
       console.error('초기 설정 로드 실패', err)
+    } finally {
+      initialized.value = true
     }
   }
 
@@ -126,6 +129,8 @@ export function useRoubySettingForm() {
   watch(
     [notifyMorningBriefing, notifyBeforeSchedule, notifyBeforeRoutine],
     async (newVals, oldVals = [false, false, false]) => {
+      if (!initialized.value) return
+
       const allWasFalse = oldVals.every((v) => !v)
       const becameTrue = newVals.some((v, i) => v && !oldVals[i])
 

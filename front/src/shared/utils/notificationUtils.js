@@ -40,7 +40,7 @@ export const getDeviceToken = async () => {
 
 export const removeDeviceToken = async () => {
   if (!app) {
-    console.error('Firebase 앱 또는 서비스 워커가 초기화되지 않았습니다.')
+    console.error('Firebase 앱이 초기화되지 않았습니다.')
     return
   }
   const messaging = getMessaging(app)
@@ -52,8 +52,8 @@ export const removeDeviceToken = async () => {
 }
 
 const requestNotificationPermission = async () => {
-  if (!app || !regSw) {
-    console.error('Firebase 앱 또는 서비스 워커가 초기화되지 않았습니다.')
+  if (!app) {
+    console.error('Firebase 앱이 초기화되지 않았습니다.')
     return
   }
   if (!('Notification' in window)) return false

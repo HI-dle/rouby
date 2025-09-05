@@ -8,9 +8,8 @@ import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import { ensureSw, listenForeground } from './shared/firebase/config'
 
-ensureSw()
-  .catch(console.warn)
-  .finally(() => listenForeground())
+ensureSw().catch(console.warn)
+listenForeground()
 
 const app = createApp(App)
 const pinia = createPinia()
