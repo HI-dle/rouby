@@ -103,15 +103,15 @@ export const useScheduleStore = defineStore(
       if (hasMonth(monthKey)) return // 캐시 히트
 
       if (_inflight.has(monthKey)) return _inflight.get(monthKey) // 진행중이면 재활용
-
       clearTimeout(_timers.get(monthKey))
 
       const p = new Promise((resolve, reject) => {
         const id = setTimeout(async () => {
           _timers.delete(monthKey)
+
           try {
             const { data } = await getSchedules(fromAt, toAt)
-            setMonthlySchedules(monthKey, data?.schedules)
+            setMonthlySchedules(monthKey, data?.schedules || [])
             resolve()
           } catch (e) {
             reject(e)

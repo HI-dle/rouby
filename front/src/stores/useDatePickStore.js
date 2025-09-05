@@ -14,7 +14,7 @@ export const useDatePickStore = defineStore(
 
     const monthRange = computed(() => {
       if (!selectedDate.value) return { rangeStart: null, rangeEnd: null }
-      return getMonthRange(selectedDate.value)
+      return getMonthRange(new Date(selectedDate.value))
     })
 
     function getSelectedDate(baseDate, isMonthly = false) {

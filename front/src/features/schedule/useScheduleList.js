@@ -87,9 +87,10 @@ export const useScheduleList = (maybeSelectedDate = null) => {
       if (!s || !n || isSameDay(s, os)) return
 
       const t = ++token
+      await fetchSchedulesByPeriod(s, n)
+
       if (t !== token) return // 최신 호출만 반영
 
-      await fetchSchedulesByPeriod(s, n)
       schedulesForSelectedMonth.value = scheduleStore.getSchedulesMonthlyByDate(
         selectedDate.value,
       )

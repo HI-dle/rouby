@@ -80,9 +80,6 @@ export const useScheduleForm = (initValues = {}) => {
       monthRange.rangeStart,
       monthRange.rangeEnd,
     )
-    schedulesForSelectedMonth.value = scheduleStore.getSchedulesMonthlyByDate(
-      selectedDate.value,
-    )
   }
 
   const onSubmit = async (onSuccess, onError) => {
@@ -96,8 +93,7 @@ export const useScheduleForm = (initValues = {}) => {
     isSubmitting.value = true
     try {
       const schedule = await createSchedule(form)
-      refetchSchedulesByPeriod()
-
+      await refetchSchedulesByPeriod()
       await nextTick()
       onSuccess?.(schedule.id)
       return schedule.id

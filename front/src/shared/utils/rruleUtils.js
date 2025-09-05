@@ -136,7 +136,7 @@ function expandRecurringSchedule(schedule, monthKey) {
 
 const compareSchedule = (a, b) => {
   // 1) 여러날 일정 우선
-  if (a.isContinued !== b.isContinued) return aCont ? -1 : 1
+  if (a.isContinued !== b.isContinued) return a.isContinued ? -1 : 1
 
   // 2) 하루종일(>=24h) 우선
   const aAll = isAllDay(a.startAt, a.endAt)
@@ -144,9 +144,9 @@ const compareSchedule = (a, b) => {
   if (aAll !== bAll) return aAll ? -1 : 1
 
   // 3) 시작시간 오름차순
-  const as = new Date(a.startDate)
-  const bs = new Date(b.startDate)
-  if (a.startDate && b.startDate) {
+  const as = new Date(a.startAt)
+  const bs = new Date(b.startAt)
+  if (as && bs) {
     if (isBefore(as, bs)) return -1
     if (isBefore(bs, as)) return 1
   } else if (as || bs) {
@@ -155,8 +155,8 @@ const compareSchedule = (a, b) => {
   }
 
   // 4) 동률이면 종료시간 → 제목 → id로 안정적 타이브레이크
-  const ae = new Date(a.endDate)
-  const be = new Date(b.endDate)
+  const ae = new Date(a.endAt)
+  const be = new Date(b.endAt)
   if (ae && be) {
     if (isBefore(ae, be)) return -1
     if (isBefore(be, ae)) return 1
