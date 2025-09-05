@@ -1,11 +1,9 @@
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { format } from 'date-fns'
-import {
-  buildRRuleString,
-  expandSchedulesByDay,
-} from '@/shared/utils/rruleUtils'
+import { expandSchedulesByDay } from '@/shared/utils/rruleUtils'
 import { getPiniaStorage } from '@/shared/utils/piniaPersistUtils'
+import { getSchedules } from '@/features/schedule/scheduleService'
 
 export const useScheduleStore = defineStore(
   'schedule',
@@ -23,10 +21,10 @@ export const useScheduleStore = defineStore(
      *   ...
      * }
      */
-    const dailySchedules = reactive({})
+    const dailySchedules = ref({})
 
     // 서버 응답 원본 저장: 재계산이 필요할 때 활용
-    const rawSchedules = reactive({}) // { '2025-07': [schedule, ...] }
+    const rawSchedules = ref({}) // { '2025-07': [schedule, ...] }
 
     /**
      * 월 단위로 기존 데이터 제거 후 새로 채움
@@ -35,41 +33,23 @@ export const useScheduleStore = defineStore(
       if (!Array.isArray(schedules)) return
 
       const { dailyMap, rawMap } = expandSchedulesByDay(schedules, monthKey)
-      rawSchedules[monthKey] = rawMap
-      dailySchedules[monthKey] = dailyMap
-    }
 
-    const addRawSchedule = (schedule) => {
-      if (!schedule || !schedule.startAt || !schedule.id) return
-
-      const date = new Date(schedule.startAt)
-      const monthKey = format(date, 'yyyy-MM')
-
-      if (schedule.recurrenceRule) {
-        schedule.recurrenceRule.rruleStr = buildRRuleString(
-          schedule.recurrenceRule,
-        )
-      }
-
-      if (!rawSchedules[monthKey]) {
-        rawSchedules[monthKey] = {}
-      }
-      rawSchedules[monthKey][schedule.id] = schedule
-
-      recalculateMonth(monthKey)
+      rawSchedules.value[monthKey] = rawMap
+      dailySchedules.value[monthKey] = dailyMap
     }
 
     /**
      * 월간 키 존재 여부 확인 (중복 조회 방지 등)
      */
-    const hasMonth = (monthKey) => !!dailySchedules[monthKey]
+    const hasMonth = (monthKey) => !!dailySchedules.value[monthKey]
 
     /**
      * 해당 월 전체 일정 리스트 반환 (flat)
      */
     const getSchedulesMonthlyByDate = (date) => {
       const monthKey = format(date, 'yyyy-MM')
-      const monthData = dailySchedules[monthKey]
+      const monthData = dailySchedules.value[monthKey]
+
       if (!monthData) return null
 
       return Object.values(monthData).flatMap((instances) =>
@@ -84,7 +64,7 @@ export const useScheduleStore = defineStore(
       const dateKey = format(date, 'yyyy-MM-dd')
       const monthKey = dateKey.slice(0, 7)
 
-      return Object.values(dailySchedules[monthKey]?.[dateKey] || {})
+      return Object.values(dailySchedules.value[monthKey]?.[dateKey] || {})
     }
 
     /**
@@ -95,33 +75,68 @@ export const useScheduleStore = defineStore(
       const [, dateKey] = instanceKey.split('@')
       const monthKey = dateKey.slice(0, 7)
 
-      return dailySchedules?.[monthKey]?.[dateKey]?.[instanceKey] || null
+      return dailySchedules.value?.[monthKey]?.[dateKey]?.[instanceKey] || null
     }
 
     /**
      * (선택) 원본 스케줄 기준으로 다시 확장 계산
      */
     const recalculateMonth = (monthKey) => {
-      const base = rawSchedules[monthKey]
+      const base = rawSchedules.value[monthKey]
       if (base) {
         setMonthlySchedules(monthKey, Object.values(base))
       }
     }
 
     const reset = () => {
-      for (const k in dailySchedules) delete dailySchedules[k]
-      for (const k in rawSchedules) delete rawSchedules[k]
+      dailySchedules.value = {}
+      rawSchedules.value = {}
+    }
+
+    // ↓↓↓ 공통 로더: 디바운스 + 중복요청 방지 (키별)
+    const _timers = new Map() // monthKey -> timeout id
+    const _inflight = new Map() // monthKey -> Promise
+
+    async function loadMonthlySchedulesIfNeeded(fromAt, toAt, delay = 300) {
+      const monthKey = format(fromAt, 'yyyy-MM')
+
+      if (hasMonth(monthKey)) return // 캐시 히트
+
+      if (_inflight.has(monthKey)) return _inflight.get(monthKey) // 진행중이면 재활용
+
+      clearTimeout(_timers.get(monthKey))
+
+      const p = new Promise((resolve, reject) => {
+        const id = setTimeout(async () => {
+          _timers.delete(monthKey)
+          try {
+            const { data } = await getSchedules(fromAt, toAt)
+            setMonthlySchedules(monthKey, data?.schedules)
+            resolve()
+          } catch (e) {
+            reject(e)
+          } finally {
+            _inflight.delete(monthKey)
+          }
+        }, delay)
+        _timers.set(monthKey, id)
+      })
+
+      _inflight.set(monthKey, p)
+      return p
     }
 
     return {
+      rawSchedules,
+      dailySchedules,
       setMonthlySchedules,
-      addRawSchedule,
       hasMonth,
       getSchedulesMonthlyByDate,
       getSchedulesForDate,
       getScheduleInstanceByKey,
       recalculateMonth,
       reset,
+      loadMonthlySchedulesIfNeeded,
     }
   },
   {
