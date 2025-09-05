@@ -126,10 +126,10 @@ export const useScheduleForm = (initValues = {}) => {
       const endDate = new Date(form.end)
 
       if (!newVal && isMidnight(endDate)) {
-        form.end = formatDateTime(addDays(form.end, 1))
+        form.end = formatDateTime(addDays(endDate, 1))
       }
       if (newVal && isMidnight(endDate)) {
-        form.end = formatDateTime(subDays(form.end, 1))
+        form.end = formatDateTime(subDays(endDate, 1))
       }
     },
     { immediate: false },
