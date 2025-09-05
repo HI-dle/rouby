@@ -1,6 +1,6 @@
 package com.rouby.notification.notificationtemplate.application.service;
 
-import static com.rouby.notification.notificationtemplate.application.exception.NotificationTemplateErrorCode.NOTIFICATION_TEMPLATE_NOT_FOUNT;
+import static com.rouby.notification.notificationtemplate.application.exception.NotificationTemplateErrorCode.NOTIFICATION_TEMPLATE_NOT_FOUND;
 
 import com.rouby.notification.notificationtemplate.application.dto.query.NotificationMessageQuery;
 import com.rouby.notification.notificationtemplate.application.exception.NotificationTemplateException;
@@ -19,8 +19,9 @@ public class NotificationTemplateReadService {
 
   @Transactional(readOnly = true)
   public Message generateNotificationMessage(NotificationMessageQuery query) {
-    NotificationTemplate template = notificationTemplateRepository.findByType(query.toQuery())
-        .orElseThrow(() -> NotificationTemplateException.from(NOTIFICATION_TEMPLATE_NOT_FOUNT));
+    NotificationTemplate template = notificationTemplateRepository.findByType(
+            query.notificationType())
+        .orElseThrow(() -> NotificationTemplateException.from(NOTIFICATION_TEMPLATE_NOT_FOUND));
     String body = template.generateMessageBody(query.username());
     return Message.of(template.getMessage().getTitle(), body);
   }

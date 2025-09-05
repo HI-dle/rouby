@@ -6,13 +6,15 @@ import com.rouby.notification.notificationtemplate.domain.entity.NotificationTyp
 
 public record CreateNotificationTemplateCommand(
     NotificationType notificationType,
-    Message message
+    String title,
+    String body
 ) {
 
   public NotificationTemplate toEntity() {
     return NotificationTemplate.builder()
         .type(notificationType)
-        .message(message)
+        .message(Message.of(title, body))
         .build();
   }
+
 }

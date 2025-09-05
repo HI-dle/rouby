@@ -9,4 +9,6 @@ public interface NotificationTemplateRepository {
   NotificationTemplate save(NotificationTemplate notificationTemplate);
 
   Optional<NotificationTemplate> findByType(NotificationType type);
+
+  boolean existsByType(NotificationType type);
 }

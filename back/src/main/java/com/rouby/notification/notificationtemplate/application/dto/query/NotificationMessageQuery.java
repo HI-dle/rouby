@@ -6,8 +6,4 @@ public record NotificationMessageQuery(
     String username,
     NotificationType notificationType
 ) {
-
-  public NotificationType toQuery() {
-    return notificationType;
-  }
 }

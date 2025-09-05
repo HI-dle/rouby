@@ -4,7 +4,7 @@ SELECT nextval('notification_template_seq'),
        NOW(),
        'BRIEFING',
        'Rouby: 브리핑 알림',
-       '{username}님 브리핑 알람이 도착하였습니다.' WHERE NOT EXISTS (SELECT 1 FROM notification_template WHERE type = 'BRIEFING'
+       '{username}님 브리핑 알림이 도착하였습니다.' WHERE NOT EXISTS (SELECT 1 FROM notification_template WHERE type = 'BRIEFING'
 );
 
 -- 브리핑 알림용 프롬프트 삽입 (id를 시퀀스로 자동 할당)
