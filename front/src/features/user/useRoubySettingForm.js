@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import {
   readRoubySetting,
@@ -14,6 +14,7 @@ export function useRoubySettingForm() {
   const keywordError = ref('') // 에러 메시지
   const router = useRouter()
 
+  const initialized = ref(false)
   const notifyMorningBriefing = ref(false)
   const notifyBeforeSchedule = ref(false)
   const notifyBeforeRoutine = ref(false)
@@ -57,6 +58,8 @@ export function useRoubySettingForm() {
       }
     } catch (err) {
       console.error('초기 설정 로드 실패', err)
+    } finally {
+      initialized.value = true
     }
   }
 
@@ -124,13 +127,20 @@ export function useRoubySettingForm() {
   }
 
   watch(
-    () => [notifyMorningBriefing, notifyMorningBriefing, notifyMorningBriefing],
-    async (newVals, oldVals) => {
-      const allWasFalse = oldVals.every((val) => !val)
-      const becameTrue = newVals.some((val, idx) => val && !oldVals?.[idx])
+    [notifyMorningBriefing, notifyBeforeSchedule, notifyBeforeRoutine],
+    async (newVals, oldVals = [false, false, false]) => {
+      if (!initialized.value) return
+
+      const allWasFalse = oldVals.every((v) => !v)
+      const becameTrue = newVals.some((v, i) => v && !oldVals[i])
+
       if (allWasFalse && becameTrue) {
-        await requestPermissionAndInitFCM()
-        await registerUserDevice()
+        try {
+          await requestPermissionAndInitFCM()
+          await registerUserDevice()
+        } catch (e) {
+          console.error('디바이스 등록 실패', e)
+        }
       }
     },
   )
