@@ -43,5 +43,11 @@ self.addEventListener('notificationclick', (event) => {
   const urlToNavigate = event.notification.data.url
   if (!urlToNavigate) return
 
-  event.waitUntil(self.clients.openWindow(urlToNavigate))
+  const u = new URL(urlToNavigate, location.origin)
+  if (!/^https?:$/.test(u.protocol)) return
+
+  const allowed = [location.origin]
+  if (!allowed.includes(u.origin)) return
+
+  event.waitUntil(self.clients.openWindow(u.href))
 })
