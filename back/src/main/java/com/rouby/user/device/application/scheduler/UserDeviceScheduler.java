@@ -22,7 +22,6 @@ public class UserDeviceScheduler {
 
   @Scheduled(cron = "0 0 4 * * *", zone = "Asia/Seoul")
   public void deleteStaleDeviceTokens() {
-
     try {
       int deletedCnt = userDeviceWriteService.hardDeleteStaleDeviceTokens(STALE_THRESHOLD);
       log.info("::stale device tokens:: {} 건 삭제되었습니다.", deletedCnt);

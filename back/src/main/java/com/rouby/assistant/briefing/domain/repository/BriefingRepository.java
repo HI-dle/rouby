@@ -9,4 +9,6 @@ import java.util.List;
  */
 public interface BriefingRepository {
   <S extends Briefing> List<S> saveAll(Iterable<S> entities);
+
+  Briefing save(Briefing briefing);
 }
