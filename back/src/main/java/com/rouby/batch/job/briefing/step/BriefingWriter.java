@@ -6,9 +6,7 @@ import com.rouby.batch.job.briefing.dto.BriefingAggregate;
 import com.rouby.notification.notificationEvent.domain.entity.NotificationEvent;
 import com.rouby.notification.notificationEvent.domain.repository.NotificationEventRepository;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.Chunk;
@@ -25,35 +23,30 @@ public class BriefingWriter implements ItemWriter<BriefingAggregate> {
 
   @Override
   public void write(Chunk<? extends BriefingAggregate> chunk) {
-    List<Briefing> briefings = new ArrayList<>();
-    for (BriefingAggregate agg : chunk) {
-      briefings.add(agg.briefing().toEntity());
-    }
-
+    List<Briefing> briefings = chunk.getItems().stream()
+        .map(agg -> agg.briefing().toEntity())
+        .toList();
     List<Briefing> savedBriefings = briefingRepository.saveAll(briefings);
 
-    Map<BriefingAggregate, Briefing> savedMap = new HashMap<>();
-    int index = 0;
-    for (BriefingAggregate agg : chunk) {
-      savedMap.put(agg, savedBriefings.get(index++));
-    }
-
     List<NotificationEvent> allEvents = new ArrayList<>();
-    for (BriefingAggregate agg : chunk) {
-      Briefing saved = savedMap.get(agg);
+    for (int i = 0; i < chunk.size(); i++) {
+      BriefingAggregate agg = chunk.getItems().get(i);
+      Briefing saved = savedBriefings.get(i);
 
-      List<NotificationEvent> events = agg.notificationEvents();
-      events.forEach(event -> event.updateMessageUrl("/briefing/{" + saved.getId() + "}"));
+      List<NotificationEvent> events = agg.notificationEvents() != null
+          ? agg.notificationEvents().toEntities() : List.of();
 
       allEvents.addAll(events);
 
       log.info("Prepared briefing {} with {} notifications", saved.getId(), events.size());
     }
 
-    notificationEventRepository.saveAll(allEvents);
+    if (!allEvents.isEmpty()) {
+      notificationEventRepository.saveAll(allEvents);
+    }
 
-    log.info("Saved {} briefings and {} notifications in batch", savedBriefings.size(),
-        allEvents.size());
+    log.info("Saved {} briefings and {} notifications in batch",
+        savedBriefings.size(), allEvents.size());
   }
 }
 

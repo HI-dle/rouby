@@ -1,5 +1,6 @@
 package com.rouby.common.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Aspect
 @Component
+@Slf4j
 public class PerformanceAspect {
 
   @Around("execution(* com.rouby.schedule.application.service..*.*(..)) || " +
@@ -19,7 +21,7 @@ public class PerformanceAspect {
 
     long end = System.currentTimeMillis();
     String methodName = joinPoint.getSignature().toShortString();
-    System.out.println(methodName + " executed in " + (end - start) + "ms");
+    log.info("{} executed in {}ms", methodName, (end - start));
 
     return result;
   }

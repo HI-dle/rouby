@@ -32,6 +32,10 @@ public class BriefingReader extends ListItemReader<UserBriefingInfo> {
     List<UserInfo> userInfos = userReadService.findUsersByBriefingTime(targetTime);
     log.info("Found {} users", userInfos.size());
 
+    if (userInfos.isEmpty()) {
+      return List.of();
+    }
+
     List<Long> userIds = userInfos.stream().map(UserInfo::id).toList();
     List<UserDevice> userDevices = userDeviceReadService.findByUserIds(
         new GetUserDeviceQuery(userIds));

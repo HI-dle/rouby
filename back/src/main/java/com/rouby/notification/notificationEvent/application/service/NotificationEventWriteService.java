@@ -5,6 +5,7 @@ import com.rouby.notification.notificationEvent.domain.repository.NotificationEv
 import com.rouby.notification.notificationEvent.domain.sender.NotificationSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -17,6 +18,7 @@ public class NotificationEventWriteService {
     this.notificationSender.send(command.toEntity());
   }
 
+  @Transactional
   public void create(CreateNotificationEventCommand command) {
     notificationEventRepository.save(command.toEntity());
   }

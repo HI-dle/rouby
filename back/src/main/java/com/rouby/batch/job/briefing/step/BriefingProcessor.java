@@ -5,8 +5,8 @@ import static com.rouby.notification.notificationtemplate.domain.entity.Notifica
 import com.rouby.assistant.briefing.application.dto.info.CreatedBriefingResult;
 import com.rouby.assistant.briefing.application.facade.BriefingFacade;
 import com.rouby.batch.job.briefing.dto.BriefingAggregate;
+import com.rouby.batch.job.briefing.dto.BriefingNotificationEvents;
 import com.rouby.batch.job.briefing.dto.UserBriefingInfo;
-import com.rouby.notification.notificationEvent.application.dto.CreateNotificationEventsCommand;
 import com.rouby.notification.notificationEvent.domain.entity.DeviceTokenInfo;
 import com.rouby.notification.notificationEvent.domain.entity.NotificationType;
 import com.rouby.notification.notificationtemplate.application.dto.query.NotificationMessageQuery;
@@ -40,7 +40,7 @@ public class BriefingProcessor implements ItemProcessor<UserBriefingInfo, Briefi
             device.getTokenInfo().getTokenProvider().name()
         )).toList();
 
-    CreateNotificationEventsCommand command = CreateNotificationEventsCommand.builder()
+    BriefingNotificationEvents events = BriefingNotificationEvents.builder()
         .userId(user.userInfo().id())
         .deviceTokenInfos(deviceTokenInfos)
         .title(message.getTitle())
@@ -48,6 +48,6 @@ public class BriefingProcessor implements ItemProcessor<UserBriefingInfo, Briefi
         .notificationType(NotificationType.BRIEFING)
         .build();
 
-    return new BriefingAggregate(briefing, command.toEntities());
+    return new BriefingAggregate(briefing, events);
   }
 }
