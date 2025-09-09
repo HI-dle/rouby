@@ -36,6 +36,9 @@ public class BriefingWriter implements ItemWriter<BriefingAggregate> {
       List<NotificationEvent> events = agg.notificationEvents() != null
           ? agg.notificationEvents().toEntities() : List.of();
 
+      if (!events.isEmpty()) {
+        events.forEach(e -> e.updateMessageUrl("/briefing/daily/" + saved.getId()));
+      }
       allEvents.addAll(events);
 
       log.info("Prepared briefing {} with {} notifications", saved.getId(), events.size());
