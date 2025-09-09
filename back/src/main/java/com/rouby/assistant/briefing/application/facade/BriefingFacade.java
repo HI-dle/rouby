@@ -11,7 +11,6 @@ import com.rouby.routine.routine_task.application.dto.command.GetRoutineTaskComm
 import com.rouby.routine.routine_task.application.service.RoutineTaskReadService;
 import com.rouby.schedule.application.dto.query.GetScheduleQuery;
 import com.rouby.schedule.application.service.ScheduleReadService;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,26 +29,25 @@ public class BriefingFacade {
   private final RoutineTaskReadService routineTaskReadService;
   private final PromptReadService promptReadService;
 
-  @Value("${prompt.version}")
-  private int PROMPT_VERSION = 1;
+  @Value("${prompt.version:1}")
+  private int promptVersion;
 
   public CreatedBriefingResult createBriefingForBatch(UserBriefingInfo userBriefingInfo) {
-    LocalDate today = LocalDate.now();
     String schedulesInfoJson = scheduleReadService.findSummarySchedulesJsonBy(
         GetScheduleQuery.builder()
             .userId(userBriefingInfo.userInfo().id())
-            .fromAt(today.atStartOfDay())
-            .toAt(today.plusDays(7).atTime(LocalTime.MAX))
+            .fromAt(userBriefingInfo.today().atStartOfDay())
+            .toAt(userBriefingInfo.today().plusDays(7).atTime(LocalTime.MAX))
             .build());
 
     String routineTaskInfoJson = routineTaskReadService.findSummaryRoutineTaskJsonBy(
         GetRoutineTaskCommand.builder()
             .userId(userBriefingInfo.userInfo().id())
-            .fromDate(today)
-            .toDate(today.plusDays(7L))
+            .fromDate(userBriefingInfo.today())
+            .toDate(userBriefingInfo.today().plusDays(7L))
             .build());
 
-    PromptInfo promptInfo = promptReadService.findByPromptTypeAndVersion(BRIEFING, PROMPT_VERSION);
+    PromptInfo promptInfo = promptReadService.findByPromptTypeAndVersion(BRIEFING, promptVersion);
 
     String prompt = promptReadService.generateBriefingPrompt(
         userBriefingInfo.userInfo(), schedulesInfoJson, routineTaskInfoJson,

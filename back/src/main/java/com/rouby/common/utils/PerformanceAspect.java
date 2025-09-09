@@ -13,7 +13,8 @@ public class PerformanceAspect {
 
   @Around("execution(* com.rouby.schedule.application.service..*.*(..)) || " +
       "execution(* com.rouby.assistant.prompt.application.service..*.*(..)) ||" +
-      "execution(* com.rouby.assistant.prompt.infrastructure.ai..*.*(..))")
+      "execution(* com.rouby.assistant.prompt.infrastructure.ai..*.*(..)) ||" +
+      "execution(* com.rouby.assistant.briefing..*.*(..))")
   public Object measureExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
     long start = System.currentTimeMillis();
 

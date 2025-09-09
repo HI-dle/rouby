@@ -13,6 +13,7 @@ import com.rouby.notification.notificationtemplate.application.dto.query.Notific
 import com.rouby.notification.notificationtemplate.application.service.NotificationTemplateReadService;
 import com.rouby.notification.notificationtemplate.domain.entity.Message;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;
@@ -34,11 +35,14 @@ public class BriefingProcessor implements ItemProcessor<UserBriefingInfo, Briefi
         new NotificationMessageQuery(user.userInfo().nickname(), BRIEFING)
     );
 
-    List<DeviceTokenInfo> deviceTokenInfos = user.devices().stream()
+    List<DeviceTokenInfo> deviceTokenInfos = Optional.ofNullable(user.devices())
+        .orElseGet(List::of)
+        .stream()
         .map(device -> DeviceTokenInfo.of(
             device.getTokenInfo().getDeviceToken(),
             device.getTokenInfo().getTokenProvider().name()
-        )).toList();
+        ))
+        .toList();
 
     BriefingNotificationEvents events = BriefingNotificationEvents.builder()
         .userId(user.userInfo().id())
