@@ -28,7 +28,6 @@ public class QuartzBriefingJob implements org.quartz.Job {
       JobParameters jobParameters = new JobParametersBuilder()
           .addString("targetTime", LocalTime.now().minusHours(1).toString())
           .addLocalDate("today", LocalDate.now())
-          .addLong("timestamp", System.currentTimeMillis())
           .toJobParameters();
 
       jobLauncher.run(briefingJob, jobParameters);
