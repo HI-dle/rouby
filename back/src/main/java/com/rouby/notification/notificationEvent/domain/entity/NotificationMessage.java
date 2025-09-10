@@ -29,4 +29,12 @@ public class NotificationMessage implements Serializable {
     this.body = body;
     this.url = url;
   }
+
+  public NotificationMessage withUrl(String url) {
+    return NotificationMessage.builder()
+        .title(this.title)
+        .body(this.body)
+        .url(url)
+        .build();
+  }
 }

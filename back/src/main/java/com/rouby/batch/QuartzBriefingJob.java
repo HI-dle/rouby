@@ -1,5 +1,7 @@
 package com.rouby.batch;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.DisallowConcurrentExecution;
@@ -24,7 +26,8 @@ public class QuartzBriefingJob implements org.quartz.Job {
   public void execute(JobExecutionContext context) throws JobExecutionException {
     try {
       JobParameters jobParameters = new JobParametersBuilder()
-          .addLong("timestamp", System.currentTimeMillis())
+          .addString("targetTime", LocalTime.now().minusHours(1).toString())
+          .addLocalDate("today", LocalDate.now())
           .toJobParameters();
 
       jobLauncher.run(briefingJob, jobParameters);

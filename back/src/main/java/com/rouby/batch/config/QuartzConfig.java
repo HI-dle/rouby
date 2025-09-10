@@ -1,4 +1,4 @@
-package com.rouby.batch.job.config;
+package com.rouby.batch.config;
 
 import com.rouby.batch.QuartzBriefingJob;
 import java.util.TimeZone;

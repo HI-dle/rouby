@@ -22,7 +22,6 @@ public class UserDeviceWriteService {
 
   @Transactional
   public void register(RegisterUserDeviceCommand command) {
-
     userDeviceRepository.upsertUserDevice(
         command.userId(),
         command.buildDeviceTokenInfo(),

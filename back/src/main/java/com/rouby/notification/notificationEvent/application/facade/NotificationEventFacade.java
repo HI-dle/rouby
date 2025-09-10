@@ -8,9 +8,14 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class NotificationEventFacade {
+
   private final NotificationEventWriteService notificationEventWriteService;
 
   public void sendNotification(CreateNotificationEventCommand command) {
     notificationEventWriteService.sendNotification(command);
+  }
+
+  public void create(CreateNotificationEventCommand command) {
+    notificationEventWriteService.create(command);
   }
 }

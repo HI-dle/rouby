@@ -5,6 +5,7 @@ import com.rouby.user.device.domain.entity.enums.TokenProviderType;
 import com.rouby.user.device.domain.entity.vo.DeviceInfo;
 import com.rouby.user.device.domain.entity.vo.DeviceTokenInfo;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface UserDeviceRepository {
@@ -23,4 +24,6 @@ public interface UserDeviceRepository {
       Long userId, String deviceToken, TokenProviderType tokenProvider);
 
   int deleteAllByUserId(Long userId);
+
+  List<UserDevice> findByUserIdIn(List<Long> userIds);
 }

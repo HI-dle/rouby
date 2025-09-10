@@ -25,8 +25,14 @@ public class DeviceTokenInfo {
 
   @Builder
   private DeviceTokenInfo(String deviceToken, TokenProviderType tokenProvider) {
-
     this.deviceToken = deviceToken;
     this.tokenProvider = tokenProvider;
+  }
+
+  public static DeviceTokenInfo of(String deviceToken, String tokenProviderName) {
+    return DeviceTokenInfo.builder()
+        .deviceToken(deviceToken)
+        .tokenProvider(TokenProviderType.parse(tokenProviderName))
+        .build();
   }
 }

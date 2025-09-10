@@ -53,4 +53,8 @@ public class NotificationEvent extends LogBaseEntity {
     this.type = type;
     this.status = SendStatus.READY;
   }
+
+  public void updateMessageUrl(String url) {
+    this.message = this.message.withUrl(url);  // 새 메시지를 통째로 교체
+  }
 }

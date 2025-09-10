@@ -16,5 +16,4 @@ public interface UserRepository {
   Optional<User> findByIdAndDeletedAtIsNull(Long userId);
 
   List<User> findActiveUsersWithBriefingNotification(LocalTime dailyStartTime);
-
 }
