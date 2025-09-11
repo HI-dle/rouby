@@ -2,8 +2,9 @@ package com.rouby.assistant.briefing.application.facade;
 
 import static com.rouby.assistant.prompt.domain.enums.PromptType.BRIEFING;
 
+import com.rouby.assistant.briefing.application.dto.info.BriefingInfo;
 import com.rouby.assistant.briefing.application.dto.info.CreatedBriefingResult;
-import com.rouby.assistant.briefing.application.service.BriefingService;
+import com.rouby.assistant.briefing.application.service.BriefingReadService;
 import com.rouby.assistant.prompt.application.info.PromptInfo;
 import com.rouby.assistant.prompt.application.service.PromptReadService;
 import com.rouby.batch.job.briefing.dto.UserBriefingInfo;
@@ -24,10 +25,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BriefingFacade {
 
-  private final BriefingService briefingService;
+  private final BriefingReadService briefingService;
   private final ScheduleReadService scheduleReadService;
   private final RoutineTaskReadService routineTaskReadService;
   private final PromptReadService promptReadService;
+  private final BriefingReadService briefingReadService;
 
   @Value("${prompt.version:1}")
   private int promptVersion;
@@ -62,4 +64,9 @@ public class BriefingFacade {
         content
     );
   }
+
+  public BriefingInfo getBriefing(Long id) {
+    return briefingReadService.getBriefing(id);
+  }
+
 }
