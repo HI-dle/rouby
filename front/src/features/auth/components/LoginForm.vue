@@ -3,7 +3,7 @@
     <!-- 이메일 입력 -->
     <div>
       <BaseInput
-        v-model="email"
+        v-model="localEmail"
         label="이메일"
         type="email"
         placeholder="your@email.com"
@@ -18,7 +18,7 @@
     <!-- 비밀번호 입력 -->
     <div>
       <BaseInput
-        v-model="password"
+        v-model="localPassword"
         label="비밀번호"
         type="password"
         placeholder="••••••••"
@@ -34,7 +34,11 @@
     <label
       class="inline-flex items-center ml-2 mb-4 cursor-pointer select-none"
     >
-      <input type="checkbox" v-model="staySignedIn" class="accent-violet-600" />
+      <input
+        type="checkbox"
+        v-model="localStaySignedIn"
+        class="accent-violet-600"
+      />
       <span class="ml-2 text-sm text-indigo-600">로그인 상태 유지</span>
     </label>
 
@@ -73,7 +77,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue'
+import { computed, defineProps, defineEmits } from 'vue'
 import BaseInput from '@/components/common/BaseInput.vue'
 import FieldError from '@/components/common/FieldError.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
@@ -82,21 +86,19 @@ import kakaoIcon from '@/assets/kakao.svg'
 import googleIcon from '@/assets/google.svg'
 import appleIcon from '@/assets/apple.svg'
 
-// Props (에러 메시지, 상태)
 const props = defineProps({
+  email: String,
+  password: String,
+  staySignedIn: Boolean,
   emailError: String,
   passwordError: String,
   loginError: String,
 })
 
-const email = defineModel('email', { type: String, default: '' })
-const password = defineModel('password', { type: String, default: '' })
-const staySignedIn = defineModel('staySignedIn', {
-  type: Boolean,
-  default: false,
-})
-
 const emit = defineEmits([
+  'update:email',
+  'update:password',
+  'update:staySignedIn',
   'validate-email',
   'validate-password',
   'submit',
@@ -104,4 +106,20 @@ const emit = defineEmits([
   'google',
   'apple',
 ])
+
+// ✅ computed getter/setter로 양방향 바인딩
+const localEmail = computed({
+  get: () => props.email,
+  set: (val) => emit('update:email', val),
+})
+
+const localPassword = computed({
+  get: () => props.password,
+  set: (val) => emit('update:password', val),
+})
+
+const localStaySignedIn = computed({
+  get: () => props.staySignedIn,
+  set: (val) => emit('update:staySignedIn', val),
+})
 </script>

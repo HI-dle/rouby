@@ -38,6 +38,28 @@ export const useScheduleStore = defineStore(
       dailySchedules.value[monthKey] = dailyMap
     }
 
+    const addRawSchedule = (schedule) => {
+      if (!schedule || !schedule.startAt || !schedule.id) return
+
+      const date = new Date(schedule.startAt)
+      const monthKey = format(date, 'yyyy-MM')
+
+      if (schedule.recurrenceRule) {
+        schedule.recurrenceRule.rruleStr = buildRRuleString(
+          schedule.recurrenceRule,
+        )
+      }
+
+      rawSchedules.value[monthKey] = rawMap
+      dailySchedules.value[monthKey] = dailyMap
+      if (!rawSchedules.value[monthKey]) {
+        rawSchedules.value[monthKey] = {}
+      }
+      rawSchedules.value[monthKey][schedule.id] = schedule
+
+      recalculateMonth(monthKey)
+    }
+
     /**
      * 월간 키 존재 여부 확인 (중복 조회 방지 등)
      */
@@ -88,6 +110,9 @@ export const useScheduleStore = defineStore(
       }
     }
 
+    /**
+     * 스토어 초기화
+     */
     const reset = () => {
       dailySchedules.value = {}
       rawSchedules.value = {}
@@ -127,8 +152,8 @@ export const useScheduleStore = defineStore(
     }
 
     return {
-      rawSchedules,
       dailySchedules,
+      rawSchedules,
       setMonthlySchedules,
       hasMonth,
       getSchedulesMonthlyByDate,
@@ -140,8 +165,6 @@ export const useScheduleStore = defineStore(
     }
   },
   {
-    persist: {
-      storage: getPiniaStorage(),
-    },
+    persist: { storage: getPiniaStorage() },
   },
 )

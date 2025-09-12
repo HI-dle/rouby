@@ -15,3 +15,10 @@ export const getSchedules = (params) => {
     params: params,
   })
 }
+
+export const updateSchedule = (payload) => {
+  if (!payload || typeof payload !== 'object') {
+    throw new Error('유효하지 않은 payload입니다.')
+  }
+  return axios.put('/v1/schedules', payload)
+}
