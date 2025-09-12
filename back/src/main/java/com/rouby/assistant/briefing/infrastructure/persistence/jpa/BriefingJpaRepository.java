@@ -11,5 +11,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface BriefingJpaRepository extends JpaRepository<Briefing, Long>,
     BriefingJpaRepositoryCustom, BriefingRepository {
-
 }

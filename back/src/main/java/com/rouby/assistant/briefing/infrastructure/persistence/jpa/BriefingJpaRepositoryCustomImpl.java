@@ -22,12 +22,12 @@ public class BriefingJpaRepositoryCustomImpl implements BriefingJpaRepositoryCus
   @Override
   public Optional<Briefing> findByUserIdAndDate(Long userId, LocalDate date) {
     LocalDateTime startOfDay = date.atStartOfDay();
-    LocalDateTime endOfDay = date.plusDays(1).atStartOfDay();
+    LocalDateTime endExclusive = date.plusDays(1).atStartOfDay();
 
     Briefing briefingResult = queryFactory.selectFrom(briefing)
         .where(
             briefing.createdAt.goe(startOfDay)
-                .and(briefing.createdAt.lt(endOfDay))
+                .and(briefing.createdAt.lt(endExclusive))
                 .and(briefing.userId.eq(userId))
                 .and(briefing.deletedAt.isNull())
         )
