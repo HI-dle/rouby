@@ -12,6 +12,7 @@ import com.rouby.notification.notificationEvent.domain.entity.NotificationType;
 import com.rouby.notification.notificationtemplate.application.dto.query.NotificationMessageQuery;
 import com.rouby.notification.notificationtemplate.application.service.NotificationTemplateReadService;
 import com.rouby.notification.notificationtemplate.domain.entity.Message;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,7 @@ public class BriefingProcessor implements ItemProcessor<UserBriefingInfo, Briefi
         .deviceTokenInfos(deviceTokenInfos)
         .title(message.getTitle())
         .body(message.getBody())
+        .url("/briefing/daily/" + user.today().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
         .notificationType(NotificationType.BRIEFING)
         .build();
 
