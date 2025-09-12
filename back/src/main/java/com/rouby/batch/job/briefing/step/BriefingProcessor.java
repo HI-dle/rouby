@@ -25,6 +25,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class BriefingProcessor implements ItemProcessor<UserBriefingInfo, BriefingAggregate> {
 
+  private static final String BriefingUrlPrefix = "/briefing/daily/";
+
   private final BriefingFacade briefingFacade;
   private final NotificationTemplateReadService notificationTemplateReadService;
 
@@ -50,7 +52,7 @@ public class BriefingProcessor implements ItemProcessor<UserBriefingInfo, Briefi
         .deviceTokenInfos(deviceTokenInfos)
         .title(message.getTitle())
         .body(message.getBody())
-        .url("/briefing/daily/" + user.today().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+        .url(BriefingUrlPrefix + user.today().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
         .notificationType(NotificationType.BRIEFING)
         .build();
 
