@@ -1,6 +1,7 @@
 package com.rouby.assistant.briefing.domain.repository;
 
 import com.rouby.assistant.briefing.domain.Briefing;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,5 +14,5 @@ public interface BriefingRepository {
 
   Briefing save(Briefing briefing);
 
-  Optional<Briefing> findByIdAndDeletedAtIsNull(Long id);
+  Optional<Briefing> findByUserIdAndDate(Long userId, LocalDate date);
 }

@@ -12,6 +12,7 @@ import com.rouby.routine.routine_task.application.dto.command.GetRoutineTaskComm
 import com.rouby.routine.routine_task.application.service.RoutineTaskReadService;
 import com.rouby.schedule.application.dto.query.GetScheduleQuery;
 import com.rouby.schedule.application.service.ScheduleReadService;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -65,8 +66,8 @@ public class BriefingFacade {
     );
   }
 
-  public BriefingInfo getBriefing(Long id) {
-    return briefingReadService.getBriefing(id);
+  public BriefingInfo getBriefingByDate(Long userId, LocalDate date) {
+    return briefingReadService.getBriefingByDate(userId, date);
   }
 
 }

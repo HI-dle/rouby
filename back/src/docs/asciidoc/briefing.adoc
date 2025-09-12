@@ -1,0 +1,17 @@
+[[BRIEFING-API]]
+= briefing-API
+
+[[GetBriefing]]
+== 브리핑 조회 API
+
+=== 성공: 브리핑 조회
+
+==== HTTP 요청
+
+include::{snippets}/get-briefing-200/http-request.adoc[]
+
+==== HTTP 응답 (204 No Content)
+
+include::{snippets}/get-briefing-200/http-response.adoc[]
+
+---
