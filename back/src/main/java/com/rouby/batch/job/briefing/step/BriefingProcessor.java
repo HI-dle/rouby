@@ -12,6 +12,7 @@ import com.rouby.notification.notificationEvent.domain.entity.NotificationType;
 import com.rouby.notification.notificationtemplate.application.dto.query.NotificationMessageQuery;
 import com.rouby.notification.notificationtemplate.application.service.NotificationTemplateReadService;
 import com.rouby.notification.notificationtemplate.domain.entity.Message;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 public class BriefingProcessor implements ItemProcessor<UserBriefingInfo, BriefingAggregate> {
+
+  private static final String BriefingUrlPrefix = "/briefing/daily/";
 
   private final BriefingFacade briefingFacade;
   private final NotificationTemplateReadService notificationTemplateReadService;
@@ -49,6 +52,7 @@ public class BriefingProcessor implements ItemProcessor<UserBriefingInfo, Briefi
         .deviceTokenInfos(deviceTokenInfos)
         .title(message.getTitle())
         .body(message.getBody())
+        .url(BriefingUrlPrefix + user.today().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
         .notificationType(NotificationType.BRIEFING)
         .build();
 

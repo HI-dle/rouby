@@ -5,8 +5,8 @@ import com.rouby.assistant.briefing.domain.repository.BriefingRepository;
 import com.rouby.batch.job.briefing.dto.BriefingAggregate;
 import com.rouby.notification.notificationEvent.domain.entity.NotificationEvent;
 import com.rouby.notification.notificationEvent.domain.repository.NotificationEventRepository;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.Chunk;
@@ -28,21 +28,11 @@ public class BriefingWriter implements ItemWriter<BriefingAggregate> {
         .toList();
     List<Briefing> savedBriefings = briefingRepository.saveAll(briefings);
 
-    List<NotificationEvent> allEvents = new ArrayList<>();
-    for (int i = 0; i < chunk.size(); i++) {
-      BriefingAggregate agg = chunk.getItems().get(i);
-      Briefing saved = savedBriefings.get(i);
-
-      List<NotificationEvent> events = agg.notificationEvents() != null
-          ? agg.notificationEvents().toEntities() : List.of();
-
-      if (!events.isEmpty()) {
-        events.forEach(e -> e.updateMessageUrl("/briefing/daily/" + saved.getId()));
-      }
-      allEvents.addAll(events);
-
-      log.info("Prepared briefing {} with {} notifications", saved.getId(), events.size());
-    }
+    List<NotificationEvent> allEvents = chunk.getItems().stream()
+        .flatMap(agg -> agg.notificationEvents() != null
+            ? agg.notificationEvents().toEntities().stream()
+            : Stream.empty())
+        .toList();
 
     if (!allEvents.isEmpty()) {
       notificationEventRepository.saveAll(allEvents);
