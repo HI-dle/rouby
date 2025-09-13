@@ -1,4 +1,4 @@
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { format } from 'date-fns'
 import { expandSchedulesByDay } from '@/shared/utils/rruleUtils'
@@ -36,28 +36,6 @@ export const useScheduleStore = defineStore(
 
       rawSchedules.value[monthKey] = rawMap
       dailySchedules.value[monthKey] = dailyMap
-    }
-
-    const addRawSchedule = (schedule) => {
-      if (!schedule || !schedule.startAt || !schedule.id) return
-
-      const date = new Date(schedule.startAt)
-      const monthKey = format(date, 'yyyy-MM')
-
-      if (schedule.recurrenceRule) {
-        schedule.recurrenceRule.rruleStr = buildRRuleString(
-          schedule.recurrenceRule,
-        )
-      }
-
-      rawSchedules.value[monthKey] = rawMap
-      dailySchedules.value[monthKey] = dailyMap
-      if (!rawSchedules.value[monthKey]) {
-        rawSchedules.value[monthKey] = {}
-      }
-      rawSchedules.value[monthKey][schedule.id] = schedule
-
-      recalculateMonth(monthKey)
     }
 
     /**
