@@ -30,7 +30,6 @@ function init() {
   const instanceDate = route.params.date
   const instanceKey = `${scheduleId}@${instanceDate}`
   schedule = scheduleStore.getScheduleInstanceByKey(instanceKey)
-  console.log(schedule)
   if (!schedule) {
     router.replace('/not-found')
     return
@@ -70,7 +69,7 @@ const onCancel = () => {
 const autoResize = (key) => {
   nextTick(() => {
     const input = inputRefs[key]
-    if (input) {
+    if (input && input.scrollHeight) {
       input.style.height = 'auto'
       input.style.height = input.scrollHeight + 'px'
     }

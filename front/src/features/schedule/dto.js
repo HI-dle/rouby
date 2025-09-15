@@ -43,15 +43,13 @@ export function toUpdateSchedulePayload(form, dailySchedule) {
     throw new Error('유효하지 않은 dailySchedule 객체입니다.')
   }
 
-  console.log(dailySchedule)
-
   return {
     parentScheduleId: dailySchedule.originId,
     targetScheduleId: dailySchedule.id,
     title: form.title,
     memo: form.memo,
     alarmOffsetMinutes: form.alarmOffsetMinutes,
-    overrideDate: dailySchedule.overrideDate ? dailySchedule.overrideDate : extractDate(dailySchedule.startAt),
+    overrideDate: dailySchedule.overrideDate ?? extractDate(dailySchedule.startAt),
     startAt: form.allDay
       ? convertDateToDateTime(extractDate(form.start), 0)
       : formatDateTime(form.start),
