@@ -106,5 +106,6 @@ export const useScheduleList = (maybeSelectedDate = null) => {
     goToScheduleDetail,
     goToScheduleDetailOf,
     formatSchedulePeriod,
+    fetchSchedulesByPeriod,
   }
 }

@@ -1,4 +1,4 @@
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { format } from 'date-fns'
 import { expandSchedulesByDay } from '@/shared/utils/rruleUtils'
@@ -88,6 +88,9 @@ export const useScheduleStore = defineStore(
       }
     }
 
+    /**
+     * 스토어 초기화
+     */
     const reset = () => {
       dailySchedules.value = {}
       rawSchedules.value = {}
@@ -127,8 +130,8 @@ export const useScheduleStore = defineStore(
     }
 
     return {
-      rawSchedules,
       dailySchedules,
+      rawSchedules,
       setMonthlySchedules,
       hasMonth,
       getSchedulesMonthlyByDate,
@@ -140,8 +143,6 @@ export const useScheduleStore = defineStore(
     }
   },
   {
-    persist: {
-      storage: getPiniaStorage(),
-    },
+    persist: { storage: getPiniaStorage() },
   },
 )

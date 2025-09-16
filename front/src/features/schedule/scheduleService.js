@@ -1,5 +1,5 @@
-import { toCreateSchedulePayload } from './dto'
-import { createSchedule as createApi, getSchedules as getApi } from './api'
+import { toCreateSchedulePayload, toUpdateSchedulePayload } from './dto'
+import { createSchedule as createApi, getSchedules as getApi, updateSchedule as updateApi } from './api'
 import { wrapApi } from '@/shared/utils/errorUtils'
 import { format } from 'date-fns'
 
@@ -16,4 +16,12 @@ export const getSchedules = wrapApi(async (fromAt, toAt) => {
     toAt: format(toAt, "yyyy-MM-dd'T'HH:mm:ss"),
   })
   return res
+}, {})
+
+export const updateSchedule = wrapApi(async (form, dailySchedule) => {
+  const payload = toUpdateSchedulePayload(form, dailySchedule)
+
+  const res = await updateApi(payload)
+
+  return { ...payload, id: res.data }
 }, {})

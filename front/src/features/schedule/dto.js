@@ -33,3 +33,28 @@ export function toCreateSchedulePayload(form) {
         },
   }
 }
+
+export function toUpdateSchedulePayload(form, dailySchedule) {
+  if (!form || typeof form !== 'object') {
+    throw new Error('유효하지 않은 form 객체입니다.')
+  }
+
+  if (!dailySchedule || typeof dailySchedule !== 'object') {
+    throw new Error('유효하지 않은 dailySchedule 객체입니다.')
+  }
+
+  return {
+    parentScheduleId: dailySchedule.originId,
+    targetScheduleId: dailySchedule.id,
+    title: form.title,
+    memo: form.memo,
+    alarmOffsetMinutes: form.alarmOffsetMinutes,
+    overrideDate: dailySchedule.overrideDate ?? extractDate(dailySchedule.startAt),
+    startAt: form.allDay
+      ? convertDateToDateTime(extractDate(form.start), 0)
+      : formatDateTime(form.start),
+    endAt: form.allDay
+      ? convertDateToDateTime(extractDate(getNxtDate(form.end)), 0)
+      : formatDateTime(form.end),
+  }
+}
