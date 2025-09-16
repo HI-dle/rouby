@@ -15,4 +15,6 @@ public interface ScheduleRepository {
   <S extends Schedule> Iterable<S> saveAll(Iterable<S> entities);
 
   Optional<Schedule> findById(Long id);
+
+  Optional<Schedule> findByIdAndUserId(Long id, Long userId);
 }

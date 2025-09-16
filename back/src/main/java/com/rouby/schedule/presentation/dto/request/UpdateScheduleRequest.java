@@ -1,6 +1,8 @@
 package com.rouby.schedule.presentation.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rouby.schedule.application.dto.command.UpdateScheduleCommand;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -31,5 +33,11 @@ public record UpdateScheduleRequest(
         .startAt(startAt)
         .endAt(endAt)
         .build();
+  }
+
+  @AssertTrue(message = "종료 일자는 시작 일자보다 이후여야 합니다.")
+  @JsonIgnore
+  public boolean isValidPeriod() {
+    return endAt.isAfter(startAt);
   }
 }

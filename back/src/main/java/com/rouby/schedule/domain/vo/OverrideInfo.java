@@ -1,6 +1,6 @@
 package com.rouby.schedule.domain.vo;
 
-import static com.rouby.schedule.domain.enums.OverrideType.*;
+import static com.rouby.schedule.domain.enums.OverrideType.CANCELLED;
 
 import com.rouby.schedule.domain.enums.OverrideType;
 import jakarta.persistence.Embeddable;
