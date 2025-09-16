@@ -3,6 +3,7 @@ package com.rouby.schedule.presentation;
 import com.rouby.schedule.application.facade.ScheduleFacade;
 import com.rouby.schedule.presentation.dto.request.CreateScheduleRequest;
 import com.rouby.schedule.presentation.dto.request.GetScheduleRequest;
+import com.rouby.schedule.presentation.dto.request.UpdateScheduleRequest;
 import com.rouby.schedule.presentation.dto.response.SchedulesResponse;
 import com.rouby.user.user.infrastructure.security.dto.SecurityUser;
 import java.net.URI;
@@ -13,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,5 +50,14 @@ public class ScheduleController {
         SchedulesResponse.of(scheduleFacade.getSchedules(req.toQuery(securityUser.getId())));
 
     return ResponseEntity.ok().body(response);
+  }
+
+  @PreAuthorize("hasAnyRole('USER')")
+  @PutMapping
+  public ResponseEntity<Long> updateSchedule(
+      @AuthenticationPrincipal SecurityUser securityUser, @RequestBody @Validated UpdateScheduleRequest req) {
+
+    Long scheduleId = scheduleFacade.updateSchedule(securityUser.getId(), req.toCommand());
+    return ResponseEntity.ok().body(scheduleId);
   }
 }

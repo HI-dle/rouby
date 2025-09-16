@@ -14,6 +14,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -23,6 +24,7 @@ import com.rouby.common.support.ControllerTestSupport;
 import com.rouby.schedule.fixture.CreateScheduleRequestFixture;
 import com.rouby.schedule.fixture.GetScheduleRequestFixture;
 import com.rouby.schedule.fixture.SchedulesInfoFixture;
+import com.rouby.schedule.fixture.UpdateScheduleRequestFixture;
 import java.time.LocalDateTime;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
@@ -199,6 +201,76 @@ class ScheduleControllerTest extends ControllerTestSupport {
                 parameterWithName("fromAt").description("조회 시작 일시"),
                 parameterWithName("toAt").description("조회 종료 일시")
             ),
+            getErrorResponseFieldSnippet()
+        ));
+  }
+
+  @WithMockCustomUser
+  @DisplayName("스케쥴 수정 API - 성공 200")
+  @Test
+  void updateSchedule() throws Exception {
+
+    // given
+    var request = UpdateScheduleRequestFixture.getSuccessRequest();
+    var content = objectMapper.writeValueAsString(request);
+
+    when(scheduleFacade.updateSchedule(any(Long.class), any()))
+        .thenReturn(request.targetScheduleId());
+
+    // when
+    ResultActions resultActions = mockMvc.perform(put("/api/v1/schedules")
+        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+        .content(content)
+        .characterEncoding("UTF-8")
+        .contentType(MediaType.APPLICATION_JSON)
+    );
+
+    // then
+    resultActions.andExpect(status().isOk())
+        .andDo(print())
+        .andDo(document("update-schedule-200",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestFields(
+                fieldWithPath("parentScheduleId").description("부모 일정 아이디"),
+                fieldWithPath("targetScheduleId").description("수정할 타겟 일정 아이디"),
+                fieldWithPath("title").description("일정 제목"),
+                fieldWithPath("memo").description("일정 메모"),
+                fieldWithPath("alarmOffsetMinutes").description(
+                    "일정 전 알림 시간 설정 (5, 10, 15, 30 분 / 1, 2시간 / 1, 2 일 / 1주일 전)"),
+                fieldWithPath("overrideDate").description("예외 반복 변경 일자 (예: 2025-09-15)"),
+                fieldWithPath("startAt").description("수정된 시작 일시 (예: 2025-09-15T10:00:00)"),
+                fieldWithPath("endAt").description("수정된 종료 일시 (예: 2025-09-15T12:00:00)")
+            )
+        ));
+  }
+
+  @WithMockCustomUser
+  @DisplayName("스케쥴 수정 API - 알람 설정 시간 검증 실패 400")
+  @Test
+  void updateSchedule_failed_alarm_offset_validation() throws Exception {
+
+    // given
+    var request = UpdateScheduleRequestFixture.getAlarmOffsetFailedRequest();
+    var content = objectMapper.writeValueAsString(request);
+
+    doThrow(new IllegalArgumentException("지원되지 않는 알림 설정 시간(분) 정보입니다."))
+        .when(scheduleFacade).updateSchedule(any(Long.class), any());
+
+    // when
+    ResultActions resultActions = mockMvc.perform(put("/api/v1/schedules")
+        .header("Authorization", "Bearer {ACCESS_TOKEN}")
+        .content(content)
+        .characterEncoding("UTF-8")
+        .contentType(MediaType.APPLICATION_JSON)
+    );
+
+    // then
+    resultActions.andExpect(status().isBadRequest())
+        .andDo(print())
+        .andDo(document("update-schedule-invalid-alarm-offset-400",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
             getErrorResponseFieldSnippet()
         ));
   }

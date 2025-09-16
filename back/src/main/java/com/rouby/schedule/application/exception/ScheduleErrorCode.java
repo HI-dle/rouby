@@ -13,6 +13,12 @@ public enum ScheduleErrorCode implements ErrorCode {
       "유효하지 않은 요청 정보입니다.",
       "SCHEDULE_INVALID_REQUEST",
       HttpStatus.UNPROCESSABLE_ENTITY),
+
+
+  SCHEDULE_NOT_FOUND(
+      "존재하지 않는 일정입니다.",
+          "SCHEDULE_NOT_FOUND",
+      HttpStatus.NOT_FOUND),
   ;
   private final String message;
   private final String code;

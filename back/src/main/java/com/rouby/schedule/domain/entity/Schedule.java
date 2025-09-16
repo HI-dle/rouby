@@ -74,18 +74,48 @@ public class Schedule extends BaseEntity {
   @Embedded
   private OverrideInfo overrideInfo;
 
+  public static Schedule createByModify(Long userId, String title, String memo, Period period,
+      Integer alarmOffsetMinutes, Schedule parentSchedule, OverrideInfo overrideInfo) {
+    return Schedule.builder()
+        .userId(userId)
+        .title(title)
+        .memo(memo)
+        .period(period)
+        .alarmOffsetMinutes(alarmOffsetMinutes)
+        .parentSchedule(parentSchedule)
+        .overrideInfo(overrideInfo)
+        .build();
+  }
+
+  public void validateUpdatable() {
+    if (overrideInfo.isCancelled()) {
+      throw new IllegalArgumentException("취소된 일정입니다.");
+    }
+  }
+
+  public void update(String title, String memo, Period period, AlarmOffsetType alarmOffsetType) {
+    this.title = title;
+    this.memo = memo;
+    this.period = period;
+    this.alarmOffsetType = alarmOffsetType;
+  }
+
   @Builder
   private Schedule(Long userId, String title, String memo, Period period,
-      Integer routineOffsetDays, Integer alarmOffsetMinutes, RecurrenceRule recurrenceRule) {
+      Integer routineOffsetDays, Integer alarmOffsetMinutes,
+      Schedule parentSchedule, OverrideInfo overrideInfo,
+      RecurrenceRule recurrenceRule) {
 
     this.userId = userId;
     this.title = title;
     this.memo = memo;
     this.period = period;
     this.routineOffsetDays = routineOffsetDays;
-    this.alarmOffsetType = alarmOffsetMinutes != null ? AlarmOffsetType.parse(alarmOffsetMinutes) : null;
+    this.alarmOffsetType =
+        alarmOffsetMinutes != null ? AlarmOffsetType.parse(alarmOffsetMinutes) : null;
+    this.parentSchedule = parentSchedule;
+    this.overrideInfo = overrideInfo;
     this.recurrenceRule = recurrenceRule;
-
     validate();
   }
 
@@ -108,12 +138,16 @@ public class Schedule extends BaseEntity {
   }
 
   private void addToParentSchedule() {
-    if (parentSchedule == null) return;
+    if (parentSchedule == null) {
+      return;
+    }
     this.parentSchedule.appendChildSchedule(this);
   }
 
   private void appendChildSchedule(Schedule schedule) {
-    if (this.children == null) this.children = new ArrayList<>();
+    if (this.children == null) {
+      this.children = new ArrayList<>();
+    }
     this.children.add(schedule);
   }
 

@@ -1,5 +1,7 @@
 package com.rouby.schedule.domain.vo;
 
+import static com.rouby.schedule.domain.enums.OverrideType.CANCELLED;
+
 import com.rouby.schedule.domain.enums.OverrideType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
@@ -27,5 +29,9 @@ public class OverrideInfo {
 
     this.overrideType = overrideType;
     this.overrideDate = overrideDate;
+  }
+
+  public boolean isCancelled() {
+    return overrideType == CANCELLED;
   }
 }
