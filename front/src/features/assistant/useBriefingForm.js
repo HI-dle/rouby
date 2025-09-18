@@ -1,5 +1,5 @@
 import { reactive, ref, watch, onMounted } from 'vue'
-import { format } from 'date-fns'
+import { format, parse, isValid} from 'date-fns'
 import { getBriefing } from '@/features/assistant/assistantService'
 import { useRouter } from 'vue-router'
 
@@ -7,7 +7,9 @@ export const useBriefingForm = (initDate) => {
   const router = useRouter()
 
   // 초기 선택 날짜
-  const selectedDate = ref(initDate ? new Date(initDate) : new Date())
+  const parseYMD = (d) =>
+    typeof d === 'string' ? parse(d, 'yyyy-MM-dd', new Date()) : new Date(d)
+  const selectedDate = ref(initDate ? parseYMD(initDate) : new Date())
   const loading = ref(false)
   const error = ref(null)
   const errorModal = reactive({ show: false, msg: '' })
@@ -25,7 +27,10 @@ export const useBriefingForm = (initDate) => {
     error.value = null
     try {
       const dateObj =
-        targetDate instanceof Date ? targetDate : new Date(targetDate)
+        targetDate instanceof Date ? targetDate : parseYMD(targetDate)
+      if (!isValid(dateObj)) {
+        throw new Error('유효하지 않은 날짜입니다.')
+      }
       const dateStr = format(dateObj, 'yyyy-MM-dd')
 
       // getBriefing이 이미 { content, createdAt } 반환
@@ -52,8 +57,7 @@ export const useBriefingForm = (initDate) => {
   onMounted(() => {
     const routeDate = router.currentRoute.value.params.date
     if (routeDate) {
-      selectedDate.value = new Date(routeDate)
-      fetchBriefing(selectedDate.value)
+      selectedDate.value = parseYMD(routeDate)
 
       // param 제거하고 URL 고정
       router.replace({ name: 'briefing-daily' })
