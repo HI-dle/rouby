@@ -9,7 +9,14 @@ export const useBriefingForm = (initDate) => {
   // 초기 선택 날짜
   const parseYMD = (d) =>
     typeof d === 'string' ? parse(d, 'yyyy-MM-dd', new Date()) : new Date(d)
-  const selectedDate = ref(initDate ? parseYMD(initDate) : new Date())
+
+  const savedDate = localStorage.getItem('lastBriefingDate')
+  const prevDate = ref(savedDate ? parseYMD(savedDate) : new Date())
+
+  const selectedDate = ref(
+    initDate ? parseYMD(initDate) : prevDate.value
+  )
+
   const loading = ref(false)
   const error = ref(null)
   const errorModal = reactive({ show: false, msg: '' })
@@ -33,7 +40,6 @@ export const useBriefingForm = (initDate) => {
       }
       const dateStr = format(dateObj, 'yyyy-MM-dd')
 
-      // getBriefing이 이미 { content, createdAt } 반환
       const data = await getBriefing(dateStr)
       if (data) {
         form.content = data.content
@@ -50,7 +56,11 @@ export const useBriefingForm = (initDate) => {
 
   // 날짜 바뀌면 자동으로 다시 조회
   watch(selectedDate, (newDate) => {
-    if (newDate) fetchBriefing(newDate)
+    if (newDate) {
+      prevDate.value = newDate
+      localStorage.setItem('lastBriefingDate', format(newDate, 'yyyy-MM-dd'))
+      fetchBriefing(newDate)
+    }
   })
 
   // 초기 param 처리 + URL 고정
@@ -61,8 +71,6 @@ export const useBriefingForm = (initDate) => {
 
       // param 제거하고 URL 고정
       router.replace({ name: 'briefing-daily' })
-    } else {
-      fetchBriefing(selectedDate.value)
     }
   })
 
