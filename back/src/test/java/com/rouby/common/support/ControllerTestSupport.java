@@ -4,6 +4,8 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rouby.assistant.briefing.application.facade.BriefingFacade;
+import com.rouby.assistant.briefing.presentation.BriefingController;
 import com.rouby.assistant.prompt.application.PromptFacade;
 import com.rouby.assistant.prompt.presentation.PromptController;
 import com.rouby.common.config.WebConfig;
@@ -45,8 +47,8 @@ import org.springframework.test.web.servlet.MockMvc;
         RoutineTaskController.class,
         DailyTaskController.class,
         UserDeviceController.class,
-        PromptController.class
-
+        PromptController.class,
+        BriefingController.class,
     },
     excludeFilters = {
         @ComponentScan.Filter(
@@ -83,6 +85,9 @@ public abstract class ControllerTestSupport {
 
   @MockitoBean
   protected DailyTaskFacade dailyTaskFacade;
+
+  @MockitoBean
+  protected BriefingFacade briefingFacade;
 
   @MockitoBean
   protected AuthenticationManager authenticationManager;

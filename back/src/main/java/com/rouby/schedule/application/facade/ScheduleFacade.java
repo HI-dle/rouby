@@ -1,6 +1,7 @@
 package com.rouby.schedule.application.facade;
 
 import com.rouby.schedule.application.dto.command.CreateScheduleCommand;
+import com.rouby.schedule.application.dto.command.UpdateScheduleCommand;
 import com.rouby.schedule.application.dto.info.SchedulesInfo;
 import com.rouby.schedule.application.dto.query.GetScheduleQuery;
 import com.rouby.schedule.application.service.ScheduleReadService;
@@ -21,5 +22,9 @@ public class ScheduleFacade {
 
   public SchedulesInfo getSchedules(GetScheduleQuery query) {
     return scheduleReadService.findSchedulesBy(query);
+  }
+
+  public Long updateSchedule(Long userId, UpdateScheduleCommand command) {
+    return scheduleWriteService.updateSchedule(userId, command);
   }
 }
