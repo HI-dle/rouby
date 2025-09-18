@@ -84,6 +84,7 @@ const router = createRouter({
         {
           path: 'briefing',
           component: () => import('@/features/assistant/views/BriefingLayout.vue'),
+          redirect: '/briefing/daily',
           children: [
             {
               path: 'daily/:date?',
