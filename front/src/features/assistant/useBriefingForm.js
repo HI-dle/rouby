@@ -2,19 +2,17 @@ import { reactive, ref, watch, onMounted } from 'vue'
 import { format, parse, isValid} from 'date-fns'
 import { getBriefing } from '@/features/assistant/assistantService'
 import { useRouter } from 'vue-router'
+import { useDatePickStore } from '@/stores/useDatePickStore.js'
 
 export const useBriefingForm = (initDate) => {
   const router = useRouter()
-
+  const datePickStore = useDatePickStore()
   // 초기 선택 날짜
   const parseYMD = (d) =>
     typeof d === 'string' ? parse(d, 'yyyy-MM-dd', new Date()) : new Date(d)
 
-  const savedDate = localStorage.getItem('lastBriefingDate')
-  const prevDate = ref(savedDate ? parseYMD(savedDate) : new Date())
-
   const selectedDate = ref(
-    initDate ? parseYMD(initDate) : prevDate.value
+    initDate ? parseYMD(initDate) :datePickStore.lastSelectedDate
   )
 
   const loading = ref(false)
@@ -54,22 +52,17 @@ export const useBriefingForm = (initDate) => {
     }
   }
 
-  // 날짜 바뀌면 자동으로 다시 조회
   watch(selectedDate, (newDate) => {
     if (newDate) {
-      prevDate.value = newDate
-      localStorage.setItem('lastBriefingDate', format(newDate, 'yyyy-MM-dd'))
       fetchBriefing(newDate)
     }
   })
 
-  // 초기 param 처리 + URL 고정
   onMounted(() => {
     const routeDate = router.currentRoute.value.params.date
     if (routeDate) {
       selectedDate.value = parseYMD(routeDate)
 
-      // param 제거하고 URL 고정
       router.replace({ name: 'briefing-daily' })
     }
   })
