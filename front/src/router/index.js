@@ -82,6 +82,22 @@ const router = createRouter({
           ],
         },
         {
+          path: 'briefing',
+          component: () => import('@/features/assistant/views/BriefingLayout.vue'),
+          redirect: '/briefing/daily',
+          children: [
+            {
+              path: 'daily/:date?',
+              name: 'briefing-daily',
+              component: () =>
+                import('@/features/assistant/views/DailyBriefingView.vue'),
+              props: (route) => ({
+                date: route.params.date || null,
+              }),
+            },
+          ],
+        },
+        {
           path: 'routine-task',
           component: () =>
             import('@/features/routine-task/views/RoutineTaskLayout.vue'),
