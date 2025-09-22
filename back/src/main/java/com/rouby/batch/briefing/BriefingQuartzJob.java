@@ -1,4 +1,4 @@
-package com.rouby.batch;
+package com.rouby.batch.briefing;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @DisallowConcurrentExecution
 @RequiredArgsConstructor
-public class QuartzBriefingJob implements org.quartz.Job {
+public class BriefingQuartzJob implements org.quartz.Job {
 
   private final JobLauncher jobLauncher;
   private final Job briefingJob;

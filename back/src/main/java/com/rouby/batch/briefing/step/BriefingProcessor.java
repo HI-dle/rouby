@@ -1,17 +1,18 @@
-package com.rouby.batch.job.briefing.step;
+package com.rouby.batch.briefing.step;
 
 import static com.rouby.notification.notificationtemplate.domain.entity.NotificationType.BRIEFING;
 
 import com.rouby.assistant.briefing.application.dto.info.CreatedBriefingResult;
 import com.rouby.assistant.briefing.application.facade.BriefingFacade;
-import com.rouby.batch.job.briefing.dto.BriefingAggregate;
-import com.rouby.batch.job.briefing.dto.BriefingNotificationEvents;
-import com.rouby.batch.job.briefing.dto.UserBriefingInfo;
+import com.rouby.batch.briefing.dto.BriefingAggregate;
+import com.rouby.batch.briefing.dto.BriefingNotificationEvents;
+import com.rouby.batch.briefing.dto.UserBriefingInfo;
 import com.rouby.notification.notificationEvent.domain.entity.DeviceTokenInfo;
 import com.rouby.notification.notificationEvent.domain.entity.NotificationType;
 import com.rouby.notification.notificationtemplate.application.dto.query.NotificationMessageQuery;
 import com.rouby.notification.notificationtemplate.application.service.NotificationTemplateReadService;
 import com.rouby.notification.notificationtemplate.domain.entity.Message;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -54,6 +55,7 @@ public class BriefingProcessor implements ItemProcessor<UserBriefingInfo, Briefi
         .body(message.getBody())
         .url(BriefingUrlPrefix + user.today().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
         .notificationType(NotificationType.BRIEFING)
+        .dueAt(LocalDateTime.of(user.today(), user.briefingTime()))
         .build();
 
     return new BriefingAggregate(briefing, events);

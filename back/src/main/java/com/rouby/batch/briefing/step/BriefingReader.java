@@ -1,6 +1,6 @@
-package com.rouby.batch.job.briefing.step;
+package com.rouby.batch.briefing.step;
 
-import com.rouby.batch.job.briefing.dto.UserBriefingInfo;
+import com.rouby.batch.briefing.dto.UserBriefingInfo;
 import com.rouby.user.device.application.dto.command.GetUserDeviceQuery;
 import com.rouby.user.device.application.service.UserDeviceReadService;
 import com.rouby.user.device.domain.entity.UserDevice;
@@ -47,9 +47,8 @@ public class BriefingReader extends ListItemReader<UserBriefingInfo> {
         .collect(Collectors.groupingBy(UserDevice::getUserId));
 
     return userInfos.stream()
-        .map(user -> new UserBriefingInfo(user,
-            deviceMap.getOrDefault(user.id(), List.of()),
-            today))
+        .map(user -> new UserBriefingInfo(
+            user, deviceMap.getOrDefault(user.id(), List.of()), today, targetTime))
         .toList();
   }
 }

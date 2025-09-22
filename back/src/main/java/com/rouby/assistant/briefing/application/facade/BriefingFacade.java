@@ -6,7 +6,7 @@ import com.rouby.assistant.briefing.application.dto.info.CreatedBriefingResult;
 import com.rouby.assistant.briefing.application.service.BriefingService;
 import com.rouby.assistant.prompt.application.info.PromptInfo;
 import com.rouby.assistant.prompt.application.service.PromptReadService;
-import com.rouby.batch.job.briefing.dto.UserBriefingInfo;
+import com.rouby.batch.briefing.dto.UserBriefingInfo;
 import com.rouby.routine.routine_task.application.dto.command.GetRoutineTaskCommand;
 import com.rouby.routine.routine_task.application.service.RoutineTaskReadService;
 import com.rouby.schedule.application.dto.query.GetScheduleQuery;

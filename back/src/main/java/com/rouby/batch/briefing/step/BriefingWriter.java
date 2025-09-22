@@ -1,8 +1,8 @@
-package com.rouby.batch.job.briefing.step;
+package com.rouby.batch.briefing.step;
 
 import com.rouby.assistant.briefing.domain.Briefing;
 import com.rouby.assistant.briefing.domain.repository.BriefingRepository;
-import com.rouby.batch.job.briefing.dto.BriefingAggregate;
+import com.rouby.batch.briefing.dto.BriefingAggregate;
 import com.rouby.notification.notificationEvent.domain.entity.NotificationEvent;
 import com.rouby.notification.notificationEvent.domain.repository.NotificationEventRepository;
 import java.util.List;

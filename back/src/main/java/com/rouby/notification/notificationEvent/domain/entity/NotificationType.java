@@ -4,6 +4,10 @@ public enum NotificationType {
   SCHEDULE,
   ROUTINE,
   BRIEFING,
+  FEEDBACK,
+  RECOMMENDATION,
+  SCHEDULE_SYNC,
+  ROUTINE_SYNC,
   ;
 
   public static NotificationType parse(String notificationType) {

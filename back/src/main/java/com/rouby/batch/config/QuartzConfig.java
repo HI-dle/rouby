@@ -1,6 +1,6 @@
 package com.rouby.batch.config;
 
-import com.rouby.batch.QuartzBriefingJob;
+import com.rouby.batch.briefing.BriefingQuartzJob;
 import java.util.TimeZone;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
@@ -22,7 +22,7 @@ public class QuartzConfig {
 
   @Bean
   public JobDetail briefingJobDetail() {
-    return JobBuilder.newJob(QuartzBriefingJob.class)
+    return JobBuilder.newJob(BriefingQuartzJob.class)
         .withIdentity("briefingJob")
         .storeDurably()
         .build();
