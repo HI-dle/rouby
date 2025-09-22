@@ -5,8 +5,8 @@ Content-Type: application/json
   "userId": 0,
   "tokenProviderType": "FCM",
   "deviceToken": "",
-  "title": "샘플 알림 제목",
-  "body": "샘플 알림 본문 내용입니다.",
+  "title": "Rouby - 브리핑 알림",
+  "body": "{}님, {}의 브리핑이 도착했습니다.",
   "url": "http://localhost:5173",
   "notificationType": "BRIEFING"
 }

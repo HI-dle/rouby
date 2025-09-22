@@ -1,8 +1,8 @@
 package com.rouby.notification.notificationEvent.domain.sender;
 
-import com.rouby.notification.notificationEvent.domain.entity.NotificationEvent;
+import com.rouby.notification.notificationEvent.domain.info.NotificationEventInfo;
 
 public interface NotificationSender {
 
-  void send(NotificationEvent event);
+  boolean send(NotificationEventInfo eventInfo, int ttl, long sentAt, boolean highPriority);
 }

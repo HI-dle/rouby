@@ -1,6 +1,7 @@
 package com.rouby.batch.config;
 
 import com.rouby.batch.briefing.BriefingQuartzJob;
+import com.rouby.batch.notification.NotificationQuartzJob;
 import java.util.TimeZone;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.JobBuilder;
@@ -37,6 +38,27 @@ public class QuartzConfig {
             CronScheduleBuilder.cronSchedule(briefingCron)
                 .inTimeZone(TimeZone.getTimeZone(briefingTimeZone))
                 .withMisfireHandlingInstructionIgnoreMisfires()
+        )
+        .build();
+  }
+
+  @Bean
+  JobDetail notificationEventDispatchJob() {
+    return JobBuilder.newJob(NotificationQuartzJob.class)
+        .withIdentity("dispatch")
+        .storeDurably()
+        .build();
+  }
+
+  @Bean
+  Trigger dispatchTrigger(JobDetail notificationEventDispatchJob) {
+
+    return TriggerBuilder.newTrigger()
+        .forJob(notificationEventDispatchJob).withIdentity("dispatchTrigger")
+        .withSchedule(
+            CronScheduleBuilder.cronSchedule("55 * * * * ?")
+                .inTimeZone(TimeZone.getTimeZone("Asia/Seoul"))
+                .withMisfireHandlingInstructionFireAndProceed()
         )
         .build();
   }
