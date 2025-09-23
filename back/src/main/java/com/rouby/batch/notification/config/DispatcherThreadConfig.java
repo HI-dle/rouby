@@ -14,11 +14,13 @@ public class DispatcherThreadConfig {
   public ThreadPoolTaskExecutor notificationSendExecutor() {
 
     ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-    executor.setCorePoolSize(4);
-    executor.setMaxPoolSize(8);
-    executor.setQueueCapacity(1000);
+    executor.setCorePoolSize(16);
+    executor.setMaxPoolSize(32);
+    executor.setQueueCapacity(200);
     executor.setThreadNamePrefix("notiSendEx-");
     executor.setRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());
+    executor.setWaitForTasksToCompleteOnShutdown(true);
+    executor.setAwaitTerminationSeconds(30);
     executor.initialize();
     return executor;
   }
@@ -31,7 +33,9 @@ public class DispatcherThreadConfig {
     executor.setMaxPoolSize(8);
     executor.setQueueCapacity(400);
     executor.setThreadNamePrefix("notiCb-");
-    executor.setRejectedExecutionHandler(new ThreadPoolExecutor.DiscardPolicy());
+    executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+    executor.setWaitForTasksToCompleteOnShutdown(true);
+    executor.setAwaitTerminationSeconds(30);
     executor.initialize();
     return executor;
   }
@@ -39,12 +43,12 @@ public class DispatcherThreadConfig {
   @Bean("preciseTimer")
   public ScheduledExecutorService preciseTimer() {
 
-    return Executors.newScheduledThreadPool(2);
+    return Executors.newScheduledThreadPool(2, r -> new Thread(r, "preciseTimer"));
   }
 
   @Bean("flushScheduler")
   public ScheduledExecutorService flushScheduler() {
 
-    return Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "flush"));
+    return Executors.newSingleThreadScheduledExecutor(r -> new Thread(r, "flushScheduler"));
   }
 }

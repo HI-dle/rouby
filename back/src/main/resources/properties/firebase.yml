@@ -1,2 +1,8 @@
 fcm:
   key_file_path: "firebase/rouby-firebase-adminsdk-key.json"
+  projectId: rouby-b3e76
+  webClient:
+    base-url: https://fcm.googleapis.com
+    pool:
+      max-connections: 400
+      pending-acquire-max: 1000

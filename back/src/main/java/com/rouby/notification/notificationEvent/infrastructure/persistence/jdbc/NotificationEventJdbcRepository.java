@@ -4,15 +4,17 @@ import com.rouby.notification.notificationEvent.domain.entity.DeviceTokenInfo;
 import com.rouby.notification.notificationEvent.domain.entity.NotificationMessage;
 import com.rouby.notification.notificationEvent.domain.entity.TokenProviderType;
 import com.rouby.notification.notificationEvent.domain.info.NotificationEventInfo;
+import com.rouby.notification.notificationEvent.domain.info.SuccessResult;
+import java.sql.Array;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -22,9 +24,7 @@ public class NotificationEventJdbcRepository {
 
   private final JdbcTemplate jdbcTemplate;
 
-
-
-  public List<NotificationEventInfo> claimSlot(Instant slotStart, Instant slotEnd, int limit, String workerId, int leaseSecTime) {
+  public List<NotificationEventInfo> claimSlot(Instant slotStart, Instant slotEnd, int limit, String workerId, int leaseSeconds) {
 
     final String sql = """
       with picked as (
@@ -53,12 +53,12 @@ public class NotificationEventJdbcRepository {
         Timestamp.from(slotStart),
         Timestamp.from(slotEnd),
         limit,
-        leaseSecTime,
+        leaseSeconds,
         workerId);
   }
 
   public List<NotificationEventInfo> claimBackfill(
-      int minutes, int maxAttempt, int limit, String workerId, int leaseSecTime) {
+      int minutes, int maxAttempt, int limit, String workerId, int leaseSeconds) {
 
     final String sql = """
       with picked as (
@@ -83,22 +83,48 @@ public class NotificationEventJdbcRepository {
       where e.id = picked.id
       returning e.id, e.user_id, e.due_at, e.title, e.body, e.url, e.device_token, e.token_provider
     """;
+
     return jdbcTemplate.query(sql,
-        (rs,i) ->
-            map(rs), minutes, maxAttempt, limit, leaseSecTime, workerId);
+        (rs,i) -> map(rs),
+        minutes,
+        maxAttempt,
+        limit,
+        leaseSeconds,
+        workerId);
   }
 
-  public int markSent(List<Long> ids, String workerId) {
+  public int markSent(List<SuccessResult> successResults, String workerId) {
 
-    if (ids.isEmpty()) return 0;
+    if (successResults.isEmpty()) return 0;
 
     final String sql = """
-      update notification_event e
-      set status='SENT', lease_until=null, updated_at=now()
-      from unnest(?::bigint[]) as t(id)
-      where e.id = t.id and e.status='IN_PROGRESS' and e.worker_id = ?
+      UPDATE notification_event AS e
+      SET
+        status     = 'SENT',
+        lease_until= NULL,
+        sent_at    = t.sent_at,
+        updated_at = now()
+      FROM unnest(?::bigint[], ?::timestamptz[]) AS t(id, sent_at)
+      WHERE e.id = t.id
+        AND e.status   = 'IN_PROGRESS'
+        AND e.worker_id = ?;
     """;
-    return jdbcTemplate.update(sql, toSqlArray(ids), workerId);
+
+    Long[] ids = successResults.stream()
+        .map(r -> r.id())
+        .toArray(Long[]::new);
+    Timestamp[] sentAts = successResults.stream()
+        .map(r -> Timestamp.from(Instant.ofEpochMilli(r.sentAt())))
+        .toArray(Timestamp[]::new);
+
+    return jdbcTemplate.execute((Connection con) -> {
+      try (PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setArray(1, con.createArrayOf("bigint", ids));
+        ps.setArray(2, con.createArrayOf("timestamptz", sentAts));
+        ps.setString(3, workerId);
+        return ps.executeUpdate();
+      }
+    });
   }
 
   public int markRetry(List<Long> ids, String workerId) {
@@ -114,15 +140,21 @@ public class NotificationEventJdbcRepository {
       from unnest(?::bigint[]) as t(id)
       where e.id = t.id and e.status='IN_PROGRESS' and e.worker_id = ?
     """;
-    return jdbcTemplate.update(sql, toSqlArray(ids), workerId);
+    return executeSqlWithArray(sql, ids, workerId);
   }
 
   public int recoverExpiredLeases() {
 
     final String sql = """
       update notification_event
-      set status='PENDING', lease_until=null, worker_id=null, updated_at=now()
-      where status='IN_PROGRESS' and lease_until < now()
+      set 
+          status='PENDING', 
+          lease_until=null, 
+          worker_id=null, 
+          updated_at=now()
+      where 
+          status='IN_PROGRESS' 
+        and lease_until < now()
     """;
     return jdbcTemplate.update(sql);
   }
@@ -132,7 +164,7 @@ public class NotificationEventJdbcRepository {
     return NotificationEventInfo.builder()
         .id(rs.getLong("id"))
         .userId(rs.getLong("user_id"))
-        .dueAt(rs.getTimestamp("due_at").toInstant())
+        .dueAt(rs.getTimestamp("due_at").toLocalDateTime())
         .message(NotificationMessage.builder()
             .title(rs.getString("title"))
             .body(rs.getString("body"))
@@ -145,12 +177,18 @@ public class NotificationEventJdbcRepository {
         .build();
   }
 
-  private java.sql.Array toSqlArray(List<Long> ids) {
+  private int executeSqlWithArray(String sql, List<Long> ids, String workerId) {
 
-    try (Connection conn = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection()) {
-      return conn.createArrayOf("bigint", ids.toArray());
-    } catch (SQLException e) {
-      throw new DataAccessResourceFailureException("array", e);
-    }
+    return jdbcTemplate.execute((ConnectionCallback<Integer>) con -> {
+      Array array = con.createArrayOf("bigint", ids.toArray());
+
+      try (PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setArray(1, array);
+        ps.setString(2, workerId);
+        return ps.executeUpdate();
+      } finally {
+        array.free();
+      }
+    });
   }
 }

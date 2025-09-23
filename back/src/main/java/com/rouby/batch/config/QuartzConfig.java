@@ -43,15 +43,15 @@ public class QuartzConfig {
   }
 
   @Bean
-  JobDetail notificationEventDispatchJob() {
+  public JobDetail notificationEventDispatchJob() {
     return JobBuilder.newJob(NotificationQuartzJob.class)
-        .withIdentity("dispatch")
+        .withIdentity("notificationDispatchJob")
         .storeDurably()
         .build();
   }
 
   @Bean
-  Trigger dispatchTrigger(JobDetail notificationEventDispatchJob) {
+  public Trigger dispatchTrigger(JobDetail notificationEventDispatchJob) {
 
     return TriggerBuilder.newTrigger()
         .forJob(notificationEventDispatchJob).withIdentity("dispatchTrigger")

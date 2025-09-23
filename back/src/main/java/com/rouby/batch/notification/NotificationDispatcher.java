@@ -1,8 +1,8 @@
 package com.rouby.batch.notification;
 
-import org.quartz.JobExecutionContext;
+import java.time.Instant;
 
 public interface NotificationDispatcher {
 
-  void dispatch(JobExecutionContext ctx);
+  void dispatch(Instant sched);
 }

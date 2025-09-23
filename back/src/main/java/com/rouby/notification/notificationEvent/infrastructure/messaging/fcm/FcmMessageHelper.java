@@ -8,6 +8,7 @@ import com.google.firebase.messaging.WebpushNotification;
 import com.rouby.notification.notificationEvent.domain.entity.NotificationEvent;
 import com.rouby.notification.notificationEvent.domain.info.NotificationEventInfo;
 import java.time.Duration;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -36,7 +37,7 @@ public class FcmMessageHelper {
     // 공통 data
     Map<String, String> data = new HashMap<>();
     data.put("eventId", String.valueOf(event.id()));
-    data.put("dueAt", String.valueOf(event.dueAt().toEpochMilli()));
+    data.put("dueAt", String.valueOf(event.dueAt().atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()));
     data.put("sentAt", String.valueOf(sentAtMs));
     data.put("priority", highPriority ? "high" : "normal");
 
@@ -89,7 +90,7 @@ public class FcmMessageHelper {
     return Message.builder()
         .setToken(event.deviceTokenInfo().getDeviceToken())
         .putData("eventId", String.valueOf(event.id()))
-        .putData("dueAt", String.valueOf(event.dueAt().toEpochMilli()))
+        .putData("dueAt", String.valueOf(event.dueAt().atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()))
         .putData("sentAt", String.valueOf(sentAt))
         .putData("title", Objects.toString(event.message().getTitle(), ""))
         .putData("body",  Objects.toString(event.message().getBody(), ""))

@@ -28,10 +28,10 @@ public class FcmConfiguration {
   GoogleCredentials fcmGoogleCredentials() throws IOException {
 
     ClassPathResource resource = new ClassPathResource(FIREBASE_KEY_PATH);
-    InputStream serviceAccount  = resource.getInputStream();
-
-    return GoogleCredentials.fromStream(serviceAccount)
-        .createScoped(List.of("https://www.googleapis.com/auth/firebase.messaging"));
+    try (InputStream serviceAccount = resource.getInputStream()) {
+      return GoogleCredentials.fromStream(serviceAccount)
+          .createScoped(List.of("https://www.googleapis.com/auth/firebase.messaging"));
+    }
   }
 
   @Bean

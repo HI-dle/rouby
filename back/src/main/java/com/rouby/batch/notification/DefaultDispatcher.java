@@ -4,11 +4,11 @@ import com.rouby.notification.notificationEvent.domain.info.NotificationEventInf
 import com.rouby.notification.notificationEvent.domain.repository.NotificationEventRepository;
 import com.rouby.notification.notificationEvent.domain.sender.AsyncNotificationSender;
 import com.rouby.notification.notificationEvent.domain.sender.NotificationSender;
+import jakarta.annotation.PostConstruct;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -17,19 +17,19 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
-import org.quartz.JobExecutionContext;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class DefaultDispatcher implements NotificationDispatcher {
 
-  private final Clock clock = Clock.systemUTC();
+  private final Clock clock;
 
-  private final Semaphore inFlight = new Semaphore(512);
   @Qualifier("notificationSendExecutor")
   private final ThreadPoolTaskExecutor notificationSendExecutor;
   @Qualifier("resultCallbackExecutor")
@@ -58,20 +58,28 @@ public class DefaultDispatcher implements NotificationDispatcher {
   private int ONTIME_TTL;
   @Value("${notification.dispatch.ttl.backfillSec:600}")
   private int BACKFILL_TTL;
-  @Value("${notification.dispatch.lease.ontimeSec:60}")
-  int LEASE_ONTIME_SEC;
+  @Value("${notification.dispatch.lease.ontimeSec:45}")
+  private int LEASE_ONTIME_SEC;
   @Value("${notification.dispatch.lease.backfillSec:30}")
-  int LEASE_BACKFILL_SEC;
+  private int LEASE_BACKFILL_SEC;
+
+  @Value("${notification.dispatch.maxConcurrent:512}")
+  private int MAX_CONCURRENT;
+  private Semaphore inFlight;
+
+  @PostConstruct
+  public void init() {
+    this.inFlight = new Semaphore(MAX_CONCURRENT);
+  }
 
   @Override
-  public void dispatch(JobExecutionContext ctx) {
+  public void dispatch(Instant sched) {
 
     // 자기치유
     notificationEventRepository.recoverExpiredLeases();
 
-    ZonedDateTime sched = ZonedDateTime.ofInstant(
-        ctx.getScheduledFireTime().toInstant(), ZoneId.of("Asia/Seoul")); // M:55
-    Instant nextSched = sched.plusMinutes(1).toInstant(); // (M+1):55
+    // sched M:55
+    Instant nextSched = sched.plus(1, ChronoUnit.MINUTES); // (M+1):55
 
     long possibleMsToNextSched = Math.max(0, Duration.between(Instant.now(clock), nextSched.minusMillis(GUARD_MS)).toMillis());
     long budgetMs = Math.max(0, Math.min(TIME_BUDGET_SEC * 1000L, possibleMsToNextSched));
@@ -81,42 +89,55 @@ public class DefaultDispatcher implements NotificationDispatcher {
     backfillSendAsync(deadlineNano);
   }
 
-  private void ontimeSendAsync(ZonedDateTime sched, long deadlineNano) {
+  private void ontimeSendAsync(Instant sched, long deadlineNano) {
 
     // 온타임: [slotStart, slotEnd)만 클레임 → 타이머 예약
     // 다음 트리거(nextSched) 직전까지만, guard 남기고 실행
-    Instant slotStart = sched.truncatedTo(ChronoUnit.MINUTES).plusMinutes(1).toInstant(); // M+1:00
+    Instant slotStart = sched.truncatedTo(ChronoUnit.MINUTES).plus(1, ChronoUnit.MINUTES); // M+1:00
     Instant slotEnd   = slotStart.plus(1, ChronoUnit.MINUTES); // M+2:00
-
+    boolean start = true;
     List<NotificationEventInfo> ontime;
     do {
       ontime = notificationEventRepository.claimSlot(slotStart, slotEnd, LIMIT, writer.workerId(), LEASE_ONTIME_SEC);
       for (NotificationEventInfo ev : ontime) {
 
         long delayMs = Math.max(
-            0, Duration.between(Instant.now(clock), ev.dueAt().minusMillis(LEAD_MS)).toMillis());
+            0, Duration.between(Instant.now(clock),
+                ev.dueAt().atZone(ZoneId.of("Asia/Seoul")).toInstant().minusMillis(LEAD_MS)).toMillis());
         preciseTimer.schedule(() -> {
           if (!inFlight.tryAcquire()) { writer.reportFailure(ev.id()); return; }
           long sentAt = clock.millis();
           sender.sendAsync(ev, ONTIME_TTL, sentAt, true)
-              .whenCompleteAsync((ok, ex) -> {
+              .whenComplete((ok, ex) -> {
                 try {
-                  if (ex == null && Boolean.TRUE.equals(ok)) writer.reportSuccess(ev.id());
-                  else writer.reportFailure(ev.id());
+                  if (ex == null && Boolean.TRUE.equals(ok)) writer.reportSuccess(ev.id(), sentAt);
+                  else {
+                    writer.reportFailure(ev.id());
+                    if (ex != null) {
+                      log.error("fcm 알림 발송 처리 실패", ex);
+                    } else {
+                      log.warn("fcm 알림 발송 처리 실패: 응답은 false (예외 없음)");
+                    }
+                  }
                 } finally {
                   inFlight.release();
                 }
-              }, resultCallbackExecutor);
+              });
           }, delayMs, TimeUnit.MILLISECONDS);
+      }
+
+      if (start) {
+        writer.requestFlush();
+        start = false;
       }
     } while (!ontime.isEmpty() && System.nanoTime() < deadlineNano);
   }
 
-  private void ontimeSend(ZonedDateTime sched, long deadlineNano) {
+  private void ontimeSend(Instant sched, long deadlineNano) {
 
     // 온타임: [slotStart, slotEnd)만 클레임 → 타이머 예약
     // 다음 트리거(nextSched) 직전까지만, guard 남기고 실행
-    Instant slotStart = sched.truncatedTo(ChronoUnit.MINUTES).plusMinutes(1).toInstant(); // M+1:00
+    Instant slotStart = sched.truncatedTo(ChronoUnit.MINUTES).plus(1, ChronoUnit.MINUTES); // M+1:00
     Instant slotEnd   = slotStart.plus(1, ChronoUnit.MINUTES); // M+2:00
 
     List<NotificationEventInfo> ontime;
@@ -125,7 +146,8 @@ public class DefaultDispatcher implements NotificationDispatcher {
       for (NotificationEventInfo ev : ontime) {
 
         long delayMs = Math.max(
-            0, Duration.between(Instant.now(clock), ev.dueAt().minusMillis(LEAD_MS)).toMillis());
+            0, Duration.between(Instant.now(clock),
+                ev.dueAt().atZone(ZoneId.of("Asia/Seoul")).toInstant().minusMillis(LEAD_MS)).toMillis());
         preciseTimer.schedule(() -> {
           try {
             CompletableFuture.supplyAsync(() -> {
@@ -134,7 +156,7 @@ public class DefaultDispatcher implements NotificationDispatcher {
                     },
                   notificationSendExecutor)
               .whenCompleteAsync((ok, ex) -> {
-                if (ex == null && Boolean.TRUE.equals(ok)) writer.reportSuccess(ev.id());
+                if (ex == null && Boolean.TRUE.equals(ok)) writer.reportSuccess(ev.id(), clock.millis());
                 else writer.reportFailure(ev.id());
               }, resultCallbackExecutor);
           } catch (RejectedExecutionException rex) {
@@ -155,17 +177,27 @@ public class DefaultDispatcher implements NotificationDispatcher {
 
       for (NotificationEventInfo ev : late) {
 
-        if (!inFlight.tryAcquire()) { writer.reportFailure(ev.id()); return; }
+        if (!inFlight.tryAcquire()) {
+          writer.reportFailure(ev.id());
+          continue;
+        }
         long sentAt = clock.millis();
         sender.sendAsync(ev, BACKFILL_TTL, sentAt, true)
-            .whenCompleteAsync((ok, ex) -> {
+            .whenComplete((ok, ex) -> {
               try {
-                if (ex == null && Boolean.TRUE.equals(ok)) writer.reportSuccess(ev.id());
-                else writer.reportFailure(ev.id());
+                if (ex == null && Boolean.TRUE.equals(ok)) writer.reportSuccess(ev.id(), sentAt);
+                else {
+                  writer.reportFailure(ev.id());
+                  if (ex != null) {
+                    log.error("fcm 알림 발송 처리 실패", ex);
+                  } else {
+                    log.warn("fcm 알림 발송 처리 실패: 응답은 false (예외 없음)");
+                  }
+                }
               } finally {
                 inFlight.release();
               }
-            }, resultCallbackExecutor);
+            });
       }
     }
   }
@@ -186,7 +218,7 @@ public class DefaultDispatcher implements NotificationDispatcher {
                 },
                 notificationSendExecutor)
             .whenCompleteAsync((ok, ex) -> {
-              if (ex == null && Boolean.TRUE.equals(ok)) writer.reportSuccess(ev.id());
+              if (ex == null && Boolean.TRUE.equals(ok)) writer.reportSuccess(ev.id(), clock.millis());
               else writer.reportFailure(ev.id());
             }, resultCallbackExecutor);
       }

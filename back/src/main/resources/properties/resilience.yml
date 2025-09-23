@@ -19,13 +19,6 @@ resilience4j:
           - java.sql.SQLRecoverableException
         ignoreExceptions:
           - java.lang.IllegalArgumentException # 재시도해도 소용없는 것들
-  retry:
-    instances:
-      dbWriter:
-        maxAttempts: 1                   # 동기 재시도 사실상 "없음"(=0회 추가)
-        waitDuration: 0
-        retryExceptions:
-          - org.springframework.dao.TransientDataAccessException
 
 ---
 spring:
@@ -49,10 +42,3 @@ resilience4j:
           - java.sql.SQLRecoverableException
         ignoreExceptions:
           - java.lang.IllegalArgumentException # 재시도해도 소용없는 것들
-  retry:
-    instances:
-      dbWriter:
-        maxAttempts: 1
-        waitDuration: 0
-        retryExceptions:
-          - org.springframework.dao.TransientDataAccessException

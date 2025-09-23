@@ -1,5 +1,6 @@
 package com.rouby.batch.notification;
 
+import com.rouby.notification.notificationEvent.domain.info.SuccessResult;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import java.util.ArrayList;
@@ -9,6 +10,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +27,7 @@ public class ResultWriter implements AutoCloseable {
 
   @Value("${notification.writer.flush.batch:500}")
   int FLUSH_BATCH_SIZE;
-  @Value("${notification.writer.flush.intervalMs:200}")
+  @Value("${notification.writer.flush.intervalMs:1000}")
   long INTERVAL_MS;
 
   private final CircuitBreakerRegistry cbRegistry;
@@ -33,30 +36,54 @@ public class ResultWriter implements AutoCloseable {
   private final DbWriterAdapter dbWriterAdapter;
 
   private final String workerId = UUID.randomUUID().toString();
-
-  private final BlockingQueue<Long> okQ     = new LinkedBlockingQueue<>(10_000);
-  private final BlockingQueue<Long> failQ   = new LinkedBlockingQueue<>(10_000);
+  private final AtomicBoolean wakeupScheduled = new AtomicBoolean(false);
+  private final BlockingQueue<SuccessResult> okQ = new LinkedBlockingQueue<>(10_000);
+  private final BlockingQueue<Long> failQ = new LinkedBlockingQueue<>(10_000);
 
   public String workerId() { return workerId; }
 
   @PostConstruct
-  void start() {
-    flushScheduler.scheduleAtFixedRate(this::flushTick, INTERVAL_MS, INTERVAL_MS, TimeUnit.MILLISECONDS);
+  public void start() {
+    flushScheduler.scheduleWithFixedDelay(this::flushTick, INTERVAL_MS, INTERVAL_MS, TimeUnit.MILLISECONDS);
+  }
+
+  public void requestFlush() {
+
+    if (wakeupScheduled.compareAndSet(false, true)) {
+      flushScheduler.execute(() -> {
+        try {
+          safeFlushTick();
+        } finally {
+          wakeupScheduled.set(false);
+        }
+      });
+    }
+  }
+
+  private void safeFlushTick() {
+    try {
+      flushTick();
+    } catch (Throwable t) {
+      log.error("flushTick failed", t);
+    }
   }
 
   private void flushTick() {
     CircuitBreaker cb = cbRegistry.circuitBreaker("dbWriter");
 
     if (cb.getState() == CircuitBreaker.State.OPEN) return;
-    drainAndUpdate(okQ,   true);
-
-    if (cb.getState() == CircuitBreaker.State.OPEN) return;
-    drainAndUpdate(failQ, false);
+    drainAndUpdate(okQ,
+        batch -> dbWriterAdapter.markSentResilient(batch, workerId),
+        this::onDbFail);
+    drainAndUpdate(failQ,
+        batch -> dbWriterAdapter.markRetryResilient(batch, workerId),
+        this::onDbFail);
   }
 
-  public void reportSuccess(long id) {
+  public void reportSuccess(long id, long sentAt) {
+
     try {
-      if (!okQ.offer(id)) {
+      if (!okQ.offer(new SuccessResult(id, sentAt))) {
         int size = okQ.size(), rem = okQ.remainingCapacity();
         log.atError()
             .addKeyValue("queue", "okQ")
@@ -77,6 +104,7 @@ public class ResultWriter implements AutoCloseable {
     }
   }
   public void reportFailure(long id) {
+
     try {
       if (!failQ.offer(id)) {
         int size = failQ.size(), rem = failQ.remainingCapacity();
@@ -99,32 +127,37 @@ public class ResultWriter implements AutoCloseable {
     }
   }
 
-  private void drainAndUpdate(BlockingQueue<Long> q, boolean success) {
+  private <E> void drainAndUpdate(BlockingQueue<E> q,
+      ThrowingConsumer<List<E>> process, BiConsumer<List<E>, BlockingQueue<E>> onFail) {
 
     CircuitBreaker cb = cbRegistry.circuitBreaker("dbWriter");
-    int batchSize = (cb.getState() == CircuitBreaker.State.HALF_OPEN)
-        ? Math.min(FLUSH_BATCH_SIZE, 50)
-        : FLUSH_BATCH_SIZE;
 
     while (true) {
-      ArrayList<Long> inFlight = new ArrayList<>(batchSize);
-      q.drainTo(inFlight, batchSize);
+      CircuitBreaker.State state = cb.getState();
+      if (state == CircuitBreaker.State.OPEN) {
+        break;
+      }
+      int batchSize = (state == CircuitBreaker.State.HALF_OPEN)
+          ? Math.min(FLUSH_BATCH_SIZE, 50)
+          : FLUSH_BATCH_SIZE;
 
+      ArrayList<E> inFlight = new ArrayList<>(batchSize);
+      q.drainTo(inFlight, batchSize);
       if (inFlight.isEmpty()) break;
 
       try {
-        if (success) dbWriterAdapter.markSentResilient(inFlight, workerId);
-        else dbWriterAdapter.markRetryResilient(inFlight, workerId);
+        process.accpet(inFlight);
+        if (state == CircuitBreaker.State.HALF_OPEN) break;
       } catch (Exception e) {
-        onDbFail(inFlight, q);
+        onFail.accept(inFlight, q);
         log.warn("drainAndUpdate DB failed; requeued {} items", inFlight.size(), e);
         break;
       }
     }
   }
 
-  private void onDbFail(List<Long> inFlight, BlockingQueue<Long> q) {
-    for (Long id : inFlight) {
+  private <E> void onDbFail(List<E> inFlight, BlockingQueue<E> q) {
+    for (E id : inFlight) {
       if (!q.offer(id)) {
         log.error("requeue overflow: id={}", id);
       }
@@ -134,7 +167,39 @@ public class ResultWriter implements AutoCloseable {
   @Override
   @PreDestroy
   public void close() {
-    flushTick();
+
     flushScheduler.shutdown();
+    boolean terminated = false;
+    try {
+      terminated = flushScheduler.awaitTermination(INTERVAL_MS, TimeUnit.MILLISECONDS);
+    } catch (InterruptedException ie) {
+      Thread.currentThread().interrupt();
+    }
+
+    final long budgetNanos = TimeUnit.MILLISECONDS.toNanos(500);
+    final long deadline = System.nanoTime() + budgetNanos;
+
+    while ((!(okQ.isEmpty() && failQ.isEmpty())) && System.nanoTime() < deadline) {
+      try {
+        flushTick();
+      } catch (Throwable t) {
+        log.warn("서버 종료를 위한 알림 결과 작성 스케쥴러 정리 중 오류가 발생하였습니다.", t);
+        break;
+      }
+    }
+
+    int okLeft = okQ.size(), failLeft = failQ.size();
+    if (okLeft + failLeft > 0) {
+      log.warn("종료 시 미처리 항목: okQ={}, failQ={}", okLeft, failLeft);
+    }
+
+    if (!terminated) {
+      flushScheduler.shutdownNow();
+    }
+  }
+
+  @FunctionalInterface
+  interface ThrowingConsumer<T> {
+    void accpet(T t) throws Exception;
   }
 }

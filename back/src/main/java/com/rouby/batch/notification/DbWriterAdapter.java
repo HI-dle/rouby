@@ -1,8 +1,9 @@
 package com.rouby.batch.notification;
 
+import com.rouby.notification.notificationEvent.domain.info.SuccessResult;
 import com.rouby.notification.notificationEvent.domain.repository.NotificationEventRepository;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.github.resilience4j.retry.annotation.Retry;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,14 +14,14 @@ public class DbWriterAdapter {
   private final NotificationEventRepository repo;
 
   @CircuitBreaker(name = "dbWriter")
-  @Retry(name = "dbWriter")
-  public void markSentResilient(java.util.List<Long> ids, String workerId) {
-    repo.markSent(ids, workerId);
+  public int markSentResilient(List<SuccessResult> successResults, String workerId) {
+    if (successResults == null || successResults.isEmpty()) return 0;
+    return repo.markSent(successResults, workerId);
   }
 
   @CircuitBreaker(name = "dbWriter")
-  @Retry(name = "dbWriter")
-  public void markRetryResilient(java.util.List<Long> ids, String workerId) {
-    repo.markRetry(ids, workerId);
+  public int markRetryResilient(List<Long> ids, String workerId) {
+    if (ids == null || ids.isEmpty()) return 0;
+    return repo.markRetry(ids, workerId);
   }
 }

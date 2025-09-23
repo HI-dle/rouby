@@ -2,12 +2,12 @@ package com.rouby.notification.notificationEvent.infrastructure.messaging.fcm;
 
 import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
+import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +24,7 @@ public class GoogleAccessTokenProvider {
   @PostConstruct
   void prewarm() throws IOException {
 
-    fcmGoogleCredentials.refreshIfExpired();
+    fcmGoogleCredentials.refresh();
     AccessToken t = fcmGoogleCredentials.getAccessToken();
     if (t != null) tokenRef.set(t);
   }

@@ -1,6 +1,7 @@
 package com.rouby.notification.notificationEvent.infrastructure.persistence;
 
 import com.rouby.notification.notificationEvent.domain.entity.NotificationEvent;
+import com.rouby.notification.notificationEvent.domain.info.SuccessResult;
 import com.rouby.notification.notificationEvent.domain.repository.NotificationEventRepository;
 import com.rouby.notification.notificationEvent.domain.info.NotificationEventInfo;
 import com.rouby.notification.notificationEvent.infrastructure.persistence.jdbc.NotificationEventJdbcRepository;
@@ -30,8 +31,8 @@ public class NotificationEventRepositoryImpl implements NotificationEventReposit
   }
 
   @Override
-  public int markSent(List<Long> ids, String workerId) {
-    return jdbcRepository.markSent(ids, workerId);
+  public int markSent(List<SuccessResult> successResults, String workerId) {
+    return jdbcRepository.markSent(successResults, workerId);
   }
 
   @Override

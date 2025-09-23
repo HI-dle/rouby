@@ -2,6 +2,7 @@ spring:
   config.activate.on-profile: local
 notification:
   dispatch:
+    maxConcurrent: 512
     limit: 200
     maxAttempt: 3
     timeBudgetSec: 50
@@ -12,18 +13,19 @@ notification:
       ontimeSec: 60
       backfillSec: 600
     lease:
-      ontimeSec: 60
+      ontimeSec: 45
       backfillSec: 30
   writer:
     flush:
       batch: 500
-      intervalMs: 200
+      intervalMs: 1000
 
 ---
 spring:
   config.activate.on-profile: test
 notification:
   dispatch:
+    maxConcurrent: 512
     limit: 200
     maxAttempt: 3
     timeBudgetSec: 50
@@ -34,9 +36,9 @@ notification:
       ontimeSec: 60
       backfillSec: 600
     lease:
-      ontimeSec: 60
+      ontimeSec: 45
       backfillSec: 30
   writer:
     flush:
       batch: 500
-      intervalMs: 200
+      intervalMs: 1000
