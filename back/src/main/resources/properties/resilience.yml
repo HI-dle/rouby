@@ -1,0 +1,78 @@
+spring:
+  config.activate.on-profile: local
+resilience4j:
+  circuitbreaker:
+    instances:
+      dbWriter:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 20            # 최근 20회 기준
+        minimumNumberOfCalls: 10
+        failureRateThreshold: 50         # 실패율 50% 이상이면 OPEN
+        waitDurationInOpenState: 10s      # OPEN 유지 시간
+        permittedNumberOfCallsInHalfOpenState: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        recordExceptions:
+          - org.springframework.dao.DeadlockLoserDataAccessException
+          - org.springframework.dao.CannotAcquireLockException
+          - org.springframework.dao.TransientDataAccessException
+          - java.sql.SQLTransientException
+          - java.sql.SQLRecoverableException
+        ignoreExceptions:
+          - java.lang.IllegalArgumentException
+      fcm:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 50
+        minimumNumberOfCalls: 20
+        failureRateThreshold: 50
+        slowCallRateThreshold: 50
+        slowCallDurationThreshold: 5s # 10s
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        writableStackTraceEnabled: true # false
+        recordExceptions:
+          - java.util.concurrent.TimeoutException
+          - reactor.netty.http.client.PrematureCloseException
+          - com.rouby.notification.notificationEvent.infrastructure.exception.NotificationEventFcmRetryableException
+        ignoreExceptions:
+          - com.rouby.notification.notificationEvent.infrastructure.exception.NotificationEventFcmException
+
+---
+spring:
+  config.activate.on-profile: test
+resilience4j:
+  circuitbreaker:
+    instances:
+      dbWriter:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 20            # 최근 20회 기준
+        minimumNumberOfCalls: 10
+        failureRateThreshold: 50         # 실패율 50% 이상이면 OPEN
+        waitDurationInOpenState: 5s      # OPEN 유지 시간
+        permittedNumberOfCallsInHalfOpenState: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        recordExceptions:
+          - org.springframework.dao.DeadlockLoserDataAccessException
+          - org.springframework.dao.CannotAcquireLockException
+          - org.springframework.dao.TransientDataAccessException
+          - java.sql.SQLTransientException
+          - java.sql.SQLRecoverableException
+        ignoreExceptions:
+          - java.lang.IllegalArgumentException
+      fcm:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 50
+        minimumNumberOfCalls: 20
+        failureRateThreshold: 50
+        slowCallRateThreshold: 50
+        slowCallDurationThreshold: 10s
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        writableStackTraceEnabled: false
+        recordExceptions:
+          - java.util.concurrent.TimeoutException
+          - reactor.netty.http.client.PrematureCloseException
+          - com.rouby.notification.notificationEvent.infrastructure.exception.NotificationEventFcmRetryableException
+        ignoreExceptions:
+          - com.rouby.notification.notificationEvent.infrastructure.exception.NotificationEventFcmException

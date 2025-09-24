@@ -1,4 +1,4 @@
-package com.rouby.batch.job.briefing.dto;
+package com.rouby.batch.briefing.dto;
 
 import com.rouby.assistant.briefing.application.dto.info.CreatedBriefingResult;
 import java.util.Objects;

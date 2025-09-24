@@ -1,9 +1,10 @@
-package com.rouby.batch.job.briefing.dto;
+package com.rouby.batch.briefing.dto;
 
 import com.rouby.notification.notificationEvent.domain.entity.DeviceTokenInfo;
 import com.rouby.notification.notificationEvent.domain.entity.NotificationEvent;
 import com.rouby.notification.notificationEvent.domain.entity.NotificationMessage;
 import com.rouby.notification.notificationEvent.domain.entity.NotificationType;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;
 
@@ -14,7 +15,8 @@ public record BriefingNotificationEvents(
     String title,
     String body,
     String url,
-    NotificationType notificationType
+    NotificationType notificationType,
+    LocalDateTime dueAt
 ) {
 
   public List<NotificationEvent> toEntities() {
@@ -27,6 +29,7 @@ public record BriefingNotificationEvents(
             .deviceTokenInfo(deviceTokenInfo)
             .message(buildNotificationMessage())
             .type(notificationType)
+            .dueAt(dueAt)
             .build())
         .toList();
   }

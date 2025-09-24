@@ -1,10 +1,10 @@
-package com.rouby.batch.config;
+package com.rouby.batch.briefing;
 
-import com.rouby.batch.job.briefing.dto.BriefingAggregate;
-import com.rouby.batch.job.briefing.dto.UserBriefingInfo;
-import com.rouby.batch.job.briefing.step.BriefingProcessor;
-import com.rouby.batch.job.briefing.step.BriefingReader;
-import com.rouby.batch.job.briefing.step.BriefingWriter;
+import com.rouby.batch.briefing.dto.BriefingAggregate;
+import com.rouby.batch.briefing.dto.UserBriefingInfo;
+import com.rouby.batch.briefing.step.BriefingProcessor;
+import com.rouby.batch.briefing.step.BriefingReader;
+import com.rouby.batch.briefing.step.BriefingWriter;
 import java.util.concurrent.Future;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -25,7 +25,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 @EnableBatchProcessing
 @RequiredArgsConstructor
-public class BatchConfig {
+public class BriefingBatchConfig {
 
   private final BriefingReader briefingReader;
   private final BriefingProcessor briefingProcessor;

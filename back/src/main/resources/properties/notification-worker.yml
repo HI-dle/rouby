@@ -1,0 +1,44 @@
+spring:
+  config.activate.on-profile: local
+notification:
+  dispatch:
+    maxConcurrent: 512
+    limit: 200
+    maxAttempt: 3
+    timeBudgetSec: 50
+    leadMs: 600
+    guardMs: 500
+    backfillMinutes: 10
+    ttl:
+      ontimeSec: 60
+      backfillSec: 600
+    lease:
+      ontimeSec: 45
+      backfillSec: 30
+  writer:
+    flush:
+      batch: 500
+      intervalMs: 1000
+
+---
+spring:
+  config.activate.on-profile: test
+notification:
+  dispatch:
+    maxConcurrent: 512
+    limit: 200
+    maxAttempt: 3
+    timeBudgetSec: 50
+    leadMs: 600
+    guardMs: 500
+    backfillMinutes: 10
+    ttl:
+      ontimeSec: 60
+      backfillSec: 600
+    lease:
+      ontimeSec: 45
+      backfillSec: 30
+  writer:
+    flush:
+      batch: 500
+      intervalMs: 1000

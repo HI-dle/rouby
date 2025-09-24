@@ -5,6 +5,7 @@ import com.rouby.notification.notificationEvent.domain.entity.NotificationEvent;
 import com.rouby.notification.notificationEvent.domain.entity.NotificationMessage;
 import com.rouby.notification.notificationEvent.domain.entity.NotificationType;
 import com.rouby.notification.notificationEvent.domain.entity.TokenProviderType;
+import com.rouby.notification.notificationEvent.domain.info.NotificationEventInfo;
 import lombok.Builder;
 
 @Builder
@@ -20,6 +21,17 @@ public record CreateNotificationEventCommand(
 
   public NotificationEvent toEntity() {
     return NotificationEvent.builder()
+        .userId(userId)
+        .deviceTokenInfo(buildDeviceTokenInfo())
+        .message(buildeNotificationMessage())
+        .type(NotificationType.parse(notificationType))
+        .build();
+  }
+
+
+  public NotificationEventInfo toInfo() {
+
+    return NotificationEventInfo.builder()
         .userId(userId)
         .deviceTokenInfo(buildDeviceTokenInfo())
         .message(buildeNotificationMessage())

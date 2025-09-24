@@ -11,10 +11,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
 @Getter
@@ -43,15 +45,39 @@ public class NotificationEvent extends LogBaseEntity {
   @Enumerated(EnumType.STRING)
   private SendStatus status;
 
+  @Column(nullable = false)
+  private LocalDateTime dueAt;
+
+  @Column
+  private LocalDateTime retryAt;
+
+  @Column
+  private LocalDateTime sentAt;
+
+  @Column(nullable = false)
+  private Integer attempt;
+
+  @Column
+  private LocalDateTime leaseUntil;
+
+  @Column
+  private String workerId;
+
+  @LastModifiedDate
+  @Column
+  private LocalDateTime updatedAt;
+
   @Builder
   private NotificationEvent(Long userId,
-      DeviceTokenInfo deviceTokenInfo, NotificationMessage message, NotificationType type) {
+      DeviceTokenInfo deviceTokenInfo, NotificationMessage message,
+      NotificationType type, LocalDateTime dueAt) {
 
     this.userId = userId;
     this.deviceTokenInfo = deviceTokenInfo;
     this.message = message;
     this.type = type;
-    this.status = SendStatus.READY;
+    this.status = SendStatus.PENDING;
+    this.dueAt = dueAt;
   }
 
   public void updateMessageUrl(String url) {
