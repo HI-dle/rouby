@@ -8,7 +8,7 @@ resilience4j:
         slidingWindowSize: 20            # 최근 20회 기준
         minimumNumberOfCalls: 10
         failureRateThreshold: 50         # 실패율 50% 이상이면 OPEN
-        waitDurationInOpenState: 5s      # OPEN 유지 시간
+        waitDurationInOpenState: 10s      # OPEN 유지 시간
         permittedNumberOfCallsInHalfOpenState: 5
         automaticTransitionFromOpenToHalfOpenEnabled: true
         recordExceptions:
@@ -18,7 +18,24 @@ resilience4j:
           - java.sql.SQLTransientException
           - java.sql.SQLRecoverableException
         ignoreExceptions:
-          - java.lang.IllegalArgumentException # 재시도해도 소용없는 것들
+          - java.lang.IllegalArgumentException
+      fcm:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 50
+        minimumNumberOfCalls: 20
+        failureRateThreshold: 50
+        slowCallRateThreshold: 50
+        slowCallDurationThreshold: 5s # 10s
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        writableStackTraceEnabled: true # false
+        recordExceptions:
+          - java.util.concurrent.TimeoutException
+          - reactor.netty.http.client.PrematureCloseException
+          - com.rouby.notification.notificationEvent.infrastructure.exception.NotificationEventFcmRetryableException
+        ignoreExceptions:
+          - com.rouby.notification.notificationEvent.infrastructure.exception.NotificationEventFcmException
 
 ---
 spring:
@@ -41,4 +58,21 @@ resilience4j:
           - java.sql.SQLTransientException
           - java.sql.SQLRecoverableException
         ignoreExceptions:
-          - java.lang.IllegalArgumentException # 재시도해도 소용없는 것들
+          - java.lang.IllegalArgumentException
+      fcm:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 50
+        minimumNumberOfCalls: 20
+        failureRateThreshold: 50
+        slowCallRateThreshold: 50
+        slowCallDurationThreshold: 10s
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        writableStackTraceEnabled: false
+        recordExceptions:
+          - java.util.concurrent.TimeoutException
+          - reactor.netty.http.client.PrematureCloseException
+          - com.rouby.notification.notificationEvent.infrastructure.exception.NotificationEventFcmRetryableException
+        ignoreExceptions:
+          - com.rouby.notification.notificationEvent.infrastructure.exception.NotificationEventFcmException

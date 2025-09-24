@@ -31,11 +31,10 @@ public class DispatcherThreadConfig {
     ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
     executor.setCorePoolSize(4);
     executor.setMaxPoolSize(8);
-    executor.setQueueCapacity(400);
+    executor.setQueueCapacity(1024);
     executor.setThreadNamePrefix("notiCb-");
     executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-    executor.setWaitForTasksToCompleteOnShutdown(true);
-    executor.setAwaitTerminationSeconds(30);
+    executor.setWaitForTasksToCompleteOnShutdown(false);
     executor.initialize();
     return executor;
   }

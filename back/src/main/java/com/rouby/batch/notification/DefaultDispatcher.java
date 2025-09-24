@@ -4,6 +4,11 @@ import com.rouby.notification.notificationEvent.domain.info.NotificationEventInf
 import com.rouby.notification.notificationEvent.domain.repository.NotificationEventRepository;
 import com.rouby.notification.notificationEvent.domain.sender.AsyncNotificationSender;
 import com.rouby.notification.notificationEvent.domain.sender.NotificationSender;
+import com.rouby.notification.notificationEvent.infrastructure.exception.NotificationEventFcmException;
+import com.rouby.notification.notificationEvent.infrastructure.exception.NotificationEventFcmRetryableException;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import jakarta.annotation.PostConstruct;
 import java.time.Clock;
 import java.time.Duration;
@@ -12,10 +17,13 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,6 +37,7 @@ import org.springframework.stereotype.Component;
 public class DefaultDispatcher implements NotificationDispatcher {
 
   private final Clock clock;
+  private final CircuitBreakerRegistry cbRegistry;
 
   @Qualifier("notificationSendExecutor")
   private final ThreadPoolTaskExecutor notificationSendExecutor;
@@ -107,22 +116,7 @@ public class DefaultDispatcher implements NotificationDispatcher {
         preciseTimer.schedule(() -> {
           if (!inFlight.tryAcquire()) { writer.reportFailure(ev.id()); return; }
           long sentAt = clock.millis();
-          sender.sendAsync(ev, ONTIME_TTL, sentAt, true)
-              .whenComplete((ok, ex) -> {
-                try {
-                  if (ex == null && Boolean.TRUE.equals(ok)) writer.reportSuccess(ev.id(), sentAt);
-                  else {
-                    writer.reportFailure(ev.id());
-                    if (ex != null) {
-                      log.error("fcm 알림 발송 처리 실패", ex);
-                    } else {
-                      log.warn("fcm 알림 발송 처리 실패: 응답은 false (예외 없음)");
-                    }
-                  }
-                } finally {
-                  inFlight.release();
-                }
-              });
+          sendWithCbRetry(ev, ONTIME_TTL, sentAt, true, deadlineNano, 1, 3);
           }, delayMs, TimeUnit.MILLISECONDS);
       }
 
@@ -131,6 +125,89 @@ public class DefaultDispatcher implements NotificationDispatcher {
         start = false;
       }
     } while (!ontime.isEmpty() && System.nanoTime() < deadlineNano);
+  }
+
+
+  private void backfillSendAsync(long deadlineNano) {
+
+    // 백필: 다음 트리거(nextSched) 직전까지만, guard 남기고 실행
+    while (System.nanoTime() < deadlineNano) {
+
+      List<NotificationEventInfo> late = notificationEventRepository.claimBackfill(
+          BACKFILL_MIN, MAX_ATTEMPT, LIMIT, writer.workerId(), LEASE_BACKFILL_SEC);
+      if (late.isEmpty()) break;
+
+      for (NotificationEventInfo ev : late) {
+
+        if (!inFlight.tryAcquire()) {
+          writer.reportFailure(ev.id());
+          continue;
+        }
+        long sentAt = clock.millis();
+        sendWithCbRetry(ev, BACKFILL_TTL, sentAt, true, deadlineNano, 1, 3);
+      }
+    }
+  }
+
+  private void sendWithCbRetry(NotificationEventInfo ev, int ttl, long sentAt,
+      boolean highPriority, long deadlineNano, int attempt, int maxAttempts) {
+
+    CircuitBreaker fcmCb = cbRegistry.circuitBreaker("fcm");
+    Supplier<CompletionStage<Boolean>> call =
+        CircuitBreaker.decorateCompletionStage(fcmCb, () -> sender.sendAsync(ev, ttl, sentAt, highPriority));
+
+    call.get().whenCompleteAsync((ok, ex) -> {
+      try {
+        boolean success = (ex == null && Boolean.TRUE.equals(ok));
+        if (success) { writer.reportSuccess(ev.id(), sentAt); return; }
+
+        if (ex instanceof CallNotPermittedException) {
+          writer.reportFailure(ev.id());
+          return;
+        }
+        if (!isTransient(ex)) {
+          writer.reportFailure(ev.id());
+          return;
+        }
+        if (attempt >= maxAttempts || System.nanoTime() >= deadlineNano) {
+          writer.reportFailure(ev.id());
+          return;
+        }
+
+        long backoffMs = computeBackoffMs(ex, attempt);
+        long next = clock.instant().getNano() + TimeUnit.MILLISECONDS.toNanos(backoffMs);
+        if (next >= deadlineNano) { writer.reportFailure(ev.id()); return; }
+
+        preciseTimer.schedule(
+            () -> sendWithCbRetry(ev, ttl, sentAt, highPriority, deadlineNano, attempt + 1, maxAttempts),
+            backoffMs, TimeUnit.MILLISECONDS);
+      } finally {
+        inFlight.release();
+      }
+    }, resultCallbackExecutor);
+  }
+
+  private boolean isTransient(Throwable t) {
+    Throwable root = (t.getCause() != null) ? t.getCause() : t;
+    if (root instanceof NotificationEventFcmException fe) {
+      int s = fe.getStatus().value();
+      return s == 429 || (s >= 500 && s < 600);
+    }
+    return (root instanceof java.util.concurrent.TimeoutException)
+        || (root instanceof reactor.netty.http.client.PrematureCloseException);
+  }
+
+  private long computeBackoffMs(Throwable t, int attempt) {
+    long base = 200L, max = 2_000L;
+    long exponential = Math.min(max, base << (attempt - 1));
+
+    Long retryAfter = (t instanceof NotificationEventFcmRetryableException fe) ? Long.valueOf(fe.getRetryAfter()) : null;
+    long ms = (retryAfter != null && retryAfter > 0) ? Math.max(exponential, retryAfter * 1000L) : exponential;
+
+    long jitter = (long)(ms * 0.2);
+    long delta = ThreadLocalRandom.current().nextLong(-jitter, jitter + 1);
+
+    return Math.max(100L, ms + delta);
   }
 
   private void ontimeSend(Instant sched, long deadlineNano) {
@@ -154,52 +231,16 @@ public class DefaultDispatcher implements NotificationDispatcher {
                       long sentAt = clock.millis();
                       return basicSender.send(ev, ONTIME_TTL, sentAt, true);
                     },
-                  notificationSendExecutor)
-              .whenCompleteAsync((ok, ex) -> {
-                if (ex == null && Boolean.TRUE.equals(ok)) writer.reportSuccess(ev.id(), clock.millis());
-                else writer.reportFailure(ev.id());
-              }, resultCallbackExecutor);
+                    notificationSendExecutor)
+                .whenCompleteAsync((ok, ex) -> {
+                  if (ex == null && Boolean.TRUE.equals(ok)) writer.reportSuccess(ev.id(), clock.millis());
+                  else writer.reportFailure(ev.id());
+                }, resultCallbackExecutor);
           } catch (RejectedExecutionException rex) {
             writer.reportFailure(ev.id());
           }}, delayMs, TimeUnit.MILLISECONDS);
       }
     } while (!ontime.isEmpty() && System.nanoTime() < deadlineNano);
-  }
-
-  private void backfillSendAsync(long deadlineNano) {
-
-    // 백필: 다음 트리거(nextSched) 직전까지만, guard 남기고 실행
-    while (System.nanoTime() < deadlineNano) {
-
-      List<NotificationEventInfo> late = notificationEventRepository.claimBackfill(
-          BACKFILL_MIN, MAX_ATTEMPT, LIMIT, writer.workerId(), LEASE_BACKFILL_SEC);
-      if (late.isEmpty()) break;
-
-      for (NotificationEventInfo ev : late) {
-
-        if (!inFlight.tryAcquire()) {
-          writer.reportFailure(ev.id());
-          continue;
-        }
-        long sentAt = clock.millis();
-        sender.sendAsync(ev, BACKFILL_TTL, sentAt, true)
-            .whenComplete((ok, ex) -> {
-              try {
-                if (ex == null && Boolean.TRUE.equals(ok)) writer.reportSuccess(ev.id(), sentAt);
-                else {
-                  writer.reportFailure(ev.id());
-                  if (ex != null) {
-                    log.error("fcm 알림 발송 처리 실패", ex);
-                  } else {
-                    log.warn("fcm 알림 발송 처리 실패: 응답은 false (예외 없음)");
-                  }
-                }
-              } finally {
-                inFlight.release();
-              }
-            });
-      }
-    }
   }
 
   private void backfillSend(long deadlineNano) {
