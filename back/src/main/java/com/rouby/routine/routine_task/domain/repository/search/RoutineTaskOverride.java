@@ -10,6 +10,7 @@ import java.time.LocalDate;
  */
 public record RoutineTaskOverride(Long id,
                                   String title,
+                                  Integer targetValue,
                                   RoutineTimeInfo routineTimeInfo,
                                   OverrideType overrideType,
                                   LocalDate overrideDate) {

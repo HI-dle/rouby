@@ -30,6 +30,7 @@ public record GetRoutineTaskResponse(
         .id(task.id())
         .userId(task.userId())
         .title(task.title())
+        .target(task.targetValue())
         .taskType(task.taskType())
         .alarmOffsetMinutes(task.alarmOffsetMinutes())
         .routineTimeInfo(mapToRoutineTimeInfo(task.routineTimeInfo()))
@@ -94,6 +95,7 @@ public record GetRoutineTaskResponse(
       Long id,
       Long userId,
       String title,
+      Integer target,
       String taskType,
       Integer alarmOffsetMinutes,
       RoutineTimeInfoResponse routineTimeInfo,

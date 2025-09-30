@@ -37,9 +37,11 @@ public class RoutineTaskJpaRepositoryCustomImpl implements RoutineTaskJpaReposit
             parent.routineTimeInfo,
             parent.recurrenceRule,
             parent.alarmOffsetType,
+            parent.targetValue,
             child.id,
             child.title,
             child.routineTimeInfo,
+            child.targetValue,
             child.overrideInfo.overrideType,
             child.overrideInfo.overrideDate
         )
@@ -98,6 +100,7 @@ public class RoutineTaskJpaRepositoryCustomImpl implements RoutineTaskJpaReposit
                   .map(t -> new RoutineTaskOverride(
                       t.get(child.id),
                       t.get(child.title),
+                      t.get(child.targetValue),
                       t.get(child.routineTimeInfo),
                       t.get(child.overrideInfo.overrideType),
                       t.get(child.overrideInfo.overrideDate)
@@ -110,6 +113,7 @@ public class RoutineTaskJpaRepositoryCustomImpl implements RoutineTaskJpaReposit
                   main.get(parent.userId),
                   main.get(parent.title),
                   main.get(parent.taskType),
+                  main.get(parent.targetValue),
                   main.get(parent.routineTimeInfo),
                   main.get(parent.recurrenceRule),
                   main.get(parent.alarmOffsetType),

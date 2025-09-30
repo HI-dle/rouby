@@ -34,7 +34,6 @@ public class RoutineTaskFacade {
 
     List<DailyTask> dailyTasks = dailyTaskReadService
         .getDailyTasks(routineIds, command.fromDate(), command.toDate());
-
     return GetRoutineTaskInfo.ofWithProgress(routines, dailyTasks);
   }
 }
