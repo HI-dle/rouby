@@ -93,6 +93,7 @@ class RoutineTaskControllerTest extends ControllerTestSupport {
     GetRoutineTaskInfo.RoutineTaskOverrideDto overrideDto = GetRoutineTaskInfo.RoutineTaskOverrideDto.builder()
         .id(100L)
         .title("오버라이드 제목")
+        .targetValue(1)
         .routineTimeInfo(
             GetRoutineTaskInfo.RoutineTimeInfoDto.builder()
                 .startDate(LocalDate.of(2025, 8, 5))
@@ -128,6 +129,7 @@ class RoutineTaskControllerTest extends ControllerTestSupport {
         .id(1L)
         .userId(1L)
         .title("물 마시기")
+        .targetValue(1)
         .taskType("COUNT")
         .alarmOffsetMinutes(5)
         .routineTimeInfo(
@@ -177,6 +179,7 @@ class RoutineTaskControllerTest extends ControllerTestSupport {
                 fieldWithPath("routineTasks[].userId").description("사용자 ID"),
                 fieldWithPath("routineTasks[].title").description("루틴 제목"),
                 fieldWithPath("routineTasks[].taskType").description("루틴 타입 (COUNT, CHECK 등)"),
+                fieldWithPath("routineTasks[].targetValue").description("루틴 목표 값"),
                 fieldWithPath("routineTasks[].alarmOffsetMinutes").description("알람 옵셋 분 (예: 5분 전 알림)"),
                 fieldWithPath("routineTasks[].routineTimeInfo.startDate").description("루틴 시작일"),
                 fieldWithPath("routineTasks[].routineTimeInfo.untilDate").description("루틴 종료일"),
@@ -190,6 +193,8 @@ class RoutineTaskControllerTest extends ControllerTestSupport {
                 fieldWithPath("routineTasks[].routineOverrides").description("오버라이드 목록"),
                 fieldWithPath("routineTasks[].routineOverrides[].id").description("오버라이드 ID"),
                 fieldWithPath("routineTasks[].routineOverrides[].title").description("오버라이드 루틴 제목"),
+                fieldWithPath("routineTasks[].routineOverrides[].targetValue").description(
+                    "오버라이드 목표 값"),
                 fieldWithPath("routineTasks[].routineOverrides[].overrideType").description("오버라이드 타입"),
                 fieldWithPath("routineTasks[].routineOverrides[].overrideTypeDesc").description("오버라이드 타입 설명"),
                 fieldWithPath("routineTasks[].routineOverrides[].overrideDate").description("오버라이드 날짜"),
