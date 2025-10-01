@@ -30,6 +30,7 @@ public record GetRoutineTaskResponse(
         .id(task.id())
         .userId(task.userId())
         .title(task.title())
+        .targetValue(task.targetValue())
         .taskType(task.taskType())
         .alarmOffsetMinutes(task.alarmOffsetMinutes())
         .routineTimeInfo(mapToRoutineTimeInfo(task.routineTimeInfo()))
@@ -74,6 +75,7 @@ public record GetRoutineTaskResponse(
     return RoutineTaskOverrideResponse.builder()
         .id(override.id())
         .title(override.title())
+        .targetValue(override.targetValue())
         .routineTimeInfo(mapToRoutineTimeInfo(override.routineTimeInfo()))
         .overrideType(override.overrideType())
         .overrideTypeDesc(override.overrideTypeDesc())
@@ -94,6 +96,7 @@ public record GetRoutineTaskResponse(
       Long id,
       Long userId,
       String title,
+      Integer targetValue,
       String taskType,
       Integer alarmOffsetMinutes,
       RoutineTimeInfoResponse routineTimeInfo,
@@ -133,6 +136,7 @@ public record GetRoutineTaskResponse(
   public record RoutineTaskOverrideResponse(
       Long id,
       String title,
+      Integer targetValue,
       RoutineTimeInfoResponse routineTimeInfo,
       String overrideType,
       String overrideTypeDesc,

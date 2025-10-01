@@ -53,8 +53,10 @@ public record GetRoutineTaskInfo(
         .id(task.id())
         .userId(task.userId())
         .title(task.title())
+        .targetValue(task.targetValue())
         .taskType(task.taskType().name())
-        .alarmOffsetMinutes(task.alarmOffsetType() == null ? null : task.alarmOffsetType().getMinutes())
+        .alarmOffsetMinutes(
+            task.alarmOffsetType() == null ? null : task.alarmOffsetType().getMinutes())
         .routineTimeInfo(mapToRoutineTimeInfo(task.routineTimeInfo()))
         .recurrenceRule(mapToRecurrenceRule(task.recurrenceRule()))
         .routineOverrides(
@@ -84,6 +86,7 @@ public record GetRoutineTaskInfo(
         .id(task.id())
         .userId(task.userId())
         .title(task.title())
+        .targetValue(task.targetValue())
         .taskType(task.taskType().name())
         .alarmOffsetMinutes(task.alarmOffsetType() == null ? null : task.alarmOffsetType().getMinutes())
         .routineTimeInfo(mapToRoutineTimeInfo(task.routineTimeInfo()))
@@ -131,6 +134,7 @@ public record GetRoutineTaskInfo(
     return RoutineTaskOverrideDto.builder()
         .id(override.id())
         .title(override.title())
+        .targetValue(override.targetValue())
         .routineTimeInfo(mapToRoutineTimeInfo(override.routineTimeInfo()))
         .overrideType(override.overrideType() != null ? override.overrideType().name() : null)
         .overrideTypeDesc(override.overrideType() != null ? override.overrideType().getDesc() : null)
@@ -146,6 +150,7 @@ public record GetRoutineTaskInfo(
       Long userId,
       String title,
       String taskType,
+      Integer targetValue,
       Integer alarmOffsetMinutes,
       RoutineTimeInfoDto routineTimeInfo,
       RecurrenceRuleDto recurrenceRule,
@@ -177,6 +182,7 @@ public record GetRoutineTaskInfo(
   public record RoutineTaskOverrideDto(
       Long id,
       String title,
+      Integer targetValue,
       RoutineTimeInfoDto routineTimeInfo,
       String overrideType,
       String overrideTypeDesc,
