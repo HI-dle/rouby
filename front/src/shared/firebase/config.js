@@ -57,7 +57,49 @@ if (!globalThis.__firebaseApp__) {
 }
 export const app = globalThis.__firebaseApp__
 export const regSw = await ensureSw()
+
 const toast = useToast()
+
+const seen = new Map()
+const DEDUPE_CH = 'noti-dedupe'
+const MAX_SEEN = 1000
+const TRIM_COUNT = 500
+
+const bc = 'BroadcastChannel' in window ? new BroadcastChannel(DEDUPE_CH) : null
+bc?.onmessage = (e) => {
+  const { id, ts } = e.data || {}
+  if (id) seen.set(id, ts)
+}
+
+const markAndCheckSeen = (id) => {
+  if (seen.has(id)) return true
+
+  const now = Date.now()
+  seen.set(id, now)
+
+  if (seen.size > MAX_SEEN) {
+    let i = 0
+    for (const key of seen.keys()) {
+      seen.delete(key)
+      if (++i >= TRIM_COUNT) break
+    }
+  }
+
+  if (bc) bc.postMessage({ id, ts: now })
+  else navigator.serviceWorker?.controller?.postMessage({ id, ts: now })
+  return false
+}
+
+// --- 탭 간 수신(BC 우선, SW 폴백) ---
+const resolvePropagatedEvent = (e) => {
+  const { id, ts } = e.data || {}
+  if (id && typeof ts === 'number') {
+    const prev = seen.get(id) ?? 0
+    if (ts > prev) seen.set(id, ts)
+  }
+}
+bc?.addEventListener('message', resolvePropagatedEvent)
+navigator.serviceWorker?.addEventListener('message', resolvePropagatedEvent)
 
 let isForegroundListenerRegistered = false
 export const listenForeground = () => {
@@ -67,6 +109,9 @@ export const listenForeground = () => {
 
   const messaging = getMessaging(app)
   onMessage(messaging, async (payload) => {
+    const id = payload.data?.eventId
+    if (id && markAndCheckSeen(id)) return
+
     const title = payload.notification?.title ?? payload.data?.title ?? '알림'
     const body = payload.notification?.body ?? payload.data?.body ?? ''
     const url = payload.fcmOptions?.link ?? payload.data?.url ?? '/'
@@ -83,8 +128,8 @@ export const listenForeground = () => {
             DEFAULT_ICON_PATH,
           badge: DEFAULT_BADGE_PATH,
           data: { url },
-          tag: payload.data?.tag ?? 'rouby',
-          renotify: true,
+          tag: id ? 'evt:' + id : (payload.data?.tag ?? 'rouby'),
+          renotify: false,
           requireInteraction: false,
         })
         return

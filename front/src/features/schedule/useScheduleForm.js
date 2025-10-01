@@ -51,6 +51,7 @@ export const useScheduleForm = (initValues = {}) => {
       repeat: null,
     })
   }
+
   const form = createInitialForm()
   const isSubmitting = ref(false)
   const errors = reactive({})
