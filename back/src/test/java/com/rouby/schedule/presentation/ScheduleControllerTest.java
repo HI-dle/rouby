@@ -280,7 +280,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
   }
 
   @WithMockCustomUser
-  @DisplayName("스케쥴 단일 삭제 API - 성공 200")
+  @DisplayName("스케쥴 단일 삭제 API - 성공 204")
   @Test
   void deleteSchedule() throws Exception {
 
@@ -315,7 +315,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
   }
 
   @WithMockCustomUser
-  @DisplayName("스케쥴 반복 이후 삭제 API - 성공 200")
+  @DisplayName("스케쥴 반복 이후 삭제 API - 성공 204")
   @Test
   void deleteScheduleFrom() throws Exception {
 
