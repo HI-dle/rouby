@@ -20,6 +20,7 @@ function getMonthRange(monthKey) {
 }
 
 function createIcalComponent(rruleStr, dtstart) {
+  console.log(rruleStr)
   const vevent = new ICAL.Component('vevent')
   const event = new ICAL.Event(vevent)
 
@@ -60,6 +61,7 @@ function expandRecurringSchedule(schedule, monthKey) {
   const { rangeStart, rangeEnd } = getMonthRange(monthKey)
 
   // 반복이 없는 경우
+  console.log(recurrence)
   if (!recurrence || !recurrence.rruleStr) {
     return expandMultiDaySchedule(
       {
@@ -75,10 +77,11 @@ function expandRecurringSchedule(schedule, monthKey) {
 
   // 반복이 있는 경우
   const overrideDates = new Set(
-    (schedule.scheduleOverrides || []).map((o) =>
-      format(parseISO(o.overrideDate), 'yyyy-MM-dd'),
-    ),
+    (schedule.scheduleOverrides || [])
+    .filter(o => o.overrideDate && o.overrideType?.toUpperCase() !== 'CANCELLED')
+    .map(o => format(parseISO(o.overrideDate), 'yyyy-MM-dd'))
   )
+
 
   const event = createIcalComponent(
     recurrence.rruleStr,
@@ -91,6 +94,10 @@ function expandRecurringSchedule(schedule, monthKey) {
   while ((next = iterator.next())) {
     const nextDate = next.toJSDate()
     if (nextDate > rangeEnd) break
+
+    console.log("언틸" + recurrence.until)
+    // 반복 종료 체크: recurrence.until 또는 untilAt 반영
+    if (recurrence.until && nextDate > parseISO(recurrence.until)) break
 
     const dateKey = format(nextDate, 'yyyy-MM-dd')
 
@@ -113,8 +120,10 @@ function expandRecurringSchedule(schedule, monthKey) {
     )
   }
 
+  // ---------- overridesType이 cancelled면 필터링하자
   // 오버라이드 된 일정 추가
   for (const override of schedule.scheduleOverrides || []) {
+    if (override.overrideType?.toUpperCase() === 'CANCELLED') continue
     const oStart = parseISO(override.startAt)
     const oEnd = parseISO(override.endAt)
 

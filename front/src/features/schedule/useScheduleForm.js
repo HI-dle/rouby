@@ -1,14 +1,15 @@
-import { nextTick, reactive, ref, watch } from 'vue'
-import { addDays, subDays } from 'date-fns'
+import {nextTick, reactive, ref, watch} from 'vue'
+import {addDays, subDays} from 'date-fns'
+import {convertDateToDateTime, formatDateTime, isMidnight,} from '@/shared/utils/dateTimeUtils'
+import {validateForm} from './validations'
 import {
-  convertDateToDateTime,
-  formatDateTime,
-  isMidnight,
-} from '@/shared/utils/dateTimeUtils'
-import { validateForm } from './validations'
-import { createSchedule, updateSchedule } from './scheduleService'
-import { useScheduleStore } from '@/stores/useScheduleStore'
-import { useDatePickStore } from '@/stores/useDatePickStore'
+  createSchedule,
+  deleteSchedule,
+  deleteSchedulesStartingFrom,
+  updateSchedule
+} from './scheduleService'
+import {useScheduleStore} from '@/stores/useScheduleStore'
+import {useDatePickStore} from '@/stores/useDatePickStore'
 
 export const useScheduleForm = (initValues = {}) => {
   const datePickStore = useDatePickStore()
@@ -22,8 +23,8 @@ export const useScheduleForm = (initValues = {}) => {
       datePickStore.setSelectedDate(baseDate)
     } else if (datePickStore.selectedDate) {
       const [year, month, day] = datePickStore.selectedDate
-        .split('-')
-        .map(Number)
+      .split('-')
+      .map(Number)
       baseDate = new Date(
         year,
         month - 1,
@@ -36,18 +37,18 @@ export const useScheduleForm = (initValues = {}) => {
     const endDate =
       initValues.end != null
         ? new Date(
-            initValues.allDay ? subDays(initValues.end, 1) : initValues.end,
-          )
+          initValues.allDay ? subDays(initValues.end, 1) : initValues.end,
+        )
         : new Date(baseDate.getTime() + 60 * 60 * 1000)
 
     return reactive({
       title: '',
       memo: '',
       allDay: initValues.allDay ?? false,
-      start: formatDateTime(baseDate, { noMins: true }),
-      end: formatDateTime(endDate, { noMins: true }),
+      start: formatDateTime(baseDate, {noMins: true}),
+      end: formatDateTime(endDate, {noMins: true}),
       alarmOffsetMinutes: null,
-      routineStart: formatDateTime(baseDate, { type: 'date' }),
+      routineStart: formatDateTime(baseDate, {type: 'date'}),
       repeat: null,
     })
   }
@@ -66,7 +67,7 @@ export const useScheduleForm = (initValues = {}) => {
     form.start = initialData.startAt
     form.end = initialData.endAt
     form.alarmOffsetMinutes = initialData.alarmOffsetMinutes ?? null
-    form.routineStart = formatDateTime(new Date(initialData.instanceDate), { type: 'date' })
+    form.routineStart = formatDateTime(new Date(initialData.instanceDate), {type: 'date'})
     form.repeat = initialData.recurrenceRule?.freq || null
   }
 
@@ -96,66 +97,97 @@ export const useScheduleForm = (initValues = {}) => {
   }
 
   const onSubmit = async (onSuccess, onError) => {
-      if (isSubmitting.value) return
-
-      if (!validateForm(form, errors)) {
-        focusFirstInvalidInput()
-        return false
-      }
-
-      isSubmitting.value = true
-      try {
-        const schedule = await createSchedule(form)
-        addRawSchedule(schedule)
-
-        await nextTick()
-        onSuccess?.(schedule.id)
-        return schedule.id
-      } catch (err) {
-        const msg = err.response?.data?.message || err.message || '저장 실패'
-        onError?.(msg)
-        return null
-      } finally {
-        isSubmitting.value = false
-      }
+    if (isSubmitting.value) {
+      return
     }
+
+    if (!validateForm(form, errors)) {
+      focusFirstInvalidInput()
+      return false
+    }
+
+    isSubmitting.value = true
+    try {
+      const schedule = await createSchedule(form)
+      addRawSchedule(schedule)
+
+      await nextTick()
+      onSuccess?.(schedule.id)
+      return schedule.id
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message || '저장 실패'
+      onError?.(msg)
+      return null
+    } finally {
+      isSubmitting.value = false
+    }
+  }
 
   const onSubmitForModify = async (dailySchedule, onSuccess, onError) => {
-      if (isSubmitting.value) return
+    if (isSubmitting.value) {
+      return
+    }
 
-      if (!validateForm(form, errors)) {
-        await focusFirstInvalidInput()
-        return false
-      }
+    if (!validateForm(form, errors)) {
+      await focusFirstInvalidInput()
+      return false
+    }
 
-      isSubmitting.value = true
+    isSubmitting.value = true
+    try {
+      // 수정 API 호출
+      const updatedSchedule = await updateSchedule(form, dailySchedule)
+
+      // 스토어 초기화 후 다시 fetch
+      datePickStore.setSelectedDate(new Date(updatedSchedule.startAt))
+      await refetchSchedulesByPeriod()
+      await nextTick()
+      onSuccess?.(updatedSchedule.id)
+      return updatedSchedule.id
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message || '수정 실패'
+      onError?.(msg)
+      return null
+    } finally {
+      isSubmitting.value = false
+    }
+  }
+
+  const onDeleteOne = async ({scheduleId, instanceDate, startAt, endAt}, onSuccess, onError) => {
+    try {
+      await deleteSchedule({scheduleId, instanceDate, startAt, endAt})
+      datePickStore.setSelectedDate(new Date(startAt))
+      await refetchSchedulesByPeriod()
+      await nextTick()
+      onSuccess?.()
+    } catch (err) {
+      onError?.(err.response?.data?.message || '삭제 실패')
+    }
+  }
+
+  const onDeleteAll = async ({scheduleId, fromAt}, onSuccess, onError) => {
       try {
-        // 수정 API 호출
-        const updatedSchedule = await updateSchedule(form, dailySchedule)
-
-        // 스토어 초기화 후 다시 fetch
-        datePickStore.setSelectedDate(new Date(updatedSchedule.startAt))
+        await deleteSchedulesStartingFrom({scheduleId, fromAt})
+        datePickStore.setSelectedDate(new Date(fromAt))
         await refetchSchedulesByPeriod()
         await nextTick()
-        onSuccess?.(updatedSchedule.id)
-        return updatedSchedule.id
+        onSuccess?.()
       } catch (err) {
-        const msg = err.response?.data?.message || err.message || '수정 실패'
-        onError?.(msg)
-        return null
-      } finally {
-        isSubmitting.value = false
+        onError?.(err.response?.data?.message || '이후 일정 삭제 실패')
       }
     }
 
-  // 에러 클리어링 watchers
+
+    // 에러 클리어링 watchers
   ;['title', 'start', 'end', 'routineStart'].forEach((key) => {
     watch(
       () => form[key],
       (newVal) => {
         if (newVal) {
           let errorKey = key
-          if (['start', 'end'].includes(key)) errorKey = 'period'
+          if (['start', 'end'].includes(key)) {
+            errorKey = 'period'
+          }
           delete errors[errorKey]
         }
       },
@@ -174,7 +206,7 @@ export const useScheduleForm = (initValues = {}) => {
         form.end = formatDateTime(subDays(endDate, 1))
       }
     },
-    { immediate: false },
+    {immediate: false},
   )
 
   return {
@@ -186,6 +218,8 @@ export const useScheduleForm = (initValues = {}) => {
     onDateTimeInput,
     onSubmit,
     onSubmitForModify,
+    onDeleteOne,
+    onDeleteAll,
     initializeForModify,
   }
 }
