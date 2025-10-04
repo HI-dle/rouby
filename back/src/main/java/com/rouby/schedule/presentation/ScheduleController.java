@@ -71,7 +71,7 @@ public class ScheduleController {
       @AuthenticationPrincipal SecurityUser securityUser, @RequestBody @Validated DeleteScheduleRequest req) {
 
     scheduleFacade.deleteSchedule(securityUser.getId(), req.toCommand());
-    return ResponseEntity.ok().build();
+    return ResponseEntity.noContent().build();
   }
 
   // 이후 일정 삭제
@@ -81,6 +81,6 @@ public class ScheduleController {
       @AuthenticationPrincipal SecurityUser securityUser, @RequestBody @Validated DeleteScheduleFromRequest req) {
 
     scheduleFacade.deleteSchedulesStartingFrom(securityUser.getId(), req.toCommand());
-    return ResponseEntity.ok().build();
+    return ResponseEntity.noContent().build();
   }
 }
