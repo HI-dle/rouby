@@ -1,6 +1,8 @@
 package com.rouby.schedule.presentation;
 
 import com.rouby.schedule.application.facade.ScheduleFacade;
+import com.rouby.schedule.presentation.dto.DeleteScheduleFromRequest;
+import com.rouby.schedule.presentation.dto.DeleteScheduleRequest;
 import com.rouby.schedule.presentation.dto.request.CreateScheduleRequest;
 import com.rouby.schedule.presentation.dto.request.GetScheduleRequest;
 import com.rouby.schedule.presentation.dto.request.UpdateScheduleRequest;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -59,5 +62,25 @@ public class ScheduleController {
 
     Long scheduleId = scheduleFacade.updateSchedule(securityUser.getId(), req.toCommand());
     return ResponseEntity.ok().body(scheduleId);
+  }
+
+  // 하나만 삭제
+  @PreAuthorize("hasAnyRole('USER')")
+  @DeleteMapping
+  public ResponseEntity<Void> deleteSchedule(
+      @AuthenticationPrincipal SecurityUser securityUser, @RequestBody @Validated DeleteScheduleRequest req) {
+
+    scheduleFacade.deleteSchedule(securityUser.getId(), req.toCommand());
+    return ResponseEntity.ok().build();
+  }
+
+  // 이후 일정 삭제
+  @PreAuthorize("hasAnyRole('USER')")
+  @DeleteMapping("/from")
+  public ResponseEntity<Void> deleteSchedulesStartingFrom(
+      @AuthenticationPrincipal SecurityUser securityUser, @RequestBody @Validated DeleteScheduleFromRequest req) {
+
+    scheduleFacade.deleteSchedulesStartingFrom(securityUser.getId(), req.toCommand());
+    return ResponseEntity.ok().build();
   }
 }

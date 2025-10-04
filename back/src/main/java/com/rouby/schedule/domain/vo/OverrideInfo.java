@@ -31,6 +31,10 @@ public class OverrideInfo {
     this.overrideDate = overrideDate;
   }
 
+  public void cancel() {
+    this.overrideType = CANCELLED;
+  }
+
   public boolean isCancelled() {
     return overrideType == CANCELLED;
   }

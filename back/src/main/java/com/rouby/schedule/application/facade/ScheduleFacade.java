@@ -1,5 +1,7 @@
 package com.rouby.schedule.application.facade;
 
+import com.rouby.schedule.application.dto.DeleteScheduleCommand;
+import com.rouby.schedule.application.dto.DeleteScheduleFromCommand;
 import com.rouby.schedule.application.dto.command.CreateScheduleCommand;
 import com.rouby.schedule.application.dto.command.UpdateScheduleCommand;
 import com.rouby.schedule.application.dto.info.SchedulesInfo;
@@ -26,5 +28,14 @@ public class ScheduleFacade {
 
   public Long updateSchedule(Long userId, UpdateScheduleCommand command) {
     return scheduleWriteService.updateSchedule(userId, command);
+  }
+
+  public void deleteSchedule(Long userId, DeleteScheduleCommand command) {
+    scheduleWriteService.deleteSchedule(userId, command);
+  }
+
+  public void deleteSchedulesStartingFrom(Long userId, DeleteScheduleFromCommand command) {
+    scheduleWriteService.deleteFromSchedule(userId, command);
+
   }
 }

@@ -21,7 +21,7 @@ public record UpdateScheduleCommand(
 ) {
 
   public Schedule toEntityWithUserId(Long userId, Schedule parentSchedule) {
-    return Schedule.createByModify(
+    return Schedule.createByOverride(
         userId,
         title,
         memo,
