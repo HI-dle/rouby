@@ -20,7 +20,6 @@ function getMonthRange(monthKey) {
 }
 
 function createIcalComponent(rruleStr, dtstart) {
-  console.log(rruleStr)
   const vevent = new ICAL.Component('vevent')
   const event = new ICAL.Event(vevent)
 

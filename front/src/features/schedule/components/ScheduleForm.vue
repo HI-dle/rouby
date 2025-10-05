@@ -21,7 +21,7 @@ const props = defineProps({
     default: 'create', // 'create' | 'edit'
   },
 })
-const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
+const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize', 'deleteOne', 'deleteAll'])
 const deleteModal = ref(false);
 </script>
 
