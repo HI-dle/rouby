@@ -1,13 +1,13 @@
 import ICAL from 'ical.js'
 import {
-  parseISO,
-  format,
-  startOfMonth,
   endOfMonth,
+  format,
   isAfter,
-  isSameDay,
-  startOfDay,
   isBefore,
+  isSameDay,
+  parseISO,
+  startOfDay,
+  startOfMonth,
 } from 'date-fns'
 import { isAllDay } from './dateUtils'
 
@@ -33,11 +33,15 @@ function expandMultiDaySchedule(base, start, end, rangeStart, rangeEnd) {
   const result = []
 
   let startDate = new Date(start)
-  if (isBefore(startDate, rangeStart)) startDate = rangeStart
+  if (isBefore(startDate, rangeStart)) {
+    startDate = rangeStart
+  }
 
   for (let d = startOfDay(startDate); d < end; d.setDate(d.getDate() + 1)) {
     const dCopy = new Date(d)
-    if (isAfter(dCopy, rangeEnd)) break
+    if (isAfter(dCopy, rangeEnd)) {
+      break
+    }
 
     const dKey = format(dCopy, 'yyyy-MM-dd')
     result.push({
@@ -90,11 +94,15 @@ function expandRecurringSchedule(schedule, monthKey) {
   let next
   while ((next = iterator.next())) {
     const nextDate = next.toJSDate()
-    if (nextDate > rangeEnd) break
+    if (nextDate > rangeEnd) {
+      break
+    }
 
     const dateKey = format(nextDate, 'yyyy-MM-dd')
 
-    if (overrideDates.has(dateKey)) continue // 오버라이드는 아래 따로 추가
+    if (overrideDates.has(dateKey)) {
+      continue
+    } // 오버라이드는 아래 따로 추가
 
     const start = new Date(nextDate)
     const end = new Date(start.getTime() + durationMs)
@@ -136,19 +144,27 @@ function expandRecurringSchedule(schedule, monthKey) {
 
 const compareSchedule = (a, b) => {
   // 1) 여러날 일정 우선
-  if (a.isContinued !== b.isContinued) return a.isContinued ? -1 : 1
+  if (a.isContinued !== b.isContinued) {
+    return a.isContinued ? -1 : 1
+  }
 
   // 2) 하루종일(>=24h) 우선
   const aAll = isAllDay(a.startAt, a.endAt)
   const bAll = isAllDay(b.startAt, b.endAt)
-  if (aAll !== bAll) return aAll ? -1 : 1
+  if (aAll !== bAll) {
+    return aAll ? -1 : 1
+  }
 
   // 3) 시작시간 오름차순
   const as = new Date(a.startAt)
   const bs = new Date(b.startAt)
   if (as && bs) {
-    if (isBefore(as, bs)) return -1
-    if (isBefore(bs, as)) return 1
+    if (isBefore(as, bs)) {
+      return -1
+    }
+    if (isBefore(bs, as)) {
+      return 1
+    }
   } else if (as || bs) {
     // 시작시간 없는 건 뒤로
     return as ? -1 : 1
@@ -158,8 +174,12 @@ const compareSchedule = (a, b) => {
   const ae = new Date(a.endAt)
   const be = new Date(b.endAt)
   if (ae && be) {
-    if (isBefore(ae, be)) return -1
-    if (isBefore(be, ae)) return 1
+    if (isBefore(ae, be)) {
+      return -1
+    }
+    if (isBefore(be, ae)) {
+      return 1
+    }
   } else if (ae || be) {
     return ae ? -1 : 1
   }
@@ -183,7 +203,9 @@ export function expandSchedulesByDay(schedules, monthKey) {
       const dateKey = instance.instanceDate
       const instanceKey = `${instance.id}@${dateKey}`
 
-      if (!dailyMap[dateKey]) dailyMap[dateKey] = {}
+      if (!dailyMap[dateKey]) {
+        dailyMap[dateKey] = {}
+      }
 
       dailyMap[dateKey][instanceKey] = {
         ...instance,
@@ -200,28 +222,35 @@ export function expandRecurringRoutine(routine, monthKey) {
 
   // 비반복 루틴 (dailyProgress 기반)
   if (!recurrence || !recurrence.rruleStr) {
-    return routine.dailyProgress?.map(progress => {
-      const dateKey = format(new Date(progress.taskDate), 'yyyy-MM-dd')
-      return {
-        id: progress.dailyTaskId,
-        routineTaskId: routine.id,
-        title: routine.title,
-        time: routine.routineTimeInfo?.time?.slice(0, 5) ?? '',
-        currentValue: progress.currentValue ?? 0,
-        targetValue: routine.targetValue ?? 1,
-        type: routine.taskType,
-        instanceDate: dateKey,
-        completed: progress.completed ?? false,
-      }
-    }) || []
+    return (routine.dailyProgress ?? [])
+      .filter((progress) => {
+        const date = new Date(progress.taskDate)
+        return date >= rangeStart && date <= rangeEnd
+      })
+      .map((progress) => {
+        const dateKey = format(new Date(progress.taskDate), 'yyyy-MM-dd')
+        return {
+          id: progress.dailyTaskId,
+          routineTaskId: routine.id,
+          title: routine.title,
+          time: routine.routineTimeInfo?.time?.slice(0, 5) ?? '',
+          currentValue: progress.currentValue ?? 0,
+          targetValue: routine.targetValue ?? 1,
+          type: routine.taskType,
+          instanceDate: dateKey,
+          completed: progress.completed ?? false,
+        }
+      })
   }
 
   // 반복 규칙이 있는 루틴
   const startStr = recurrence.dtstart || routine.routineTimeInfo?.startDate
-  if (!startStr) return []
+  if (!startStr) {
+    return []
+  }
 
   const startDate = parseISO(startStr)
-  const endStr = routine.routineTimeInfo?.endDate || startStr
+  const endStr = routine.routineTimeInfo?.untilDate || startStr
   const endDate = parseISO(endStr)
   const durationMs = endDate.getTime() - startDate.getTime()
 
@@ -233,51 +262,59 @@ export function expandRecurringRoutine(routine, monthKey) {
 
   // ✅ dailyProgress를 Map으로 변환 (날짜 → progress 객체 전체)
   const progressMap = new Map(
-    (routine.dailyProgress || []).map(p => [
+    (routine.dailyProgress || []).map((p) => [
       format(new Date(p.taskDate), 'yyyy-MM-dd'),
       {
         id: p.dailyTaskId,
         currentValue: p.currentValue ?? 0,
         targetValue: p.targetValue ?? routine.targetValue ?? 1,
-        taskDate:p.taskDate,
+        taskDate: p.taskDate,
         completed: p.completed ?? false,
       },
-    ])
+    ]),
   )
-
   let next
+
+//  rangeStart 이전 반복들을 빠르게 스킵
   while ((next = iterator.next())) {
     const nextDate = next.toJSDate()
-    if (nextDate > rangeEnd) break
-    if (nextDate < rangeStart) continue
+    if (nextDate >= rangeStart) {
+      break
+    }
+  }
 
-    const dateKey = format(nextDate, 'yyyy-MM-dd')
-    if (seenDates.has(dateKey)) continue
-    seenDates.add(dateKey)
+// 💡 next가 rangeStart 이상인 상태에서 루프 시작
+  if (next && next.toJSDate() <= rangeEnd) {
+    do {
+      const nextDate = next.toJSDate()
+      const dateKey = format(nextDate, 'yyyy-MM-dd')
+      if (!seenDates.has(dateKey)) {
+        seenDates.add(dateKey)
 
-    const start = new Date(nextDate)
-    const end = new Date(start.getTime() + durationMs)
-    const progress = progressMap.get(dateKey)
+        const start = new Date(nextDate)
+        const end = new Date(start.getTime() + durationMs)
+        const progress = progressMap.get(dateKey)
 
-    result.push({
-      id: progress?.id ?? `${routine.id}@${dateKey}`,
-      routineTaskId: routine.id,
-      title: routine.title,
-      time: routine.routineTimeInfo?.time?.slice(0, 5) ?? '',
-      currentValue: progress?.currentValue ?? 0,
-      targetValue: progress?.targetValue ?? routine.targetValue ?? 1,
-      completed: progress?.completed ?? false,
-      date: progress?.taskDate ?? dateKey,
-      type: routine.taskType,
-      instanceDate: dateKey,
-      startAt: start.toISOString(),
-      endAt: end.toISOString(),
-    })
+        result.push({
+          id: progress?.id ?? `${routine.id}@${dateKey}`,
+          routineTaskId: routine.id,
+          title: routine.title,
+          time: routine.routineTimeInfo?.time?.slice(0, 5) ?? '',
+          currentValue: progress?.currentValue ?? 0,
+          targetValue: progress?.targetValue ?? routine.targetValue ?? 1,
+          completed: progress?.completed ?? false,
+          date: progress?.taskDate ?? dateKey,
+          type: routine.taskType,
+          instanceDate: dateKey,
+          startAt: start.toISOString(),
+          endAt: end.toISOString(),
+        })
+      }
+    } while ((next = iterator.next()) && next.toJSDate() <= rangeEnd)
   }
 
   return result
 }
-
 
 export function expandRoutinesByDay(routines, monthKey) {
   const dailyMap = {}
@@ -292,7 +329,9 @@ export function expandRoutinesByDay(routines, monthKey) {
       const dateKey = instance.instanceDate
       const instanceKey = `${instance.id}@${dateKey}`
 
-      if (!dailyMap[dateKey]) dailyMap[dateKey] = {}
+      if (!dailyMap[dateKey]) {
+        dailyMap[dateKey] = {}
+      }
 
       dailyMap[dateKey][instanceKey] = { ...instance }
     })
@@ -309,7 +348,9 @@ export function expandRoutineDates(rrule, dtstart, monthKey) {
   let next
   while ((next = iterator.next())) {
     const date = next.toJSDate()
-    if (date > rangeEnd) break
+    if (date > rangeEnd) {
+      break
+    }
     if (date >= rangeStart) {
       result.push(format(date, 'yyyy-MM-dd'))
     }

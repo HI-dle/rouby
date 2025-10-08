@@ -21,9 +21,14 @@ export const useRoutineForm = (maybeSelectedDate = null) => {
       : [],
   )
 
-  const routinesForSelectedMonth = ref(
-    routineStore.getRoutinesMonthlyByDate(selectedDate.value),
-  )
+  const routinesForSelectedMonth = ref([])
+  const syncMonthlyRoutines = () => {
+    routinesForSelectedMonth.value = selectedDate.value
+    ? routineStore.getRoutinesMonthlyByDate(selectedDate.value) ?? []
+    : []
+  }
+
+  watch(selectedDate, syncMonthlyRoutines, { immediate: true })
 
   const startOfThisMonth = computed(() => datePickStore.monthRange.rangeStart)
   const startOfNextMonth = computed(() => datePickStore.monthRange.rangeEnd)
@@ -90,9 +95,7 @@ export const useRoutineForm = (maybeSelectedDate = null) => {
 
       if (t !== token) return // 최신 호출만 반영
 
-      routinesForSelectedMonth.value = routineStore.getRoutinesMonthlyByDate(
-        selectedDate.value,
-      )
+      syncMonthlyRoutines()
     },
     { immediate: true },
   )

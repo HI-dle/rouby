@@ -61,8 +61,9 @@ export const useRoutineStore = defineStore(
     const getRoutinesForDate = (date) => {
       const dateKey = format(date, 'yyyy-MM-dd')
       const monthKey = dateKey.slice(0, 7)
+      const daily = dailyRoutines.value[monthKey]?.[dateKey]
 
-      return dailyRoutines.value[monthKey]?.[dateKey] || []
+      return daily ? Object.values(daily) : []
     }
 
     /**
