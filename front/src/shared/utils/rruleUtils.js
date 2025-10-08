@@ -194,6 +194,112 @@ export function expandSchedulesByDay(schedules, monthKey) {
   return { dailyMap, rawMap }
 }
 
+export function expandRecurringRoutine(routine, monthKey) {
+  const recurrence = routine.recurrenceRule
+  const { rangeStart, rangeEnd } = getMonthRange(monthKey)
+
+  // 비반복 루틴 (dailyProgress 기반)
+  if (!recurrence || !recurrence.rruleStr) {
+    return routine.dailyProgress?.map(progress => {
+      const dateKey = format(new Date(progress.taskDate), 'yyyy-MM-dd')
+      return {
+        id: progress.dailyTaskId,
+        routineTaskId: routine.id,
+        title: routine.title,
+        time: routine.routineTimeInfo?.time?.slice(0, 5) ?? '',
+        currentValue: progress.currentValue ?? 0,
+        targetValue: routine.targetValue ?? 1,
+        type: routine.taskType,
+        instanceDate: dateKey,
+        completed: progress.completed ?? false,
+      }
+    }) || []
+  }
+
+  // 반복 규칙이 있는 루틴
+  const startStr = recurrence.dtstart || routine.routineTimeInfo?.startDate
+  if (!startStr) return []
+
+  const startDate = parseISO(startStr)
+  const endStr = routine.routineTimeInfo?.endDate || startStr
+  const endDate = parseISO(endStr)
+  const durationMs = endDate.getTime() - startDate.getTime()
+
+  const event = createIcalComponent(recurrence.rruleStr, startDate)
+  const iterator = event.iterator(event.startDate)
+
+  const result = []
+  const seenDates = new Set()
+
+  // ✅ dailyProgress를 Map으로 변환 (날짜 → progress 객체 전체)
+  const progressMap = new Map(
+    (routine.dailyProgress || []).map(p => [
+      format(new Date(p.taskDate), 'yyyy-MM-dd'),
+      {
+        id: p.dailyTaskId,
+        currentValue: p.currentValue ?? 0,
+        targetValue: p.targetValue ?? routine.targetValue ?? 1,
+        taskDate:p.taskDate,
+        completed: p.completed ?? false,
+      },
+    ])
+  )
+
+  let next
+  while ((next = iterator.next())) {
+    const nextDate = next.toJSDate()
+    if (nextDate > rangeEnd) break
+    if (nextDate < rangeStart) continue
+
+    const dateKey = format(nextDate, 'yyyy-MM-dd')
+    if (seenDates.has(dateKey)) continue
+    seenDates.add(dateKey)
+
+    const start = new Date(nextDate)
+    const end = new Date(start.getTime() + durationMs)
+    const progress = progressMap.get(dateKey)
+
+    result.push({
+      id: progress?.id ?? `${routine.id}@${dateKey}`,
+      routineTaskId: routine.id,
+      title: routine.title,
+      time: routine.routineTimeInfo?.time?.slice(0, 5) ?? '',
+      currentValue: progress?.currentValue ?? 0,
+      targetValue: progress?.targetValue ?? routine.targetValue ?? 1,
+      completed: progress?.completed ?? false,
+      date: progress?.taskDate ?? dateKey,
+      type: routine.taskType,
+      instanceDate: dateKey,
+      startAt: start.toISOString(),
+      endAt: end.toISOString(),
+    })
+  }
+
+  return result
+}
+
+
+export function expandRoutinesByDay(routines, monthKey) {
+  const dailyMap = {}
+  const rawMap = {}
+
+  routines.forEach((task) => {
+    rawMap[task.id] = task
+
+    const instances = expandRecurringRoutine(task, monthKey)
+
+    instances.forEach((instance) => {
+      const dateKey = instance.instanceDate
+      const instanceKey = `${instance.id}@${dateKey}`
+
+      if (!dailyMap[dateKey]) dailyMap[dateKey] = {}
+
+      dailyMap[dateKey][instanceKey] = { ...instance }
+    })
+  })
+  return { dailyMap, rawMap }
+}
+
 export function expandRoutineDates(rrule, dtstart, monthKey) {
   const { rangeStart, rangeEnd } = getMonthRange(monthKey)
   const event = createIcalComponent(rrule, dtstart)
