@@ -14,8 +14,7 @@ public record DeleteScheduleCommand(
     LocalDateTime endAt
 ) {
 
-  public Schedule toEntityWithUserId(Long userId, Schedule schedule, LocalDate instanceDate,
-      LocalDateTime startAt, LocalDateTime endAt) {
+  public Schedule toEntityWithUserId(Long userId, Schedule schedule) {
     return Schedule.createByOverride(
         userId,
         schedule.getTitle(),

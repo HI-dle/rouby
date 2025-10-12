@@ -161,6 +161,8 @@ public class Schedule extends BaseEntity {
   }
 
   public void cancelFrom(LocalDateTime fromAt) {
-    this.recurrenceRule.cutUntil(fromAt.minusSeconds(1));
+    if (this.recurrenceRule != null) {
+      this.recurrenceRule.cutUntil(fromAt.minusSeconds(1));
+    }
   }
 }

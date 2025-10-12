@@ -16,6 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -64,9 +65,8 @@ public class ScheduleController {
     return ResponseEntity.ok().body(scheduleId);
   }
 
-  // 하나만 삭제
   @PreAuthorize("hasAnyRole('USER')")
-  @DeleteMapping
+  @PatchMapping
   public ResponseEntity<Void> deleteSchedule(
       @AuthenticationPrincipal SecurityUser securityUser, @RequestBody @Validated DeleteScheduleRequest req) {
 
@@ -74,9 +74,8 @@ public class ScheduleController {
     return ResponseEntity.noContent().build();
   }
 
-  // 이후 일정 삭제
   @PreAuthorize("hasAnyRole('USER')")
-  @DeleteMapping("/from")
+  @PatchMapping("/from")
   public ResponseEntity<Void> deleteSchedulesStartingFrom(
       @AuthenticationPrincipal SecurityUser securityUser, @RequestBody @Validated DeleteScheduleFromRequest req) {
 

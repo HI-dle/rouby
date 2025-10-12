@@ -69,39 +69,32 @@ public class ScheduleWriteService {
 
   @Transactional
   public void deleteSchedule(Long userId, DeleteScheduleCommand command) {
-    Schedule schedule = scheduleRepository.findById(command.scheduleId())
+    Schedule schedule = scheduleRepository.findByIdAndUserId(command.scheduleId(), userId)
         .orElseThrow(() -> ScheduleException.from(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
-
-    if (!Objects.equals(schedule.getUserId(), userId)) {
-      throw ScheduleException.from(ScheduleErrorCode.SCHEDULE_INVALID_REQUEST);
-    }
 
     Schedule parentSchedule = schedule.getParentSchedule();
 
     if (parentSchedule != null) {
       schedule.cancel();
     } else {
-      Schedule newSchedule = command.toEntityWithUserId(
-          userId, schedule, command.instanceDate(), command.startAt(), command.endAt());
+      Schedule newSchedule = command.toEntityWithUserId(userId, schedule);
       scheduleRepository.save(newSchedule);
     }
   }
 
   @Transactional
   public void deleteFromSchedule(Long userId, DeleteScheduleFromCommand command) {
-    Schedule schedule = scheduleRepository.findById(command.scheduleId())
+    Schedule schedule = scheduleRepository.findByIdAndUserId(command.scheduleId(), userId)
         .orElseThrow(() -> ScheduleException.from(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
-
-    if (!Objects.equals(schedule.getUserId(), userId)) {
-      throw ScheduleException.from(ScheduleErrorCode.SCHEDULE_INVALID_REQUEST);
-    }
 
     Schedule parentSchedule = schedule.getParentSchedule();
 
     if (parentSchedule != null) {
       parentSchedule.cancelFrom(command.fromAt());
+      scheduleRepository.bulkCancel(parentSchedule.getId(), command.fromAt());
     } else {
       schedule.cancelFrom(command.fromAt());
+      scheduleRepository.bulkCancel(schedule.getId(), command.fromAt());
     }
   }
 }
