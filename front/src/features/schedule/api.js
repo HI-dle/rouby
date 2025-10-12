@@ -28,7 +28,9 @@ export const deleteSchedule = (payload) => {
     throw new Error('유효하지 않은 payload입니다.')
   }
   // 단일 일정 삭제
-  return axios.delete('/v1/schedules', { data: payload })
+  return axios.patch('/v1/schedules', payload, {
+    headers: { 'Content-Type': 'application/json' },
+  })
 }
 
 export const deleteSchedulesStartingFrom = (payload) => {
@@ -36,5 +38,7 @@ export const deleteSchedulesStartingFrom = (payload) => {
     throw new Error('유효하지 않은 payload입니다.')
   }
   // 이후 일정 삭제
-  return axios.delete('/v1/schedules/from', { data: payload })
+  return axios.patch('/v1/schedules/from', payload, {
+    headers: { 'Content-Type': 'application/json' },
+  })
 }
