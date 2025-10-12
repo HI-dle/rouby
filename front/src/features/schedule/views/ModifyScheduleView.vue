@@ -66,7 +66,6 @@ const handleSubmit = async () => {
 
 const handleDeleteOne = async (schedule) => {
   const instanceDate = route.params.date
-  console.log(schedule)
   await onDeleteOne(
     { scheduleId: schedule.id, instanceDate: instanceDate, startAt: schedule.start, endAt: schedule.end },
     () => {
