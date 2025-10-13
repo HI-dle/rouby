@@ -1,4 +1,4 @@
-package com.rouby.assistant.feedback.domain.vo;
+package com.rouby.assistant.feedback.domain.entity.vo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -23,10 +23,12 @@ import org.hibernate.type.SqlTypes;
 public class FeedbackKeyword {
 
   @JdbcTypeCode(SqlTypes.JSON)
-  @Column(columnDefinition = "jsonb", nullable = false)
-  private List<String> feedbackKeyword;
+  @Column(columnDefinition = "jsonb")
+  private List<String> feedbackKeyword = new ArrayList<>();
 
   private FeedbackKeyword(List<String> feedbackKeyword) {
+
+    if (feedbackKeyword == null || feedbackKeyword.isEmpty()) return;
     this.feedbackKeyword = new ArrayList<>(feedbackKeyword);
   }
 

@@ -1,4 +1,4 @@
-package com.rouby.assistant.feedback.domain.vo;
+package com.rouby.assistant.feedback.domain.entity.vo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -18,10 +18,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FeedbackContent {
 
-  @Column(nullable = false)
   private String prompt;
 
-  @Column(nullable = false)
+  @Column(columnDefinition = "TEXT")
   private String content;
 
   private FeedbackContent(String prompt, String content) {
