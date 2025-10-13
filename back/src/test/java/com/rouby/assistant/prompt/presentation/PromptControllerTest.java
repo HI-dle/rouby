@@ -55,8 +55,7 @@ class PromptControllerTest extends ControllerTestSupport {
             requestFields(
                 fieldWithPath("promptType").description("프롬프트 타입(브리핑,피드백,추천)"),
                 fieldWithPath("systemMessage").description("시스템 메시지 프롬프트"),
-                fieldWithPath("userMessage").description("유저 메시지 프롬프트"),
-                fieldWithPath("version").description("프롬프트 버전")
+                fieldWithPath("userMessage").description("유저 메시지 프롬프트")
             )
         ));
   }
