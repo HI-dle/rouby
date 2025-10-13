@@ -6,6 +6,8 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rouby.assistant.briefing.application.facade.BriefingFacade;
 import com.rouby.assistant.briefing.presentation.BriefingController;
+import com.rouby.assistant.feedback.application.usecase.CreateFeedbackUsecase;
+import com.rouby.assistant.feedback.presentation.FeedbackController;
 import com.rouby.assistant.prompt.application.service.PromptWriteService;
 import com.rouby.assistant.prompt.presentation.PromptController;
 import com.rouby.common.config.WebConfig;
@@ -49,6 +51,7 @@ import org.springframework.test.web.servlet.MockMvc;
         UserDeviceController.class,
         PromptController.class,
         BriefingController.class,
+        FeedbackController.class,
     },
     excludeFilters = {
         @ComponentScan.Filter(
@@ -88,7 +91,10 @@ public abstract class ControllerTestSupport {
 
   @MockitoBean
   protected BriefingFacade briefingFacade;
-  
+
+  @MockitoBean
+  protected CreateFeedbackUsecase createFeedbackUsecase;
+
   @MockitoBean
   protected PromptWriteService promptWriteService;
 
