@@ -15,7 +15,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -280,7 +280,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
   }
 
   @WithMockCustomUser
-  @DisplayName("스케쥴 단일 삭제 API - 성공 204")
+  @DisplayName("스케쥴 단일 삭제 API - 성공 200")
   @Test
   void deleteSchedule() throws Exception {
 
@@ -292,7 +292,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
 
     // when
     ResultActions resultActions = mockMvc.perform(
-        delete("/api/v1/schedules") // 실제 컨트롤러 매핑에 맞게 수정
+        patch("/api/v1/schedules") // 실제 컨트롤러 매핑에 맞게 수정
             .header("Authorization", "Bearer {ACCESS_TOKEN}")
             .content(content)
             .characterEncoding("UTF-8")
@@ -300,7 +300,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
     );
 
     // then
-    resultActions.andExpect(status().isNoContent())
+    resultActions.andExpect(status().isOk())
         .andDo(print())
         .andDo(document("delete-schedule-204",
             preprocessRequest(prettyPrint()),
@@ -315,7 +315,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
   }
 
   @WithMockCustomUser
-  @DisplayName("스케쥴 반복 이후 삭제 API - 성공 204")
+  @DisplayName("스케쥴 반복 이후 삭제 API - 성공 200")
   @Test
   void deleteScheduleFrom() throws Exception {
 
@@ -327,7 +327,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
 
     // when
     ResultActions resultActions = mockMvc.perform(
-        delete("/api/v1/schedules/from")
+        patch("/api/v1/schedules/from")
             .header("Authorization", "Bearer {ACCESS_TOKEN}")
             .content(content)
             .characterEncoding("UTF-8")
@@ -335,7 +335,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
     );
 
     // then
-    resultActions.andExpect(status().isNoContent())
+    resultActions.andExpect(status().isOk())
         .andDo(print())
         .andDo(document("delete-schedule-from-204",
             preprocessRequest(prettyPrint()),
@@ -361,7 +361,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
 
     // when
     ResultActions resultActions = mockMvc.perform(
-        delete("/api/v1/schedules")
+        patch("/api/v1/schedules")
             .header("Authorization", "Bearer {ACCESS_TOKEN}")
             .content(content)
             .characterEncoding("UTF-8")

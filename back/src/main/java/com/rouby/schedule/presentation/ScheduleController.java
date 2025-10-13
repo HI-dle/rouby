@@ -71,7 +71,7 @@ public class ScheduleController {
       @AuthenticationPrincipal SecurityUser securityUser, @RequestBody @Validated DeleteScheduleRequest req) {
 
     scheduleFacade.deleteSchedule(securityUser.getId(), req.toCommand());
-    return ResponseEntity.noContent().build();
+    return ResponseEntity.ok().build();
   }
 
   @PreAuthorize("hasAnyRole('USER')")
@@ -80,6 +80,6 @@ public class ScheduleController {
       @AuthenticationPrincipal SecurityUser securityUser, @RequestBody @Validated DeleteScheduleFromRequest req) {
 
     scheduleFacade.deleteSchedulesStartingFrom(securityUser.getId(), req.toCommand());
-    return ResponseEntity.noContent().build();
+    return ResponseEntity.ok().build();
   }
 }
