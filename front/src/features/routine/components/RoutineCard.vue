@@ -11,6 +11,7 @@
         <input
           type="checkbox"
           v-model="isChecked"
+          @change="updateCheck"
           class="w-5 h-5 text-indigo-500 accent-indigo-500"
         />
       </template>
@@ -26,53 +27,77 @@
             <img src="@/assets/chevron-down.svg" alt="Decrease" class="w-4 h-4 text-main-color" />
           </button>
 
-          <div class="text-sm font-semibold text-gray-800 w-6 text-center">{{ countValue }}</div>
+          <input
+            type="number"
+            v-model.number="countValue"
+            :min="0"
+            :max="maxCount"
+            class="text-sm font-semibold text-gray-800 w-8 text-center border rounded appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-moz-appearance:textfield]"
+          />
 
           <button
             @click="increment"
+            :disabled="countValue >= maxCount"
             class="p-1 rounded hover:bg-indigo-100"
           >
-            <img src="@/assets/chevron-up.svg" alt="Increase" class="w-4 h-4 text-main-color" />
+            <img src="@/assets/chevron-up.svg" alt="Increase" class="w-4 h-4" />
           </button>
         </div>
       </template>
 
       <!-- 시간 분 루틴 -->
       <template v-else-if="routine.type === 'MINUTES'">
-        <div class="flex items-center space-x-6">
+        <div class="flex items-center space-x-2">
           <!-- 시간 -->
-          <div class="flex flex-col items-center space-y-1">
-            <button @click="increaseHour" class="p-1 rounded hover:bg-indigo-100">
+          <div class="flex flex-col items-center">
+            <button
+              @click="increaseHour"
+              class="flex justify-center items-center w-6 h-6 rounded hover:bg-indigo-100 mb-1"
+            >
               <img src="@/assets/chevron-up.svg" alt="Up" class="w-4 h-4 text-main-color" />
             </button>
-            <div class="text-sm font-semibold text-gray-800 w-[56px] text-center">
-              {{ hour }}시간
-            </div>
+            <input
+              type="number"
+              v-model.number="hour"
+              min="0"
+              class="text-sm font-semibold text-gray-800 w-8 text-center border rounded appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-moz-appearance:textfield]"
+            />
             <button
               @click="decreaseHour"
               :disabled="currentValue < 60"
-              class="p-1 rounded hover:bg-indigo-100 disabled:opacity-30"
+              class="flex justify-center items-center w-6 h-6 rounded hover:bg-indigo-100 mt-1 disabled:opacity-30"
             >
               <img src="@/assets/chevron-down.svg" alt="Down" class="w-4 h-4 text-main-color" />
             </button>
           </div>
 
-          <!-- 분 -->
-          <div class="flex flex-col items-center space-y-1">
-            <button @click="increaseMinute" class="p-1 rounded hover:bg-indigo-100">
+          <span class="text-sm text-gray-700 mt-1 font-medium text-gray-800">시간</span>
+
+          <!-- 분-->
+          <div class="flex flex-col items-center ml-3">
+            <button
+              @click="increaseMinute"
+              class="flex justify-center items-center w-6 h-6 rounded hover:bg-indigo-100 mb-1"
+            >
               <img src="@/assets/chevron-up.svg" alt="Up" class="w-4 h-4 text-main-color" />
             </button>
-            <div class="text-sm font-semibold text-gray-800 w-[56px] text-center">
-              {{ minute }}분
-            </div>
+            <input
+              type="number"
+              v-model.number="minute"
+              min="0"
+              max="59"
+              class="text-sm font-semibold text-gray-800 w-8 text-center border rounded appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-moz-appearance:textfield]"
+            />
             <button
               @click="decreaseMinute"
               :disabled="currentValue < minuteStep"
-              class="p-1 rounded hover:bg-indigo-100 disabled:opacity-30"
+              class="flex justify-center items-center w-6 h-6 rounded hover:bg-indigo-100 mt-1 disabled:opacity-30"
             >
               <img src="@/assets/chevron-down.svg" alt="Down" class="w-4 h-4 text-main-color" />
             </button>
           </div>
+
+          <span class="text-sm text-gray-700 mt-1 font-medium text-gray-800">분</span>
         </div>
       </template>
     </div>
@@ -80,55 +105,71 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
+import { useDailyTaskForm } from '@/features/routine-task/useDailyTaskForm'
 
 const props = defineProps({
-  routine: {
-    type: Object,
-    required: true,
+  routine: Object,
+  date: Date,
+})
+
+const { handleCheckboxChange, handleValueChange } = useDailyTaskForm(props.routine)
+
+// 체크박스
+const isChecked = ref(props.routine.currentValue >= 1)
+
+// COUNT
+const maxCount = props.routine.targetValue ?? 50
+const countValue = ref(props.routine.currentValue ?? 0)
+
+// MINUTES
+const currentValue = ref(props.routine.currentValue ?? 0)
+const minuteStep = 1
+
+// MINUTES input도 수정 가능하게 computed getter + setter
+const hour = computed({
+  get: () => Math.floor(currentValue.value / 60),
+  set: (val) => {
+    currentValue.value = val * 60 + (currentValue.value % 60)
   },
 })
 
-const isChecked = ref(props.routine.currentValue >= 1)
-const countValue = ref(props.routine.currentValue ?? 0)
-const maxCount = props.routine.targetValue ?? 50
-const minuteStep = 1
-
-const currentValue = ref(props.routine.currentValue ?? 0)
-
-const hour = computed(() => Math.floor(currentValue.value / 60))
-const minute = computed(() => currentValue.value % 60)
-
-watch(isChecked, (val) => {
-  console.log(`${props.routine.title} 완료 여부:`, val)
+const minute = computed({
+  get: () => currentValue.value % 60,
+  set: (val) => {
+    const h = Math.floor(currentValue.value / 60)
+    currentValue.value = h * 60 + val
+  },
 })
 
-watch(countValue, (val) => {
-  console.log(`${props.routine.title} 카운트 값:`, val)
+// === Watch & API ===
+watch(isChecked, (val, old) => {
+  if (val === old) return
+  handleCheckboxChange({ target: { checked: val } })
 })
 
-watch(currentValue, (val) => {
-  console.log(`${props.routine.title} 시간 값(분):`, val)
+watch(countValue, (val, old) => {
+  if (val === old) return
+  handleValueChange(val)
 })
 
-// COUNT용
+watch(currentValue, (val, old) => {
+  if (val === old) return
+  handleValueChange(val)
+})
+
+// === UI Actions ===
 const increment = () => {
-  countValue.value++
+  if (countValue.value < maxCount) countValue.value++
 }
 const decrement = () => {
   if (countValue.value > 0) countValue.value--
 }
-
-// MINUTES용 – maxCount 제한 제거
-const increaseHour = () => {
-  currentValue.value += 60
-}
+const increaseHour = () => (currentValue.value += 60)
 const decreaseHour = () => {
   if (currentValue.value >= 60) currentValue.value -= 60
 }
-const increaseMinute = () => {
-  currentValue.value += minuteStep
-}
+const increaseMinute = () => (currentValue.value += minuteStep)
 const decreaseMinute = () => {
   if (currentValue.value >= minuteStep) currentValue.value -= minuteStep
 }

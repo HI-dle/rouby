@@ -66,10 +66,6 @@ const MAX_SEEN = 1000
 const TRIM_COUNT = 500
 
 const bc = 'BroadcastChannel' in window ? new BroadcastChannel(DEDUPE_CH) : null
-bc?.onmessage = (e) => {
-  const { id, ts } = e.data || {}
-  if (id) seen.set(id, ts)
-}
 
 const markAndCheckSeen = (id) => {
   if (seen.has(id)) return true

@@ -101,8 +101,16 @@ const router = createRouter({
           path: 'routine-task',
           component: () =>
             import('@/features/routine-task/views/RoutineTaskLayout.vue'),
-          redirect: '/routine-task/daily',
+          redirect: '/routine-task/daily/list',
           children: [
+            {
+              path: 'daily/list',
+              name: 'routine-task-daily-list',
+              component: () =>
+                import(
+                  '@/features/routine/views/DailyRoutineView.vue'
+                  ),
+            },
             {
               path: 'create',
               name: 'routine-task-create',

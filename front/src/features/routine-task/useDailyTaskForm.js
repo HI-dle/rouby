@@ -35,7 +35,7 @@ export function useDailyTaskForm(task) {
     lastSentAt = Date.now()
     try {
       const req = {
-        id: task.id,
+        id: (typeof task.id === 'string' && task.id.includes('@')) ? null : task.id,
         routineTaskId: task.routineTaskId,
         currentValue: value,
         taskDate: task.date,
