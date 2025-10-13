@@ -1,6 +1,6 @@
 package com.rouby.user.user.presentation.dto.response;
 
-import com.rouby.user.user.application.dto.info.UserCheckInfo;
+import com.rouby.user.user.application.dto.info.UserDetailInfo;
 import java.util.Set;
 import lombok.Builder;
 
@@ -18,15 +18,15 @@ public record UserCheckResponse(Long id,
                                 String onboardingStatePath) {
 
 
-  public static UserCheckResponse from(UserCheckInfo userCheckInfo) {
+  public static UserCheckResponse from(UserDetailInfo userDetailInfo) {
     return UserCheckResponse.builder()
-        .id(userCheckInfo.id())
-        .email(userCheckInfo.email())
-        .nickname(userCheckInfo.nickname())
-        .healthStatusKeywords(userCheckInfo.healthStatusKeywords())
-        .profileKeywords(userCheckInfo.profileKeywords())
-        .communicationTone(userCheckInfo.communicationTone())
-        .onboardingStatePath(userCheckInfo.onboardingState().getRedirectPath())
+        .id(userDetailInfo.id())
+        .email(userDetailInfo.email())
+        .nickname(userDetailInfo.nickname())
+        .healthStatusKeywords(userDetailInfo.healthStatusKeywords())
+        .profileKeywords(userDetailInfo.profileKeywords())
+        .communicationTone(userDetailInfo.communicationTone())
+        .onboardingStatePath(userDetailInfo.onboardingState().getRedirectPath())
         .build();
   }
 

@@ -38,9 +38,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.rouby.common.security.WithMockCustomUser;
 import com.rouby.common.support.ControllerTestSupport;
 import com.rouby.notification.email.application.exception.EmailException;
+import com.rouby.user.user.fixture.UserRequestFixture;
 import com.rouby.user.user.application.dto.info.RoubySettingInfo;
 import com.rouby.user.user.application.dto.info.RoubySettingInfo.NotificationSettingInfo;
-import com.rouby.user.user.application.dto.info.UserCheckInfo;
+import com.rouby.user.user.application.dto.info.UserDetailInfo;
 import com.rouby.user.user.application.exception.UserException;
 import com.rouby.user.user.domain.entity.OnboardingState;
 import com.rouby.user.user.presentation.dto.request.CreateUserRequest;
@@ -70,7 +71,7 @@ class UserControllerTest extends ControllerTestSupport {
     // given
     CreateUserRequest request = UserRequestFixture.toCreateRequest();
     String token = UserRequestFixture.VALID_EMAIL_TOKEN;
-    doNothing().when(userFacade).createUser(request.toCommand(token));
+    doNothing().when(userUsecase).createUser(request.toCommand(token));
 
     // when and then
     mockMvc.perform(post("/api/v1/users")
@@ -101,7 +102,7 @@ class UserControllerTest extends ControllerTestSupport {
     CreateUserRequest request = UserRequestFixture.toCreateRequest();
     String token = UserRequestFixture.VALID_EMAIL_TOKEN;
     doThrow(UserException.from(DUPLICATE_EMAIL))
-        .when(userFacade).createUser(request.toCommand(token));
+        .when(userUsecase).createUser(request.toCommand(token));
 
     //when and then
     mockMvc.perform(post("/api/v1/users")
@@ -133,7 +134,7 @@ class UserControllerTest extends ControllerTestSupport {
     CreateUserRequest request = UserRequestFixture.toCreateRequest();
     String token = UserRequestFixture.VALID_EMAIL_TOKEN;
     doThrow(UserException.from(EMAIL_NOT_VERIFIED))
-        .when(userFacade).createUser(request.toCommand(token));
+        .when(userUsecase).createUser(request.toCommand(token));
 
     //when and then
     mockMvc.perform(post("/api/v1/users")
@@ -220,7 +221,7 @@ class UserControllerTest extends ControllerTestSupport {
 
     // given
     SendEmailVerificationRequest request = UserRequestFixture.toSendEmailVerificationRequest();
-    doNothing().when(userFacade).sendEmailVerification(request.toCommand());
+    doNothing().when(userUsecase).sendEmailVerification(request.toCommand());
 
     // when
     ResultActions result = mockMvc.perform(post("/api/v1/users/email-verification/request")
@@ -246,7 +247,7 @@ class UserControllerTest extends ControllerTestSupport {
     // given
     SendEmailVerificationRequest request =
         UserRequestFixture.toSendEmailVerificationRequestInvalidEmail();
-    doNothing().when(userFacade).sendEmailVerification(request.toCommand());
+    doNothing().when(userUsecase).sendEmailVerification(request.toCommand());
 
     // when
     ResultActions result = mockMvc.perform(post("/api/v1/users/email-verification/request")
@@ -272,7 +273,7 @@ class UserControllerTest extends ControllerTestSupport {
 
     // given
     SendEmailVerificationRequest request = UserRequestFixture.toSendEmailVerificationRequest();
-    doThrow(UserException.from(DUPLICATE_EMAIL)).when(userFacade)
+    doThrow(UserException.from(DUPLICATE_EMAIL)).when(userUsecase)
         .sendEmailVerification(request.toCommand());
 
     // when
@@ -299,7 +300,7 @@ class UserControllerTest extends ControllerTestSupport {
 
     // given
     SendEmailVerificationRequest request = UserRequestFixture.toSendEmailVerificationRequest();
-    doThrow(EmailException.from(EMAIL_SEND_FAILED)).when(userFacade)
+    doThrow(EmailException.from(EMAIL_SEND_FAILED)).when(userUsecase)
         .sendEmailVerification(request.toCommand());
 
     // when
@@ -327,7 +328,7 @@ class UserControllerTest extends ControllerTestSupport {
     // given
     VerifyEmailRequest request = UserRequestFixture.toVerifyEmailRequest();
     String token = UserRequestFixture.VALID_EMAIL_TOKEN;
-    when(userFacade.verifyEmail(request.toCommand())).thenReturn(token);
+    when(userUsecase.verifyEmail(request.toCommand())).thenReturn(token);
 
     // when
     ResultActions result = mockMvc.perform(post("/api/v1/users/email-verification/verify")
@@ -408,7 +409,7 @@ class UserControllerTest extends ControllerTestSupport {
 
     // given
     VerifyEmailRequest request = UserRequestFixture.toVerifyEmailRequest();
-    doThrow(UserException.from(INVALID_EMAIL_VERIFICATION)).when(userFacade)
+    doThrow(UserException.from(INVALID_EMAIL_VERIFICATION)).when(userUsecase)
         .verifyEmail(request.toCommand());
 
     // when
@@ -437,7 +438,7 @@ class UserControllerTest extends ControllerTestSupport {
     //given
     FindPasswordRequest request = FindPasswordRequest.builder().email("test@email.com").build();
 
-    doNothing().when(userFacade).findPassword(argThat(req ->
+    doNothing().when(userUsecase).findPassword(argThat(req ->
         "test@email.com".equals(request.email())));
 
     //when
@@ -463,7 +464,7 @@ class UserControllerTest extends ControllerTestSupport {
     //given
     FindPasswordRequest request = FindPasswordRequest.builder().email("test@email.com").build();
 
-    doThrow(EmailException.from(EMAIL_LIMIT_EXCEEDED)).when(userFacade)
+    doThrow(EmailException.from(EMAIL_LIMIT_EXCEEDED)).when(userUsecase)
         .findPassword(request.toCommand());
 
     //when
@@ -493,7 +494,7 @@ class UserControllerTest extends ControllerTestSupport {
         .token(UUID.randomUUID().toString())
         .build();
 
-    doNothing().when(userFacade).resetPasswordByToken(request.toCommand());
+    doNothing().when(userUsecase).resetPasswordByToken(request.toCommand());
 
     //when
     ResultActions resultActions = mockMvc.perform(
@@ -521,7 +522,7 @@ class UserControllerTest extends ControllerTestSupport {
     String email = "test@email.com";
     String token = UUID.randomUUID().toString();
 
-    doNothing().when(userFacade).validatePasswordToken(email, token);
+    doNothing().when(userUsecase).validatePasswordToken(email, token);
 
     //when
     ResultActions resultActions = mockMvc.perform(
@@ -555,7 +556,7 @@ class UserControllerTest extends ControllerTestSupport {
 
     Long userId = 1L;
 
-    doNothing().when(userFacade).resetPassword(eq(userId), any());
+    doNothing().when(userUsecase).resetPassword(eq(userId), any());
 
     //when
     ResultActions resultActions = mockMvc.perform(patch("/api/v1/users/password/reset")
@@ -590,7 +591,7 @@ class UserControllerTest extends ControllerTestSupport {
         )
     );
 
-    given(userFacade.getRoubySettingInfo(userId)).willReturn(roubySettingInfo);
+    given(userUsecase.getRoubySettingInfo(userId)).willReturn(roubySettingInfo);
 
     // when
     ResultActions resultActions = mockMvc.perform(get("/api/v1/users/rouby-setting")
@@ -627,7 +628,7 @@ class UserControllerTest extends ControllerTestSupport {
             new NotificationSettingRequest(BRIEFING, true)
         ));
 
-    doNothing().when(userFacade).updateRoubySettings(eq(userId), any());
+    doNothing().when(userUsecase).updateRoubySettings(eq(userId), any());
 
     // when
     ResultActions resultActions = mockMvc.perform(put("/api/v1/users/rouby-setting")
@@ -657,7 +658,7 @@ class UserControllerTest extends ControllerTestSupport {
   void deleteUser() throws Exception {
     Long userId = 1L;
 
-    doNothing().when(userFacade).delete(eq(userId));
+    doNothing().when(userUsecase).delete(eq(userId));
 
     // when
     ResultActions resultActions = mockMvc.perform(patch("/api/v1/users/delete")
@@ -680,7 +681,7 @@ class UserControllerTest extends ControllerTestSupport {
     // given
     Long userId = 1L;
 
-    UserCheckInfo info = UserCheckInfo.builder()
+    UserDetailInfo info = UserDetailInfo.builder()
         .id(userId)
         .email("test@example.com")
         .nickname("루비짱")
@@ -690,7 +691,7 @@ class UserControllerTest extends ControllerTestSupport {
         .onboardingState(OnboardingState.USER_INFO_SETTING_BEFORE)
         .build();
 
-    given(userFacade.userInfoCheck(eq(userId)))
+    given(userUsecase.userInfoCheck(eq(userId)))
         .willReturn(info);
 
     // when
@@ -723,7 +724,7 @@ class UserControllerTest extends ControllerTestSupport {
   void completeUserInfoSetting() throws Exception {
     // given
     Long userId = 1L;
-    doNothing().when(userFacade).completeInitialUserInfoSetting(eq(userId));
+    doNothing().when(userUsecase).completeInitialUserInfoSetting(eq(userId));
 
     // when
     ResultActions resultActions = mockMvc.perform(
@@ -752,7 +753,7 @@ class UserControllerTest extends ControllerTestSupport {
     // given
     Long userId = 1L;
     doThrow(UserException.from(ONBOARDING_STATE_CHANGE_NOT_ALLOWED))
-        .when(userFacade).completeInitialUserInfoSetting(userId);
+        .when(userUsecase).completeInitialUserInfoSetting(userId);
 
     // when
     ResultActions resultActions = mockMvc.perform(
@@ -781,7 +782,7 @@ class UserControllerTest extends ControllerTestSupport {
   void completeRoubySetting() throws Exception {
     // given
     Long userId = 1L;
-    doNothing().when(userFacade).completeInitialRoubySetting(userId);
+    doNothing().when(userUsecase).completeInitialRoubySetting(userId);
 
     // when
     ResultActions resultActions = mockMvc.perform(
@@ -810,7 +811,7 @@ class UserControllerTest extends ControllerTestSupport {
     // given
     Long userId = 1L;
     doThrow(UserException.from(ONBOARDING_STATE_CHANGE_NOT_ALLOWED))
-        .when(userFacade).completeInitialRoubySetting(userId);
+        .when(userUsecase).completeInitialRoubySetting(userId);
 
     // when
     ResultActions resultActions = mockMvc.perform(
@@ -849,7 +850,7 @@ class UserControllerTest extends ControllerTestSupport {
     );
 
     willDoNothing()
-        .given(userFacade)
+        .given(userUsecase)
         .updateMyUserInfo(argThat(command ->
             command.updaterId().equals(userId) &&
                 command.nickname().equals("루비짱")

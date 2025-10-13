@@ -23,12 +23,16 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
 @Table(name = "users")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
 
   @Id
@@ -55,8 +59,12 @@ public class User extends BaseEntity {
   @Embedded
   private CommunicationTone communicationTone;
 
+  @ColumnDefault("'0'")
+  @Column(nullable = false)
+  private Boolean notificationEnabled;
+
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<NotificationSetting> notificationSettings;
+  private Set<NotificationSetting> notificationSettings = new HashSet<>();
 
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
@@ -71,6 +79,32 @@ public class User extends BaseEntity {
   private OnboardingState onboardingState;
 
   private LocalDateTime lastActivatedAt;
+
+  @Builder
+  private User(
+      String email,
+      String password,
+      String nickname,
+      AuthProvider authProvider,
+      UserRole role,
+      LocalDateTime lastActivatedAt,
+      OnboardingState onboardingState,
+      Boolean notificationEnabled
+  ) {
+    this.email = email;
+    this.password = password;
+    this.nickname = nickname;
+    this.dailyActiveTime = DailyActiveTime.defaultTime();
+    this.healthStatusKeywords = HealthStatusKeywords.empty();
+    this.profileKeywords = ProfileKeywords.empty();
+    this.communicationTone = CommunicationTone.empty();
+    this.notificationSettings = createDefaultNotificationSettings();
+    this.authProvider = authProvider == null ? AuthProvider.DEFAULT : authProvider;
+    this.role = role == null ? UserRole.USER : role;
+    this.onboardingState = onboardingState == null ? ROUBY_SETTING_BEFORE : onboardingState;
+    this.notificationEnabled = notificationEnabled == null ? Boolean.FALSE : Boolean.TRUE;
+    this.lastActivatedAt = lastActivatedAt;
+  }
 
   public static User create(
       String email, String plainPassword, UserPasswordEncoder passwordEncoder) {
@@ -152,30 +186,6 @@ public class User extends BaseEntity {
     }
   }
 
-  @Builder
-  private User(
-      String email,
-      String password,
-      String nickname,
-      AuthProvider authProvider,
-      UserRole role,
-      LocalDateTime lastActivatedAt,
-      OnboardingState onboardingState
-  ) {
-    this.email = email;
-    this.password = password;
-    this.nickname = nickname;
-    this.dailyActiveTime = DailyActiveTime.defaultTime();
-    this.healthStatusKeywords = HealthStatusKeywords.empty();
-    this.profileKeywords = ProfileKeywords.empty();
-    this.communicationTone = CommunicationTone.empty();
-    this.notificationSettings = createDefaultNotificationSettings();
-    this.authProvider = authProvider == null ? AuthProvider.DEFAULT : authProvider;
-    this.role = role == null ? UserRole.USER : role;
-    this.lastActivatedAt = lastActivatedAt;
-    this.onboardingState = onboardingState;
-  }
-
   private Set<NotificationSetting> createDefaultNotificationSettings() {
     return Arrays.stream(NotificationType.values())
         .map(type -> NotificationSetting.createDefault(this, type))
@@ -185,10 +195,6 @@ public class User extends BaseEntity {
   public Set<String> getCommunicationToneValues() {
     if (communicationTone == null) return Collections.emptySet();
     return communicationTone.getRoubyCommunicationTone();
-  }
-
-  protected User() {
-    this.notificationSettings = new HashSet<>();
   }
 
   public void updatePassword(UserPasswordEncoder passwordEncoder, String newPassword) {
