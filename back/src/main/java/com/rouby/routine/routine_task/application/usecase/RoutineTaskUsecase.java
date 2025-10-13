@@ -1,4 +1,4 @@
-package com.rouby.routine.routine_task.application.facade;
+package com.rouby.routine.routine_task.application.usecase;
 
 import com.rouby.routine.daily_task.application.service.DailyTaskReadService;
 import com.rouby.routine.daily_task.domain.DailyTask;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-public class RoutineTaskFacade {
+public class RoutineTaskUsecase {
 
   private final RoutineTaskWriteService routineTaskWriteService;
   private final RoutineTaskReadService routineTaskReadService;

@@ -52,7 +52,7 @@ class RoutineTaskControllerTest extends ControllerTestSupport {
     String content = objectMapper.writeValueAsString(request);
     Long routineTaskId = 42L;
 
-    given(routineTaskFacade.createRoutineTask(any())).willReturn(routineTaskId);
+    given(routineTaskUsecase.createRoutineTask(any())).willReturn(routineTaskId);
 
     // when
     ResultActions result = mockMvc.perform(post("/api/v1/routine-task")
@@ -157,7 +157,7 @@ class RoutineTaskControllerTest extends ControllerTestSupport {
         .routines(List.of(routineTaskDto))
         .build();
 
-    given(routineTaskFacade.getRoutineTaskWithProgress(any())).willReturn(mockResponse);
+    given(routineTaskUsecase.getRoutineTaskWithProgress(any())).willReturn(mockResponse);
 
     // when
     ResultActions result = mockMvc.perform(get("/api/v1/routine-task")

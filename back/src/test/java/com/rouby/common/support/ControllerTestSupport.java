@@ -14,13 +14,13 @@ import com.rouby.common.exception.GlobalExceptionHandler;
 import com.rouby.common.resolver.CustomPageableArgumentResolver;
 import com.rouby.routine.daily_task.application.facade.DailyTaskFacade;
 import com.rouby.routine.daily_task.presentation.DailyTaskController;
-import com.rouby.routine.routine_task.application.facade.RoutineTaskFacade;
+import com.rouby.routine.routine_task.application.usecase.RoutineTaskUsecase;
 import com.rouby.routine.routine_task.presentaion.RoutineTaskController;
 import com.rouby.schedule.application.facade.ScheduleFacade;
 import com.rouby.schedule.presentation.ScheduleController;
 import com.rouby.user.device.application.facade.UserDeviceFacade;
 import com.rouby.user.device.presentation.UserDeviceController;
-import com.rouby.user.user.application.UserFacade;
+import com.rouby.user.user.application.usecase.UserUsecase;
 import com.rouby.user.user.infrastructure.security.filter.JwtAuthenticationFilter;
 import com.rouby.user.user.presentation.AuthController;
 import com.rouby.user.user.presentation.UserController;
@@ -75,13 +75,13 @@ public abstract class ControllerTestSupport {
   protected ScheduleFacade scheduleFacade;
 
   @MockitoBean
-  protected UserFacade userFacade;
+  protected UserUsecase userUsecase;
 
   @MockitoBean
   protected UserDeviceFacade userDeviceFacade;
 
   @MockitoBean
-  protected RoutineTaskFacade routineTaskFacade;
+  protected RoutineTaskUsecase routineTaskUsecase;
 
   @MockitoBean
   protected DailyTaskFacade dailyTaskFacade;
@@ -98,8 +98,6 @@ public abstract class ControllerTestSupport {
   @MockitoBean
   protected JwtAuthenticationFilter jwtAuthenticationFilter;
 
-  @MockitoBean
-  protected PromptFacade promptFacade;
 
   protected static ResponseFieldsSnippet getValidationErrorResponseFieldSnippet() {
     return responseFields(

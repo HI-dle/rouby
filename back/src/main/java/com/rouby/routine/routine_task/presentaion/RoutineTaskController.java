@@ -1,6 +1,6 @@
 package com.rouby.routine.routine_task.presentaion;
 
-import com.rouby.routine.routine_task.application.facade.RoutineTaskFacade;
+import com.rouby.routine.routine_task.application.usecase.RoutineTaskUsecase;
 import com.rouby.routine.routine_task.presentaion.dto.request.CreateRoutineTaskRequest;
 import com.rouby.routine.routine_task.presentaion.dto.request.GetRoutineTaskRequest;
 import com.rouby.routine.routine_task.presentaion.dto.response.GetRoutineTaskResponse;
@@ -25,14 +25,14 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequiredArgsConstructor
 public class RoutineTaskController {
 
-  private final RoutineTaskFacade routineTaskFacade;
+  private final RoutineTaskUsecase routineTaskUsecase;
 
   @PreAuthorize("hasAnyRole('USER')")
   @PostMapping
   public ResponseEntity<Void> createRoutineTask(
       @AuthenticationPrincipal SecurityUser userDetails,
       @RequestBody @Validated CreateRoutineTaskRequest req) {
-    Long routineTaskId = routineTaskFacade.createRoutineTask(req.toCommand(userDetails.getId()));
+    Long routineTaskId = routineTaskUsecase.createRoutineTask(req.toCommand(userDetails.getId()));
     URI location = ServletUriComponentsBuilder
         .fromCurrentRequestUri()
         .path("/{routineTaskId}")
@@ -49,7 +49,7 @@ public class RoutineTaskController {
       @Valid @ModelAttribute GetRoutineTaskRequest getRoutineTaskRequest
   ) {
     return ResponseEntity.ok(GetRoutineTaskResponse.of(
-        routineTaskFacade.getRoutineTaskWithProgress(
+        routineTaskUsecase.getRoutineTaskWithProgress(
             getRoutineTaskRequest.toCommand(securityUser.getId()))));
   }
 }
