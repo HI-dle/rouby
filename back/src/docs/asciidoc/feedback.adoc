@@ -1,0 +1,26 @@
+[[FEEDBACK-API]]
+= Feedback-API
+
+[[Create-Feedback]]
+== 피드백 생성 API
+=== 성공: 피드백 생성 요청
+
+==== HTTP 요청
+include::{snippets}/create-feedback-201/http-request.adoc[]
+
+==== 요청 필드
+include::{snippets}/create-feedback-201/request-fields.adoc[]
+
+==== HTTP 응답 (201 Created)
+include::{snippets}/create-feedback-201/http-response.adoc[]
+
+=== 실패: 유효성 검증 오류
+
+==== 유효하지 않은 사용자 기분 요청값 오류
+
+===== HTTP 요청
+include::{snippets}/create-feedback-invalid-user-mood-400/http-request.adoc[]
+
+===== HTTP 응답 (400 Bad Request)
+include::{snippets}/create-feedback-invalid-user-mood-400/http-response.adoc[]
+---

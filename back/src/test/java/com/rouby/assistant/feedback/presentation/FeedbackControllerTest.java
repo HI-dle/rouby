@@ -10,11 +10,14 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.rouby.assistant.feedback.fixture.CreateDailyFeedbackRequestFixture;
 import com.rouby.common.security.WithMockCustomUser;
 import com.rouby.common.support.ControllerTestSupport;
+import java.time.LocalDate;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -34,7 +37,7 @@ class FeedbackControllerTest extends ControllerTestSupport {
 
     // when
     ResultActions resultActions = mockMvc.perform(
-        post("/api/v1/assistants/feedback")
+        post("/api/v1/assistants/feedbacks")
             .header("Authorization", "Bearer {ACCESS_TOKEN}")
             .content(content)
             .characterEncoding("UTF-8")
@@ -42,9 +45,11 @@ class FeedbackControllerTest extends ControllerTestSupport {
     );
 
     // then
-    resultActions.andExpect(status().isNoContent())
+    resultActions.andExpect(status().isCreated())
+        .andExpect(header().string(
+            "Location", Matchers.endsWith(String.format("/api/v1/assistants/feedbacks/%s", LocalDate.now()))))
         .andDo(print())
-        .andDo(document("create-feedback-204",
+        .andDo(document("create-feedback-201",
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
             requestFields(
@@ -63,7 +68,7 @@ class FeedbackControllerTest extends ControllerTestSupport {
     var content = objectMapper.writeValueAsString(request);
 
     // when
-    ResultActions resultActions = mockMvc.perform(post("/api/v1/assistants/feedback")
+    ResultActions resultActions = mockMvc.perform(post("/api/v1/assistants/feedbacks")
         .header("Authorization", "Bearer {ACCESS_TOKEN}")
         .content(content)
         .characterEncoding("UTF-8")
