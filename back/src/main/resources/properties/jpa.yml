@@ -32,4 +32,5 @@ spring:
         order_updates: true
     hibernate:
       ddl-auto: create
+    defer-datasource-initialization: true
     open-in-view: false

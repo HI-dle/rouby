@@ -4,6 +4,7 @@ public enum SendStatus {
   PENDING,
   IN_PROGRESS,
   SENT,
-  FAILED
+  FAILED,
+  SKIPPED,
   ;
 }

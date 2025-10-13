@@ -1,9 +1,8 @@
 package com.rouby.notification.notificationEvent.application.service;
 
-import com.rouby.notification.notificationEvent.application.dto.CreateNotificationEventCommand;
+import com.rouby.notification.notificationEvent.application.dto.CreateNotificationEventWithTemplateCommand;
 import com.rouby.notification.notificationEvent.domain.repository.NotificationEventRepository;
-import com.rouby.notification.notificationEvent.domain.sender.NotificationSender;
-import java.time.Clock;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,16 +11,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class NotificationEventWriteService {
 
-  private final Clock clock = Clock.systemUTC();
-  private final NotificationSender notificationSender;
   private final NotificationEventRepository notificationEventRepository;
 
-  public void sendNotification(CreateNotificationEventCommand command) {
-    this.notificationSender.send(command.toInfo(), 10, clock.millis(), false);
+  @Transactional
+  public void create(CreateNotificationEventWithTemplateCommand command) {
+
+    notificationEventRepository.save(command.toEntity(Boolean.TRUE));
   }
 
   @Transactional
-  public void create(CreateNotificationEventCommand command) {
-    notificationEventRepository.save(command.toEntity());
+  public void createEvents(List<CreateNotificationEventWithTemplateCommand> commands,
+      Boolean notificationEnabled) {
+
+    notificationEventRepository.saveAll(commands.stream()
+        .map(command -> command.toEntity(notificationEnabled))
+        .toList());
   }
 }

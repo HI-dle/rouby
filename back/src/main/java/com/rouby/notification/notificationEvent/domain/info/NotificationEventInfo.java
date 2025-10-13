@@ -16,4 +16,10 @@ public record NotificationEventInfo(
     LocalDateTime dueAt
 ) {
 
+  public String getTag() {
+    if (type == NotificationType.FEEDBACK) {
+      return "feedback-" + message.getUrl().split("/")[2];
+    }
+    return "evt-" + id;
+  }
 }

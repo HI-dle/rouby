@@ -9,9 +9,9 @@ import com.rouby.batch.briefing.dto.BriefingNotificationEvents;
 import com.rouby.batch.briefing.dto.UserBriefingInfo;
 import com.rouby.notification.notificationEvent.domain.entity.DeviceTokenInfo;
 import com.rouby.notification.notificationEvent.domain.entity.NotificationType;
+import com.rouby.notification.notificationtemplate.application.dto.MessageInfo;
 import com.rouby.notification.notificationtemplate.application.dto.query.NotificationMessageQuery;
 import com.rouby.notification.notificationtemplate.application.service.NotificationTemplateReadService;
-import com.rouby.notification.notificationtemplate.domain.entity.Message;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -35,7 +35,7 @@ public class BriefingProcessor implements ItemProcessor<UserBriefingInfo, Briefi
   public BriefingAggregate process(UserBriefingInfo user) {
     CreatedBriefingResult briefing = briefingFacade.createBriefingForBatch(user);
 
-    Message message = notificationTemplateReadService.generateNotificationMessage(
+    MessageInfo messageInfo = notificationTemplateReadService.generateNotificationMessage(
         new NotificationMessageQuery(user.userInfo().nickname(), BRIEFING)
     );
 
@@ -51,8 +51,8 @@ public class BriefingProcessor implements ItemProcessor<UserBriefingInfo, Briefi
     BriefingNotificationEvents events = BriefingNotificationEvents.builder()
         .userId(user.userInfo().id())
         .deviceTokenInfos(deviceTokenInfos)
-        .title(message.getTitle())
-        .body(message.getBody())
+        .title(messageInfo.title())
+        .body(messageInfo.body())
         .url(BriefingUrlPrefix + user.today().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
         .notificationType(NotificationType.BRIEFING)
         .dueAt(LocalDateTime.of(user.today(), user.briefingTime()))

@@ -1,6 +1,6 @@
 package com.rouby.assistant.briefing.application.facade;
 
-import static com.rouby.assistant.prompt.domain.enums.PromptType.BRIEFING;
+import static com.rouby.assistant.prompt.domain.entity.enums.PromptType.BRIEFING;
 
 import com.rouby.assistant.briefing.application.dto.info.BriefingInfo;
 import com.rouby.assistant.briefing.application.dto.info.CreatedBriefingResult;
@@ -34,8 +34,7 @@ public class BriefingFacade {
   private final PromptReadService promptReadService;
   private final BriefingReadService briefingReadService;
 
-
-  @Value("${prompt.version:1}")
+  @Value("${prompt.briefing.version:1}")
   private int promptVersion;
 
   public CreatedBriefingResult createBriefingForBatch(UserBriefingInfo userBriefingInfo) {
@@ -57,7 +56,7 @@ public class BriefingFacade {
 
     String prompt = promptReadService.generateBriefingPrompt(
         userBriefingInfo.userInfo(), schedulesInfoJson, routineTaskInfoJson,
-        promptInfo.promptTemplate());
+        promptInfo.userMessage());
 
     String content = briefingClient.sendPromptToAi(prompt);
 
