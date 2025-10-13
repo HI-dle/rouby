@@ -107,6 +107,13 @@ public class RecurrenceRule implements Serializable {
     this.freq.validateInterval(this.interval);
   }
 
+  public void cutUntil(LocalDateTime until) {
+    if (this.until != null && this.until.isBefore(until)) {
+      return;
+    }
+    this.until = until;
+  }
+
   @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
   enum RuleType {
     FREQ(str -> Freq.valueOf(str),

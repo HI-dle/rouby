@@ -1,6 +1,8 @@
 package com.rouby.schedule.application.service;
 
 
+import com.rouby.schedule.application.dto.DeleteScheduleCommand;
+import com.rouby.schedule.application.dto.DeleteScheduleFromCommand;
 import com.rouby.schedule.application.dto.command.CreateScheduleCommand;
 import com.rouby.schedule.application.dto.command.UpdateScheduleCommand;
 import com.rouby.schedule.application.exception.ScheduleErrorCode;
@@ -62,6 +64,37 @@ public class ScheduleWriteService {
       return schedule.getId();
     } catch (IllegalArgumentException e) {
       throw ScheduleException.of(ScheduleErrorCode.SCHEDULE_INVALID_REQUEST, e.getMessage());
+    }
+  }
+
+  @Transactional
+  public void deleteSchedule(Long userId, DeleteScheduleCommand command) {
+    Schedule schedule = scheduleRepository.findByIdAndUserId(command.scheduleId(), userId)
+        .orElseThrow(() -> ScheduleException.from(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
+
+    Schedule parentSchedule = schedule.getParentSchedule();
+
+    if (parentSchedule != null) {
+      schedule.cancel();
+    } else {
+      Schedule newSchedule = command.toEntityWithUserId(userId, schedule);
+      scheduleRepository.save(newSchedule);
+    }
+  }
+
+  @Transactional
+  public void deleteFromSchedule(Long userId, DeleteScheduleFromCommand command) {
+    Schedule schedule = scheduleRepository.findByIdAndUserId(command.scheduleId(), userId)
+        .orElseThrow(() -> ScheduleException.from(ScheduleErrorCode.SCHEDULE_NOT_FOUND));
+
+    Schedule parentSchedule = schedule.getParentSchedule();
+
+    if (parentSchedule != null) {
+      parentSchedule.cancelFrom(command.fromAt());
+      scheduleRepository.bulkCancel(parentSchedule.getId(), command.fromAt());
+    } else {
+      schedule.cancelFrom(command.fromAt());
+      scheduleRepository.bulkCancel(schedule.getId(), command.fromAt());
     }
   }
 }

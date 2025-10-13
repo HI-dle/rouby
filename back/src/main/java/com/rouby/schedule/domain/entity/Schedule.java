@@ -21,6 +21,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -74,7 +75,7 @@ public class Schedule extends BaseEntity {
   @Embedded
   private OverrideInfo overrideInfo;
 
-  public static Schedule createByModify(Long userId, String title, String memo, Period period,
+  public static Schedule createByOverride(Long userId, String title, String memo, Period period,
       Integer alarmOffsetMinutes, Schedule parentSchedule, OverrideInfo overrideInfo) {
     return Schedule.builder()
         .userId(userId)
@@ -153,5 +154,15 @@ public class Schedule extends BaseEntity {
 
   private boolean isRoutineActivateDateOneMoreDayBefore() {
     return period.getStartAt().toLocalDate().minusDays(routineOffsetDays).isBefore(LocalDate.now().minusDays(1));
+  }
+
+  public void cancel() {
+    this.overrideInfo.cancel();
+  }
+
+  public void cancelFrom(LocalDateTime fromAt) {
+    if (this.recurrenceRule != null) {
+      this.recurrenceRule.cutUntil(fromAt.minusSeconds(1));
+    }
   }
 }

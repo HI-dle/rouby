@@ -1,6 +1,7 @@
 package com.rouby.schedule.presentation;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -14,6 +15,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -22,6 +24,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.rouby.common.security.WithMockCustomUser;
 import com.rouby.common.support.ControllerTestSupport;
 import com.rouby.schedule.fixture.CreateScheduleRequestFixture;
+import com.rouby.schedule.fixture.DeleteScheduleFromRequestFixture;
+import com.rouby.schedule.fixture.DeleteScheduleRequestFixture;
 import com.rouby.schedule.fixture.GetScheduleRequestFixture;
 import com.rouby.schedule.fixture.SchedulesInfoFixture;
 import com.rouby.schedule.fixture.UpdateScheduleRequestFixture;
@@ -274,4 +278,104 @@ class ScheduleControllerTest extends ControllerTestSupport {
             getErrorResponseFieldSnippet()
         ));
   }
+
+  @WithMockCustomUser
+  @DisplayName("스케쥴 단일 삭제 API - 성공 200")
+  @Test
+  void deleteSchedule() throws Exception {
+
+    // given
+    var request = DeleteScheduleRequestFixture.getSuccessRequest();
+    var content = objectMapper.writeValueAsString(request);
+
+    doNothing().when(scheduleFacade).deleteSchedule(any(Long.class), any());
+
+    // when
+    ResultActions resultActions = mockMvc.perform(
+        patch("/api/v1/schedules") // 실제 컨트롤러 매핑에 맞게 수정
+            .header("Authorization", "Bearer {ACCESS_TOKEN}")
+            .content(content)
+            .characterEncoding("UTF-8")
+            .contentType(MediaType.APPLICATION_JSON)
+    );
+
+    // then
+    resultActions.andExpect(status().isOk())
+        .andDo(print())
+        .andDo(document("delete-schedule-204",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestFields(
+                fieldWithPath("scheduleId").description("삭제할 일정 아이디"),
+                fieldWithPath("instanceDate").description("삭제 기준 instanceDate"),
+                fieldWithPath("startAt").description("삭제 대상 시작 일시"),
+                fieldWithPath("endAt").description("삭제 대상 종료 일시")
+            )
+        ));
+  }
+
+  @WithMockCustomUser
+  @DisplayName("스케쥴 반복 이후 삭제 API - 성공 200")
+  @Test
+  void deleteScheduleFrom() throws Exception {
+
+    // given
+    var request = DeleteScheduleFromRequestFixture.getSuccessRequest();
+    var content = objectMapper.writeValueAsString(request);
+
+    doNothing().when(scheduleFacade).deleteSchedulesStartingFrom(any(Long.class), any());
+
+    // when
+    ResultActions resultActions = mockMvc.perform(
+        patch("/api/v1/schedules/from")
+            .header("Authorization", "Bearer {ACCESS_TOKEN}")
+            .content(content)
+            .characterEncoding("UTF-8")
+            .contentType(MediaType.APPLICATION_JSON)
+    );
+
+    // then
+    resultActions.andExpect(status().isOk())
+        .andDo(print())
+        .andDo(document("delete-schedule-from-204",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestFields(
+                fieldWithPath("scheduleId").description("삭제할 일정 아이디"),
+                fieldWithPath("fromAt").description("해당 일시 이후 일정부터 삭제")
+            )
+        ));
+  }
+
+  @WithMockCustomUser
+  @DisplayName("스케쥴 삭제 API - 유효하지 않은 요청으로 인한 실패 400")
+  @Test
+  void deleteSchedule_invalidRequest() throws Exception {
+
+    // given
+    var request = DeleteScheduleRequestFixture.getInvalidDateRequest();
+    var content = objectMapper.writeValueAsString(request);
+
+    doThrow(new IllegalArgumentException("시작 시간이 종료 시간보다 이후일 수 없습니다."))
+        .when(scheduleFacade).deleteSchedule(any(Long.class), any());
+
+    // when
+    ResultActions resultActions = mockMvc.perform(
+        patch("/api/v1/schedules")
+            .header("Authorization", "Bearer {ACCESS_TOKEN}")
+            .content(content)
+            .characterEncoding("UTF-8")
+            .contentType(MediaType.APPLICATION_JSON)
+    );
+
+    // then
+    resultActions.andExpect(status().isBadRequest())
+        .andDo(print())
+        .andDo(document("delete-schedule-invalid-400",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            getErrorResponseFieldSnippet()
+        ));
+  }
 }
+
