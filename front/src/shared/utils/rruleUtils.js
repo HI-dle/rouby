@@ -60,7 +60,6 @@ function expandRecurringSchedule(schedule, monthKey) {
   const { rangeStart, rangeEnd } = getMonthRange(monthKey)
 
   // 반복이 없는 경우
-  console.log(recurrence)
   if (!recurrence || !recurrence.rruleStr) {
     return expandMultiDaySchedule(
       {
