@@ -37,12 +37,13 @@ public class ScheduleTestDataSaver {
     int totalCount = ScheduleTestDataFactory.getSchedulesAbstractTotalCount(parentSize);
 
     for (int i = 0; i < totalCount; i += chunkSize) {
+      int currentChunkSize = Math.min(totalCount - i, chunkSize);
       try {
-        List<Long> ids = repository.fetchNextIds(Math.min(totalCount - i, chunkSize));
-        schedules = ScheduleTestDataFactory.generateTestSchedules(i, Math.min(totalCount - i, chunkSize), ids);
+        List<Long> ids = repository.fetchNextIds(currentChunkSize);
+        schedules = ScheduleTestDataFactory.generateTestSchedules(i, currentChunkSize, ids);
         repository.batchInsert(batchSize, schedules);
 
-        System.out.printf("Inserted batched chunk %d-%d%n", i, i + Math.min(totalCount - i, chunkSize));
+        System.out.printf("Inserted batched chunk %d-%d%n", i, i + currentChunkSize);
 
       } catch (Exception e) {
 
