@@ -1,9 +1,9 @@
-package com.rouby.schedule.domain.vo;
+package com.rouby.schedule.domain.entity.vo;
 
 
 import com.rouby.schedule.domain.entity.ByDaySetConverter;
-import com.rouby.schedule.domain.enums.ByDay;
-import com.rouby.schedule.domain.enums.Freq;
+import com.rouby.schedule.domain.entity.enums.ByDay;
+import com.rouby.schedule.domain.entity.enums.Freq;
 import com.rouby.schedule.domain.support.UntilDateTimeFormatter;
 import io.jsonwebtoken.lang.Assert;
 import jakarta.persistence.Convert;
@@ -65,7 +65,7 @@ public class RecurrenceRule implements Serializable {
       sb.append(RuleType.BYDAY).append(equal).append(byDayStr).append(separator);
     }
     if (interval != null) {
-       sb.append(RuleType.INTERVAL).append(equal).append(interval).append(separator);
+      sb.append(RuleType.INTERVAL).append(equal).append(interval).append(separator);
     }
     if (until != null) {
       String formattedUntilStr = UntilDateTimeFormatter.format(until);
@@ -118,26 +118,26 @@ public class RecurrenceRule implements Serializable {
   enum RuleType {
     FREQ(str -> Freq.valueOf(str),
         (rrule, freq) -> {
-      if (rrule.freq != null) throw new IllegalArgumentException("FREQ 중복 설정");
-      rrule.freq = (Freq) freq;
-    }),
+          if (rrule.freq != null) throw new IllegalArgumentException("FREQ 중복 설정");
+          rrule.freq = (Freq) freq;
+        }),
     BYDAY(str -> Arrays.stream(str.split(","))
         .map(ByDay::valueOf)
         .collect(Collectors.toSet()),
         (rrule, byDay) -> {
-      if (rrule.byDay != null) throw new IllegalArgumentException("BYDAY 중복 설정");
-      rrule.byDay = (Set<ByDay>) byDay;
-    }),
+          if (rrule.byDay != null) throw new IllegalArgumentException("BYDAY 중복 설정");
+          rrule.byDay = (Set<ByDay>) byDay;
+        }),
     INTERVAL(str -> Integer.valueOf(str),
         (rrule, interval) -> {
-      if (rrule.interval != null) throw new IllegalArgumentException("INTERVAL 중복 설정");
-      rrule.interval = (Integer) interval;
-    }),
+          if (rrule.interval != null) throw new IllegalArgumentException("INTERVAL 중복 설정");
+          rrule.interval = (Integer) interval;
+        }),
     UNTIL(str -> UntilDateTimeFormatter.parse(str),
         (rrule, until) -> {
-      if (rrule.until != null) throw new IllegalArgumentException("UNTIL 중복 설정");
-      rrule.until = (LocalDateTime) until;
-    }),
+          if (rrule.until != null) throw new IllegalArgumentException("UNTIL 중복 설정");
+          rrule.until = (LocalDateTime) until;
+        }),
     ;
 
     private final Function<String, Object> stringConverter;

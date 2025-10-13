@@ -1,4 +1,4 @@
-package com.rouby.schedule.domain.enums;
+package com.rouby.schedule.domain.entity.enums;
 
 import java.util.function.Predicate;
 import lombok.AccessLevel;

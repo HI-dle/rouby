@@ -28,28 +28,27 @@ public class ScheduleTestDataSaver {
   @DisplayName("스케쥴 기본 데이터 생성")
   void createSchedules() {
 
-    int batchSize = 100;
-    int maxSize = 1_000; // * 3 정도의 데이터 생성됨
+    int chunkSize = 10_000;
+    int batchSize = 1000;
+    int parentSize = 3_000_000;
 
     JdbcTestDataRepository repository = new JdbcTestDataRepository(jdbcTemplate, objectMapper);
     List<Schedule> schedules;
-    int totalSize = ScheduleTestDataFactory.getCountSchedules(maxSize);
+    int totalCount = ScheduleTestDataFactory.getSchedulesAbstractTotalCount(parentSize);
 
-    List<Long> ids = repository.fetchNextIds(totalSize);
-
-    int idIndex = 0;
-
-    for (int i = 0; i < maxSize; i += batchSize) {
+    for (int i = 0; i < totalCount; i += chunkSize) {
+      int currentChunkSize = Math.min(totalCount - i, chunkSize);
       try {
-        schedules = ScheduleTestDataFactory.generateTestSchedules(i, batchSize, ids, idIndex);
+        List<Long> ids = repository.fetchNextIds(currentChunkSize);
+        schedules = ScheduleTestDataFactory.generateTestSchedules(i, currentChunkSize, ids);
         repository.batchInsert(batchSize, schedules);
-        idIndex += ScheduleTestDataFactory.getCountSchedules(Math.min(batchSize, maxSize - i));
 
-        System.out.printf("Inserted batch %d-%d%n", i, i + batchSize);
+        System.out.printf("Inserted batched chunk %d-%d%n", i, i + currentChunkSize);
 
       } catch (Exception e) {
 
-        System.err.printf("Failed to insert batch %d-%d: %s%n", i, i + batchSize, e.getMessage());
+        System.err.printf("Failed to insert batched chunk %d-%d: %s%n",
+            i, i + Math.min(totalCount - i, chunkSize), e.getMessage());
         break;
       }
     }

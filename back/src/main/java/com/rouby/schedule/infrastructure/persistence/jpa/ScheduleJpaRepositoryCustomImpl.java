@@ -7,7 +7,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.rouby.schedule.domain.entity.QSchedule;
-import com.rouby.schedule.domain.enums.OverrideType;
+import com.rouby.schedule.domain.entity.enums.OverrideType;
 import com.rouby.schedule.domain.repository.criteria.GetScheduleCriteria;
 import com.rouby.schedule.domain.repository.info.ScheduleWithOverrides;
 import com.rouby.schedule.domain.repository.info.ScheduleWithOverrides.ScheduleOverride;

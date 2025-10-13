@@ -1,8 +1,8 @@
-package com.rouby.schedule.domain.vo;
+package com.rouby.schedule.domain.entity.vo;
 
-import static com.rouby.schedule.domain.enums.OverrideType.CANCELLED;
+import static com.rouby.schedule.domain.entity.enums.OverrideType.CANCELLED;
 
-import com.rouby.schedule.domain.enums.OverrideType;
+import com.rouby.schedule.domain.entity.enums.OverrideType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

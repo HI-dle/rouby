@@ -1,4 +1,4 @@
-package com.rouby.schedule.domain.vo;
+package com.rouby.schedule.domain.entity.vo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

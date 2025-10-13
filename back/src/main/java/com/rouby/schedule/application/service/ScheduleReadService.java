@@ -27,7 +27,7 @@ public class ScheduleReadService {
 
   public String findSummarySchedulesJsonBy(GetScheduleQuery query) {
     try {
-      return jsonHelper.toJson(
+      return jsonHelper.toPrettyJson(
           SchedulesSummaryInfo.of(scheduleRepository.findSchedulesByCriteria(query.toCriteria())));
     } catch (IllegalArgumentException e) {
       throw ScheduleException.of(ScheduleErrorCode.SCHEDULE_INVALID_REQUEST, e.getMessage());

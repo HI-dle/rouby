@@ -1,9 +1,9 @@
 package com.rouby.schedule.application.dto.command;
 
 import com.rouby.schedule.domain.entity.Schedule;
-import com.rouby.schedule.domain.enums.OverrideType;
-import com.rouby.schedule.domain.vo.OverrideInfo;
-import com.rouby.schedule.domain.vo.Period;
+import com.rouby.schedule.domain.entity.enums.OverrideType;
+import com.rouby.schedule.domain.entity.vo.OverrideInfo;
+import com.rouby.schedule.domain.entity.vo.Period;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.Builder;
