@@ -1,8 +1,8 @@
 package com.rouby.schedule.domain.repository.info;
 
-import com.rouby.schedule.domain.enums.AlarmOffsetType;
-import com.rouby.schedule.domain.enums.OverrideType;
-import com.rouby.schedule.domain.vo.RecurrenceRule;
+import com.rouby.schedule.domain.entity.enums.AlarmOffsetType;
+import com.rouby.schedule.domain.entity.enums.OverrideType;
+import com.rouby.schedule.domain.entity.vo.RecurrenceRule;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;

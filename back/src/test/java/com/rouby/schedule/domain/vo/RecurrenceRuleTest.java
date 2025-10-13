@@ -4,8 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.rouby.schedule.domain.enums.ByDay;
-import com.rouby.schedule.domain.enums.Freq;
+import com.rouby.schedule.domain.entity.vo.RecurrenceRule;
+import com.rouby.schedule.domain.entity.enums.ByDay;
+import com.rouby.schedule.domain.entity.enums.Freq;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Stream;

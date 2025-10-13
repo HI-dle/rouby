@@ -1,4 +1,4 @@
-package com.rouby.schedule.domain.enums;
+package com.rouby.schedule.domain.entity.enums;
 
 public enum OverrideType {
 

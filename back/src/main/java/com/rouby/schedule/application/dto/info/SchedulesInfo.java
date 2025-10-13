@@ -2,7 +2,7 @@ package com.rouby.schedule.application.dto.info;
 
 import com.rouby.schedule.domain.repository.info.ScheduleWithOverrides;
 import com.rouby.schedule.domain.repository.info.ScheduleWithOverrides.ScheduleOverride;
-import com.rouby.schedule.domain.vo.RecurrenceRule;
+import com.rouby.schedule.domain.entity.vo.RecurrenceRule;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;

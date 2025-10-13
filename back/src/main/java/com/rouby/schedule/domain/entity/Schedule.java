@@ -1,10 +1,10 @@
 package com.rouby.schedule.domain.entity;
 
 import com.rouby.common.jpa.BaseEntity;
-import com.rouby.schedule.domain.enums.AlarmOffsetType;
-import com.rouby.schedule.domain.vo.OverrideInfo;
-import com.rouby.schedule.domain.vo.Period;
-import com.rouby.schedule.domain.vo.RecurrenceRule;
+import com.rouby.schedule.domain.entity.enums.AlarmOffsetType;
+import com.rouby.schedule.domain.entity.vo.OverrideInfo;
+import com.rouby.schedule.domain.entity.vo.Period;
+import com.rouby.schedule.domain.entity.vo.RecurrenceRule;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
