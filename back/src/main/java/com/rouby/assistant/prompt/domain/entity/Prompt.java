@@ -1,6 +1,6 @@
-package com.rouby.assistant.prompt.domain;
+package com.rouby.assistant.prompt.domain.entity;
 
-import com.rouby.assistant.prompt.domain.enums.PromptType;
+import com.rouby.assistant.prompt.domain.entity.enums.PromptType;
 import com.rouby.common.jpa.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,17 +26,20 @@ public class Prompt extends BaseEntity {
   @Column(nullable = false)
   private PromptType promptType;
 
+  @Column(columnDefinition = "TEXT")
+  private String systemMessage;
+
   @Column(nullable = false, columnDefinition = "TEXT")
-  private String promptTemplate;
+  private String userMessage;
 
   @Column(nullable = false)
   private Integer version;
 
   @Builder
-  private Prompt(PromptType promptType, String promptTemplate, Integer version) {
+  private Prompt(PromptType promptType, String systemMessage, String userMessage, Integer version) {
     this.promptType = promptType;
-    this.promptTemplate = promptTemplate;
+    this.systemMessage = systemMessage;
+    this.userMessage = userMessage;
     this.version = version;
   }
-
 }

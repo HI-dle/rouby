@@ -24,8 +24,8 @@ resilience4j:
         slidingWindowSize: 50
         minimumNumberOfCalls: 20
         failureRateThreshold: 50
-        slowCallRateThreshold: 50
-        slowCallDurationThreshold: 5s # 10s
+        slowCallRateThreshold: 50 # slow call 50% 초과시 차단(open)
+        slowCallDurationThreshold: 5s # api 응답이 느린 경우 10s
         waitDurationInOpenState: 5s
         permittedNumberOfCallsInHalfOpenState: 5
         automaticTransitionFromOpenToHalfOpenEnabled: true
@@ -36,6 +36,29 @@ resilience4j:
           - com.rouby.notification.notificationEvent.infrastructure.exception.NotificationEventFcmRetryableException
         ignoreExceptions:
           - com.rouby.notification.notificationEvent.infrastructure.exception.NotificationEventFcmException
+      assistance:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 50
+        failureRateThreshold: 50
+        slowCallRateThreshold: 50
+        slowCallDurationThreshold: 10s
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+  retry:
+    instances:
+      assistance:
+        maxAttempts: 3
+        waitDuration: 500ms
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+        retryExceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - org.springframework.web.client.ResourceAccessException
+          - java.util.concurrent.TimeoutException
+          - org.springframework.web.client.HttpClientErrorException$TooManyRequests
+        ignoreExceptions:
+          - org.springframework.web.client.HttpClientErrorException
 
 ---
 spring:

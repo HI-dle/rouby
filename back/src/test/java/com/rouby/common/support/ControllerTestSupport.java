@@ -6,7 +6,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rouby.assistant.briefing.application.facade.BriefingFacade;
 import com.rouby.assistant.briefing.presentation.BriefingController;
-import com.rouby.assistant.prompt.application.PromptFacade;
+import com.rouby.assistant.prompt.application.service.PromptWriteService;
 import com.rouby.assistant.prompt.presentation.PromptController;
 import com.rouby.common.config.WebConfig;
 import com.rouby.common.config.WebMvcConfig;
@@ -88,6 +88,9 @@ public abstract class ControllerTestSupport {
 
   @MockitoBean
   protected BriefingFacade briefingFacade;
+  
+  @MockitoBean
+  protected PromptWriteService promptWriteService;
 
   @MockitoBean
   protected AuthenticationManager authenticationManager;

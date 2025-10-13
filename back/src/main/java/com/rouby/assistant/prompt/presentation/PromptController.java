@@ -1,6 +1,6 @@
 package com.rouby.assistant.prompt.presentation;
 
-import com.rouby.assistant.prompt.application.PromptFacade;
+import com.rouby.assistant.prompt.application.service.PromptWriteService;
 import com.rouby.assistant.prompt.presentation.request.CreatePromptRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class PromptController {
 
-  private final PromptFacade promptFacade;
+  private final PromptWriteService promptWriteService;
 
   @PostMapping
   @PreAuthorize("hasAnyRole('ADMIN')")
   public ResponseEntity<Void> createPrompt(@RequestBody @Valid CreatePromptRequest request) {
-    promptFacade.createPrompt(request.toCommand());
+
+    promptWriteService.createPrompt(request.toCommand());
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 }
