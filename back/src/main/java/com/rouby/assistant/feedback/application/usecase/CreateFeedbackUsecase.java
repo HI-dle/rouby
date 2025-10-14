@@ -19,7 +19,6 @@ import com.rouby.assistant.feedback.application.service.FeedbackReadService;
 import com.rouby.assistant.feedback.application.service.FeedbackWriteService;
 import java.time.LocalDate;
 import java.util.concurrent.CompletionException;
-import java.util.function.Consumer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -65,13 +64,24 @@ public class CreateFeedbackUsecase {
     var toDate = today.plusDays(1);
     var fromDate = toDate.minusDays(7);
 
-    UserInfoForFeedback userInfo = userGateway.getUserInfoWithNotification(command.userId());
-    RoutineTasksInfoForFeedback routineTaskWithProgress = routineTaskGateway.getRoutineTaskWithProgress(
-        command.userId(), fromDate, toDate);
-    SchedulesInfoForFeedback schedulesInfo = scheduleGateway.getSchedulesByCondition(
-        command.userId(), fromDate.atStartOfDay(), toDate.atStartOfDay());
-    FeedbackInfoForNewFeedback recentFeedbackInfo =
-        feedbackReadService.getRecentFeedbackInfoWithin1W(command.userId());
+    UserInfoForFeedback userInfo;
+    RoutineTasksInfoForFeedback routineTaskWithProgress;
+    SchedulesInfoForFeedback schedulesInfo;
+    FeedbackInfoForNewFeedback recentFeedbackInfo;
+
+    try {
+      userInfo = userGateway.getUserInfoWithNotification(command.userId());
+      routineTaskWithProgress = routineTaskGateway.getRoutineTaskWithProgress(
+          command.userId(), fromDate, toDate);
+      schedulesInfo = scheduleGateway.getSchedulesByCondition(
+          command.userId(), fromDate.atStartOfDay(), toDate.atStartOfDay());
+      recentFeedbackInfo =
+          feedbackReadService.getRecentFeedbackInfoWithin1W(command.userId());
+    } catch (Exception e) {
+      onFailure(e, feedbackId, command.userId());
+      throw e;
+    }
+
 
     TEMPERATURE = 0.5;
 
@@ -83,36 +93,37 @@ public class CreateFeedbackUsecase {
         CreateFeedbackResult.class
         )
         .thenAccept(result -> {
-          onSuccessCallback(feedbackId,
-              FeedbackNotiTargetUserInfo.from(command.userId(), userInfo), today).accept(result);
+          onSuccess(result, feedbackId,
+              FeedbackNotiTargetUserInfo.from(command.userId(), userInfo), today);
         })
         .whenComplete((result, t) -> {
           if (t != null) {
-            onFailureCallback(feedbackId, command.userId()).accept(t);
+            onFailure(t, feedbackId, command.userId());
           }
         });
   }
 
-  public Consumer<CreateFeedbackResult> onSuccessCallback(
+  public void onSuccess(CreateFeedbackResult result,
       Long feedbackId, FeedbackNotiTargetUserInfo targetUserInfo, LocalDate feedbackDate) {
 
-    return (result) -> {
-      try {
-        feedbackWriteService.markSuccess(feedbackId, result);
-        notificationEventGateway.createFeedbackNotificationEvent(
-            targetUserInfo, FEEDBACK_URL_PREFIX + feedbackDate.toString());
-      } catch (Exception e) {
-        log.error("어시스턴트의 피드백 생성 성공 콜백 수행 중 오류 발생으로 인한 실패 처리: {}", feedbackId, e);
-        throw new CompletionException(e);
-      }
-    };
+    try {
+      feedbackWriteService.markSuccess(feedbackId, result);
+    } catch (Exception e) {
+      log.error("어시스턴트의 피드백 생성 성공 로직 수행 중 데이터베이스 업데이트 오류 발생으로 인한 실패 처리: {}", feedbackId, e);
+      throw new CompletionException(e);
+    }
+
+    try {
+      notificationEventGateway.createFeedbackNotificationEvent(
+          targetUserInfo, FEEDBACK_URL_PREFIX + feedbackDate.toString());
+    } catch (Exception e) {
+      log.error("어시스턴트의 피드백 생성 성공 로직 수행 중 알림 생성 오류 발생: {}", feedbackId, e);
+    }
   }
 
-  public Consumer<Throwable> onFailureCallback(Long feedbackId, Long userId) {
+  public void onFailure(Throwable t, Long feedbackId, Long userId) {
 
-    return (t) -> {
-      log.error("어시스턴트의 피드백 생성 중 오류 발생으로 인한 실패 처리: {}", t.getMessage(), t);
-      feedbackWriteService.markFailure(feedbackId, userId);
-    };
+    log.error("어시스턴트의 피드백 생성 중 오류 발생으로 인한 실패 처리: {}", t.getMessage(), t);
+    feedbackWriteService.markFailure(feedbackId, userId);
   }
 }
