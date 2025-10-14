@@ -90,7 +90,7 @@ include::{snippets}/delete-schedule-200/http-request.adoc[]
 ==== 요청 필드
 include::{snippets}/delete-schedule-200/request-fields.adoc[]
 
-==== HTTP 응답 (200 Ok)
+==== HTTP 응답 (200 OK)
 include::{snippets}/delete-schedule-200/http-response.adoc[]
 
 === 실패: 유효성 검증 오류
@@ -116,7 +116,7 @@ include::{snippets}/delete-schedule-from-200/http-request.adoc[]
 ==== 요청 필드
 include::{snippets}/delete-schedule-from-200/request-fields.adoc[]
 
-==== HTTP 응답 (200 Ok)
+==== HTTP 응답 (200 OK)
 include::{snippets}/delete-schedule-from-200/http-response.adoc[]
 
 ---

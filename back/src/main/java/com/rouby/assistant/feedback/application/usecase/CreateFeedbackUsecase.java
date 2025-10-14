@@ -48,7 +48,7 @@ public class CreateFeedbackUsecase {
 
   public void requestFeedback(CreateFeedbackCommand command) {
 
-    Long feedbackId = null;
+    Long feedbackId;
     try{
       feedbackId = feedbackWriteService.createFeedbackRequestWithinQuota(command, PROMPT_VERSION);
     } catch (DataIntegrityViolationException e) {
@@ -73,8 +73,7 @@ public class CreateFeedbackUsecase {
     FeedbackInfoForNewFeedback recentFeedbackInfo =
         feedbackReadService.getRecentFeedbackInfoWithin1W(command.userId());
 
-    TEMPERATURE = 0.2;
-    final Long finalFeedbackId = feedbackId;
+    TEMPERATURE = 0.5;
 
     assistantGateway.requestDailyFeedbackAsync(
         PROMPT_VERSION,
@@ -84,12 +83,12 @@ public class CreateFeedbackUsecase {
         CreateFeedbackResult.class
         )
         .thenAccept(result -> {
-          onSuccessCallback(finalFeedbackId,
+          onSuccessCallback(feedbackId,
               FeedbackNotiTargetUserInfo.from(command.userId(), userInfo), today).accept(result);
         })
         .whenComplete((result, t) -> {
           if (t != null) {
-            onFailureCallback(finalFeedbackId, command.userId()).accept(t);
+            onFailureCallback(feedbackId, command.userId()).accept(t);
           }
         });
   }

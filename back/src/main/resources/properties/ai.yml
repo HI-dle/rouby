@@ -6,15 +6,19 @@ spring:
       api-key: ${AI_API_KEY}
       chat:
         base-url: ${AI_API_URL}
+        completions-path: "/chat/completions"
         options:
           model: "gemini-2.0-flash-lite"
           temperature: 0.0
-        completions-path: "/chat/completions"
 prompt:
   briefing:
     version: 1
   feedback:
     version: 1
+assistant:
+  api:
+    read-timeout-seconds: 60
+    connect-timeout-seconds: 5
 
 ---
 # test 환경
@@ -34,3 +38,7 @@ prompt:
     version: 1
   feedback:
     version: 1
+assistant:
+  api:
+    read-timeout-seconds: 60
+    connect-timeout-seconds: 5

@@ -1,4 +1,4 @@
-POST {{url}}/api/v1/assistants/feedback
+POST {{url}}/api/v1/assistants/feedbacks
 content-type: application/json
 
 {

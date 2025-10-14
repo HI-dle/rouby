@@ -40,7 +40,7 @@ public record CreateNotificationEventWithTemplateCommand(
     return NotificationEvent.builder()
         .userId(userId)
         .deviceTokenInfo(buildDeviceTokenInfo())
-        .message(buildeNotificationMessage())
+        .message(buildNotificationMessage())
         .type(NotificationType.parse(notificationType))
         .status(notificationEnabled ? SendStatus.PENDING : SendStatus.SKIPPED)
         .dueAt(LocalDateTime.now().plusSeconds(1))
@@ -53,7 +53,7 @@ public record CreateNotificationEventWithTemplateCommand(
     return NotificationEventInfo.builder()
         .userId(userId)
         .deviceTokenInfo(buildDeviceTokenInfo())
-        .message(buildeNotificationMessage())
+        .message(buildNotificationMessage())
         .type(NotificationType.parse(notificationType))
         .build();
   }
@@ -66,7 +66,7 @@ public record CreateNotificationEventWithTemplateCommand(
         .build();
   }
 
-  private NotificationMessage buildeNotificationMessage() {
+  private NotificationMessage buildNotificationMessage() {
 
     return NotificationMessage.builder()
         .title(title)

@@ -87,7 +87,7 @@ public class User extends BaseEntity {
       UserRole role,
       LocalDateTime lastActivatedAt,
       OnboardingState onboardingState,
-      Boolean notificationEnabled
+      boolean notificationEnabled
   ) {
     this.email = email;
     this.password = password;
@@ -96,11 +96,11 @@ public class User extends BaseEntity {
     this.healthStatusKeywords = HealthStatusKeywords.empty();
     this.profileKeywords = ProfileKeywords.empty();
     this.communicationTone = CommunicationTone.empty();
-    this.notificationSettings = createDefaultNotificationSettings();
+    this.notificationSettings.addAll(createDefaultNotificationSettings());
     this.authProvider = authProvider == null ? AuthProvider.DEFAULT : authProvider;
     this.role = role == null ? UserRole.USER : role;
     this.onboardingState = onboardingState == null ? ROUBY_SETTING_BEFORE : onboardingState;
-    this.notificationEnabled = notificationEnabled == null ? Boolean.FALSE : notificationEnabled;
+    this.notificationEnabled = notificationEnabled;
     this.lastActivatedAt = lastActivatedAt;
   }
 

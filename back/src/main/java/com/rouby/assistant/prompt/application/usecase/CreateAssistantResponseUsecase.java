@@ -1,6 +1,8 @@
 package com.rouby.assistant.prompt.application.usecase;
 
 import com.rouby.assistant.prompt.application.client.AssistantClient;
+import com.rouby.assistant.prompt.application.exception.PromptErrorCode;
+import com.rouby.assistant.prompt.application.exception.PromptException;
 import com.rouby.assistant.prompt.application.info.PromptInfo;
 import com.rouby.assistant.prompt.application.service.PromptReadService;
 import com.rouby.assistant.prompt.domain.entity.enums.PromptType;
@@ -20,8 +22,15 @@ public class CreateAssistantResponseUsecase {
       String promptType, int version, double temperature,
       Map<String, Object> model, Class<R> responseClazz) {
 
-    PromptInfo promptInfo = promptReadService.findByPromptTypeAndVersion(
-        PromptType.parse(promptType), version);
+    PromptInfo promptInfo;
+    try {
+      promptInfo = promptReadService.findByPromptTypeAndVersion(
+          PromptType.parse(promptType), version);
+    } catch (IllegalArgumentException e) {
+      throw PromptException.from(PromptErrorCode.INVALID_PROMPT_TYPE);
+    } catch (Exception e) {
+      throw PromptException.from(PromptErrorCode.PROMPT_NOT_FOUND);
+    }
 
     AssistantResponse<R> response = assistantClient.generateResponseFromPrompt(
         temperature,

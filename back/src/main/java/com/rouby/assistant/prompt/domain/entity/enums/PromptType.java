@@ -8,7 +8,7 @@ public enum PromptType {
 
   public static PromptType parse(String type) {
 
-    if (type == null) throw new IllegalArgumentException("PromptType은 널null 일 수 없습니다.");
+    if (type == null) throw new IllegalArgumentException("PromptType은 null 일 수 없습니다.");
 
     try {
       return PromptType.valueOf(type.trim().toUpperCase());

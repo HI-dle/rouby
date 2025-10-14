@@ -15,7 +15,10 @@ public record RoutineTasksInfoForFeedback(
   public static RoutineTasksInfoForFeedback from(GetRoutineTaskInfo routineTaskInfo) {
 
     return RoutineTasksInfoForFeedback.builder()
-        .routines(routineTaskInfo.routines().stream().map(RoutineTask::from).toList())
+        .routines(
+            routineTaskInfo.routines() == null
+                ? List.of()
+                : routineTaskInfo.routines().stream().map(RoutineTask::from).toList())
         .build();
   }
 
@@ -42,10 +45,26 @@ public record RoutineTasksInfoForFeedback(
           .taskType(routineTask.taskType())
           .targetValue(routineTask.targetValue())
           .alarmOffsetMinutes(routineTask.alarmOffsetMinutes())
-          .routineTimeInfo(RoutineTimeInfoDto.from(routineTask.routineTimeInfo()))
-          .recurrenceRule(RecurrenceRuleDto.from(routineTask.recurrenceRule()))
-          .routineOverrides(routineTask.routineOverrides().stream().map(RoutineTaskOverrideDto::from).toList())
-          .dailyProgress(routineTask.dailyProgress().stream().map(DailyProgressDto::from).toList())
+          .routineTimeInfo(
+              routineTask.routineTimeInfo() == null
+                  ? null
+                  : RoutineTimeInfoDto.from(routineTask.routineTimeInfo()))
+          .recurrenceRule(
+              routineTask.recurrenceRule() == null
+                  ? null
+                  : RecurrenceRuleDto.from(routineTask.recurrenceRule()))
+          .routineOverrides(
+              routineTask.routineOverrides() == null
+                  ? List.of()
+                  : routineTask.routineOverrides().stream()
+                      .map(RoutineTaskOverrideDto::from)
+                      .toList())
+          .dailyProgress(
+              routineTask.dailyProgress() == null
+                  ? List.of()
+                  : routineTask.dailyProgress().stream()
+                      .map(DailyProgressDto::from)
+                      .toList())
           .build();
     }
   }
@@ -60,6 +79,8 @@ public record RoutineTasksInfoForFeedback(
 
     public static RoutineTimeInfoDto from(
         GetRoutineTaskInfo.RoutineTimeInfoDto routineTimeInfoDto) {
+
+      if (routineTimeInfoDto == null) return null;
 
       return RoutineTimeInfoDto.builder()
           .startDate(routineTimeInfoDto.startDate())
@@ -80,6 +101,8 @@ public record RoutineTasksInfoForFeedback(
   ) {
 
     public static RecurrenceRuleDto from(GetRoutineTaskInfo.RecurrenceRuleDto recurrenceRuleDto) {
+
+      if (recurrenceRuleDto == null) return null;
 
       return RecurrenceRuleDto.builder()
           .freq(recurrenceRuleDto.freq())

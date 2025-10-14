@@ -27,9 +27,9 @@ public record UserDetailInfo(
         .id(user.getId())
         .email(user.getEmail())
         .nickname(user.getNickname())
-        .healthStatusKeywords(user.getHealthStatusKeywords().getHealthStatusKeywords())
-        .profileKeywords(user.getProfileKeywords().getProfileKeywords())
-        .communicationTone(user.getCommunicationToneValues())
+        .healthStatusKeywords(Set.copyOf(user.getHealthStatusKeywords().getHealthStatusKeywords()))
+        .profileKeywords(Set.copyOf(user.getProfileKeywords().getProfileKeywords()))
+        .communicationTone(Set.copyOf(user.getCommunicationToneValues()))
         .onboardingState(user.getOnboardingState())
         .notificationEnabled(user.isNotificationEnabled())
         .build();
