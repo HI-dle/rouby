@@ -1,0 +1,7 @@
+POST {{url}}/api/v1/assistants/feedbacks
+content-type: application/json
+
+{
+  "userInput": "오늘은 집중이 잘 안 되는 하루였던 거 같아. 빨리 집중해서 취업해야 되는데...!",
+  "userMood": "SOSO"
+}

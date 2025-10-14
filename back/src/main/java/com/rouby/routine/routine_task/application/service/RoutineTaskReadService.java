@@ -46,7 +46,7 @@ public class RoutineTaskReadService {
   }
 
   public String findSummaryRoutineTaskJsonBy(GetRoutineTaskCommand command) {
-    return jsonHelper.toJson(RoutineTaskSummaryInfo.of(
+    return jsonHelper.toPrettyJson(RoutineTaskSummaryInfo.of(
         routineTaskRepository.findRoutineTaskByCriteria(command.toCriteria())));
   }
 }

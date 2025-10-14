@@ -79,7 +79,7 @@ include::{snippets}/update-schedule-invalid-alarm-offset-400/http-response.adoc[
 
 ---
 
-[[Delete-Schedules-]]
+[[Delete-Schedules]]
 == 해당 일정 삭제 API
 
 === 성공: 해당 일정 삭제 요청

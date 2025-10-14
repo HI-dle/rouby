@@ -5,5 +5,7 @@ public enum NotificationType {
   SCHEDULE,
   ROUTINE,
   BRIEFING,
+  FEEDBACK,
+  RECOMMENDATION,
   ;
 }

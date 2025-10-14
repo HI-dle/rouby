@@ -29,7 +29,6 @@ public class UserDeviceController {
       @RequestBody @Validated RegisterUserDeviceRequest request) {
 
     userDeviceFacade.register(request.toCommand(securityUser.getId()));
-
     return ResponseEntity.noContent().build();
   }
 

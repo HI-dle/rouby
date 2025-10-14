@@ -302,7 +302,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
     // then
     resultActions.andExpect(status().isOk())
         .andDo(print())
-        .andDo(document("delete-schedule-204",
+        .andDo(document("delete-schedule-200",
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
             requestFields(
@@ -337,7 +337,7 @@ class ScheduleControllerTest extends ControllerTestSupport {
     // then
     resultActions.andExpect(status().isOk())
         .andDo(print())
-        .andDo(document("delete-schedule-from-204",
+        .andDo(document("delete-schedule-from-200",
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
             requestFields(

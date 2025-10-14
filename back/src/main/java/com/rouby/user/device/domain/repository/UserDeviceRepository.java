@@ -26,4 +26,6 @@ public interface UserDeviceRepository {
   int deleteAllByUserId(Long userId);
 
   List<UserDevice> findByUserIdIn(List<Long> userIds);
+
+  List<UserDevice> findByUserId(Long userId);
 }

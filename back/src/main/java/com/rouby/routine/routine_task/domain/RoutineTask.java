@@ -75,6 +75,7 @@ public class RoutineTask extends BaseEntity {
   private RoutineTask(AlarmOffsetType alarmOffsetType, OverrideInfo overrideInfo,
       RoutineTask parentRoutineTask, RecurrenceRule recurrenceRule, RoutineTimeInfo routineTimeInfo,
       Integer targetValue, TaskType taskType, String title, Long userId) {
+
     validate(title, targetValue, taskType, routineTimeInfo);
     this.alarmOffsetType = alarmOffsetType;
     this.overrideInfo = overrideInfo;

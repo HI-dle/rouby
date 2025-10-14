@@ -47,7 +47,7 @@ class AuthControllerTest extends ControllerTestSupport {
     LoginCommand command = loginRequest.toApplication();
     String fakeToken = "Bearer fake.jwt.token";
 
-    when(userFacade.login(command)).thenReturn(new LoginInfo(fakeToken));
+    when(userUsecase.login(command)).thenReturn(new LoginInfo(fakeToken));
 
     // when
     ResultActions result = mockMvc.perform(post("/api/v1/auth/login")
@@ -76,7 +76,7 @@ class AuthControllerTest extends ControllerTestSupport {
         .password("1234")
         .build();
 
-    doThrow(UserException.from(INVALID_USER)).when(userFacade).login(any(LoginCommand.class));
+    doThrow(UserException.from(INVALID_USER)).when(userUsecase).login(any(LoginCommand.class));
 
 
     // when

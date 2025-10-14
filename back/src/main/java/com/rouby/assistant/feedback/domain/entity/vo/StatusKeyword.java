@@ -1,0 +1,46 @@
+package com.rouby.assistant.feedback.domain.entity.vo;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+/**
+ * @Date : 2025. 07. 07.
+ *
+ * @author : hanjihoon
+ */
+@Embeddable
+@EqualsAndHashCode
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class StatusKeyword {
+
+  @JdbcTypeCode(SqlTypes.JSON)
+  @Column(columnDefinition = "jsonb")
+  private List<String> statusKeyword = new ArrayList<>();
+
+  private StatusKeyword(List<String> statusKeyword) {
+
+    if (statusKeyword == null || statusKeyword.isEmpty()) return;
+    this.statusKeyword = new ArrayList<>(statusKeyword);
+  }
+
+  public static StatusKeyword of(List<String> statusKeyword){
+
+    return new StatusKeyword(statusKeyword);
+  }
+
+  //방어 복사(외부에서 컬렉션 수정 불가하게)
+  public List<String> getStatusKeyword() {
+    return statusKeyword == null ? Collections.emptyList() :  List.copyOf(statusKeyword);
+  }
+
+}

@@ -22,3 +22,8 @@ CREATE INDEX IF NOT EXISTS idx_daily_tasks_task_rid_date_cover
 CREATE INDEX IF NOT EXISTS idx_ne_inprog_lease_until
     ON notification_event (lease_until)
     WHERE status='IN_PROGRESS';
+
+-- FEEDBACK
+CREATE UNIQUE INDEX IF NOT EXISTS uq_feedback_user_daily_slot
+    ON feedback (user_id, feedback_date, slot)
+    WHERE status <> 'FAILED';

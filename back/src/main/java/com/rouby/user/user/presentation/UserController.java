@@ -1,6 +1,6 @@
 package com.rouby.user.user.presentation;
 
-import com.rouby.user.user.application.UserFacade;
+import com.rouby.user.user.application.usecase.UserUsecase;
 import com.rouby.user.user.infrastructure.security.dto.SecurityUser;
 import com.rouby.user.user.presentation.dto.request.CreateUserRequest;
 import com.rouby.user.user.presentation.dto.request.FindPasswordRequest;
@@ -37,12 +37,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserController {
 
-  private final UserFacade userFacade;
+  private final UserUsecase userUsecase;
 
   @PostMapping("/email-verification/request")
   public ResponseEntity<Void> requestEmail(
       @RequestBody @Valid SendEmailVerificationRequest request) {
-    userFacade.sendEmailVerification(request.toCommand());
+    userUsecase.sendEmailVerification(request.toCommand());
     return ResponseEntity.ok().build();
   }
 
@@ -50,35 +50,35 @@ public class UserController {
   public ResponseEntity<VerifyEmailTokenResponse> verifyEmail(
       @RequestBody @Valid VerifyEmailRequest request) {
     return ResponseEntity.ok(
-        VerifyEmailTokenResponse.of(userFacade.verifyEmail(request.toCommand())));
+        VerifyEmailTokenResponse.of(userUsecase.verifyEmail(request.toCommand())));
   }
 
   @PostMapping
   public ResponseEntity<Void> createUser(
       @RequestHeader("Authorization") @StartsWith(prefix = "EmailVerification ") String token,
       @RequestBody @Valid CreateUserRequest req) {
-    userFacade.createUser(req.toCommand(token));
+    userUsecase.createUser(req.toCommand(token));
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   @PatchMapping("/password/reset/token")
   public ResponseEntity<Void> resetPasswordByToken(
       @RequestBody ResetPasswordByTokenRequest request) {
-    userFacade.resetPasswordByToken(request.toCommand());
+    userUsecase.resetPasswordByToken(request.toCommand());
     return ResponseEntity.noContent().build();
   }
 
   @GetMapping("/password/reset/validate")
   public ResponseEntity<Void> validateResetToken(@RequestParam String email,
       @RequestParam String token) {
-    userFacade.validatePasswordToken(email, token);
+    userUsecase.validatePasswordToken(email, token);
     return ResponseEntity.ok().build();
   }
 
   @PostMapping("/password/find")
   public ResponseEntity<Void> findPassword(
       @RequestBody FindPasswordRequest request) {
-    userFacade.findPassword(request.toCommand());
+    userUsecase.findPassword(request.toCommand());
     return ResponseEntity.noContent().build();
   }
 
@@ -87,7 +87,7 @@ public class UserController {
   public ResponseEntity<Void> resetPassword(
       @AuthenticationPrincipal SecurityUser securityUser,
       @RequestBody @Valid ResetPasswordRequest request) {
-    userFacade.resetPassword(securityUser.getId(), request.toCommand());
+    userUsecase.resetPassword(securityUser.getId(), request.toCommand());
     return ResponseEntity.noContent().build();
   }
 
@@ -96,7 +96,7 @@ public class UserController {
   public ResponseEntity<RoubySettingResponse> getRoubySetting(
       @AuthenticationPrincipal SecurityUser securityUser) {
     return ResponseEntity.ok(RoubySettingResponse.from(
-        userFacade.getRoubySettingInfo(securityUser.getId())));
+        userUsecase.getRoubySettingInfo(securityUser.getId())));
   }
 
   @PreAuthorize("hasAnyRole('USER')")
@@ -104,7 +104,7 @@ public class UserController {
   public ResponseEntity<Void> updateRoubySetting(
       @AuthenticationPrincipal SecurityUser securityUser,
       @RequestBody @Valid UpdateRoubySettingRequest request) {
-    userFacade.updateRoubySettings(securityUser.getId(), request.toCommand());
+    userUsecase.updateRoubySettings(securityUser.getId(), request.toCommand());
     return ResponseEntity.noContent().build();
   }
 
@@ -113,7 +113,7 @@ public class UserController {
   public ResponseEntity<UserCheckResponse> userInfoCheck(
       @AuthenticationPrincipal SecurityUser securityUser) {
     return ResponseEntity.ok(
-        UserCheckResponse.from(userFacade.userInfoCheck(securityUser.getId())));
+        UserCheckResponse.from(userUsecase.userInfoCheck(securityUser.getId())));
   }
 
   @PatchMapping("/user-info")
@@ -122,7 +122,7 @@ public class UserController {
       @AuthenticationPrincipal SecurityUser securityUser,
       @RequestBody @Valid UpdateMyUserInfoRequest request
   ) {
-    userFacade.updateMyUserInfo(request.toCommand(securityUser.getId()));
+    userUsecase.updateMyUserInfo(request.toCommand(securityUser.getId()));
     return ResponseEntity.noContent().build();
   }
 
@@ -130,7 +130,7 @@ public class UserController {
   @PatchMapping("/onboarding/user-info/complete")
   public ResponseEntity<Void> completeUserInfoSetting(
       @AuthenticationPrincipal SecurityUser securityUser) {
-    userFacade.completeInitialUserInfoSetting(securityUser.getId());
+    userUsecase.completeInitialUserInfoSetting(securityUser.getId());
     return ResponseEntity.ok().build();
   }
 
@@ -138,7 +138,7 @@ public class UserController {
   @PatchMapping("/onboarding/rouby/complete")
   public ResponseEntity<Void> completeRoubySetting(
       @AuthenticationPrincipal SecurityUser securityUser) {
-    userFacade.completeInitialRoubySetting(securityUser.getId());
+    userUsecase.completeInitialRoubySetting(securityUser.getId());
     return ResponseEntity.ok().build();
   }
 
@@ -146,7 +146,7 @@ public class UserController {
   @PatchMapping("/delete")
   public ResponseEntity<Void> delete(
       @AuthenticationPrincipal SecurityUser securityUser) {
-    userFacade.delete(securityUser.getId());
+    userUsecase.delete(securityUser.getId());
     return ResponseEntity.noContent().build();
   }
 }

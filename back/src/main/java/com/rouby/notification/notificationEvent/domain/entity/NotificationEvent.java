@@ -70,14 +70,17 @@ public class NotificationEvent extends LogBaseEntity {
   @Builder
   private NotificationEvent(Long userId,
       DeviceTokenInfo deviceTokenInfo, NotificationMessage message,
-      NotificationType type, LocalDateTime dueAt) {
+      NotificationType type, LocalDateTime dueAt, SendStatus status) {
 
     this.userId = userId;
     this.deviceTokenInfo = deviceTokenInfo;
     this.message = message;
     this.type = type;
-    this.status = SendStatus.PENDING;
     this.dueAt = dueAt;
+    this.status = status;
+    if (status == null) this.status = SendStatus.PENDING;
+
+    this.attempt = 0;
   }
 
   public void updateMessageUrl(String url) {

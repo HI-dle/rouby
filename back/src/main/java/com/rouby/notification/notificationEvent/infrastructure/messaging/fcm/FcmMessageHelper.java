@@ -45,12 +45,12 @@ public class FcmMessageHelper {
     Map<String, Object> webpushHeaders = new HashMap<>();
     webpushHeaders.put("TTL", String.valueOf(ttlSec));
     webpushHeaders.put("Urgency", highPriority ? "high" : "normal");  // very-low/low/normal/high
-    // webpushHeaders.put("Topic", "event-" + ev.id()); // (선택) 중복 억제
+    // webpushHeaders.put("Topic", event.getTag()); // (선택) 중복 억제
 
     Map<String, Object> webpushNotif = Map.of(
         "title", event.message().getTitle(),
         "body", event.message().getBody(),
-        "tag", "event-" + event.id(), // 브라우저 측 대체 키
+        "tag", event.getTag(), // 브라우저 측 대체 키
         "icon",  (iconUri.startsWith("http")
             ? iconUri
             : appUrl + (iconUri.startsWith("/") ? iconUri : ("/" + iconUri)))
@@ -65,7 +65,7 @@ public class FcmMessageHelper {
     Map<String, Object> android = new HashMap<>();
     android.put("priority", highPriority ? "HIGH" : "NORMAL"); // HIGH/NORMAL
     android.put("ttl", ttlSec + "s");                          // "60s" 형식
-    // android.put("collapse_key", "event-" + ev.id());        // (선택) 안드 대체 키
+    // android.put("collapse_key", event.getTag());        // (선택) 안드 대체 키
 
     // APNs(iOS) 설정 (웹푸시가 아닌 네이티브 iOS 앱 쓰는 경우에만)
     long expirationEpochSec = (sentAtMs + ttlSec * 1000L) / 1000L;
