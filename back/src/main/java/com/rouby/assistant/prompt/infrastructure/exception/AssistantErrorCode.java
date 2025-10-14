@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum AssistantErrorCode implements ErrorCode {
 
-  SERVICE_UNAVAILABLE("AI ASSISTANT가 가용하지 않습니다.", "SERVICE_UNAVAILABLE",
+  SERVICE_UNAVAILABLE("AI ASSISTANT가 가용하지 않습니다.", "ASSISTANT_SERVICE_UNAVAILABLE",
       HttpStatus.SERVICE_UNAVAILABLE),
   ;
 

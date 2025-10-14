@@ -10,5 +10,5 @@ public interface PromptRepository {
 
   Optional<Prompt> findByPromptTypeAndVersion(PromptType promptType, Integer version);
 
-  Optional<Integer> checkVersionByPromptType(PromptType promptType);
+  Optional<Integer> findMaxVersionByPromptType(PromptType promptType);
 }

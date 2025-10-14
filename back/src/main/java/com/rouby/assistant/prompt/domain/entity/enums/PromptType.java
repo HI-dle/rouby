@@ -12,7 +12,7 @@ public enum PromptType {
 
     try {
       return PromptType.valueOf(type.trim().toUpperCase());
-    } catch (Exception e) {
+    } catch (IllegalArgumentException e) {
       throw new IllegalArgumentException("입력된 PromptType 값이 적절한 값이 아닙니다.");
     }
   }

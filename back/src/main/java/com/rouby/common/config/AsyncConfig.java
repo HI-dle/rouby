@@ -23,6 +23,8 @@ public class AsyncConfig implements AsyncConfigurer {
     ex.setThreadNamePrefix("llm-");
     ex.setCorePoolSize(4);
     ex.setMaxPoolSize(16);
+    ex.setQueueCapacity(200);
+    ex.setKeepAliveSeconds(60); // 임시 스레드가 idle 상태로 유지될 수 있는 최대 시간
     ex.setWaitForTasksToCompleteOnShutdown(true);
     ex.setAwaitTerminationSeconds(30);
     ex.setTaskDecorator(r -> r);

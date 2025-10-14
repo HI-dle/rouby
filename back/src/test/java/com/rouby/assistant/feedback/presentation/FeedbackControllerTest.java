@@ -10,14 +10,11 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.rouby.assistant.feedback.fixture.CreateDailyFeedbackRequestFixture;
 import com.rouby.common.security.WithMockCustomUser;
 import com.rouby.common.support.ControllerTestSupport;
-import java.time.LocalDate;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -26,7 +23,7 @@ import org.springframework.test.web.servlet.ResultActions;
 class FeedbackControllerTest extends ControllerTestSupport {
 
   @WithMockCustomUser
-  @DisplayName("피드백 요청 API: 성공 204")
+  @DisplayName("피드백 요청 API: 성공 202")
   @Test
   void createDailyFeedback() throws Exception {
 
@@ -45,11 +42,9 @@ class FeedbackControllerTest extends ControllerTestSupport {
     );
 
     // then
-    resultActions.andExpect(status().isCreated())
-        .andExpect(header().string(
-            "Location", Matchers.endsWith(String.format("/api/v1/assistants/feedbacks/%s", LocalDate.now()))))
+    resultActions.andExpect(status().isAccepted())
         .andDo(print())
-        .andDo(document("create-feedback-201",
+        .andDo(document("create-feedback-202",
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
             requestFields(

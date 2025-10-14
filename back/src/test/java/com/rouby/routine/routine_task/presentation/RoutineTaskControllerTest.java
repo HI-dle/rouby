@@ -1,4 +1,4 @@
-package com.rouby.routine.routine_task.presentaion;
+package com.rouby.routine.routine_task.presentation;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -18,8 +18,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.rouby.common.security.WithMockCustomUser;
 import com.rouby.common.support.ControllerTestSupport;
 import com.rouby.routine.routine_task.application.dto.info.GetRoutineTaskInfo;
-import com.rouby.routine.routine_task.presentaion.dto.request.CreateRoutineTaskRequest;
-import com.rouby.routine.routine_task.presentaion.dto.request.GetRoutineTaskRequest;
+import com.rouby.routine.routine_task.presentation.dto.request.CreateRoutineTaskRequest;
+import com.rouby.routine.routine_task.presentation.dto.request.GetRoutineTaskRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;

@@ -7,4 +7,9 @@ public record CreateFeedbackResult(
     List<String> feedbackKeywords,
     List<String> userStatusKeywords
 ) {
+
+  public CreateFeedbackResult {
+    feedbackKeywords = feedbackKeywords == null ? List.of() : List.copyOf(feedbackKeywords);
+    userStatusKeywords = userStatusKeywords == null ? List.of() : List.copyOf(userStatusKeywords);
+  }
 }

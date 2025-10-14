@@ -31,6 +31,7 @@ public class DispatcherThreadConfig {
     ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
     executor.setCorePoolSize(4);
     executor.setMaxPoolSize(8);
+    executor.setQueueCapacity(1024);
     executor.setThreadNamePrefix("notiCb-");
     executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy()); // 스레드 풀이나 큐 포화시 메인 스레드에서 실행
     executor.setWaitForTasksToCompleteOnShutdown(false);

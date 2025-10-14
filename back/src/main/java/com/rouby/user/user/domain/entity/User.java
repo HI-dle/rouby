@@ -27,7 +27,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
@@ -59,9 +58,8 @@ public class User extends BaseEntity {
   @Embedded
   private CommunicationTone communicationTone;
 
-  @ColumnDefault("'0'")
   @Column(nullable = false)
-  private Boolean notificationEnabled;
+  private boolean notificationEnabled;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<NotificationSetting> notificationSettings = new HashSet<>();
@@ -102,7 +100,7 @@ public class User extends BaseEntity {
     this.authProvider = authProvider == null ? AuthProvider.DEFAULT : authProvider;
     this.role = role == null ? UserRole.USER : role;
     this.onboardingState = onboardingState == null ? ROUBY_SETTING_BEFORE : onboardingState;
-    this.notificationEnabled = notificationEnabled == null ? Boolean.FALSE : Boolean.TRUE;
+    this.notificationEnabled = notificationEnabled == null ? Boolean.FALSE : notificationEnabled;
     this.lastActivatedAt = lastActivatedAt;
   }
 

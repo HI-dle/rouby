@@ -4,5 +4,5 @@ import com.rouby.assistant.feedback.application.dto.UserInfoForFeedback;
 
 public interface UserGateway {
 
-  UserInfoForFeedback getUserInfoWithNotification(Long aLong);
+  UserInfoForFeedback getUserInfoWithNotification(Long userId);
 }

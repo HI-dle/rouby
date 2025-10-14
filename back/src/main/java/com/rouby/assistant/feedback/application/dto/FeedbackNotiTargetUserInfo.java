@@ -8,7 +8,7 @@ import lombok.Builder;
 public record FeedbackNotiTargetUserInfo(
     Long userId,
     String nickname,
-    Boolean notificationEnabled,
+    boolean notificationEnabled,
     List<DeviceInfoForFeedback> deviceInfos
 ) {
 

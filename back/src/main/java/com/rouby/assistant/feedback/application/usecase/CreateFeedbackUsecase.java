@@ -18,6 +18,7 @@ import com.rouby.assistant.feedback.application.port.outbound.UserGateway;
 import com.rouby.assistant.feedback.application.service.FeedbackReadService;
 import com.rouby.assistant.feedback.application.service.FeedbackWriteService;
 import java.time.LocalDate;
+import java.util.concurrent.CompletionException;
 import java.util.function.Consumer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +35,7 @@ public class CreateFeedbackUsecase {
   private int PROMPT_VERSION;
   @Value("${spring.ai.openai.chat.options.temperature:0.2}")
   private double TEMPERATURE;
-  private static final String FEEDBACK_URL_PREFIX = "/daily-feedback/";
+  private static final String FEEDBACK_URL_PREFIX = "/feedback/daily/";
 
   private final FeedbackReadService feedbackReadService;
   private final FeedbackWriteService feedbackWriteService;
@@ -73,23 +74,38 @@ public class CreateFeedbackUsecase {
         feedbackReadService.getRecentFeedbackInfoWithin1W(command.userId());
 
     TEMPERATURE = 0.2;
+    final Long finalFeedbackId = feedbackId;
+
     assistantGateway.requestDailyFeedbackAsync(
         PROMPT_VERSION,
         TEMPERATURE,
         InfoForFeedback.from(
             command, userInfo, routineTaskWithProgress, schedulesInfo, recentFeedbackInfo),
-        CreateFeedbackResult.class,
-        onSuccessCallback(feedbackId, FeedbackNotiTargetUserInfo.from(command.userId(), userInfo), today),
-        onFailureCallback(feedbackId, command.userId()));
+        CreateFeedbackResult.class
+        )
+        .thenAccept(result -> {
+          onSuccessCallback(finalFeedbackId,
+              FeedbackNotiTargetUserInfo.from(command.userId(), userInfo), today).accept(result);
+        })
+        .whenComplete((result, t) -> {
+          if (t != null) {
+            onFailureCallback(finalFeedbackId, command.userId()).accept(t);
+          }
+        });
   }
 
   public Consumer<CreateFeedbackResult> onSuccessCallback(
       Long feedbackId, FeedbackNotiTargetUserInfo targetUserInfo, LocalDate feedbackDate) {
 
     return (result) -> {
-      feedbackWriteService.markSuccess(feedbackId, result);
-      notificationEventGateway.createFeedbackNotificationEvent(
-          targetUserInfo, FEEDBACK_URL_PREFIX + feedbackDate.toString());
+      try {
+        feedbackWriteService.markSuccess(feedbackId, result);
+        notificationEventGateway.createFeedbackNotificationEvent(
+            targetUserInfo, FEEDBACK_URL_PREFIX + feedbackDate.toString());
+      } catch (Exception e) {
+        log.error("어시스턴트의 피드백 생성 성공 콜백 수행 중 오류 발생으로 인한 실패 처리: {}", feedbackId, e);
+        throw new CompletionException(e);
+      }
     };
   }
 

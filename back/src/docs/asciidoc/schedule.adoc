@@ -79,19 +79,19 @@ include::{snippets}/update-schedule-invalid-alarm-offset-400/http-response.adoc[
 
 ---
 
-[[Delete-Schedules-]]
+[[Delete-Schedules]]
 == 해당 일정 삭제 API
 
 === 성공: 해당 일정 삭제 요청
 
 ==== HTTP 요청
-include::{snippets}/delete-schedule-204/http-request.adoc[]
+include::{snippets}/delete-schedule-200/http-request.adoc[]
 
 ==== 요청 필드
-include::{snippets}/delete-schedule-204/request-fields.adoc[]
+include::{snippets}/delete-schedule-200/request-fields.adoc[]
 
-==== HTTP 응답 (200 OK)
-include::{snippets}/delete-schedule-204/http-response.adoc[]
+==== HTTP 응답 (200 Ok)
+include::{snippets}/delete-schedule-200/http-response.adoc[]
 
 === 실패: 유효성 검증 오류
 
@@ -111,12 +111,12 @@ include::{snippets}/delete-schedule-invalid-400/http-response.adoc[]
 === 성공: 이후 일정 모두 삭제 요청
 
 ==== HTTP 요청
-include::{snippets}/delete-schedule-from-204/http-request.adoc[]
+include::{snippets}/delete-schedule-from-200/http-request.adoc[]
 
 ==== 요청 필드
-include::{snippets}/delete-schedule-from-204/request-fields.adoc[]
+include::{snippets}/delete-schedule-from-200/request-fields.adoc[]
 
-==== HTTP 응답 (200 OK)
-include::{snippets}/delete-schedule-from-204/http-response.adoc[]
+==== HTTP 응답 (200 Ok)
+include::{snippets}/delete-schedule-from-200/http-response.adoc[]
 
 ---

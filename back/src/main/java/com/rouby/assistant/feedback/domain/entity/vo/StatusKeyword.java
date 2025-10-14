@@ -3,6 +3,7 @@ package com.rouby.assistant.feedback.domain.entity.vo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -39,7 +40,7 @@ public class StatusKeyword {
 
   //방어 복사(외부에서 컬렉션 수정 불가하게)
   public List<String> getStatusKeyword() {
-    return List.copyOf(statusKeyword);
+    return statusKeyword == null ? Collections.emptyList() :  List.copyOf(statusKeyword);
   }
 
 }

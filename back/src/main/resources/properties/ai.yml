@@ -30,4 +30,7 @@ spring:
           temperature: 0.0
         completions-path: "/chat/completions"
 prompt:
-  version: 1
+  briefing:
+    version: 1
+  feedback:
+    version: 1

@@ -33,7 +33,7 @@ public record InfoForFeedback(
         .profileKeywords(userInfo.profileKeywords())
         .healthStatusKeywords(userInfo.healthStatusKeywords())
         .recentStatusKeywords(recentFeedbackInfo.statusKeyword())
-        .recentFeedbackKeywords(recentFeedbackInfo.statusKeyword())
+        .recentFeedbackKeywords(recentFeedbackInfo.feedbackKeyword())
         .schedulesInfo(schedulesInfo)
         .routineTasksWithProgress(routineTasksWithProgress)
         .build();

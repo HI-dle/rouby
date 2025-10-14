@@ -18,7 +18,7 @@ public record UserDetailInfo(
     Set<String> profileKeywords,
     Set<String> communicationTone,
     OnboardingState onboardingState,
-    Boolean notificationEnabled
+    boolean notificationEnabled
 ) {
 
   public static UserDetailInfo from(User user) {
@@ -31,7 +31,7 @@ public record UserDetailInfo(
         .profileKeywords(user.getProfileKeywords().getProfileKeywords())
         .communicationTone(user.getCommunicationToneValues())
         .onboardingState(user.getOnboardingState())
-        .notificationEnabled(user.getNotificationEnabled())
+        .notificationEnabled(user.isNotificationEnabled())
         .build();
   }
 }

@@ -1,9 +1,9 @@
-package com.rouby.routine.routine_task.presentaion;
+package com.rouby.routine.routine_task.presentation;
 
 import com.rouby.routine.routine_task.application.usecase.RoutineTaskUsecase;
-import com.rouby.routine.routine_task.presentaion.dto.request.CreateRoutineTaskRequest;
-import com.rouby.routine.routine_task.presentaion.dto.request.GetRoutineTaskRequest;
-import com.rouby.routine.routine_task.presentaion.dto.response.GetRoutineTaskResponse;
+import com.rouby.routine.routine_task.presentation.dto.request.CreateRoutineTaskRequest;
+import com.rouby.routine.routine_task.presentation.dto.request.GetRoutineTaskRequest;
+import com.rouby.routine.routine_task.presentation.dto.response.GetRoutineTaskResponse;
 import com.rouby.user.user.infrastructure.security.dto.SecurityUser;
 import jakarta.validation.Valid;
 import java.net.URI;

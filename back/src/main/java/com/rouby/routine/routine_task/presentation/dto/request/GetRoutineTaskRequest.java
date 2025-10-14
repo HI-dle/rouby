@@ -1,4 +1,4 @@
-package com.rouby.routine.routine_task.presentaion.dto.request;
+package com.rouby.routine.routine_task.presentation.dto.request;
 
 import com.rouby.routine.routine_task.application.dto.command.GetRoutineTaskCommand;
 import jakarta.validation.constraints.NotNull;

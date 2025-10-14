@@ -14,7 +14,9 @@ public record SchedulesInfoForFeedback(
 
   public static SchedulesInfoForFeedback from(SchedulesInfo schedulesInfo) {
     return SchedulesInfoForFeedback.builder()
-        .schedules(schedulesInfo.schedules().stream().map(ScheduleInfo::from).toList())
+        .schedules(schedulesInfo.schedules() == null
+            ? List.of()
+            : schedulesInfo.schedules().stream().map(ScheduleInfo::from).toList())
         .build();
   }
 
@@ -42,8 +44,17 @@ public record SchedulesInfoForFeedback(
           .endAt(scheduleInfo.endAt())
           .routineOffsetDays(scheduleInfo.routineOffsetDays())
           .alarmOffsetMinutes(scheduleInfo.alarmOffsetMinutes())
-          .recurrenceRule(RecurrenceRuleInfo.from(scheduleInfo.recurrenceRule()))
-          .scheduleOverrides(scheduleInfo.scheduleOverrides().stream().map(ScheduleOverrideInfo::from).toList())
+          .recurrenceRule(
+              scheduleInfo.recurrenceRule() == null
+                  ? null
+                  : RecurrenceRuleInfo.from(scheduleInfo.recurrenceRule())
+          )
+          .scheduleOverrides(
+              scheduleInfo.scheduleOverrides() == null
+                  ? List.of()
+                  : scheduleInfo.scheduleOverrides().stream()
+                      .map(ScheduleOverrideInfo::from).toList()
+          )
           .build();
     }
   }
@@ -58,6 +69,8 @@ public record SchedulesInfoForFeedback(
   ) {
 
     public static RecurrenceRuleInfo from(SchedulesInfo.RecurrenceRuleInfo recurrenceRuleInfo) {
+
+      if (recurrenceRuleInfo == null) return null;
 
       return RecurrenceRuleInfo.builder()
           .freq(recurrenceRuleInfo.freq())
@@ -84,6 +97,8 @@ public record SchedulesInfoForFeedback(
   ) {
 
     public static ScheduleOverrideInfo from(SchedulesInfo.ScheduleOverrideInfo scheduleOverrideInfo) {
+
+      if (scheduleOverrideInfo == null) return null;
 
       return ScheduleOverrideInfo.builder()
           .id(scheduleOverrideInfo.id())

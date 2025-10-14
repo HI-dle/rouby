@@ -2,6 +2,7 @@ package com.rouby.assistant.feedback.application.dto;
 
 import com.rouby.user.device.application.dto.UserDeviceInfo;
 import com.rouby.user.user.application.dto.UserInfoWithDeviceInfos;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import lombok.Builder;
@@ -12,7 +13,7 @@ public record UserInfoForFeedback(
     Set<String> healthStatusKeywords,
     Set<String> profileKeywords,
     Set<String> communicationTone,
-    Boolean notificationEnabled,
+    boolean notificationEnabled,
     List<DeviceInfoForFeedback> deviceInfos
 ) {
 
@@ -24,7 +25,9 @@ public record UserInfoForFeedback(
         .profileKeywords(userInfo.profileKeywords())
         .communicationTone(userInfo.communicationTone())
         .notificationEnabled(userInfo.notificationEnabled())
-        .deviceInfos(userInfo.deviceInfos().stream()
+        .deviceInfos(userInfo.deviceInfos() == null
+            ? Collections.emptyList()
+            : userInfo.deviceInfos().stream()
             .map(DeviceInfoForFeedback::from)
             .toList())
         .build();

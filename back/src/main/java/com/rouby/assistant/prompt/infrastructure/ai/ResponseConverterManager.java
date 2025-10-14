@@ -38,7 +38,7 @@ public class ResponseConverterManager {
   public <R> BeanOutputConverter<R> getConverter(ParameterizedTypeReference<R> typeReference) {
 
     BeanOutputConverter<?> converter = converters.computeIfAbsent(
-        typeReference.getType().getClass(),
+        typeReference.getType(),
         type -> new BeanOutputConverter<>(typeReference)
     );
     return (BeanOutputConverter<R>) converter;

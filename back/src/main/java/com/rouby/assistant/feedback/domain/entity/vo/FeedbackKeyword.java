@@ -3,6 +3,7 @@ package com.rouby.assistant.feedback.domain.entity.vo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -37,7 +38,7 @@ public class FeedbackKeyword {
   }
 
   public List<String> getFeedbackKeyword() {
-    return List.copyOf(feedbackKeyword);
+    return this.feedbackKeyword == null ? Collections.emptyList() : List.copyOf(feedbackKeyword);
   }
 
 }

@@ -13,11 +13,17 @@ public record FeedbackInfoForNewFeedback(
 
   public static FeedbackInfoForNewFeedback from(Feedback recentFeedback) {
 
-    if  (recentFeedback == null) return new FeedbackInfoForNewFeedback(Collections.emptyList(), Collections.emptyList());
+    if (recentFeedback == null) return new FeedbackInfoForNewFeedback(Collections.emptyList(), Collections.emptyList());
 
-    return FeedbackInfoForNewFeedback.builder()
-        .feedbackKeyword(recentFeedback.getFeedbackKeyword().getFeedbackKeyword())
-        .statusKeyword(recentFeedback.getUserStatusKeyword().getStatusKeyword())
-        .build();
+    var feedbackVO = recentFeedback.getFeedbackKeyword();
+    var statusVO   = recentFeedback.getUserStatusKeyword();
+
+    var feedbackKeywords = feedbackVO == null
+        ? Collections.<String>emptyList()
+        : List.copyOf(feedbackVO.getFeedbackKeyword());
+    var statusKeywords = statusVO == null
+        ? Collections.<String>emptyList()
+        : List.copyOf(statusVO.getStatusKeyword());
+    return new FeedbackInfoForNewFeedback(feedbackKeywords, statusKeywords);
   }
 }

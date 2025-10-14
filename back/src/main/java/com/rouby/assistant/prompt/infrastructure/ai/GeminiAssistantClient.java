@@ -55,8 +55,10 @@ public class GeminiAssistantClient implements AssistantClient {
   }
 
   private <R> AssistantResponse<R> fallback(
-      String systemMsg, String userMsg, Map<String, Object> model, Class<R> responseClazz, Throwable t) {
+      double temperature, String systemMsg, String userMsg,
+      Map<String, Object> model, Class<R> responseClazz, Throwable t) {
 
+    log.error("Assistant 요청 실패로 인한 서킷 브레이커 활성화", t);
     throw AssistantException.from(AssistantErrorCode.SERVICE_UNAVAILABLE);
   }
 }

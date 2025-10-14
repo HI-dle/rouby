@@ -17,7 +17,7 @@ import com.rouby.common.resolver.CustomPageableArgumentResolver;
 import com.rouby.routine.daily_task.application.facade.DailyTaskFacade;
 import com.rouby.routine.daily_task.presentation.DailyTaskController;
 import com.rouby.routine.routine_task.application.usecase.RoutineTaskUsecase;
-import com.rouby.routine.routine_task.presentaion.RoutineTaskController;
+import com.rouby.routine.routine_task.presentation.RoutineTaskController;
 import com.rouby.schedule.application.facade.ScheduleFacade;
 import com.rouby.schedule.presentation.ScheduleController;
 import com.rouby.user.device.application.facade.UserDeviceFacade;

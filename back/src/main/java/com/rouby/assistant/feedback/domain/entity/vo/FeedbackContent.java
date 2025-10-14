@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FeedbackContent {
 
+  @Column(columnDefinition = "TEXT")
   private String prompt;
 
   @Column(columnDefinition = "TEXT")

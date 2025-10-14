@@ -17,8 +17,17 @@ public record NotificationEventInfo(
 ) {
 
   public String getTag() {
+
     if (type == NotificationType.FEEDBACK) {
-      return "feedback-" + message.getUrl().split("/")[2];
+      String url = message.getUrl();
+      if (url == null || url.isBlank()) {
+        return "evt-" + id;
+      }
+      String[] segments = url.split("/");
+      if (segments.length > 2) {
+        return "feedback-" + segments[2];
+      }
+      return "evt-" + id;
     }
     return "evt-" + id;
   }

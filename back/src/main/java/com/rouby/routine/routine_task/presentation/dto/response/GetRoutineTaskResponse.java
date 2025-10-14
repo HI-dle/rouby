@@ -1,4 +1,4 @@
-package com.rouby.routine.routine_task.presentaion.dto.response;
+package com.rouby.routine.routine_task.presentation.dto.response;
 
 import com.rouby.routine.routine_task.application.dto.info.GetRoutineTaskInfo;
 import com.rouby.routine.routine_task.application.dto.info.GetRoutineTaskInfo.DailyProgressDto;
