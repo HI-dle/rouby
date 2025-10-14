@@ -1,7 +1,9 @@
 package com.rouby.assistant.feedback.application.dto;
 
 import java.util.List;
+import lombok.Builder;
 
+@Builder
 public record CreateFeedbackResult(
     String feedback,
     List<String> feedbackKeywords,

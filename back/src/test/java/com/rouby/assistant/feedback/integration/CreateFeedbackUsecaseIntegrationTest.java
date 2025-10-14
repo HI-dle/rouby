@@ -2,8 +2,12 @@ package com.rouby.assistant.feedback.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
 import com.rouby.assistant.feedback.application.dto.CreateFeedbackCommand;
+import com.rouby.assistant.feedback.application.dto.CreateFeedbackResult;
+import com.rouby.assistant.feedback.application.dto.InfoForFeedback;
 import com.rouby.assistant.feedback.application.exception.FeedbackErrorCode;
 import com.rouby.assistant.feedback.application.port.outbound.AssistantGateway;
 import com.rouby.assistant.feedback.application.usecase.CreateFeedbackUsecase;
@@ -53,6 +57,10 @@ class CreateFeedbackUsecaseIntegrationTest extends IntegrationTestSupport {
         .userMood("GOOD")
         .build();
 
+    given(assistantGateway.requestDailyFeedbackAsync(
+        any(Integer.class), any(Double.class), any(InfoForFeedback.class), any()))
+        .willReturn(CompletableFuture.completedFuture(CreateFeedbackResult.builder().build()));
+
     int requestCnt = 2;
     CountDownLatch startGate = new CountDownLatch(1);
     Executor executor = Executors.newFixedThreadPool(requestCnt);
@@ -85,7 +93,7 @@ class CreateFeedbackUsecaseIntegrationTest extends IntegrationTestSupport {
       try {
         future.join();
         successResults.add(Boolean.TRUE);
-      } catch (CompletionException e) {
+      } catch (Exception e) {
         thrown.add(e.getCause());
       }
     }
@@ -96,7 +104,7 @@ class CreateFeedbackUsecaseIntegrationTest extends IntegrationTestSupport {
 
     Throwable ex = thrown.get(0);
     if (ex instanceof CustomException ce) {
-      assertThat(ce.getCode()).isEqualTo(FeedbackErrorCode.CONCURRENT_REQUEST_FAILED.name());
+      assertThat(ce.getCode()).isEqualTo(FeedbackErrorCode.CONCURRENT_REQUEST_FAILED.getCode());
     } else {
       fail("예외가 예상한 CustomApiException이 아님: " + ex);
     }
