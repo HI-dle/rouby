@@ -92,9 +92,6 @@ function expandRecurringSchedule(schedule, monthKey) {
     const nextDate = next.toJSDate()
     if (nextDate > rangeEnd) break
 
-    // 반복 종료 체크: recurrence.until 또는 untilAt 반영
-    if (recurrence.until && nextDate > parseISO(recurrence.until)) break
-
     const dateKey = format(nextDate, 'yyyy-MM-dd')
 
     if (overrideDates.has(dateKey)) continue // 오버라이드는 아래 따로 추가
