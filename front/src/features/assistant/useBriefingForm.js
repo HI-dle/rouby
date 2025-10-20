@@ -1,18 +1,16 @@
 import { reactive, ref, watch, onMounted } from 'vue'
-import { format, parse, isValid} from 'date-fns'
+import { format, parse, isValid } from 'date-fns'
 import { getBriefing } from '@/features/assistant/assistantService'
 import { useRouter } from 'vue-router'
 import { useDatePickStore } from '@/stores/useDatePickStore.js'
+import { parseYMD } from '@/shared/utils/dateUtils'
+import { marked } from 'marked'
 
 export const useBriefingForm = (initDate) => {
   const router = useRouter()
   const datePickStore = useDatePickStore()
-  // 초기 선택 날짜
-  const parseYMD = (d) =>
-    typeof d === 'string' ? parse(d, 'yyyy-MM-dd', new Date()) : new Date(d)
-
   const selectedDate = ref(
-    initDate ? parseYMD(initDate) :datePickStore.lastSelectedDate
+    initDate ? parseYMD(initDate) : new Date(datePickStore.lastSelectedDate),
   )
 
   const loading = ref(false)
@@ -21,7 +19,7 @@ export const useBriefingForm = (initDate) => {
 
   // 브리핑 데이터 form
   const form = reactive({
-    content: '',
+    htmlContent: '',
     createdAt: format(selectedDate.value, 'yyyy-MM-dd'),
   })
 
@@ -40,7 +38,7 @@ export const useBriefingForm = (initDate) => {
 
       const data = await getBriefing(dateStr)
       if (data) {
-        form.content = data.content
+        form.htmlContent = marked.parse(data.content)
         form.createdAt = data.createdAt
       }
     } catch (e) {
@@ -63,7 +61,7 @@ export const useBriefingForm = (initDate) => {
     if (routeDate) {
       selectedDate.value = parseYMD(routeDate)
 
-      router.replace({ name: 'briefing-daily' })
+      router.replace({ name: 'daily-briefing' })
     }
   })
 

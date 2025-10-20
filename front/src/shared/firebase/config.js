@@ -94,6 +94,7 @@ const resolvePropagatedEvent = (e) => {
     if (ts > prev) seen.set(id, ts)
   }
 }
+
 bc?.addEventListener('message', resolvePropagatedEvent)
 navigator.serviceWorker?.addEventListener('message', resolvePropagatedEvent)
 

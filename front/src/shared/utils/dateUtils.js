@@ -5,6 +5,7 @@ import {
   addMonths,
   endOfMonth,
   isSameDay,
+  parse,
 } from 'date-fns'
 import { formatDateTime } from './dateTimeUtils'
 
@@ -81,3 +82,6 @@ export const isAllDay = (startAtStr, endAtStr) => {
 
   return isStartMidnight && (isEndEndOfDay || isEndNextMidnight)
 }
+
+export const parseYMD = (d) =>
+  d && typeof d === 'string' ? parse(d, 'yyyy-MM-dd', new Date()) : new Date(d)

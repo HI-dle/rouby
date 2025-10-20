@@ -6,7 +6,6 @@ import BriefingForm from '@/features/assistant/component/BriefingForm.vue'
 const props = defineProps({ date: { type: Number, required: true } })
 
 const { selectedDate, form, loading, error } = useBriefingForm(props.date)
-
 </script>
 
 <template>
@@ -18,7 +17,7 @@ const { selectedDate, form, loading, error } = useBriefingForm(props.date)
       <BriefingForm
         :loading="loading"
         :error="error"
-        :content="form.content"
+        :htmlContent="form.htmlContent"
       />
     </div>
   </div>

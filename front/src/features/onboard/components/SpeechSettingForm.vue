@@ -16,7 +16,7 @@
 
     <!-- 입력창 -->
     <div class="mt-10">
-      <UserSettingInput
+      <UserInput
         :model-value="keyword"
         @update:model-value="(val) => emit('update:keyword', val)"
         placeholder="귀여운, 건방진, 까칠한, 겸손한"
@@ -30,7 +30,7 @@
 
 <script setup>
 import KeywordTag from '@/components/common/KeywordTag.vue'
-import UserSettingInput from '@/components/common/UserSettingInput.vue'
+import UserInput from '@/components/common/UserInput.vue'
 import FieldError from '@/components/common/FieldError.vue'
 
 const props = defineProps({

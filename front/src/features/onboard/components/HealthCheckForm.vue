@@ -1,6 +1,6 @@
 <script setup>
 import KeywordTag from '@/components/common/KeywordTag.vue'
-import UserSettingInput from '@/components/common/UserSettingInput.vue'
+import UserInput from '@/components/common/UserInput.vue'
 import FieldError from '@/components/common/FieldError.vue'
 
 const props = defineProps({
@@ -39,7 +39,7 @@ const emit = defineEmits(['update:keyword'])
 
     <!-- 입력창 -->
     <div class="mt-10">
-      <UserSettingInput
+      <UserInput
         :model-value="keyword"
         @update:model-value="(val) => emit('update:keyword', val)"
         placeholder="키워드를 추가해주세요."

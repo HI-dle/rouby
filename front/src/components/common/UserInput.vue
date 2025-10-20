@@ -12,13 +12,21 @@ const emit = defineEmits([
 ])
 
 const props = defineProps({
+  maxlength: Number,
   modelValue: String,
   placeholder: String,
   class: String,
   disabled: Boolean,
-  error: String,
+  error: {
+    type: String,
+    default: '',
+  },
   label: String,
   labelClass: {
+    type: String,
+    default: '',
+  },
+  inputClass: {
     type: String,
     default: '',
   },
@@ -48,16 +56,18 @@ const handleBlur = (e) => {
 
     <!-- input + 버튼 -->
     <div class="relative">
-      <input
+      <textarea
+        :maxlength="maxlength ?? 100"
         :value="modelValue"
         :placeholder="placeholder"
         :disabled="disabled"
         :class="
           cn(
-            'w-full h-10 pl-4 pr-10 rounded-2xl bg-white border text-main-color placeholder:text-placeholder-color text-base outline-none focus:ring-1 transition shadow-sm',
+            'w-full h-10 pl-4 pr-10 py-1.5 rounded-2xl bg-white border text-main-color placeholder:text-placeholder-color text-base outline-none focus:ring-1 transition shadow-sm resize-none',
             error
               ? 'border-error-color'
               : 'border-border-color focus:ring-[#B6A6FF]',
+            inputClass,
           )
         "
         :style="
@@ -66,15 +76,15 @@ const handleBlur = (e) => {
             : ''
         "
         @input="emit('update:modelValue', $event.target.value)"
-        @keyup.enter="emit('submit')"
+        @keyup.enter="emit('submit', $event)"
         @keydown="emit('keydown', $event)"
         @blur="handleBlur"
         @focus="handleFocus"
       />
       <button
         type="button"
-        @click="emit('submit')"
-        class="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 p-0"
+        @click="emit('submit', $event)"
+        class="absolute right-3 bottom-1.5 -translate-y-1/2 w-5 h-5 p-0"
       >
         <img :src="SettingButton" alt="Submit" class="w-full h-full" />
       </button>

@@ -1,4 +1,4 @@
-import {createRouter, createWebHistory} from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -82,18 +82,41 @@ const router = createRouter({
           ],
         },
         {
-          path: 'briefing',
-          component: () => import('@/features/assistant/views/BriefingLayout.vue'),
-          redirect: '/briefing/daily',
+          path: 'assistant',
+          component: () =>
+            import('@/features/assistant/views/AssistantLayout.vue'),
           children: [
             {
-              path: 'daily/:date?',
-              name: 'briefing-daily',
+              path: 'briefing/daily/:date(\\d{4}-\\d{2}-\\d{2})?',
+              name: 'daily-briefing',
               component: () =>
                 import('@/features/assistant/views/DailyBriefingView.vue'),
               props: (route) => ({
                 date: route.params.date || null,
               }),
+            },
+            {
+              path: 'feedback/daily',
+              redirect: 'feedback/daily/request',
+              children: [
+                {
+                  path: 'request',
+                  name: 'daily-feedback-request',
+                  component: () =>
+                    import(
+                      '@/features/assistant/views/DailyFeedbackRequestView.vue'
+                    ),
+                },
+                {
+                  path: 'list/:date(\\d{4}-\\d{2}-\\d{2})?',
+                  name: 'daily-feedback-list',
+                  component: () =>
+                    import('@/features/assistant/views/DailyFeedbackView.vue'),
+                  props: (route) => ({
+                    date: route.params.date || null,
+                  }),
+                },
+              ],
             },
           ],
         },
@@ -107,9 +130,7 @@ const router = createRouter({
               path: 'daily/list',
               name: 'routine-task-daily-list',
               component: () =>
-                import(
-                  '@/features/routine/views/DailyRoutineView.vue'
-                  ),
+                import('@/features/routine/views/DailyRoutineView.vue'),
             },
             {
               path: 'create',
@@ -125,7 +146,7 @@ const router = createRouter({
               component: () =>
                 import(
                   '@/features/routine-task/views/DetailRoutineTaskView.vue'
-                  ),
+                ),
             },
           ],
         },
