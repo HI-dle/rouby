@@ -1,3 +1,4 @@
+### 피드백 생성 요청
 POST {{url}}/api/v1/assistants/feedbacks
 content-type: application/json
 
@@ -5,3 +6,6 @@ content-type: application/json
   "userInput": "오늘은 집중이 잘 안 되는 하루였던 거 같아. 빨리 집중해서 취업해야 되는데...!",
   "userMood": "SOSO"
 }
+
+### 일간 피드백 리스트 요청
+GET {{url}}/api/v1/assistants/feedbacks/daily/2025-10-22

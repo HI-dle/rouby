@@ -6,6 +6,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rouby.assistant.briefing.application.facade.BriefingFacade;
 import com.rouby.assistant.briefing.presentation.BriefingController;
+import com.rouby.assistant.feedback.application.service.FeedbackReadService;
 import com.rouby.assistant.feedback.application.usecase.CreateFeedbackUsecase;
 import com.rouby.assistant.feedback.presentation.FeedbackController;
 import com.rouby.assistant.prompt.application.service.PromptWriteService;
@@ -91,6 +92,9 @@ public abstract class ControllerTestSupport {
 
   @MockitoBean
   protected BriefingFacade briefingFacade;
+
+  @MockitoBean
+  protected FeedbackReadService feedbackReadService;
 
   @MockitoBean
   protected CreateFeedbackUsecase createFeedbackUsecase;

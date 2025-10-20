@@ -82,9 +82,7 @@ public class CreateFeedbackUsecase {
       throw e;
     }
 
-
     TEMPERATURE = 0.5;
-
     assistantGateway.requestDailyFeedbackAsync(
         PROMPT_VERSION,
         TEMPERATURE,
