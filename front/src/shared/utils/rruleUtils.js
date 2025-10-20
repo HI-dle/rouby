@@ -79,10 +79,10 @@ function expandRecurringSchedule(schedule, monthKey) {
 
   // 반복이 있는 경우
   const overrideDates = new Set(
-    (schedule.scheduleOverrides || []).map((o) =>
-      format(parseISO(o.overrideDate), 'yyyy-MM-dd'),
-    ),
+    (schedule.scheduleOverrides || [])
+    .map(o => format(parseISO(o.overrideDate), 'yyyy-MM-dd'))
   )
+
 
   const event = createIcalComponent(
     recurrence.rruleStr,
@@ -121,8 +121,8 @@ function expandRecurringSchedule(schedule, monthKey) {
     )
   }
 
-  // 오버라이드 된 일정 추가
   for (const override of schedule.scheduleOverrides || []) {
+    if (override.overrideType?.toUpperCase() === 'CANCELLED') continue
     const oStart = parseISO(override.startAt)
     const oEnd = parseISO(override.endAt)
 

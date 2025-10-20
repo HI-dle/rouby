@@ -1,5 +1,6 @@
 import { toCreateSchedulePayload, toUpdateSchedulePayload } from './dto'
 import { createSchedule as createApi, getSchedules as getApi, updateSchedule as updateApi } from './api'
+import { deleteSchedule as deleteApi, deleteSchedulesStartingFrom as deleteFromApi } from './api'
 import { wrapApi } from '@/shared/utils/errorUtils'
 import { format } from 'date-fns'
 
@@ -24,4 +25,12 @@ export const updateSchedule = wrapApi(async (form, dailySchedule) => {
   const res = await updateApi(payload)
 
   return { ...payload, id: res.data }
+}, {})
+
+export const deleteSchedule = wrapApi(async ({ scheduleId, instanceDate, startAt, endAt }) => {
+  await deleteApi({ scheduleId, instanceDate, startAt, endAt })
+}, {})
+
+export const deleteSchedulesStartingFrom = wrapApi(async ({ scheduleId, fromAt }) => {
+  await deleteFromApi({ scheduleId, fromAt })
 }, {})
