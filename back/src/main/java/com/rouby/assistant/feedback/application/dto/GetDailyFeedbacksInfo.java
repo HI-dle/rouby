@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import lombok.Builder;
 
-@Builder
 public record GetDailyFeedbacksInfo(
     List<GetFeedbackInfo> feedbacks
 ) {
@@ -17,9 +16,7 @@ public record GetDailyFeedbacksInfo(
       return new GetDailyFeedbacksInfo(Collections.emptyList());
     }
 
-    return GetDailyFeedbacksInfo.builder()
-        .feedbacks(feedbacks.stream().map(GetFeedbackInfo::from).toList())
-        .build();
+    return new GetDailyFeedbacksInfo(feedbacks.stream().map(GetFeedbackInfo::from).toList());
   }
 
   @Builder

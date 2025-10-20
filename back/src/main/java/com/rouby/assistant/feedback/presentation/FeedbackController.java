@@ -5,6 +5,7 @@ import com.rouby.assistant.feedback.application.usecase.CreateFeedbackUsecase;
 import com.rouby.assistant.feedback.presentation.dto.CreateFeedbackRequest;
 import com.rouby.assistant.feedback.presentation.dto.GetDailyFeedbacksResponse;
 import com.rouby.user.user.infrastructure.security.dto.SecurityUser;
+import jakarta.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +41,7 @@ public class FeedbackController {
   @GetMapping("/daily/{date}")
   public ResponseEntity<GetDailyFeedbacksResponse> getDailyFeedback(
       @AuthenticationPrincipal SecurityUser user,
-      @PathVariable LocalDate date) {
+      @PathVariable @PastOrPresent LocalDate date) {
 
     GetDailyFeedbacksResponse res = GetDailyFeedbacksResponse.from(
         feedbackReadService.getDailyFeedbacks(user.getId(), date));

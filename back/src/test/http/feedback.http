@@ -8,4 +8,4 @@ content-type: application/json
 }
 
 ### 일간 피드백 리스트 요청
-GET {{url}}/api/v1/assistants/feedbacks/daily/2025-10-19
+GET {{url}}/api/v1/assistants/feedbacks/daily/2025-10-22

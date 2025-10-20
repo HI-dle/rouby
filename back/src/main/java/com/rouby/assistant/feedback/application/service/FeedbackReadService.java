@@ -26,9 +26,8 @@ public class FeedbackReadService {
 
   public GetDailyFeedbacksInfo getDailyFeedbacks(Long userId, LocalDate date) {
 
-    GetDailyFeedbacksInfo info = GetDailyFeedbacksInfo.from(
+    return GetDailyFeedbacksInfo.from(
         feedbackRepository.findByUserIdAndFeedbackDateAndStatusAndDeletedAtIsNull(
             userId, date, Status.COMPLETED));
-    return info;
   }
 }

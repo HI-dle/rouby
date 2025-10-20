@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -96,18 +97,17 @@ class FeedbackControllerTest extends ControllerTestSupport {
   @Test
   void getDailyFeedbacks() throws Exception {
 
-    GetDailyFeedbacksInfo feedbacksInfo = GetDailyFeedbacksInfo.builder()
-        .feedbacks(IntStream.range(0, 3)
+    GetDailyFeedbacksInfo feedbacksInfo = new GetDailyFeedbacksInfo(
+        IntStream.range(0, 3)
             .mapToObj(i -> GetFeedbackInfo.builder()
                 .slot(i + 1)
                 .userMood("SOSO")
-                .userInput("사용자 요청 입력값 " + i + 1)
-                .feedbackContent("피드백 응답 데이터 " + i + 1)
+                .userInput("사용자 요청 입력값 " + (i + 1))
+                .feedbackContent("피드백 응답 데이터 " + (i + 1))
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build())
-            .toList())
-        .build();
+            .toList());
 
     when(feedbackReadService.getDailyFeedbacks(eq(1L), any(LocalDate.class)))
         .thenReturn(feedbacksInfo);
@@ -136,5 +136,27 @@ class FeedbackControllerTest extends ControllerTestSupport {
                 fieldWithPath("feedbacks[].updatedAt").description("피드백 생성 일시 (예: 2025-09-15T10:00:00)")
             )
         ));
+  }
+
+  @WithMockCustomUser
+  @DisplayName("일간 피드백 리스트 요청 API: 잘못된 일자 요청으로 인한 실패 400")
+  @Test
+  void getDailyFeedbacksWithFutureDate_return400() throws Exception {
+
+    // when
+    ResultActions resultActions = mockMvc.perform(
+        get("/api/v1/assistants/feedbacks/daily/{date}", LocalDate.now().plusDays(1))
+            .header("Authorization", "Bearer {ACCESS_TOKEN}")
+            .header(HttpHeaders.ACCEPT_LANGUAGE, "ko-KR")
+    );
+
+    // then
+    resultActions.andExpect(status().isBadRequest())
+        .andDo(print())
+        .andDo(document("get-daily-feedbacks-invalid-date-400",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            getValidationErrorResponseFieldSnippet()
+            ));
   }
 }
