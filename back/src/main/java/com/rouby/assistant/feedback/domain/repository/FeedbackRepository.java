@@ -1,8 +1,10 @@
 package com.rouby.assistant.feedback.domain.repository;
 
 import com.rouby.assistant.feedback.domain.entity.Feedback;
+import com.rouby.assistant.feedback.domain.entity.enums.Status;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface FeedbackRepository {
@@ -17,4 +19,6 @@ public interface FeedbackRepository {
   void markFailure(Long feedbackId, Long userId);
 
   Optional<Feedback> findByIdAndDeletedAtIsNull(Long feedbackId);
+
+  List<Feedback> findByUserIdAndFeedbackDateAndStatusAndDeletedAtIsNull(Long userId, LocalDate date, Status status);
 }
