@@ -130,7 +130,7 @@ const router = createRouter({
               path: 'daily/list',
               name: 'routine-task-daily-list',
               component: () =>
-                import('@/features/routine/views/DailyRoutineView.vue'),
+                import('@/features/routine-task/views/DailyRoutineView.vue'),
             },
             {
               path: 'create',

@@ -1,6 +1,5 @@
 <script setup>
 import { Loader } from 'lucide-vue-next'
-import { defineProps } from 'vue'
 
 // props로 크기와 선 굵기를 조절할 수 있게 합니다.
 defineProps({

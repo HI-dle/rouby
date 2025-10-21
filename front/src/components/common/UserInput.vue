@@ -12,7 +12,10 @@ const emit = defineEmits([
 ])
 
 const props = defineProps({
-  maxlength: Number,
+  maxlength: {
+    type: Number,
+    default: 100,
+  },
   modelValue: String,
   placeholder: String,
   class: String,
@@ -57,7 +60,7 @@ const handleBlur = (e) => {
     <!-- input + 버튼 -->
     <div class="relative">
       <textarea
-        :maxlength="maxlength ?? 100"
+        :maxlength="maxlength"
         :value="modelValue"
         :placeholder="placeholder"
         :disabled="disabled"

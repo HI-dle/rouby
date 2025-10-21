@@ -83,5 +83,9 @@ export const isAllDay = (startAtStr, endAtStr) => {
   return isStartMidnight && (isEndEndOfDay || isEndNextMidnight)
 }
 
-export const parseYMD = (d) =>
-  d && typeof d === 'string' ? parse(d, 'yyyy-MM-dd', new Date()) : new Date(d)
+export const parseYMD = (d) => {
+  if (!d) return new Date()
+  return typeof d === 'string'
+    ? parse(d, 'yyyy-MM-dd', new Date())
+    : new Date(d)
+}

@@ -2,7 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { format } from 'date-fns'
 import { getPiniaStorage } from '@/shared/utils/piniaPersistUtils'
-import { getRoutines } from '@/features/routine/routineService'
+import { getRoutines } from '@/features/routine-task/routineService'
 import { expandRoutinesByDay } from '@/shared/utils/rruleUtils.js' // 방금 만든 API 래퍼
 
 export const useRoutineStore = defineStore(

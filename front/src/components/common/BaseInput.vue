@@ -20,7 +20,7 @@ const props = defineProps({
   },
   autocomplete: {
     type: String,
-    default: 'text',
+    default: 'off',
   },
   error: String,
   disabled: Boolean,

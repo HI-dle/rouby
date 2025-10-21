@@ -1,6 +1,7 @@
 <script setup>
 import { cn } from '@/lib/utils'
 import BaseButton from './BaseButton.vue'
+import { parseMdToHtmlAndSanitize } from '@/shared/utils/htmlContentUtils'
 
 const props = defineProps({
   modelValue: { type: Boolean },
@@ -20,6 +21,8 @@ const props = defineProps({
   },
 })
 const emit = defineEmits(['update:modelValue', 'close'])
+
+const safeHtmlContent = computed(() => parseMdToHtmlAndSanitize(props.message))
 const close = () => {
   emit('update:modelValue', false)
 }
@@ -46,7 +49,7 @@ const handleClick = () => {
       <h2 v-if="title" class="text-lg font-semibold text-main-color mb-4">
         {{ title }}
       </h2>
-      <p class="text-sm text-gray-700 mb-6" v-html="message"></p>
+      <p class="text-sm text-gray-700 mb-6" v-html="safeHtmlContent"></p>
       <BaseButton
         @click="handleClick"
         :class="['text-sm w-2/5 h-10', props.buttonClass]"

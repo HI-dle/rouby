@@ -57,7 +57,7 @@ const { messages } = defineProps({
                 v-if="msg.mood"
                 class="mb-1 py-1 px-2 shadow-sm shadow-placeholder-color/30 rounded-xl text-center text-main-color font-medium"
               >
-                {{ MOODS[msg.mood.toLowerCase()].day }}
+                {{ MOODS[msg.mood.toLowerCase()]?.day || msg.mood }}
               </div>
             </div>
             <div class="flex items-center">

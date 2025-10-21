@@ -95,11 +95,11 @@ const handleModalConfirm = () => {
             @submit="onSubmit"
             input-class="h-20"
           />
-          <p class="text-xs text-gray-500 mt-[-0.5rem](-8px) mx-2">
+          <p class="text-xs text-gray-500 -mt-2 mx-2">
             입력은 최대 {{ MAX_LEN.userInput }} 자까지 가능합니다. ({{
               userInput.length
             }}
-            / 1000 자)
+            / {{ MAX_LEN.userInput }} 자)
           </p>
         </div>
       </div>
