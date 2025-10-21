@@ -1,6 +1,6 @@
 import { reactive, ref, watch } from 'vue'
 import { requestFeedback } from './assistantService'
-import { MAX_LEN } from './constants'
+import { MAX_LEN, REQ_ERR_MESSAGES } from './constants'
 
 export const useFeedbackForm = () => {
   const selectedMoodKey = ref('soso')
@@ -30,7 +30,12 @@ export const useFeedbackForm = () => {
         '요청하신 피드백을 작성하고 있습니다. <br /> 피드백 작성이 완료되면 알림으로 알려드릴게요!'
       resultModal.show = true
     } catch (err) {
-      const msg = err.response?.data?.message || err.message || '저장 실패'
+      const msg =
+        err.response?.data?.message ||
+        err.message ||
+        err ||
+        REQ_ERR_MESSAGES[err.code] ||
+        '피드백 요청에 실패하였습니다.'
       resultModal.msg = msg
       resultModal.show = true
     }
