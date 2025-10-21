@@ -6,11 +6,7 @@ export function createApiError(
   err,
   { targetField, fieldMessages, fallbackMessage = '오류가 발생했습니다.' } = {},
 ) {
-  const {
-    errors: list = [],
-    message: dataMsg,
-    code: code,
-  } = extractErrorData(err)
+  const { errors: list = [], message: dataMsg, code } = extractErrorData(err)
 
   if (list.length > 0) {
     if (fieldMessages) {

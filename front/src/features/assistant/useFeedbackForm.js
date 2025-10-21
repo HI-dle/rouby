@@ -31,10 +31,9 @@ export const useFeedbackForm = () => {
       resultModal.show = true
     } catch (err) {
       const msg =
-        err.response?.data?.message ||
-        err.message ||
-        err ||
-        REQ_ERR_MESSAGES[err.code] ||
+        err?.response?.data?.message ??
+        REQ_ERR_MESSAGES[err?.code] ??
+        (typeof err === 'string' ? err : err?.message) ??
         '피드백 요청에 실패하였습니다.'
       resultModal.msg = msg
       resultModal.show = true

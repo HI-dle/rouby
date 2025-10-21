@@ -14,19 +14,9 @@ export const useFeedbackList = (initDate = null) => {
 
   const nomessages = ref(LIST_ERR_MESSAGES.noContent)
   const messages = ref([])
-  const parsedDate = initDate ? parseYMD(initDate) : null
-  const selectedDate = parsedDate
-    ? ref(parsedDate)
-    : ref(new Date(datePickStore.lastSelectedDate))
-
-  const scrollToLastUserDiv = () => {
-    const userDivs = document.querySelectorAll('div.from-user')
-
-    if (userDivs.length > 0) {
-      const lastUserDiv = userDivs[userDivs.length - 1]
-      lastUserDiv.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
-  }
+  const selectedDate = ref(
+    initDate ? parseYMD(initDate) : new Date(datePickStore.lastSelectedDate),
+  )
 
   const fetchFeedbacksAsMessageForm = async (date) => {
     messages.value = []
@@ -38,27 +28,29 @@ export const useFeedbackList = (initDate = null) => {
         return
       }
 
-      for (let r of res.feedbacks) {
-        messages.value.push({
+      messages.value = res.feedbacks.flatMap((r) => [
+        {
           from: 'user',
           time: formatDateTime(r.createdAt, { type: 'time12format' }),
           txt: r.userInput.replace(/\n/g, '<br>'),
           mood: r.userMood,
-        })
-        messages.value.push({
+        },
+        {
           from: 'rouby',
           time: formatDateTime(r.updatedAt, { type: 'time12format' }),
           txt: r.feedbackContent.replace(/\n/g, '<br>'),
-        })
-      }
+        },
+      ])
     } catch (e) {
       if (e.code === 'INVALID_REQUEST') {
         nomessages.value = LIST_ERR_MESSAGES.invalidRequest
+      } else {
+        nomessages.value =
+          typeof e === 'string'
+            ? e
+            : e.message || '피드백을 불러오는 중 오류가 발생했습니다.'
       }
     }
-
-    await nextTick()
-    scrollToLastUserDiv()
   }
 
   onMounted(() => {
@@ -75,5 +67,11 @@ export const useFeedbackList = (initDate = null) => {
       fetchFeedbacksAsMessageForm(newDate)
     }
   })
-  return { selectedDate, messages, nomessages, fetchFeedbacksAsMessageForm }
+
+  return {
+    selectedDate,
+    messages,
+    nomessages,
+    fetchFeedbacksAsMessageForm,
+  }
 }
