@@ -1,6 +1,8 @@
 <script setup>
+import { computed } from 'vue'
 import { cn } from '@/lib/utils'
 import BaseButton from './BaseButton.vue'
+import { parseMdToHtmlAndSanitize } from '@/shared/utils/htmlContentUtils'
 
 const props = defineProps({
   modelValue: { type: Boolean },
@@ -19,13 +21,15 @@ const props = defineProps({
     default: '',
   },
 })
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'close'])
+
+const safeHtmlContent = computed(() => parseMdToHtmlAndSanitize(props.message))
 const close = () => {
   emit('update:modelValue', false)
 }
 const handleClick = () => {
-  emit('close') // 확인 버튼 눌렀을 때
   close()
+  emit('close') // 부모로 이벤트 전달
 }
 </script>
 <template>
@@ -37,12 +41,20 @@ const handleClick = () => {
   >
     <div
       :class="[
-        cn('bg-white rounded-xl shadow-lg w-full max-w-sm w-2/3 p-6 text-center', props.class),
+        cn(
+          'bg-white rounded-xl shadow-lg max-w-sm w-2/3 p-6 text-center',
+          props.class,
+        ),
       ]"
     >
-      <h2 v-if="title" class="text-lg font-semibold text-main-color mb-4">{{ title }}</h2>
-      <p class="text-sm text-gray-700 mb-6">{{ message }}</p>
-      <BaseButton @click="handleClick" :class="['text-sm w-2/5 h-10', props.buttonClass]">
+      <h2 v-if="title" class="text-lg font-semibold text-main-color mb-4">
+        {{ title }}
+      </h2>
+      <p class="text-sm text-gray-700 mb-6" v-html="safeHtmlContent"></p>
+      <BaseButton
+        @click="handleClick"
+        :class="['text-sm w-2/5 h-10', props.buttonClass]"
+      >
         {{ buttonText }}
       </BaseButton>
     </div>

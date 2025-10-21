@@ -4,8 +4,7 @@ import { wrapApi } from '@/shared/utils/errorUtils'
 export const getRoutines = wrapApi(async (fromDate, toDate) => {
   const res = await getApi({
     fromDate: fromDate,
-    toDate: toDate
+    toDate: toDate,
   })
   return res
 }, {})
-

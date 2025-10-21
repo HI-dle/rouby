@@ -1,13 +1,29 @@
 <script setup>
-import { Calendar, ClipboardList, Clock3, User, MoreHorizontal, Plus } from 'lucide-vue-next'
-import { useActivePath } from '@/shared/composable/useActivePath'
+import { ref } from 'vue'
 import { useRoute } from 'vue-router'
+
+import {
+  Calendar,
+  ClipboardList,
+  Clock3,
+  User,
+  MoreHorizontal,
+  Plus,
+  Gem,
+} from 'lucide-vue-next'
+import { useActivePath } from '@/shared/composable/useActivePath'
 
 const route = useRoute()
 const { isActive } = useActivePath()
 
 const createOrModify = ['create', 'modify']
-const isNotCreateOrModify = () => !createOrModify.some((p) => route.path.includes(p))
+const isNotCreateOrModify = () =>
+  !createOrModify.some((p) => route.path.includes(p))
+
+const isMoreClicked = ref(false)
+const toggleMoreOptions = () => {
+  isMoreClicked.value = !isMoreClicked.value
+}
 </script>
 
 <template>
@@ -32,9 +48,9 @@ const isNotCreateOrModify = () => !createOrModify.some((p) => route.path.include
     </RouterLink>
 
     <RouterLink
-      to="/alarm"
+      to="/notification"
       class="flex justify-center items-center"
-      :class="isActive('/alarm') ? 'text-main-color' : 'text-gray-400'"
+      :class="isActive('/notification') ? 'text-main-color' : 'text-gray-400'"
     >
       <Clock3 class="w-6 h-6" />
     </RouterLink>
@@ -47,14 +63,6 @@ const isNotCreateOrModify = () => !createOrModify.some((p) => route.path.include
       <User class="w-6 h-6" />
     </RouterLink>
 
-    <!-- ... 버튼 -->
-    <div
-      v-if="isNotCreateOrModify()"
-      class="absolute -top-16 right-6 bg-main-color text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center"
-      aria-label="추가 선택지"
-    >
-      <MoreHorizontal class="w-6 h-6" />
-    </div>
     <!-- + 버튼 -->
     <!-- <RouterLink
       to="/create"
@@ -64,5 +72,69 @@ const isNotCreateOrModify = () => !createOrModify.some((p) => route.path.include
       <Plus class="w-6 h-6" />
     </RouterLink>
      -->
+
+    <!-- ... 버튼 -->
+    <div
+      v-if="isNotCreateOrModify()"
+      class="absolute -top-14 right-6 bg-main-color text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center"
+      aria-label="추가 선택지"
+      @click="toggleMoreOptions"
+    >
+      <MoreHorizontal class="w-6 h-6" />
+    </div>
+
+    <div
+      v-if="isMoreClicked"
+      class="absolute -top-[11rem] right-4 w-36 h-20 flex flex-col items-center justify-center"
+    >
+      <RouterLink
+        to="/assistant/recommendation/request"
+        class="flex justify-center items-center w-full h-8 bg-main-color rounded-full shadow-lg"
+        @click="isMoreClicked = false"
+      >
+        <div
+          class="flex justify-between items-center w-full h-8 text-white px-[9px]"
+        >
+          <Gem class="size-5" />
+          <span>루틴 추천받기</span>
+        </div>
+      </RouterLink>
+      <RouterLink
+        to="/assistant/feedback/daily/request"
+        class="flex justify-center items-center w-full h-8 mt-1 bg-main-color rounded-full shadow-lg"
+        @click="isMoreClicked = false"
+      >
+        <div
+          class="flex justify-between items-center w-full h-8 text-white px-[9px]"
+        >
+          <Gem class="size-5" />
+          <span>하루 마무리하기</span>
+        </div>
+      </RouterLink>
+      <RouterLink
+        to="/assistant/feedback/daily/list"
+        class="flex justify-center items-center w-full h-8 mt-1 bg-main-color rounded-full shadow-lg"
+        @click="isMoreClicked = false"
+      >
+        <div
+          class="flex justify-between items-center w-full h-8 text-white px-[9px]"
+        >
+          <Gem class="size-5" />
+          <span>피드백 보기</span>
+        </div>
+      </RouterLink>
+      <RouterLink
+        to="/assistant/briefing/daily"
+        class="flex justify-center items-center w-full h-8 mt-1 bg-main-color rounded-full shadow-lg"
+        @click="isMoreClicked = false"
+      >
+        <div
+          class="flex justify-between items-center w-full h-8 text-white px-[9px]"
+        >
+          <Gem class="size-5" />
+          <span>브리핑 보기</span>
+        </div>
+      </RouterLink>
+    </div>
   </footer>
 </template>

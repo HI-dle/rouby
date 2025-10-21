@@ -16,6 +16,7 @@ export const formatDateTime = (
   const patterns = {
     date: 'yyyy-MM-dd',
     time: 'HH:mm',
+    time12format: 'h:mm aaa',
     datetime: "yyyy-MM-dd'T'HH:mm",
   }
 
@@ -57,7 +58,9 @@ export const formatDateHeader = (dateString) => {
 
   if (!isValid(date)) return ''
 
-  const weekday = new Intl.DateTimeFormat('ko-KR', { weekday: 'long' }).format(date)
+  const weekday = new Intl.DateTimeFormat('ko-KR', { weekday: 'long' }).format(
+    date,
+  )
   const month = date.getMonth() + 1
   const day = date.getDate()
 

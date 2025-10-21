@@ -1,18 +1,13 @@
 <script setup>
 import { ref, watch } from 'vue'
 import WeeklyMonthlyDatePicker from '@/components/common/date-picker/WeeklyMonthlyDatePicker.vue'
-import RoutineCard from '@/features/routine/components/RoutineCard.vue'
+import RoutineCard from '@/features/routine-task/components/RoutineCard.vue'
 
-import { useRoutineForm } from '@/features/routine/useRoutineForm'
+import { useRoutineForm } from '@/features/routine-task/useRoutineForm'
 
 const selectedDate = ref(new Date())
 
-
-const {
-  routinesForSelectedDate,
-} = useRoutineForm(selectedDate)
-
-
+const { routinesForSelectedDate } = useRoutineForm(selectedDate)
 </script>
 
 <template>

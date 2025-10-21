@@ -13,7 +13,7 @@ export const myPageUpdateRoubySetting = (payload) => {
 }
 
 export const myPageReadUserInfo = () => {
-  return axios.get('/v1/users/user-info')
+  return axios.get('/v1/users/basic-info')
 }
 
 export const myPageUpdateUserInfo = (payload) => {
