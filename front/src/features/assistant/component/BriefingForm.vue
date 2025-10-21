@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from 'vue'
 import { parseMdToHtmlAndSanitize } from '@/shared/utils/htmlContentUtils'
 
 const { loading, error, content } = defineProps({

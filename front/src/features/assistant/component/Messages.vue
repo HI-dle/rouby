@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from 'vue'
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import { MOODS } from '../constants'
 import { parseMdToHtmlAndSanitize } from '@/shared/utils/htmlContentUtils'

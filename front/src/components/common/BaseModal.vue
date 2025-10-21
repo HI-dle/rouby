@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from 'vue'
 import { cn } from '@/lib/utils'
 import BaseButton from './BaseButton.vue'
 import { parseMdToHtmlAndSanitize } from '@/shared/utils/htmlContentUtils'
