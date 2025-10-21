@@ -1,9 +1,12 @@
 <script setup>
+import { parseMdToHtmlAndSanitize } from '@/shared/utils/htmlContentUtils'
+
 const { loading, error, content } = defineProps({
   loading: { type: Boolean, required: true },
   error: { type: String, default: '' },
-  htmlContent: { type: String, default: '' },
+  content: { type: String, default: '' },
 })
+const sanitizedHtml = computed(() => parseMdToHtmlAndSanitize(content))
 </script>
 
 <template>
@@ -16,7 +19,7 @@ const { loading, error, content } = defineProps({
     >
       <div
         class="overflow-y-auto max-h-150 whitespace-pre-wrap"
-        v-html="htmlContent"
+        v-html="sanitizedHtml"
       ></div>
     </div>
   </div>

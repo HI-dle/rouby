@@ -14,11 +14,7 @@ const { selectedDate, form, loading, error } = useBriefingForm(props.date)
       <div class="sticky top-0 bg-white z-10">
         <WeeklyMonthlyDatePicker v-model="selectedDate" />
       </div>
-      <BriefingForm
-        :loading="loading"
-        :error="error"
-        :htmlContent="form.htmlContent"
-      />
+      <BriefingForm :loading="loading" :error="error" :content="form.content" />
     </div>
   </div>
 </template>

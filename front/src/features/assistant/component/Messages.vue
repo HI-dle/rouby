@@ -1,9 +1,17 @@
 <script setup>
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import { MOODS } from '../constants'
+import { parseMdToHtmlAndSanitize } from '@/shared/utils/htmlContentUtils'
 
 const { messages } = defineProps({
   messages: { type: Array, default: [], required: true },
+})
+
+const sanitizedMessages = computed(() => {
+  return messages.map((msg) => ({
+    ...msg,
+    txt: parseMdToHtmlAndSanitize(msg.txt),
+  }))
 })
 </script>
 
@@ -13,7 +21,7 @@ const { messages } = defineProps({
       class="flex flex-col space-y-4 w-full max-w-xl mx-auto mb-8 overflow-y-auto"
     >
       <div
-        v-for="(msg, index) in messages"
+        v-for="(msg, index) in sanitizedMessages"
         :key="index"
         :class="[
           'flex',

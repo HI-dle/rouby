@@ -4,7 +4,6 @@ import { getBriefing } from '@/features/assistant/assistantService'
 import { useRouter } from 'vue-router'
 import { useDatePickStore } from '@/stores/useDatePickStore.js'
 import { parseYMD } from '@/shared/utils/dateUtils'
-import { parseMdToHtmlAndSanitize } from '@/shared/utils/htmlContentUtils'
 
 export const useBriefingForm = (initDate) => {
   const router = useRouter()
@@ -19,7 +18,7 @@ export const useBriefingForm = (initDate) => {
 
   // 브리핑 데이터 form
   const form = reactive({
-    htmlContent: '',
+    content: '',
     createdAt: format(selectedDate.value, 'yyyy-MM-dd'),
   })
 
@@ -38,7 +37,7 @@ export const useBriefingForm = (initDate) => {
 
       const data = await getBriefing(dateStr)
       if (data) {
-        form.htmlContent = parseMdToHtmlAndSanitize(data.content)
+        form.content = data.content
         form.createdAt = data.createdAt
       }
     } catch (e) {
