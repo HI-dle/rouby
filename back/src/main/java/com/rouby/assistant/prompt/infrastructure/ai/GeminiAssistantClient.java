@@ -4,7 +4,9 @@ import com.rouby.assistant.prompt.application.client.AssistantClient;
 import com.rouby.assistant.prompt.domain.info.AssistantResponse;
 import com.rouby.assistant.prompt.infrastructure.exception.AssistantErrorCode;
 import com.rouby.assistant.prompt.infrastructure.exception.AssistantInfraException;
+import com.rouby.assistant.prompt.infrastructure.exception.AssistantInfraRetryableException;
 import com.rouby.common.utils.JsonHelper;
+import com.rouby.common.utils.RetryAfterParser;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
@@ -67,6 +69,14 @@ public class GeminiAssistantClient implements AssistantClient {
 
     } catch (HttpClientErrorException e) {
 
+      if (e.getStatusCode() == HttpStatus.TOO_MANY_REQUESTS) {
+        long retryAfterSeconds = RetryAfterParser.parseRetryAfterSeconds(e.getResponseHeaders());
+        if (retryAfterSeconds <= 5) {
+          throw AssistantInfraRetryableException.of(
+              HttpStatus.TOO_MANY_REQUESTS, e.getMessage(),
+              RetryAfterParser.parseRetryAfterSeconds(e.getResponseHeaders()));
+        }
+      }
       throw AssistantInfraException.of(HttpStatus.valueOf(e.getStatusCode().value()), e.getMessage());
     }
   }

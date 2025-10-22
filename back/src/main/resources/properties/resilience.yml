@@ -37,15 +37,6 @@ resilience4j:
         automaticTransitionFromOpenToHalfOpenEnabled: true
         ignoreExceptions:
           - com.rouby.assistant.prompt.infrastructure.exception.AssistantInfraException
-  retry:
-    instances:
-      assistant:
-        maxAttempts: 3
-        waitDuration: 500ms
-        enableExponentialBackoff: true
-        exponentialBackoffMultiplier: 2
-        ignoreExceptions:
-          - com.rouby.assistant.prompt.infrastructure.exception.AssistantInfraException
 
 ---
 spring:
@@ -83,12 +74,5 @@ resilience4j:
         failureRateThreshold: 50
         waitDurationInOpenState: 200ms
         permittedNumberOfCallsInHalfOpenState: 1
-        ignoreExceptions:
-          - com.rouby.assistant.prompt.infrastructure.exception.AssistantInfraException
-  retry:
-    instances:
-      assistant:
-        maxAttempts: 3
-        waitDuration: 10ms
         ignoreExceptions:
           - com.rouby.assistant.prompt.infrastructure.exception.AssistantInfraException

@@ -13,13 +13,18 @@ import com.rouby.assistant.feedback.application.dto.CreateFeedbackResult;
 import com.rouby.assistant.prompt.domain.info.AssistantResponse;
 import com.rouby.assistant.prompt.infrastructure.exception.AssistantErrorCode;
 import com.rouby.assistant.prompt.infrastructure.exception.AssistantInfraException;
-import com.rouby.common.exception.CustomException;
+import com.rouby.assistant.prompt.infrastructure.exception.AssistantInfraRetryableException;
 import com.rouby.common.support.IntegrationTestSupport;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker.State;
+import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryRegistry;
+import io.github.resilience4j.retry.event.RetryOnRetryEvent;
+import java.time.Duration;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,6 +65,7 @@ class GeminiAssistantClientTest extends IntegrationTestSupport {
   @Test
   @SuppressWarnings("unchecked")
   void checkRetryWhenGenerateFeedbackResponseFromPrompt() {
+
     cb.transitionToClosedState();
     // given
     CreateFeedbackResult feedbackResult = CreateFeedbackResult.builder()
@@ -93,6 +99,68 @@ class GeminiAssistantClientTest extends IntegrationTestSupport {
     // then
     assertThat(resp.result().feedback()).isEqualTo("SUCCESS");
     assertThat(tries.get()).isEqualTo(3);
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void shouldWaitDynamicallyBasedOnRetryAfterHeader() {
+
+    Retry retry = retryRegistry.retry("assistant");
+    List<Duration> waits = new CopyOnWriteArrayList<>();
+    retry.getEventPublisher().onRetry((RetryOnRetryEvent e) -> {
+      Duration wait = e.getWaitInterval();
+      waits.add(wait);
+    });
+
+    cb.transitionToClosedState();
+    // given
+    CreateFeedbackResult feedbackResult = CreateFeedbackResult.builder()
+        .feedback("SUCCESS")
+        .build();
+    BeanOutputConverter<CreateFeedbackResult> converter =
+        responseConverterManager.getConverter(CreateFeedbackResult.class);
+    ResponseEntity<ChatResponse, CreateFeedbackResult> responseEntity =
+        new ResponseEntity<> (new ChatResponse(Collections.emptyList()), feedbackResult);
+
+    CallResponseSpec mockResult = Mockito.mock(CallResponseSpec.class);
+    when(mockResult.responseEntity(converter)).thenReturn(responseEntity);
+
+    // 첫 번째와 두 번째 호출 시 다른 Retry-After 값을 가진 예외를 던지도록 설정
+    when(chatClient.prompt()
+        .system(anyString())
+        .options(any())
+        .user(any(Consumer.class))
+        .call())
+        // 1차 호출 (재시도 간격 5000ms)
+        .thenThrow(AssistantInfraRetryableException.of(
+            HttpStatus.TOO_MANY_REQUESTS, "", 2))
+        // 2차 호출 (재시도 간격 10000ms)
+        .thenThrow(AssistantInfraRetryableException.of(
+            HttpStatus.TOO_MANY_REQUESTS, "", 2))
+        // 3차 호출 (최대 재시도 횟수 3회에 도달, 성공)
+        .thenReturn(mockResult); // 최종 성공 (총 3회 호출)
+
+    // 동기 호출로 전체 시간 측정
+    long t0 = System.nanoTime();
+    AssistantResponse<CreateFeedbackResult> resp = client.generateResponseFromPrompt(
+        0.2, "s", "u", Map.of(), CreateFeedbackResult.class);
+    long elapsedMs = java.time.Duration.ofNanos(System.nanoTime() - t0).toMillis();
+
+    // then
+    assertThat(resp.result().feedback()).isEqualTo("SUCCESS");
+
+    assertThat(waits).hasSize(2);
+    assertThat(waits.get(0)).isEqualTo(Duration.ofSeconds(2));
+    assertThat(waits.get(1)).isEqualTo(Duration.ofSeconds(2));
+
+    // 총 대기: 2s + 2s = ~ 3000ms (+오차 허용)
+    long expectedMin = 4_000L;
+    long slack = 2_000L; // CI, 스케줄러 지연 등 오차
+    assertThat(elapsedMs).isGreaterThanOrEqualTo(expectedMin);
+    assertThat(elapsedMs).isLessThan(expectedMin + slack);
+
+    // 총 시도 수 = max-attempts(3) → prompt() 3번
+    Mockito.verify(chatClient, Mockito.times(4)).prompt();
   }
 
   @Test
@@ -134,6 +202,7 @@ class GeminiAssistantClientTest extends IntegrationTestSupport {
     verify(chatClient, times(8)).prompt();
     assertThat(metrics.getNumberOfFailedCalls()).isEqualTo(6);
     assertThat(cb.getState()).isEqualTo(State.OPEN);
+    // **리트라이 수행되는 동안 실패 횟수 조건이 충족되어도 서킷브레이커 동작 진행되지 않음, aop 진행 순서로 인해**
 
     // 3) 세 번째 호출: OPEN 상태이므로 외부 호출 없이 즉시 fallback 경로로 단락
     //    => chatClient 가 전혀 호출되지 않아야 함
