@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import { MOODS } from '../constants'
 import { parseMdToHtmlAndSanitize } from '@/shared/utils/htmlContentUtils'
@@ -7,13 +7,35 @@ import { parseMdToHtmlAndSanitize } from '@/shared/utils/htmlContentUtils'
 const { messages } = defineProps({
   messages: { type: Array, default: [], required: true },
 })
-
 const sanitizedMessages = computed(() => {
   return messages.map((msg) => ({
     ...msg,
     txt: parseMdToHtmlAndSanitize(msg.txt),
   }))
 })
+
+const lastUserMessageRef = ref(null)
+const setLastUserRef = (el) => {
+  if (el) lastUserMessageRef.value = el
+}
+
+const scrollToLastUserDiv = async () => {
+  const el = lastUserMessageRef.value
+  if (!el) return
+
+  el.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start',
+  })
+}
+watch(
+  () => messages,
+  async () => {
+    await nextTick()
+    await scrollToLastUserDiv()
+  },
+  { flush: 'post', deep: true, immediate: true },
+)
 </script>
 
 <template>
@@ -24,6 +46,11 @@ const sanitizedMessages = computed(() => {
       <div
         v-for="(msg, index) in sanitizedMessages"
         :key="index"
+        :ref="
+          msg.from === 'user' && sanitizedMessages.length - 2 == index
+            ? setLastUserRef
+            : null
+        "
         :class="[
           'flex',
           {

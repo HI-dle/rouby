@@ -17,3 +17,8 @@ export const requestFeedback = wrapApi(async (payload) => {
   const res = await requestFeedbackApi(payload)
   return res.data
 })
+
+export const getFeedbacks = wrapApi(async (date) => {
+  const res = await getFeedbacksApi(date)
+  return res.data
+})

@@ -40,3 +40,7 @@ export const LIST_ERR_MESSAGES = {
   noContent: '해당 일자에는 피드백 정보가 존재하지 않습니다.',
   invalidRequest: '아직 해당 일자의 피드백을 요청할 수 없습니다.',
 }
+
+export const REQ_ERR_MESSAGES = {
+  EXCEEDED_DAILY_FEEDBACK_USAGE: '피드백의 당일 사용량을 모두 초과하였습니다.',
+}
