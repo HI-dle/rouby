@@ -1,5 +1,6 @@
 package com.rouby.notification.notificationEvent.infrastructure.messaging.fcm;
 
+import com.rouby.common.utils.RetryAfterParser;
 import com.rouby.notification.notificationEvent.domain.info.NotificationEventInfo;
 import com.rouby.notification.notificationEvent.domain.sender.AsyncNotificationSender;
 import com.rouby.notification.notificationEvent.infrastructure.exception.NotificationEventFcmException;
@@ -50,11 +51,10 @@ public class WebClientFcmSender implements AsyncNotificationSender {
                       "FCM WebClient error: " + resp.statusCode() + " body=" + body);
                 }
 
-                String retryAfter = resp.headers().asHttpHeaders().getFirst("Retry-After");
                 return new NotificationEventFcmRetryableException(
                     (HttpStatus) resp.statusCode(),
                     "FCM WebClient error: " + resp.statusCode() + " body=" + body,
-                    retryAfter);
+                    RetryAfterParser.parseRetryAfterSeconds(resp.headers().asHttpHeaders()));
               })
         )
         .bodyToMono(Void.class)

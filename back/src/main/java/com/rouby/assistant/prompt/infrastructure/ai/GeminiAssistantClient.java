@@ -3,8 +3,9 @@ package com.rouby.assistant.prompt.infrastructure.ai;
 import com.rouby.assistant.prompt.application.client.AssistantClient;
 import com.rouby.assistant.prompt.domain.info.AssistantResponse;
 import com.rouby.assistant.prompt.infrastructure.exception.AssistantErrorCode;
-import com.rouby.assistant.prompt.infrastructure.exception.AssistantException;
+import com.rouby.assistant.prompt.infrastructure.exception.AssistantInfraException;
 import com.rouby.common.utils.JsonHelper;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import java.util.Map;
@@ -18,7 +19,9 @@ import org.springframework.ai.chat.client.ResponseEntity;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.converter.BeanOutputConverter;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -36,29 +39,48 @@ public class GeminiAssistantClient implements AssistantClient {
       double temperature, String systemMsg, String userMsg,
       Map<String, Object> model, Class<R> responseClazz) {
 
-    final Map<String, Object> jsonModel = model.entrySet().stream()
-        .collect(Collectors.toMap(
-            Entry::getKey, entry-> jsonHelper.toJson(entry.getValue())));
-    BeanOutputConverter<R> converter = responseConverterManager.getConverter(responseClazz);
+    final Map<String, Object> jsonModel;
+    BeanOutputConverter<R> converter;
 
-    CallResponseSpec result = chatClient.prompt()
-        .system(systemMsg)
-        .options(ChatOptions.builder().temperature(temperature).build())
-        .user(userSpec -> userSpec
-            .text(userMsg)
-            .param("format", converter.getFormat())
-            .params(jsonModel))
-        .call();
+    try {
+       jsonModel = model.entrySet().stream()
+          .collect(Collectors.toMap(
+              Entry::getKey, entry-> jsonHelper.toJson(entry.getValue())));
+       converter = responseConverterManager.getConverter(responseClazz);
 
-    ResponseEntity<ChatResponse, R> chatResponseEntity = result.responseEntity(converter);
-    return AssistantResponse.of(chatResponseEntity.getEntity());
+    } catch (Exception e) {
+      throw AssistantInfraException.from(AssistantErrorCode.ASSISTANT_INVALID_REQUEST);
+    }
+
+    try {
+      CallResponseSpec result = chatClient.prompt()
+          .system(systemMsg)
+          .options(ChatOptions.builder().temperature(temperature).build())
+          .user(userSpec -> userSpec
+              .text(userMsg)
+              .param("format", converter.getFormat())
+              .params(jsonModel))
+          .call();
+
+      ResponseEntity<ChatResponse, R> chatResponseEntity = result.responseEntity(converter);
+      return AssistantResponse.of(chatResponseEntity.getEntity());
+
+    } catch (HttpClientErrorException e) {
+
+      throw AssistantInfraException.of(HttpStatus.valueOf(e.getStatusCode().value()), e.getMessage());
+    }
   }
 
   private <R> AssistantResponse<R> fallback(
       double temperature, String systemMsg, String userMsg,
       Map<String, Object> model, Class<R> responseClazz, Throwable t) {
 
-    log.error("Assistant 요청 실패로 인한 서킷 브레이커 활성화", t);
-    throw AssistantException.from(AssistantErrorCode.SERVICE_UNAVAILABLE);
+    if (t instanceof CallNotPermittedException) {
+      log.error("Assistant 요청 실패로 인한 서킷 브레이커 활성화", t);
+      throw AssistantInfraException.from(AssistantErrorCode.SERVICE_UNAVAILABLE);
+    }
+    log.error("Assistant 생성 요청 실패", t);
+    if (t instanceof RuntimeException re) throw re;
+    throw new RuntimeException(t);
   }
 }
