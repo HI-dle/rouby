@@ -46,12 +46,12 @@ public class WebClientFcmSender implements AsyncNotificationSender {
               .map(body -> {
 
                 if (resp.statusCode().is4xxClientError() && resp.statusCode().value() != 429) {
-                  return new NotificationEventFcmException(
+                  return NotificationEventFcmException.of(
                       (HttpStatus) resp.statusCode(),
                       "FCM WebClient error: " + resp.statusCode() + " body=" + body);
                 }
 
-                return new NotificationEventFcmRetryableException(
+                return NotificationEventFcmRetryableException.of(
                     (HttpStatus) resp.statusCode(),
                     "FCM WebClient error: " + resp.statusCode() + " body=" + body,
                     RetryAfterParser.parseRetryAfterSeconds(resp.headers().asHttpHeaders()));

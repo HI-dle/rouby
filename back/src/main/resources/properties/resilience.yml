@@ -37,6 +37,10 @@ resilience4j:
         automaticTransitionFromOpenToHalfOpenEnabled: true
         ignoreExceptions:
           - com.rouby.assistant.prompt.infrastructure.exception.AssistantInfraException
+  retry:
+    instances:
+      assistant:
+        maxAttempts: 3
 
 ---
 spring:
@@ -76,3 +80,7 @@ resilience4j:
         permittedNumberOfCallsInHalfOpenState: 1
         ignoreExceptions:
           - com.rouby.assistant.prompt.infrastructure.exception.AssistantInfraException
+  retry:
+    instances:
+      assistant:
+        maxAttempts: 3

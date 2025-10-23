@@ -45,7 +45,8 @@ public class GeminiAssistantClient implements AssistantClient {
     BeanOutputConverter<R> converter;
 
     try {
-       jsonModel = model.entrySet().stream()
+      Map<String, Object> safeModel = (model != null) ? model : java.util.Collections.emptyMap();
+      jsonModel = safeModel.entrySet().stream()
           .collect(Collectors.toMap(
               Entry::getKey, entry-> jsonHelper.toJson(entry.getValue())));
        converter = responseConverterManager.getConverter(responseClazz);
@@ -71,7 +72,7 @@ public class GeminiAssistantClient implements AssistantClient {
 
       if (e.getStatusCode() == HttpStatus.TOO_MANY_REQUESTS) {
         long retryAfterSeconds = RetryAfterParser.parseRetryAfterSeconds(e.getResponseHeaders());
-        if (retryAfterSeconds <= 5) {
+        if (retryAfterSeconds > -1 && retryAfterSeconds <= 5) {
           throw AssistantInfraRetryableException.of(
               HttpStatus.TOO_MANY_REQUESTS, e.getMessage(),
               RetryAfterParser.parseRetryAfterSeconds(e.getResponseHeaders()));

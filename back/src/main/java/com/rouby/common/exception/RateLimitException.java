@@ -11,6 +11,6 @@ public abstract class RateLimitException extends CustomException {
   protected RateLimitException(HttpStatus httpStatus, String message, long retryAfterSeconds) {
 
     super(httpStatus, "RETRYABLE_EXCEPTION", message);
-    this.retryAfterSeconds = retryAfterSeconds;
+    this.retryAfterSeconds = (retryAfterSeconds >= 0) ? retryAfterSeconds : -1L;
   }
 }

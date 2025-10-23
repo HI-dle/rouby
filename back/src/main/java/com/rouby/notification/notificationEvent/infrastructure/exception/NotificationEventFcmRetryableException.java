@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 
 public class NotificationEventFcmRetryableException extends RateLimitException {
 
-  public NotificationEventFcmRetryableException(
+  private NotificationEventFcmRetryableException(
       HttpStatus status, String message, long retryAfterSeconds) {
     super(status, message, retryAfterSeconds);
   }

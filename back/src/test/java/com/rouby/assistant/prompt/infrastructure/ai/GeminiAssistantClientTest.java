@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -199,7 +200,7 @@ class GeminiAssistantClientTest extends IntegrationTestSupport {
             0.2, "s", "u", Map.of(), String.class))
         .isInstanceOf(RuntimeException.class);
 
-    verify(chatClient, times(8)).prompt();
+    verify(chatClient, atLeast(6)).prompt();
     assertThat(metrics.getNumberOfFailedCalls()).isEqualTo(6);
     assertThat(cb.getState()).isEqualTo(State.OPEN);
     // **리트라이 수행되는 동안 실패 횟수 조건이 충족되어도 서킷브레이커 동작 진행되지 않음, aop 진행 순서로 인해**

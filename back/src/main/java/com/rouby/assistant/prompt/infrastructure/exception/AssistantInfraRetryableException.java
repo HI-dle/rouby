@@ -1,10 +1,8 @@
 package com.rouby.assistant.prompt.infrastructure.exception;
 
 import com.rouby.common.exception.RateLimitException;
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-@Getter
 public class AssistantInfraRetryableException extends RateLimitException {
 
   private AssistantInfraRetryableException(HttpStatus status, String msg, long retryAfterSeconds) {
@@ -15,4 +13,3 @@ public class AssistantInfraRetryableException extends RateLimitException {
     return new AssistantInfraRetryableException(status, msg, retryAfterSeconds);
   }
 }
-
