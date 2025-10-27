@@ -65,7 +65,7 @@ public class User extends BaseEntity {
   private Set<NotificationSetting> notificationSettings = new HashSet<>();
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<RefreshToken> refreshTokens;
+  private Set<RefreshToken> refreshTokens = new HashSet<>();
 
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
