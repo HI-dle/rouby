@@ -1,4 +1,4 @@
-package com.rouby.user.user.application;
+package com.rouby.user.user.application.usecase;
 
 
 import static com.rouby.notification.email.domain.entity.EmailType.RESET_PASSWORD;
@@ -9,10 +9,14 @@ import com.rouby.common.props.URIProperty;
 import com.rouby.common.utils.CodeGenerator;
 import com.rouby.notification.email.application.exception.EmailException;
 import com.rouby.notification.email.application.service.EmailService;
+import com.rouby.user.device.application.dto.UserDeviceInfo;
+import com.rouby.user.device.application.service.UserDeviceReadService;
 import com.rouby.user.device.application.service.UserDeviceWriteService;
+import com.rouby.user.user.application.dto.UserInfoWithDeviceInfos;
 import com.rouby.user.user.application.dto.command.CreateUserCommand;
 import com.rouby.user.user.application.dto.command.FindPasswordCommand;
 import com.rouby.user.user.application.dto.command.LoginCommand;
+import com.rouby.user.user.application.dto.command.RefreshTokenCommand;
 import com.rouby.user.user.application.dto.command.ResetPasswordByTokenCommand;
 import com.rouby.user.user.application.dto.command.ResetPasswordCommand;
 import com.rouby.user.user.application.dto.command.SaveVerificationCodeCommand;
@@ -21,13 +25,17 @@ import com.rouby.user.user.application.dto.command.UpdateUserInfoCommand;
 import com.rouby.user.user.application.dto.command.UpdateUserRoubySettingCommand;
 import com.rouby.user.user.application.dto.command.VerifyEmailCommand;
 import com.rouby.user.user.application.dto.info.LoginInfo;
-import com.rouby.user.user.application.dto.info.UserCheckInfo;
 import com.rouby.user.user.application.dto.info.RoubySettingInfo;
+import com.rouby.user.user.application.dto.info.TokenInfo;
+import com.rouby.user.user.application.dto.info.UserDetailInfo;
 import com.rouby.user.user.application.exception.UserException;
 import com.rouby.user.user.application.service.UserReadService;
 import com.rouby.user.user.application.service.UserWriteService;
+import java.util.Collections;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor

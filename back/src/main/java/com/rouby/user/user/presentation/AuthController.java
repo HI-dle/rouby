@@ -35,6 +35,6 @@ public class AuthController {
   @PostMapping("/refresh")
   public ResponseEntity<TokenResponse> refresh(
       @RequestBody @Valid RefreshTokenRequest request) {
-    return ResponseEntity.ok(TokenResponse.from(userFacade.refresh(request.toApplication())));
+    return ResponseEntity.ok(TokenResponse.from(userUsecase.refresh(request.toApplication())));
   }
 }

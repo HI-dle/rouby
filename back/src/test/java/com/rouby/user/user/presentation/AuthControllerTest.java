@@ -50,7 +50,7 @@ class AuthControllerTest extends ControllerTestSupport {
     String fakeToken = "Bearer fake.jwt.token";
     String refreshToken = UUID.randomUUID().toString();
 
-    when(userFacade.login(command)).thenReturn(new LoginInfo(fakeToken, refreshToken));
+    when(userUsecase.login(command)).thenReturn(new LoginInfo(fakeToken, refreshToken));
 
     // when
     ResultActions result = mockMvc.perform(post("/api/v1/auth/login")
@@ -79,7 +79,7 @@ class AuthControllerTest extends ControllerTestSupport {
         .password("1234")
         .build();
 
-    doThrow(UserException.from(INVALID_USER)).when(userFacade).login(any(LoginCommand.class));
+    doThrow(UserException.from(INVALID_USER)).when(userUsecase).login(any(LoginCommand.class));
 
 
     // when
@@ -110,7 +110,7 @@ class AuthControllerTest extends ControllerTestSupport {
 
     RefreshTokenRequest request = new RefreshTokenRequest("old.refresh.token");
 
-    when(userFacade.refresh(any())).thenReturn(
+    when(userUsecase.refresh(any())).thenReturn(
         new com.rouby.user.user.application.dto.info.TokenInfo(fakeAccessToken, fakeRefreshToken)
     );
 
