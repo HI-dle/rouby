@@ -6,7 +6,9 @@ import { alarmOptions, repeatOptions } from '../constants'
 import FieldError from '@/components/common/FieldError.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import BaseModal from '@/components/common/BaseModal.vue'
+import { ref } from 'vue';
 import { extractDate } from '@/shared/utils/dateTimeUtils'
+import DeleteScheduleModal from "@/features/schedule/components/DeleteScheduleModal.vue";
 
 const props = defineProps({
   form: Object,
@@ -14,8 +16,13 @@ const props = defineProps({
   errors: Object,
   inputRefs: Object,
   errorModal: Object,
+  mode: {
+    type: String,
+    default: 'create', // 'create' | 'edit'
+  },
 })
-const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
+const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize', 'deleteOne', 'deleteAll'])
+const deleteModal = ref(false);
 </script>
 
 <template>
@@ -169,18 +176,38 @@ const emit = defineEmits(['submit', 'cancel', 'inputDatetime', 'autoResize'])
       </div>
       <!-- 버튼 -->
       <div class="flex justify-between pt-10 gap-2">
-        <BaseButton
-          @click="emit('cancel')"
-          class="bg-none bg-gray-200 !text-content-color hover:bg-gray-300"
-          >취소
-        </BaseButton>
-        <BaseButton type="submit" :disabled="isSubmitting">저장</BaseButton>
+        <!-- 생성 모드 -->
+        <template v-if="mode === 'create'">
+          <BaseButton
+            @click="emit('cancel')"
+            class="bg-none bg-gray-200 !text-content-color hover:bg-gray-300"
+          >
+            취소
+          </BaseButton>
+          <BaseButton type="submit" :disabled="isSubmitting">저장</BaseButton>
+        </template>
+
+        <!-- 수정 모드 -->
+        <template v-else-if="mode === 'edit'">
+          <BaseButton
+            @click="deleteModal = true"
+          >
+            삭제
+          </BaseButton>
+          <BaseButton type="submit" :disabled="isSubmitting">수정</BaseButton>
+        </template>
       </div>
     </form>
   </div>
+
   <BaseModal
     v-model="errorModal.show"
     :message="errorModal.msg"
     buttonText="확인"
+  />
+  <DeleteScheduleModal
+    v-model="deleteModal"
+    @deleteOne="() => emit('deleteOne', form)"
+    @deleteAll="() => emit('deleteAll', form)"
   />
 </template>

@@ -1,11 +1,18 @@
 <template>
   <form @submit.prevent="sendResetPassword" class="p-6 space-y-4">
+    <input
+      type="text"
+      name="username"
+      autocomplete="username"
+      class="sr-only"
+    />
     <!-- 기존 비밀번호 -->
     <div class="space-y-2">
       <BaseInput
         v-model="form.password"
         label="기존 비밀번호 확인"
         type="password"
+        autocomplete="current-password"
         placeholder="비밀번호를 입력하세요"
         :error="errors.password"
         label-class="text-auth-label-color"
@@ -21,6 +28,7 @@
         v-model="form.newPassword"
         label="변경할 비밀번호"
         type="password"
+        autocomplete="new-password"
         placeholder="비밀번호를 입력하세요"
         :error="errors.password"
         label-class="text-auth-label-color"
@@ -39,6 +47,7 @@
         v-model="form.passwordConfirm"
         label="비밀번호 확인"
         type="password"
+        autocomplete="new-password"
         placeholder="비밀번호를 다시 입력하세요"
         :error="errors.passwordConfirm"
         label-class="text-auth-label-color"
@@ -51,7 +60,10 @@
     <!-- API 에러 -->
     <FieldError :message="errors.apiResult" />
     <!-- 성공 메시지 추가 -->
-    <p v-if="successMessage.message" class="text-green-600 text-sm font-medium text-center mb-[-0.5rem]">
+    <p
+      v-if="successMessage.message"
+      class="text-green-600 text-sm font-medium text-center mb-[-0.5rem]"
+    >
       {{ successMessage.message }}
     </p>
 
@@ -79,6 +91,6 @@ const {
   successMessage,
   validatePasswordField,
   validatePasswordConfirmField,
-  sendResetPassword
+  sendResetPassword,
 } = usePasswordForm()
 </script>

@@ -3,6 +3,7 @@ package com.rouby.user.user.application.service;
 import static com.rouby.user.user.application.exception.UserErrorCode.USER_NOT_FOUND;
 
 import com.rouby.user.user.application.dto.info.RoubySettingInfo;
+import com.rouby.user.user.application.dto.info.UserDetailInfo;
 import com.rouby.user.user.application.dto.info.UserInfo;
 import com.rouby.user.user.application.exception.UserException;
 import com.rouby.user.user.domain.entity.User;
@@ -23,24 +24,24 @@ public class UserReadService {
     return userRepository.existsByEmail(email);
   }
 
-  @Transactional(readOnly = true)
-  public User findByUserId(Long id) {
-    return userRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(() ->
-        UserException.from(USER_NOT_FOUND));
+  public UserDetailInfo getUserDetailInfoByUserId(Long id) {
+
+    return UserDetailInfo.from(userRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(() ->
+        UserException.from(USER_NOT_FOUND)));
   }
 
   @Transactional(readOnly = true)
   public RoubySettingInfo getRoubySettingInfo(Long userId) {
+
     return RoubySettingInfo.from(userRepository.findByIdAndDeletedAtIsNull(userId)
         .orElseThrow(() -> UserException.from(USER_NOT_FOUND)));
   }
 
-  @Transactional(readOnly = true)
   public List<UserInfo> findUsersByBriefingTime(LocalTime briefingTime) {
+
     return userRepository.findActiveUsersWithBriefingNotification(briefingTime).stream()
         .map(UserInfo::of)
         .toList();
   }
-
 
 }

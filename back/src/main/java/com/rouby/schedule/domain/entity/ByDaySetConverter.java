@@ -2,7 +2,7 @@ package com.rouby.schedule.domain.entity;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rouby.common.jpa.EnumSetConverter;
-import com.rouby.schedule.domain.enums.ByDay;
+import com.rouby.schedule.domain.entity.enums.ByDay;
 import org.springframework.stereotype.Component;
 
 @Component

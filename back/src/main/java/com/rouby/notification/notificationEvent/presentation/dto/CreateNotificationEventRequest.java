@@ -1,6 +1,6 @@
 package com.rouby.notification.notificationEvent.presentation.dto;
 
-import com.rouby.notification.notificationEvent.application.dto.CreateNotificationEventCommand;
+import com.rouby.notification.notificationEvent.application.dto.CreateNotificationEventWithTemplateCommand;
 
 public record CreateNotificationEventRequest(
     Long userId,
@@ -12,8 +12,8 @@ public record CreateNotificationEventRequest(
     String notificationType
 ) {
 
-  public CreateNotificationEventCommand toCommand() {
-    return CreateNotificationEventCommand.builder()
+  public CreateNotificationEventWithTemplateCommand toCommand() {
+    return CreateNotificationEventWithTemplateCommand.builder()
         .userId(userId)
         .tokenProviderType(tokenProviderType)
         .deviceToken(deviceToken)

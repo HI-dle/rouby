@@ -1,11 +1,11 @@
 package com.rouby.schedule.data;
 
 import com.rouby.schedule.domain.entity.Schedule;
-import com.rouby.schedule.domain.enums.Freq;
-import com.rouby.schedule.domain.enums.OverrideType;
-import com.rouby.schedule.domain.vo.OverrideInfo;
-import com.rouby.schedule.domain.vo.Period;
-import com.rouby.schedule.domain.vo.RecurrenceRule;
+import com.rouby.schedule.domain.entity.enums.Freq;
+import com.rouby.schedule.domain.entity.enums.OverrideType;
+import com.rouby.schedule.domain.entity.vo.OverrideInfo;
+import com.rouby.schedule.domain.entity.vo.Period;
+import com.rouby.schedule.domain.entity.vo.RecurrenceRule;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,48 +14,56 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 public class ScheduleTestDataFactory {
 
-  private static final int MAX_USER_COUNT = 1_000;
-  private static final int OVERRIDE_FREQUENCY = 4; // 4개 중 1개에 override 생성
-  private static final int OVERRIDES_PER_SCHEDULE = 10;
+  private static final int MAX_USER_COUNT = 10_000;
 
-  public static List<Schedule> generateTestSchedules(int offset, int count,
-      List<Long> scheduleIds, int startIdx) {
-    List<Schedule> schedulesResult = new ArrayList<>(
-        count + count / OVERRIDE_FREQUENCY * OVERRIDES_PER_SCHEDULE);
+  private static final int RRULE_FREQUENCY = 10;
+  private static final int RRULE_BUCKET = 0;
+  private static final int OVERRIDE_FREQUENCY = 3; // 3개 중 1개에 override 생성
+  private static final int OVERRIDES_PER_SCHEDULE = 5;
 
-    for (int i = offset; i < offset + count; i++) {
+  public static List<Schedule> generateTestSchedules(
+      int offset, int count, List<Long> scheduleIds) {
 
+    List<Schedule> schedulesResult = new ArrayList<>(count);
+    int i = offset;
+    int idIdx = 0;
+
+    while (i < offset + count) {
       // 부모 Schedule 생성
-      Schedule schedule = createSchedule(i, scheduleIds.get(startIdx++));
+      Schedule schedule = createSchedule(i++, scheduleIds.get(idIdx++));
       schedulesResult.add(schedule);
 
       // 자식 Schedule (예외) 생성
-      if (i % OVERRIDE_FREQUENCY == 0) {
+      if (schedule.getRecurrenceRule() != null) {
         for (int j = 0; j < OVERRIDES_PER_SCHEDULE; j++) {
-          Long childId = scheduleIds.get(startIdx++);
-          Schedule override = createScheduleOverride(schedule, i, j, childId);
+          if (i >= offset + count) break;
+
+          Long childId = scheduleIds.get(idIdx++);
+          Schedule override = createScheduleOverride(schedule, i++, j, childId);
           schedulesResult.add(override);
         }
       }
     }
-
     return schedulesResult;
   }
 
   private static Schedule createSchedule(int index, Long id) {
     long userId = (index % MAX_USER_COUNT) + 1;
+    long dayOffset = index / MAX_USER_COUNT;
+
+    boolean pickRrule = ((userId + dayOffset) % RRULE_FREQUENCY) == RRULE_BUCKET;
 
     Schedule schedule = Schedule.builder()
         .userId(userId)
         .title("테스트 일정 " + index)
         .memo("자동 생성된 메모 " + index)
         .period(Period.builder()
-            .startAt(LocalDate.now().minusMonths(2).atStartOfDay().plusDays(index / MAX_USER_COUNT))
+            .startAt(LocalDate.now().minusMonths(2).atStartOfDay().plusDays(dayOffset))
             .endAt(
-                LocalDate.now().minusMonths(2).atStartOfDay().plusDays(index / MAX_USER_COUNT + 1))
+                LocalDate.now().minusMonths(2).atStartOfDay().plusDays(dayOffset + 1))
             .build())
         .alarmOffsetMinutes(60)
-        .recurrenceRule(index % 2 == 0
+        .recurrenceRule(pickRrule
             ? RecurrenceRule.builder()
             .freq(Freq.WEEKLY)
             .interval(1)
@@ -94,8 +102,8 @@ public class ScheduleTestDataFactory {
     return override;
   }
 
-  public static int getCountSchedules(int count) {
-    int overrideCount = (count / OVERRIDE_FREQUENCY) * OVERRIDES_PER_SCHEDULE;
+  public static int getSchedulesAbstractTotalCount(int count) {
+    int overrideCount = (count / (RRULE_FREQUENCY * OVERRIDE_FREQUENCY)) * OVERRIDES_PER_SCHEDULE;
     return count + overrideCount;
   }
 }

@@ -1,6 +1,5 @@
 package com.rouby.assistant.prompt.presentation;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
@@ -13,7 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.rouby.assistant.prompt.application.info.PromptInfo;
-import com.rouby.assistant.prompt.domain.enums.PromptType;
+import com.rouby.assistant.prompt.domain.entity.enums.PromptType;
 import com.rouby.assistant.prompt.presentation.request.CreatePromptRequest;
 import com.rouby.common.support.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
@@ -25,21 +24,22 @@ class PromptControllerTest extends ControllerTestSupport {
 
   @Test
   @DisplayName("프롬프트 생성")
-  void createUser() throws Exception {
+  void createPrompt() throws Exception {
 
     // given
     CreatePromptRequest request = new CreatePromptRequest(
         PromptType.BRIEFING,
-        getPrompt(),
-        1
+        "",
+        getPrompt()
     );
-    given(promptFacade.createPrompt(request.toCommand())) .willReturn(new PromptInfo(
-        1L,
-        request.promptType(),
-        request.promptTemplate(),
-        request.version()
-    ));
-
+    given(promptWriteService.createPrompt(request.toCommand())).willReturn(
+        PromptInfo.builder()
+            .id(1L)
+            .promptType(request.promptType().toString())
+            .userMessage(request.userMessage())
+            .systemMessage(request.systemMessage())
+            .version(1)
+            .build());
 
     // when and then
     mockMvc.perform(post("/api/v1/assistants/prompt")
@@ -54,8 +54,8 @@ class PromptControllerTest extends ControllerTestSupport {
             preprocessResponse(prettyPrint()),
             requestFields(
                 fieldWithPath("promptType").description("프롬프트 타입(브리핑,피드백,추천)"),
-                fieldWithPath("promptTemplate").description("프롬프트 템플릿"),
-                fieldWithPath("version").description("프롬프트 버전")
+                fieldWithPath("systemMessage").description("시스템 메시지 프롬프트"),
+                fieldWithPath("userMessage").description("유저 메시지 프롬프트")
             )
         ));
   }

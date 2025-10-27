@@ -33,7 +33,7 @@ public class DispatcherThreadConfig {
     executor.setMaxPoolSize(8);
     executor.setQueueCapacity(1024);
     executor.setThreadNamePrefix("notiCb-");
-    executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+    executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy()); // 스레드 풀이나 큐 포화시 메인 스레드에서 실행
     executor.setWaitForTasksToCompleteOnShutdown(false);
     executor.initialize();
     return executor;

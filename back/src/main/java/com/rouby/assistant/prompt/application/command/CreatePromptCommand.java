@@ -1,17 +1,21 @@
 package com.rouby.assistant.prompt.application.command;
 
-import com.rouby.assistant.prompt.domain.Prompt;
-import com.rouby.assistant.prompt.domain.enums.PromptType;
+import com.rouby.assistant.prompt.domain.entity.Prompt;
+import com.rouby.assistant.prompt.domain.entity.enums.PromptType;
+import lombok.Builder;
 
+@Builder
 public record CreatePromptCommand(
     PromptType promptType,
-    String promptTemplate,
-    Integer version) {
+    String systemMessage,
+    String userMessage) {
 
-  public Prompt toEntity(){
+  public Prompt toEntity(int version){
+
     return Prompt.builder()
         .promptType(promptType)
-        .promptTemplate(promptTemplate)
+        .systemMessage(systemMessage)
+        .userMessage(userMessage)
         .version(version)
         .build();
   }

@@ -1,11 +1,12 @@
 <script setup>
 import { onMounted } from 'vue'
-import UserSettingInput from '@/components/common/UserSettingInput.vue'
+import UserInput from '@/components/common/UserInput.vue'
 import ToggleSwitch from '@/components/common/ToggleSwitch.vue'
 import { useRoubySettingForm } from '@/features/user/useRoubySettingForm.js'
 import KeywordTag from '@/components/common/KeywordTag.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import FieldError from '@/components/common/FieldError.vue'
+import { useGoBack } from '@/shared/composable/useGoBack'
 
 const {
   communicationTone,
@@ -17,13 +18,15 @@ const {
   loadInitialSettings,
   saveSettings,
   addToneTag,
-  removeToneTag
+  removeToneTag,
 } = useRoubySettingForm()
+
+const { goBackOrPath } = useGoBack()
+const onCancel = () => goBackOrPath()
 
 onMounted(() => {
   loadInitialSettings()
 })
-
 </script>
 
 <template>
@@ -41,7 +44,7 @@ onMounted(() => {
 
     <!-- 입력창 -->
     <div class="mt-6">
-      <UserSettingInput
+      <UserInput
         v-model="keyword"
         placeholder="ex. 귀여운, 공손한"
         @submit="addToneTag"
@@ -75,12 +78,11 @@ onMounted(() => {
     <!-- 버튼 -->
     <div class="flex justify-between pt-10 gap-2">
       <BaseButton
-        @click="emit('cancel')"
+        @click="onCancel"
         class="bg-none bg-gray-200 !text-content-color hover:bg-gray-300"
-      >취소
+        >취소
       </BaseButton>
       <BaseButton type="button" @click="saveSettings">저장</BaseButton>
     </div>
   </div>
 </template>
-

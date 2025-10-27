@@ -29,5 +29,11 @@ spring:
     username: postgres
     password: postgres
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+  sql:
+    init:
+      mode: always
+      schema-locations:
+        - classpath:db/schema.sql
+        - classpath:db/insert-template.sql
 ---
 

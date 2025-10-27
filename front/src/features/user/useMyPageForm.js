@@ -16,7 +16,7 @@ export function useMyPageForm() {
   })
 
   const menuItems = [
-    { label: '내 정보 설정', route: { name: 'mypage' } },
+    { label: '내 정보 설정', route: { name: 'user-info' } },
     { label: '비밀번호 변경', route: { name: 'password-reset' } },
     { label: '루비 설정', route: { name: 'rouby-setting' } },
     { label: '회원탈퇴', action: 'withdraw' },

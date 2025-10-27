@@ -1,10 +1,10 @@
 package com.rouby.schedule.application.dto.command;
 
 import com.rouby.schedule.domain.entity.Schedule;
-import com.rouby.schedule.domain.enums.ByDay;
-import com.rouby.schedule.domain.enums.Freq;
-import com.rouby.schedule.domain.vo.Period;
-import com.rouby.schedule.domain.vo.RecurrenceRule;
+import com.rouby.schedule.domain.entity.enums.ByDay;
+import com.rouby.schedule.domain.entity.enums.Freq;
+import com.rouby.schedule.domain.entity.vo.Period;
+import com.rouby.schedule.domain.entity.vo.RecurrenceRule;
 import java.time.LocalDateTime;
 import lombok.Builder;
 

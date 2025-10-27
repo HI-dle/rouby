@@ -55,6 +55,7 @@ const onCancel = () => goBackOrPath()
     :errors="errors"
     :inputRefs="inputRefs"
     :errorModal="errorModal"
+    mode="create"
     @inputDatetime="onDateTimeInput"
     @submit="handleSubmit"
     @cancel="onCancel"

@@ -23,6 +23,7 @@ public class UserJpaRepositoryCustomImpl implements UserJpaRepositoryCustom {
 
   @Override
   public List<User> findActiveUsersWithBriefingNotification(LocalTime dailyStartTime) {
+
     return jpaQueryFactory
         .selectFrom(user)
         .join(user.notificationSettings, notificationSetting)

@@ -22,6 +22,8 @@ const {
   errorModal,
   onDateTimeInput,
   onSubmitForModify,
+  onDeleteOne,
+  onDeleteAll,
   initializeForModify,
 } = useScheduleForm()
 
@@ -62,6 +64,33 @@ const handleSubmit = async () => {
   )
 }
 
+const handleDeleteOne = async (schedule) => {
+  const instanceDate = route.params.date
+  await onDeleteOne(
+    { scheduleId: schedule.id, instanceDate: instanceDate, startAt: schedule.start, endAt: schedule.end },
+    () => {
+      router.push('/schedule/daily/list')
+    },
+    (msg) => {
+      errorModal.msg = msg
+      errorModal.show = true
+    },
+  )
+}
+
+const handleDeleteAll = async (schedule) => {
+  await onDeleteAll(
+    { scheduleId: schedule.id, fromAt: schedule.start },
+    () => {
+      router.push('/schedule/daily/list')
+    },
+    (msg) => {
+      errorModal.msg = msg
+      errorModal.show = true
+    },
+  )
+}
+
 const onCancel = () => {
   router.back()
 }
@@ -85,6 +114,9 @@ const autoResize = (key) => {
     :errors="errors"
     :inputRefs="inputRefs"
     :errorModal="errorModal"
+    mode="edit"
+    @deleteOne="handleDeleteOne"
+    @deleteAll="handleDeleteAll"
     @inputDatetime="onDateTimeInput"
     @submit="handleSubmit"
     @cancel="onCancel"

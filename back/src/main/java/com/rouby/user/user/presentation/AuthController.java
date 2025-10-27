@@ -1,6 +1,6 @@
 package com.rouby.user.user.presentation;
 
-import com.rouby.user.user.application.UserFacade;
+import com.rouby.user.user.application.usecase.UserUsecase;
 import com.rouby.user.user.presentation.dto.request.LoginRequest;
 import com.rouby.user.user.presentation.dto.request.RefreshTokenRequest;
 import com.rouby.user.user.presentation.dto.response.LoginResponse;
@@ -25,11 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
-  private final UserFacade userFacade;
+  private final UserUsecase userUsecase;
 
   @PostMapping("/login")
   public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request) {
-    return ResponseEntity.ok(LoginResponse.from(userFacade.login(request.toApplication())));
+    return ResponseEntity.ok(LoginResponse.from(userUsecase.login(request.toApplication())));
   }
 
   @PostMapping("/refresh")

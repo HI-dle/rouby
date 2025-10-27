@@ -57,24 +57,7 @@ public interface UserDeviceJpaRepository extends JpaRepository<UserDevice, Long>
                     os             = EXCLUDED.os,
                     browser        = EXCLUDED.browser,
                     user_agent     = EXCLUDED.user_agent,
-                    last_active_at = NOW()
-                WHERE ROW(
-                        user_device.token_provider,
-                        user_device.app_version,
-                        user_device.app_type,
-                        user_device.device_type,
-                        user_device.os,
-                        user_device.browser,
-                        user_device.user_agent
-                    ) IS DISTINCT FROM ROW(
-                        EXCLUDED.token_provider,
-                        EXCLUDED.app_version,
-                        EXCLUDED.app_type,
-                        EXCLUDED.device_type,
-                        EXCLUDED.os,
-                        EXCLUDED.browser,
-                        EXCLUDED.user_agent
-                    );
+                    last_active_at = NOW();
   """, nativeQuery = true)
   int upsertUserDevice(@Param("userId") Long userId,
       @Param("tokenInfo") DeviceTokenInfo tokenInfo,

@@ -1,58 +1,41 @@
 package com.rouby.notification.notificationEvent.application.dto;
 
-import com.rouby.notification.notificationEvent.domain.entity.DeviceTokenInfo;
-import com.rouby.notification.notificationEvent.domain.entity.NotificationEvent;
-import com.rouby.notification.notificationEvent.domain.entity.NotificationMessage;
-import com.rouby.notification.notificationEvent.domain.entity.NotificationType;
-import com.rouby.notification.notificationEvent.domain.entity.TokenProviderType;
-import com.rouby.notification.notificationEvent.domain.info.NotificationEventInfo;
+import com.rouby.assistant.feedback.application.dto.FeedbackNotiTargetUserInfo;
+import java.util.Collections;
+import java.util.List;
 import lombok.Builder;
 
 @Builder
 public record CreateNotificationEventCommand(
     Long userId,
+    String nickname,
     String tokenProviderType,
     String deviceToken,
-    String title,
-    String body,
     String url,
     String notificationType
 ) {
+  private static final String TYPE_FEEDBACK = "FEEDBACK";
 
-  public NotificationEvent toEntity() {
-    return NotificationEvent.builder()
-        .userId(userId)
-        .deviceTokenInfo(buildDeviceTokenInfo())
-        .message(buildeNotificationMessage())
-        .type(NotificationType.parse(notificationType))
-        .build();
-  }
+  public static List<CreateNotificationEventCommand> from(
+      FeedbackNotiTargetUserInfo targetUserInfo, String url) {
 
+    if (targetUserInfo == null || !targetUserInfo.notificationEnabled()) {
+      return Collections.emptyList();
+    }
 
-  public NotificationEventInfo toInfo() {
-
-    return NotificationEventInfo.builder()
-        .userId(userId)
-        .deviceTokenInfo(buildDeviceTokenInfo())
-        .message(buildeNotificationMessage())
-        .type(NotificationType.parse(notificationType))
-        .build();
-  }
-
-  private DeviceTokenInfo buildDeviceTokenInfo() {
-
-    return DeviceTokenInfo.builder()
-        .tokenProvider(TokenProviderType.parse(tokenProviderType))
-        .deviceToken(deviceToken)
-        .build();
-  }
-
-  private NotificationMessage buildeNotificationMessage() {
-
-    return NotificationMessage.builder()
-        .title(title)
-        .body(body)
-        .url(url)
-        .build();
+    return targetUserInfo.deviceInfos() == null
+        ? Collections.emptyList()
+        : targetUserInfo.deviceInfos().stream()
+            .filter(d -> d != null && d.deviceToken() != null && !d.deviceToken().isBlank())
+            .map(d ->
+                CreateNotificationEventCommand.builder()
+                    .userId(targetUserInfo.userId())
+                    .nickname(targetUserInfo.nickname())
+                    .tokenProviderType(d.tokenProvider())
+                    .deviceToken(d.deviceToken())
+                    .url(url)
+                    .notificationType(TYPE_FEEDBACK)
+                    .build())
+        .toList();
   }
 }

@@ -7,6 +7,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.rouby.schedule.domain.entity.QSchedule;
+import com.rouby.schedule.domain.entity.enums.OverrideType;
 import com.rouby.schedule.domain.repository.criteria.GetScheduleCriteria;
 import com.rouby.schedule.domain.repository.info.ScheduleWithOverrides;
 import com.rouby.schedule.domain.repository.info.ScheduleWithOverrides.ScheduleOverride;
@@ -23,6 +24,18 @@ public class ScheduleJpaRepositoryCustomImpl implements ScheduleJpaRepositoryCus
 
   private final JPAQueryFactory jpaQueryFactory;
   private final QSchedule child = new QSchedule("child");
+
+  @Override
+  public void bulkCancel(Long parentScheduleId, LocalDateTime fromAt) {
+    jpaQueryFactory.update(schedule)
+        .set(schedule.overrideInfo.overrideType, OverrideType.CANCELLED)
+        .where(
+            schedule.parentSchedule.id.eq(parentScheduleId),
+            schedule.period.startAt.goe(fromAt),
+            schedule.deletedAt.isNull()
+        )
+        .execute();
+  }
 
   @Override
   public List<ScheduleWithOverrides> findSchedulesByCriteria(GetScheduleCriteria criteria) {

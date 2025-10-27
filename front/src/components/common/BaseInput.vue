@@ -18,6 +18,10 @@ const props = defineProps({
     type: String,
     default: 'text',
   },
+  autocomplete: {
+    type: String,
+    default: 'off',
+  },
   error: String,
   disabled: Boolean,
   maxlength: String,
@@ -26,12 +30,15 @@ const props = defineProps({
 
 <template>
   <div class="w-full">
-    <label v-if="label" :class="[cn('block mb-2 text-sm text-content-color', props.labelClass)]">{{
-      label
-    }}</label>
+    <label
+      v-if="label"
+      :class="[cn('block mb-2 text-sm text-content-color', props.labelClass)]"
+      >{{ label }}</label
+    >
     <input
       :value="modelValue"
       :type="type"
+      :autocomplete="autocomplete"
       :placeholder="placeholder"
       :class="[
         {

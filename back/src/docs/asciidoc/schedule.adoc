@@ -78,3 +78,45 @@ include::{snippets}/update-schedule-invalid-alarm-offset-400/http-request.adoc[]
 include::{snippets}/update-schedule-invalid-alarm-offset-400/http-response.adoc[]
 
 ---
+
+[[Delete-Schedules]]
+== 해당 일정 삭제 API
+
+=== 성공: 해당 일정 삭제 요청
+
+==== HTTP 요청
+include::{snippets}/delete-schedule-200/http-request.adoc[]
+
+==== 요청 필드
+include::{snippets}/delete-schedule-200/request-fields.adoc[]
+
+==== HTTP 응답 (200 OK)
+include::{snippets}/delete-schedule-200/http-response.adoc[]
+
+=== 실패: 유효성 검증 오류
+
+==== 알람 설정 시간 오류
+
+===== HTTP 요청
+include::{snippets}/delete-schedule-invalid-400/http-request.adoc[]
+
+===== HTTP 응답 (400 Bad Request)
+include::{snippets}/delete-schedule-invalid-400/http-response.adoc[]
+
+---
+
+[[Delete-Schedules-From]]
+== 이후 일정 삭제 API
+
+=== 성공: 이후 일정 모두 삭제 요청
+
+==== HTTP 요청
+include::{snippets}/delete-schedule-from-200/http-request.adoc[]
+
+==== 요청 필드
+include::{snippets}/delete-schedule-from-200/request-fields.adoc[]
+
+==== HTTP 응답 (200 OK)
+include::{snippets}/delete-schedule-from-200/http-response.adoc[]
+
+---

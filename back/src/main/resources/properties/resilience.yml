@@ -11,12 +11,6 @@ resilience4j:
         waitDurationInOpenState: 10s      # OPEN 유지 시간
         permittedNumberOfCallsInHalfOpenState: 5
         automaticTransitionFromOpenToHalfOpenEnabled: true
-        recordExceptions:
-          - org.springframework.dao.DeadlockLoserDataAccessException
-          - org.springframework.dao.CannotAcquireLockException
-          - org.springframework.dao.TransientDataAccessException
-          - java.sql.SQLTransientException
-          - java.sql.SQLRecoverableException
         ignoreExceptions:
           - java.lang.IllegalArgumentException
       fcm:
@@ -24,18 +18,29 @@ resilience4j:
         slidingWindowSize: 50
         minimumNumberOfCalls: 20
         failureRateThreshold: 50
-        slowCallRateThreshold: 50
-        slowCallDurationThreshold: 5s # 10s
+        slowCallRateThreshold: 50 # slow call 50% 초과시 차단(open)
+        slowCallDurationThreshold: 5s # api 응답이 느린 경우 10s
         waitDurationInOpenState: 5s
         permittedNumberOfCallsInHalfOpenState: 5
         automaticTransitionFromOpenToHalfOpenEnabled: true
         writableStackTraceEnabled: true # false
-        recordExceptions:
-          - java.util.concurrent.TimeoutException
-          - reactor.netty.http.client.PrematureCloseException
-          - com.rouby.notification.notificationEvent.infrastructure.exception.NotificationEventFcmRetryableException
         ignoreExceptions:
           - com.rouby.notification.notificationEvent.infrastructure.exception.NotificationEventFcmException
+      assistant:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 50
+        failureRateThreshold: 50
+        slowCallRateThreshold: 50
+        slowCallDurationThreshold: 10s
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        ignoreExceptions:
+          - com.rouby.assistant.prompt.infrastructure.exception.AssistantInfraException
+  retry:
+    instances:
+      assistant:
+        maxAttempts: 3
 
 ---
 spring:
@@ -51,12 +56,6 @@ resilience4j:
         waitDurationInOpenState: 5s      # OPEN 유지 시간
         permittedNumberOfCallsInHalfOpenState: 5
         automaticTransitionFromOpenToHalfOpenEnabled: true
-        recordExceptions:
-          - org.springframework.dao.DeadlockLoserDataAccessException
-          - org.springframework.dao.CannotAcquireLockException
-          - org.springframework.dao.TransientDataAccessException
-          - java.sql.SQLTransientException
-          - java.sql.SQLRecoverableException
         ignoreExceptions:
           - java.lang.IllegalArgumentException
       fcm:
@@ -70,9 +69,18 @@ resilience4j:
         permittedNumberOfCallsInHalfOpenState: 5
         automaticTransitionFromOpenToHalfOpenEnabled: true
         writableStackTraceEnabled: false
-        recordExceptions:
-          - java.util.concurrent.TimeoutException
-          - reactor.netty.http.client.PrematureCloseException
-          - com.rouby.notification.notificationEvent.infrastructure.exception.NotificationEventFcmRetryableException
         ignoreExceptions:
           - com.rouby.notification.notificationEvent.infrastructure.exception.NotificationEventFcmException
+      assistant:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 6
+        failureRateThreshold: 50
+        waitDurationInOpenState: 200ms
+        permittedNumberOfCallsInHalfOpenState: 1
+        ignoreExceptions:
+          - com.rouby.assistant.prompt.infrastructure.exception.AssistantInfraException
+  retry:
+    instances:
+      assistant:
+        maxAttempts: 3

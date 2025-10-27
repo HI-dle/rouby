@@ -1,6 +1,6 @@
 package com.rouby.notification.notificationEvent.presentation;
 
-import com.rouby.notification.notificationEvent.application.facade.NotificationEventFacade;
+import com.rouby.notification.notificationEvent.application.usecase.CreateNotificationEventUsecase;
 import com.rouby.notification.notificationEvent.presentation.dto.CreateNotificationEventRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class NotificationEventController {
 
-  private final NotificationEventFacade notificationEventFacade;
+  private final CreateNotificationEventUsecase createNotificationEventUsecase;
 
   @PostMapping
   public ResponseEntity<Void> test(@RequestBody CreateNotificationEventRequest request) {
-    notificationEventFacade.sendNotification(request.toCommand());
+    createNotificationEventUsecase.sendNotification(request.toCommand());
     return ResponseEntity.noContent().build();
   }
 }

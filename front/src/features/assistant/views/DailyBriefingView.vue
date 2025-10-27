@@ -6,7 +6,6 @@ import BriefingForm from '@/features/assistant/component/BriefingForm.vue'
 const props = defineProps({ date: { type: Number, required: true } })
 
 const { selectedDate, form, loading, error } = useBriefingForm(props.date)
-
 </script>
 
 <template>
@@ -15,11 +14,7 @@ const { selectedDate, form, loading, error } = useBriefingForm(props.date)
       <div class="sticky top-0 bg-white z-10">
         <WeeklyMonthlyDatePicker v-model="selectedDate" />
       </div>
-      <BriefingForm
-        :loading="loading"
-        :error="error"
-        :content="form.content"
-      />
+      <BriefingForm :loading="loading" :error="error" :content="form.content" />
     </div>
   </div>
 </template>

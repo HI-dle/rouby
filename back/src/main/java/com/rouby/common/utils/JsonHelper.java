@@ -13,6 +13,14 @@ public class JsonHelper {
 
   public String toJson(Object obj) {
     try {
+      return objectMapper.writeValueAsString(obj);
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException("Failed to serialize object to JSON", e);
+    }
+  }
+
+  public String toPrettyJson(Object obj) {
+    try {
       return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
     } catch (JsonProcessingException e) {
       throw new RuntimeException("Failed to serialize object to JSON", e);
