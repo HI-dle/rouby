@@ -1,19 +1,17 @@
 package com.rouby.notification.notificationEvent.infrastructure.exception;
 
-import com.rouby.common.exception.CustomException;
-import lombok.Getter;
+import com.rouby.common.exception.RateLimitException;
 import org.springframework.http.HttpStatus;
 
-@Getter
-public class NotificationEventFcmRetryableException extends CustomException {
+public class NotificationEventFcmRetryableException extends RateLimitException {
 
-  private final String retryAfter;
-
-  public NotificationEventFcmRetryableException(HttpStatus status, String msg, String retryAfter) {
-    super(status, msg);
-    this.retryAfter = retryAfter;
+  private NotificationEventFcmRetryableException(
+      HttpStatus status, String message, long retryAfterSeconds) {
+    super(status, message, retryAfterSeconds);
   }
-  public HttpStatus status() {
-    return super.getStatus();
+
+  public static NotificationEventFcmRetryableException of(
+      HttpStatus httpStatus, String message, long retryAfterSeconds) {
+    return new NotificationEventFcmRetryableException(httpStatus, message, retryAfterSeconds);
   }
 }

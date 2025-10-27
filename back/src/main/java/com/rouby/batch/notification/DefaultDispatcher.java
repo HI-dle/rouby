@@ -201,7 +201,8 @@ public class DefaultDispatcher implements NotificationDispatcher {
     long base = 200L, max = 2_000L;
     long exponential = Math.min(max, base << (attempt - 1));
 
-    Long retryAfter = (t instanceof NotificationEventFcmRetryableException fe) ? Long.valueOf(fe.getRetryAfter()) : null;
+    Long retryAfter = (t instanceof NotificationEventFcmRetryableException fe) ? fe.getRetryAfterSeconds()
+        : null;
     long ms = (retryAfter != null && retryAfter > 0) ? Math.max(exponential, retryAfter * 1000L) : exponential;
 
     long jitter = (long)(ms * 0.2);

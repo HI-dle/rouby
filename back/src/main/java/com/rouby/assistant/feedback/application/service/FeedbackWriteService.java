@@ -23,7 +23,7 @@ public class FeedbackWriteService {
 
     var today = LocalDate.now();
     Integer usageCount = feedbackRepository.countDailyUsage(command.userId(), today).orElse(0);
-    if (usageCount >= 3) throw FeedbackException.from(FeedbackErrorCode.EXCEEDED_DAILY_USAGE);
+    if (usageCount >= 3) throw FeedbackException.from(FeedbackErrorCode.EXCEEDED_DAILY_FEEDBACK_USAGE);
 
     Feedback feedback = command.toEntity(today, usageCount + 1, version);
     feedbackRepository.save(feedback);

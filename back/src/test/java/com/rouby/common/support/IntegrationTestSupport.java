@@ -3,6 +3,7 @@ package com.rouby.common.support;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rouby.common.container.RedisTestContainerExtension;
 import com.rouby.user.user.domain.repository.UserRepository;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +23,6 @@ import org.testcontainers.utility.TestcontainersConfiguration;
 public abstract class IntegrationTestSupport {
 
   @Autowired
-  protected StringRedisTemplate stringRedisTemplate;
-
-  @Autowired
-  private DatabaseCleanUp databaseCleanUp;
-
-  @Autowired
   protected MockMvc mockMvc;
 
   @Autowired
@@ -35,6 +30,15 @@ public abstract class IntegrationTestSupport {
 
   @Autowired
   protected UserRepository userRepository;
+
+  @Autowired
+  protected CircuitBreakerRegistry cbRegistry;
+
+  @Autowired
+  protected StringRedisTemplate stringRedisTemplate;
+
+  @Autowired
+  private DatabaseCleanUp databaseCleanUp;
 
   @AfterEach
   void tearDown() {
