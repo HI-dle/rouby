@@ -13,6 +13,7 @@ import com.rouby.user.device.application.service.UserDeviceWriteService;
 import com.rouby.user.user.application.dto.command.CreateUserCommand;
 import com.rouby.user.user.application.dto.command.FindPasswordCommand;
 import com.rouby.user.user.application.dto.command.LoginCommand;
+import com.rouby.user.user.application.dto.command.RefreshTokenCommand;
 import com.rouby.user.user.application.dto.command.ResetPasswordByTokenCommand;
 import com.rouby.user.user.application.dto.command.ResetPasswordCommand;
 import com.rouby.user.user.application.dto.command.SaveVerificationCodeCommand;
@@ -21,8 +22,9 @@ import com.rouby.user.user.application.dto.command.UpdateUserInfoCommand;
 import com.rouby.user.user.application.dto.command.UpdateUserRoubySettingCommand;
 import com.rouby.user.user.application.dto.command.VerifyEmailCommand;
 import com.rouby.user.user.application.dto.info.LoginInfo;
-import com.rouby.user.user.application.dto.info.UserCheckInfo;
 import com.rouby.user.user.application.dto.info.RoubySettingInfo;
+import com.rouby.user.user.application.dto.info.TokenInfo;
+import com.rouby.user.user.application.dto.info.UserCheckInfo;
 import com.rouby.user.user.application.exception.UserException;
 import com.rouby.user.user.application.service.UserReadService;
 import com.rouby.user.user.application.service.UserWriteService;
@@ -93,7 +95,7 @@ public class UserFacade {
   }
 
   public LoginInfo login(LoginCommand command){
-    return userReadService.validUser(command);
+    return userWriteService.validUser(command);
   }
 
   public UserCheckInfo userInfoCheck(Long id) {
@@ -114,11 +116,17 @@ public class UserFacade {
   public void completeInitialRoubySetting(Long id) {
     userWriteService.completeInitialRoubySetting(id);
   }
+
   public void updateMyUserInfo(UpdateUserInfoCommand command) {
     userWriteService.updateUserInfo(command);
   }
+
   public void delete(Long userId) {
     userWriteService.delete(userId);
     userDeviceWriteService.hardDeleteAllByUser(userId);
+  }
+
+  public TokenInfo refresh(RefreshTokenCommand command) {
+    return userWriteService.refresh(command);
   }
 }

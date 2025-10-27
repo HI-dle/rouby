@@ -9,11 +9,15 @@ import lombok.Builder;
  * @author : hanjihoon
  */
 @Builder
-public record LoginResponse(String token) {
+public record LoginResponse(
+    String accessToken,
+    String refreshToken
+) {
 
   public static LoginResponse from(LoginInfo info){
     return LoginResponse.builder()
-        .token(info.accessToken())
+        .accessToken(info.accessToken())
+        .refreshToken(info.refreshToken())
         .build();
   }
 }

@@ -19,6 +19,8 @@ import com.rouby.user.user.application.dto.command.LoginCommand;
 import com.rouby.user.user.application.dto.info.LoginInfo;
 import com.rouby.user.user.application.exception.UserException;
 import com.rouby.user.user.presentation.dto.request.LoginRequest;
+import com.rouby.user.user.presentation.dto.request.RefreshTokenRequest;
+import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -35,7 +37,7 @@ class AuthControllerTest extends ControllerTestSupport {
 
 
   @Test
-  @DisplayName("로그인시 AccessToken을 반환한다.")
+  @DisplayName("로그인시 AccessToken과 RefreshToken을 반환한다.")
   void login_test() throws Exception {
 
     //given
@@ -46,8 +48,9 @@ class AuthControllerTest extends ControllerTestSupport {
 
     LoginCommand command = loginRequest.toApplication();
     String fakeToken = "Bearer fake.jwt.token";
+    String refreshToken = UUID.randomUUID().toString();
 
-    when(userFacade.login(command)).thenReturn(new LoginInfo(fakeToken));
+    when(userFacade.login(command)).thenReturn(new LoginInfo(fakeToken, refreshToken));
 
     // when
     ResultActions result = mockMvc.perform(post("/api/v1/auth/login")
@@ -98,4 +101,32 @@ class AuthControllerTest extends ControllerTestSupport {
         ));
   }
 
+  @Test
+  @DisplayName("리프레시 요청 성공 API")
+  void refresh_test() throws Exception {
+    // given
+    String fakeAccessToken = "fake.new.access.token";
+    String fakeRefreshToken = UUID.randomUUID().toString();
+
+    RefreshTokenRequest request = new RefreshTokenRequest("old.refresh.token");
+
+    when(userFacade.refresh(any())).thenReturn(
+        new com.rouby.user.user.application.dto.info.TokenInfo(fakeAccessToken, fakeRefreshToken)
+    );
+
+    // when
+    ResultActions result = mockMvc.perform(post("/api/v1/auth/refresh")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(request)));
+
+    // then
+    result.andExpect(status().isOk())
+        .andDo(document("refresh-token-200",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestFields(
+                fieldWithPath("refreshToken").description("갱신할 리프레시 토큰")
+            )
+        ));
+  }
 }

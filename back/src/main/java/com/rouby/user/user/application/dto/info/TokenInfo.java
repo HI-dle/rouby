@@ -1,11 +1,6 @@
 package com.rouby.user.user.application.dto.info;
 
-/**
- * @Date : 2025. 07. 08.
- *
- * @author : hanjihoon
- */
-public record LoginInfo(
+public record TokenInfo(
     String accessToken,
     String refreshToken
 ) {

@@ -10,6 +10,8 @@ public interface TokenProvider {
 
   String createAccessToken(String userId, String role, String email);
 
+  String createRefreshToken();
+
   boolean validateAccessToken(String token);
 
   Long getUserId(String token);

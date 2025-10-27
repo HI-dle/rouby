@@ -58,6 +58,9 @@ public class User extends BaseEntity {
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<NotificationSetting> notificationSettings;
 
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<RefreshToken> refreshTokens;
+
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
   private AuthProvider authProvider;
@@ -170,6 +173,7 @@ public class User extends BaseEntity {
     this.profileKeywords = ProfileKeywords.empty();
     this.communicationTone = CommunicationTone.empty();
     this.notificationSettings = createDefaultNotificationSettings();
+    this.refreshTokens = new HashSet<>();
     this.authProvider = authProvider == null ? AuthProvider.DEFAULT : authProvider;
     this.role = role == null ? UserRole.USER : role;
     this.lastActivatedAt = lastActivatedAt;
@@ -229,5 +233,33 @@ public class User extends BaseEntity {
     this.lastActivatedAt = null;
 
     super.delete(userId);
+  }
+
+  public RefreshToken saveRefreshToken(String token) {
+    RefreshToken refreshToken = RefreshToken.create(this, token);
+    this.refreshTokens.add(refreshToken);
+    return refreshToken;
+  }
+
+  public RefreshToken rotate(String oldRefreshToken, String newRefreshToken) {
+    RefreshToken existingToken = findRefreshToken(oldRefreshToken);
+
+    if (existingToken.getExpiredAt().isAfter(LocalDateTime.now().plusDays(1))) {
+      return existingToken;
+    }
+
+    this.refreshTokens.remove(existingToken);
+    return saveRefreshToken(newRefreshToken);
+  }
+
+  public boolean isExpiredRefreshToken(String oldRefreshToken) {
+    return findRefreshToken(oldRefreshToken).isExpired();
+  }
+
+  private RefreshToken findRefreshToken(String tokenValue) {
+    return this.refreshTokens.stream()
+        .filter(rt -> rt.getToken().equals(tokenValue))
+        .findFirst()
+        .orElseThrow(() -> new IllegalStateException("일치하는 리프레시 토큰이 없습니다."));
   }
 }

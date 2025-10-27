@@ -27,4 +27,19 @@ include::{snippets}/login-email-invalid-401/request-fields.adoc[]
 
 ===== HTTP 응답 (400 Bad Request)
 include::{snippets}/login-email-invalid-401/http-response.adoc[]
----
+
+== 리프레시 API
+
+=== 성공: 리프레시 토큰 갱신 성공
+
+==== HTTP 요청
+
+include::{snippets}/refresh-token-200/http-request.adoc[]
+
+==== 요청 필드
+
+include::{snippets}/refresh-token-200/request-fields.adoc[]
+
+==== HTTP 응답 (200 OK)
+
+include::{snippets}/refresh-token-200/http-response.adoc[]
