@@ -32,3 +32,9 @@ export function toResetPasswordPayload(form) {
     token: form.token?.trim(),
   }
 }
+
+export function toRefreshPayload(form) {
+  return {
+    refreshToken: form.refreshToken?.trim(),
+  }
+}

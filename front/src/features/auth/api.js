@@ -43,3 +43,7 @@ export const login = async ({ email, password }) => {
 export async function getUserBasicInfo() {
   return await axios.get('/v1/users/basic-info')
 }
+
+export const refresh = (payload) => {
+  return axios.post('/v1/auth/refresh', payload)
+}

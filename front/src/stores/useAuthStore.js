@@ -7,31 +7,56 @@ export const useAuthStore = defineStore(
   'auth',
   () => {
     const staySignedIn = ref(false)
-    const token = ref('')
+    const accessToken = ref('')
+    const refreshToken = ref('')
+    const accessTokenExpirationTime = ref(0)
 
-    const setToken = (value) => {
-      token.value = value
+    const setAccessToken = (value) => {
+      accessToken.value = value
+    }
+
+    const setRefreshToken = (value) => {
+      refreshToken.value = value
+    }
+
+    const setAccessTokenExpirationTime = (value) => {
+      accessTokenExpirationTime.value = value
     }
 
     const setStaySignedIn = (value) => {
       staySignedIn.value = value
     }
 
-    const getToken = () => {
-      return token.value
+    const getAccessToken = () => {
+      return accessToken.value
     }
+
+    const getRefreshToken = () => {
+      return refreshToken.value
+    }
+
+    const getAccessTokenExpirationTime = () => {
+      return accessTokenExpirationTime.value
+    }
+
     const reset = () => {
       staySignedIn.value = false
-      token.value = ''
+      accessToken.value = ''
     }
 
     return {
       staySignedIn,
-      token,
+      accessToken,
+      refreshToken,
+      accessTokenExpirationTime,
 
-      setToken,
+      setAccessToken,
+      setRefreshToken,
       setStaySignedIn,
-      getToken,
+      setAccessTokenExpirationTime,
+      getAccessTokenExpirationTime,
+      getAccessToken,
+      getRefreshToken,
       reset,
     }
   },

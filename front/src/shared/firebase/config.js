@@ -67,6 +67,7 @@ const TRIM_COUNT = 500
 
 const bc = 'BroadcastChannel' in window ? new BroadcastChannel(DEDUPE_CH) : null
 
+
 const markAndCheckSeen = (id) => {
   if (seen.has(id)) return true
 
@@ -94,7 +95,6 @@ const resolvePropagatedEvent = (e) => {
     if (ts > prev) seen.set(id, ts)
   }
 }
-
 bc?.addEventListener('message', resolvePropagatedEvent)
 navigator.serviceWorker?.addEventListener('message', resolvePropagatedEvent)
 
@@ -132,7 +132,6 @@ export const listenForeground = () => {
         return
       }
     }
-
     toast.show({
       title,
       message: body || title,
