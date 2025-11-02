@@ -11,6 +11,7 @@ import static com.rouby.user.user.application.exception.UserErrorCode.INVALID_US
 import static com.rouby.user.user.application.exception.UserErrorCode.INVALID_USER_PASSWORD;
 import static com.rouby.user.user.application.exception.UserErrorCode.ONBOARDING_STATE_CHANGE_NOT_ALLOWED;
 import static com.rouby.user.user.application.exception.UserErrorCode.PASSWORD_TOKEN_EXPIRED;
+import static com.rouby.user.user.application.exception.UserErrorCode.TOO_MANY_SESSIONS;
 import static com.rouby.user.user.application.exception.UserErrorCode.USER_NOT_FOUND;
 
 import com.rouby.common.props.SettingProperties;
@@ -215,6 +216,14 @@ public class UserWriteService {
 
     if (!passwordEncoder.matches(command.password(), user.getPassword())) {
       throw UserException.from(INVALID_USER_PASSWORD);
+    }
+
+    if (user.getRefreshTokens().size() >= 10) {
+      if (!command.isForceLogin()) {
+        throw UserException.from(TOO_MANY_SESSIONS);
+      } else {
+        user.removeOldestRefreshTokenByExpiration();
+      }
     }
 
     RefreshToken refreshToken = user.saveRefreshToken(tokenProvider.createRefreshToken());

@@ -105,6 +105,10 @@ public class UserUsecase {
     return userWriteService.validUser(command);
   }
 
+  public LoginInfo forceLogin(LoginCommand command) {
+    return userWriteService.validUser(command);
+  }
+
   public UserDetailInfo userInfoCheck(Long id) {
     return userReadService.getUserDetailInfoByUserId(id);
   }
