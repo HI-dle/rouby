@@ -1,5 +1,6 @@
 package com.rouby.user.user.domain.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -25,8 +26,10 @@ public class RefreshToken {
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
+  @Column(nullable = false, unique = true)
   private String token;
 
+  @Column(nullable = false)
   private LocalDateTime expiredAt;
 
   @Builder
@@ -40,7 +43,7 @@ public class RefreshToken {
     return RefreshToken.builder()
         .user(user)
         .token(token)
-        .expiredAt(LocalDateTime.now().plusDays(7))
+        .expiredAt(LocalDateTime.now().plusDays(30))
         .build();
   }
 
@@ -49,9 +52,5 @@ public class RefreshToken {
 
   public boolean isExpired() {
     return expiredAt.isBefore(LocalDateTime.now());
-  }
-
-  public void addUser(User user) {
-    this.user = user;
   }
 }

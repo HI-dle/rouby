@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -239,15 +240,19 @@ public class User extends BaseEntity {
   }
 
   public RefreshToken saveRefreshToken(String token) {
+    if (token == null || token.isBlank()) {
+      throw new IllegalArgumentException("리프레시 토큰은 필수입니다.");
+    }
     RefreshToken refreshToken = RefreshToken.create(this, token);
     this.refreshTokens.add(refreshToken);
+
     return refreshToken;
   }
 
   public RefreshToken rotate(String oldRefreshToken, String newRefreshToken) {
     RefreshToken existingToken = findRefreshToken(oldRefreshToken);
 
-    if (existingToken.getExpiredAt().isAfter(LocalDateTime.now().plusDays(1))) {
+    if (existingToken.getExpiredAt().isAfter(LocalDateTime.now().plusDays(7))) {
       return existingToken;
     }
 
@@ -264,5 +269,17 @@ public class User extends BaseEntity {
         .filter(rt -> rt.getToken().equals(tokenValue))
         .findFirst()
         .orElseThrow(() -> new IllegalStateException("일치하는 리프레시 토큰이 없습니다."));
+  }
+
+  public void removeOldestRefreshTokenByExpiration() {
+    if (refreshTokens.isEmpty()) {
+      return;
+    }
+
+    RefreshToken oldest = refreshTokens.stream()
+        .min(Comparator.comparing(RefreshToken::getExpiredAt))
+        .orElseThrow();
+
+    refreshTokens.remove(oldest);
   }
 }

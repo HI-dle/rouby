@@ -11,13 +11,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class UserScheduler {
-
-  private static final LocalDateTime cutoffTime = LocalDateTime.now();
   private final UserWriteService userWriteService;
 
   @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
   public void deleteExpiredRefreshTokens() {
     try {
+      LocalDateTime cutoffTime = LocalDateTime.now();
       long count = userWriteService.deleteExpiredRefreshTokens(cutoffTime);
       log.info("[" + cutoffTime + "] 기준 만료된 RefreshToken 삭제 개수: " + count);
     } catch (Exception e) {
