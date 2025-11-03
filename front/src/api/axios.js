@@ -15,12 +15,17 @@ let isRefreshing = false
 let refreshSubscribers = []
 
 function onRefreshed(newAccessToken) {
-  refreshSubscribers.forEach((cb) => cb(newAccessToken))
+  refreshSubscribers.forEach(({ resolve }) => resolve(newAccessToken))
   refreshSubscribers = []
 }
 
-function addRefreshSubscriber(callback) {
-  refreshSubscribers.push(callback)
+function onRefreshFailed(error) {
+  refreshSubscribers.forEach(({ reject }) => reject(error))
+  refreshSubscribers = []
+}
+
+function addRefreshSubscriber(handlers) {
+  refreshSubscribers.push(handlers)
 }
 
 async function refreshAccessToken(authStore) {
@@ -43,6 +48,7 @@ async function refreshAccessToken(authStore) {
     return newAccessToken
   } catch (error) {
     console.error('Refresh 실패:', error)
+    onRefreshFailed(error)
     authStore.reset()
     window.location.href = '/login'
     throw error
@@ -62,6 +68,7 @@ instance.interceptors.request.use(
     const expiredAt = authStore.getAccessTokenExpirationTime()
 
     if (!token) return config
+    if (config.headers.Authorization) return config
 
     const now = Date.now()
 
@@ -71,19 +78,23 @@ instance.interceptors.request.use(
 
       // 이미 갱신 중이라면 기다림
       if (isRefreshing) {
-        return new Promise((resolve) => {
-          addRefreshSubscriber((newAccessToken) => {
-            config.headers.Authorization = `Bearer ${newAccessToken}`
-            resolve(config)
-          })
+        return new Promise((resolve, reject) => {
+          addRefreshSubscriber({ resolve, reject })
+        }).then((newAccessToken) => {
+          config.headers.Authorization = `Bearer ${newAccessToken}`
+          return config
         })
       }
 
       // refresh 수행
       isRefreshing = true
-      const newAccessToken = await refreshAccessToken(authStore)
-      config.headers.Authorization = `Bearer ${newAccessToken}`
-      return config
+      try {
+        const newAccessToken = await refreshAccessToken(authStore)
+        config.headers.Authorization = `Bearer ${newAccessToken}`
+        return config
+      } catch (error) {
+        return Promise.reject(error)
+      }
     }
 
     // 만료되지 않았으면 그대로 요청

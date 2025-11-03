@@ -22,18 +22,22 @@
         v-model:email="email"
         v-model:password="password"
         v-model:staySignedIn="staySignedIn"
+        v-model:showForceLoginModal="showForceLoginModal"
         :emailError="emailError"
         :passwordError="passwordError"
         :loginError="loginError"
+        :showForceLoginModal="showForceLoginModal"
         @update:email="email = $event"
         @update:password="password = $event"
         @update:staySignedIn="staySignedIn = $event"
         @validate-email="validateEmail"
         @validate-password="validatePassword"
         @submit="onLogin"
+        @handleForceLogin="handleForceLogin"
         @kakao="onKakaoLogin"
         @google="onGoogleLogin"
         @apple="onAppleLogin"
+        @force-login="() => onLogin(true)"
       />
 
       <!-- 하단 링크 -->
@@ -62,11 +66,13 @@ const {
   emailError,
   passwordError,
   loginError,
+  showForceLoginModal,
   validateEmail,
   validatePassword,
   onLogin,
   onKakaoLogin,
   onGoogleLogin,
   onAppleLogin,
+  handleForceLogin
 } = useLoginForm()
 </script>

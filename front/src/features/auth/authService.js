@@ -100,7 +100,7 @@ export const refresh = wrapApi(
   },
 )
 
-export const loginAndBootstrap = async (email, password, staySignedIn) => {
+export const loginAndBootstrap = async (email, password, staySignedIn, isForceLogin) => {
   const userInfoStore = useUserInfoStore()
   const authStore = useAuthStore()
 
@@ -108,6 +108,7 @@ export const loginAndBootstrap = async (email, password, staySignedIn) => {
   const response = await login({
     email: email.trim(),
     password: password,
+    isForceLogin: isForceLogin
   })
 
   // 2. 토큰 저장

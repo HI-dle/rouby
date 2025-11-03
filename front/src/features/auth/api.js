@@ -33,10 +33,11 @@ export const verificationPasswordCode = (payload) => {
   })
 }
 
-export const login = async ({ email, password }) => {
+export const login = async ({ email, password, isForceLogin }) => {
   return await axios.post('/v1/auth/login', {
     email,
     password,
+    isForceLogin
   })
 }
 
