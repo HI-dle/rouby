@@ -6,7 +6,6 @@ import static com.rouby.user.user.application.exception.UserErrorCode.EMAIL_VERI
 import static com.rouby.user.user.application.exception.UserErrorCode.EXPIRED_REFRESH_TOKEN;
 import static com.rouby.user.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION;
 import static com.rouby.user.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION_TOKEN;
-import static com.rouby.user.user.application.exception.UserErrorCode.INVALID_REFRESH_TOKEN;
 import static com.rouby.user.user.application.exception.UserErrorCode.INVALID_USER;
 import static com.rouby.user.user.application.exception.UserErrorCode.INVALID_USER_PASSWORD;
 import static com.rouby.user.user.application.exception.UserErrorCode.ONBOARDING_STATE_CHANGE_NOT_ALLOWED;
@@ -241,8 +240,11 @@ public class UserWriteService {
   @Transactional
   public TokenInfo refresh(RefreshTokenCommand command) {
     String oldRefreshToken = command.refreshToken();
-    User user = userRepository.findByRefreshToken(oldRefreshToken)
-        .orElseThrow(() -> UserException.from(INVALID_REFRESH_TOKEN));
+
+    String email = tokenProvider.getEmail(command.accessToken());
+
+    User user = userRepository.findByEmail(email)
+        .orElseThrow(() -> UserException.from(INVALID_USER));
 
     if (user.isExpiredRefreshToken(passwordEncoder, oldRefreshToken)) {
       throw UserException.from(EXPIRED_REFRESH_TOKEN);
@@ -254,7 +256,7 @@ public class UserWriteService {
         user.getEmail()
     );
 
-    String newRefreshToken = passwordEncoder.encode(tokenProvider.createRefreshToken());
+    String newRefreshToken = tokenProvider.createRefreshToken();
     RefreshToken refreshToken = user.rotate(passwordEncoder, oldRefreshToken, newRefreshToken);
 
     return new TokenInfo(newAccessToken, refreshToken.getToken());

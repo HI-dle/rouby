@@ -5,10 +5,12 @@ import jakarta.validation.constraints.NotBlank;
 
 public record RefreshTokenRequest(
     @NotBlank(message = "토큰 정보는 필수입니다.")
+    String accessToken,
+    @NotBlank(message = "토큰 정보는 필수입니다.")
     String refreshToken
 ) {
 
   public RefreshTokenCommand toApplication() {
-    return new RefreshTokenCommand(refreshToken);
+    return new RefreshTokenCommand(accessToken, refreshToken);
   }
 }
