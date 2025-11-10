@@ -218,7 +218,9 @@ public class UserWriteService {
       throw UserException.from(INVALID_USER_PASSWORD);
     }
 
-    if (user.getRefreshTokens().size() >= 10) {
+    long tokenCount = userRepository.countRefreshTokensByUser(user);
+
+    if (tokenCount >= 10) {
       if (!command.isForceLogin()) {
         throw UserException.from(TOO_MANY_SESSIONS);
       } else {
@@ -226,13 +228,14 @@ public class UserWriteService {
       }
     }
 
-    RefreshToken refreshToken = user.saveRefreshToken(tokenProvider.createRefreshToken());
+    String token = tokenProvider.createRefreshToken();
+    user.saveRefreshToken(passwordEncoder, token);
 
     return new LoginInfo(tokenProvider.createAccessToken(
         user.getId().toString(),
         user.getRole().toString(),
         user.getEmail()),
-        refreshToken.getToken());
+        token);
   }
 
   @Transactional
@@ -241,7 +244,7 @@ public class UserWriteService {
     User user = userRepository.findByRefreshToken(oldRefreshToken)
         .orElseThrow(() -> UserException.from(INVALID_REFRESH_TOKEN));
 
-    if (user.isExpiredRefreshToken(oldRefreshToken)) {
+    if (user.isExpiredRefreshToken(passwordEncoder, oldRefreshToken)) {
       throw UserException.from(EXPIRED_REFRESH_TOKEN);
     }
 
@@ -251,8 +254,8 @@ public class UserWriteService {
         user.getEmail()
     );
 
-    String newRefreshToken = tokenProvider.createRefreshToken();
-    RefreshToken refreshToken = user.rotate(oldRefreshToken, newRefreshToken);
+    String newRefreshToken = passwordEncoder.encode(tokenProvider.createRefreshToken());
+    RefreshToken refreshToken = user.rotate(passwordEncoder, oldRefreshToken, newRefreshToken);
 
     return new TokenInfo(newAccessToken, refreshToken.getToken());
   }

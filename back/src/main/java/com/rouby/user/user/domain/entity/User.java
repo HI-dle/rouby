@@ -239,34 +239,37 @@ public class User extends BaseEntity {
     super.delete(userId);
   }
 
-  public RefreshToken saveRefreshToken(String token) {
+  public RefreshToken saveRefreshToken(UserPasswordEncoder passwordEncoder, String token) {
     if (token == null || token.isBlank()) {
       throw new IllegalArgumentException("리프레시 토큰은 필수입니다.");
     }
-    RefreshToken refreshToken = RefreshToken.create(this, token);
+
+    RefreshToken refreshToken = RefreshToken.create(this, passwordEncoder.encode(token));
     this.refreshTokens.add(refreshToken);
 
     return refreshToken;
   }
 
-  public RefreshToken rotate(String oldRefreshToken, String newRefreshToken) {
-    RefreshToken existingToken = findRefreshToken(oldRefreshToken);
+  public RefreshToken rotate(UserPasswordEncoder passwordEncoder, String oldRefreshToken,
+      String newRefreshToken) {
+    RefreshToken existingToken = findRefreshToken(passwordEncoder, oldRefreshToken);
 
     if (existingToken.getExpiredAt().isAfter(LocalDateTime.now().plusDays(7))) {
       return existingToken;
     }
 
     this.refreshTokens.remove(existingToken);
-    return saveRefreshToken(newRefreshToken);
+    return saveRefreshToken(passwordEncoder, newRefreshToken);
   }
 
-  public boolean isExpiredRefreshToken(String oldRefreshToken) {
-    return findRefreshToken(oldRefreshToken).isExpired();
+  public boolean isExpiredRefreshToken(UserPasswordEncoder passwordEncoder,
+      String oldRefreshToken) {
+    return findRefreshToken(passwordEncoder, oldRefreshToken).isExpired();
   }
 
-  private RefreshToken findRefreshToken(String tokenValue) {
+  private RefreshToken findRefreshToken(UserPasswordEncoder passwordEncoder, String tokenValue) {
     return this.refreshTokens.stream()
-        .filter(rt -> rt.getToken().equals(tokenValue))
+        .filter(rt -> passwordEncoder.matches(tokenValue, rt.getToken()))
         .findFirst()
         .orElseThrow(() -> new IllegalStateException("일치하는 리프레시 토큰이 없습니다."));
   }

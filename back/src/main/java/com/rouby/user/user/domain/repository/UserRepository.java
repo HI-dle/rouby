@@ -21,4 +21,6 @@ public interface UserRepository {
   Optional<User> findByRefreshToken(String token);
 
   long deleteExpiredRefreshTokens(LocalDateTime cutoffTime);
+
+  long countRefreshTokensByUser(User user);
 }
