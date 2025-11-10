@@ -31,6 +31,7 @@ function addRefreshSubscriber(handlers) {
 async function refreshAccessToken(authStore) {
   try {
     const { accessToken: newAccessToken, refreshToken: newRefreshToken } = await refresh({
+      accessToken: authStore.getAccessToken(),
       refreshToken: authStore.getRefreshToken(),
     })
     const decoded = decodeJwt(newAccessToken)
