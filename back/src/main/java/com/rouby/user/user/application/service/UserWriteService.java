@@ -241,7 +241,7 @@ public class UserWriteService {
   public TokenInfo refresh(RefreshTokenCommand command) {
     String oldRefreshToken = command.refreshToken();
 
-    String email = tokenProvider.getEmail(command.accessToken());
+    String email = tokenProvider.getEmailFromExpiredToken(command.accessToken());
 
     User user = userRepository.findByEmail(email)
         .orElseThrow(() -> UserException.from(INVALID_USER));

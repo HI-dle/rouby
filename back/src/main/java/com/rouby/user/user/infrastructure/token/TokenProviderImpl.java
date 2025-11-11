@@ -39,6 +39,11 @@ public class TokenProviderImpl implements TokenProvider {
   }
 
   @Override
+  public String getEmailFromExpiredToken(String token) {
+    return jwtAuthTokenProvider.getEmailFromExpiredToken(token);
+  }
+
+  @Override
   public String getRole(String token) {
     return jwtAuthTokenProvider.getRole(token);
   }
