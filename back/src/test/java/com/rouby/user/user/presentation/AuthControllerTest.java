@@ -108,7 +108,8 @@ class AuthControllerTest extends ControllerTestSupport {
     String fakeAccessToken = "fake.new.access.token";
     String fakeRefreshToken = UUID.randomUUID().toString();
 
-    RefreshTokenRequest request = new RefreshTokenRequest("old.refresh.token");
+    RefreshTokenRequest request = new RefreshTokenRequest("expired.access.token",
+        "old.refresh.token");
 
     when(userUsecase.refresh(any())).thenReturn(
         new com.rouby.user.user.application.dto.info.TokenInfo(fakeAccessToken, fakeRefreshToken)
@@ -125,6 +126,7 @@ class AuthControllerTest extends ControllerTestSupport {
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
             requestFields(
+                fieldWithPath("accessToken").description("만료된 엑세스 토큰"),
                 fieldWithPath("refreshToken").description("갱신할 리프레시 토큰")
             )
         ));
