@@ -18,6 +18,8 @@ public interface TokenProvider {
 
   String getEmail(String token);
 
+  String getEmailFromExpiredToken(String token);
+
   String getRole(String token);
 
   String resolveAccessToken(HttpServletRequest request);
