@@ -2,7 +2,9 @@ package com.rouby.user.user.presentation;
 
 import com.rouby.user.user.application.usecase.UserUsecase;
 import com.rouby.user.user.presentation.dto.request.LoginRequest;
+import com.rouby.user.user.presentation.dto.request.RefreshTokenRequest;
 import com.rouby.user.user.presentation.dto.response.LoginResponse;
+import com.rouby.user.user.presentation.dto.response.TokenResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,4 +32,9 @@ public class AuthController {
     return ResponseEntity.ok(LoginResponse.from(userUsecase.login(request.toApplication())));
   }
 
+  @PostMapping("/refresh")
+  public ResponseEntity<TokenResponse> refresh(
+      @RequestBody @Valid RefreshTokenRequest request) {
+    return ResponseEntity.ok(TokenResponse.from(userUsecase.refresh(request.toApplication())));
+  }
 }

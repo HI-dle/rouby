@@ -19,6 +19,8 @@ import com.rouby.user.user.application.dto.command.LoginCommand;
 import com.rouby.user.user.application.dto.info.LoginInfo;
 import com.rouby.user.user.application.exception.UserException;
 import com.rouby.user.user.presentation.dto.request.LoginRequest;
+import com.rouby.user.user.presentation.dto.request.RefreshTokenRequest;
+import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -35,19 +37,21 @@ class AuthControllerTest extends ControllerTestSupport {
 
 
   @Test
-  @DisplayName("로그인시 AccessToken을 반환한다.")
+  @DisplayName("로그인시 AccessToken과 RefreshToken을 반환한다.")
   void login_test() throws Exception {
 
     //given
     LoginRequest loginRequest = LoginRequest.builder()
         .email("test@gmail.com")
         .password("1234")
+        .isForceLogin(true)
         .build();
 
     LoginCommand command = loginRequest.toApplication();
     String fakeToken = "Bearer fake.jwt.token";
+    String refreshToken = UUID.randomUUID().toString();
 
-    when(userUsecase.login(command)).thenReturn(new LoginInfo(fakeToken));
+    when(userUsecase.login(command)).thenReturn(new LoginInfo(fakeToken, refreshToken));
 
     // when
     ResultActions result = mockMvc.perform(post("/api/v1/auth/login")
@@ -61,7 +65,8 @@ class AuthControllerTest extends ControllerTestSupport {
             preprocessResponse(prettyPrint()),
             requestFields(
                 fieldWithPath("email").description("로그인 이메일"),
-                fieldWithPath("password").description("로그인 비밀번호")
+                fieldWithPath("password").description("로그인 비밀번호"),
+                fieldWithPath("isForceLogin").description("로그인 세션이 초과 되었을 때 강제 로그인 여부")
             )
         ));
   }
@@ -74,6 +79,7 @@ class AuthControllerTest extends ControllerTestSupport {
     LoginRequest loginRequest = LoginRequest.builder()
         .email("jinyoungchoi")
         .password("1234")
+        .isForceLogin(false)
         .build();
 
     doThrow(UserException.from(INVALID_USER)).when(userUsecase).login(any(LoginCommand.class));
@@ -92,10 +98,41 @@ class AuthControllerTest extends ControllerTestSupport {
             preprocessResponse(prettyPrint()),
             requestFields(
                 fieldWithPath("email").description("로그인 이메일"),
-                fieldWithPath("password").description("로그인 비밀번호")
+                fieldWithPath("password").description("로그인 비밀번호"),
+                fieldWithPath("isForceLogin").description("로그인 세션이 초과 되었을 때 강제 로그인 여부")
             ),
             getValidationErrorResponseFieldSnippet()
         ));
   }
 
+  @Test
+  @DisplayName("리프레시 요청 성공 API")
+  void refresh_test() throws Exception {
+    // given
+    String fakeAccessToken = "fake.new.access.token";
+    String fakeRefreshToken = UUID.randomUUID().toString();
+
+    RefreshTokenRequest request = new RefreshTokenRequest("expired.access.token",
+        "old.refresh.token");
+
+    when(userUsecase.refresh(any())).thenReturn(
+        new com.rouby.user.user.application.dto.info.TokenInfo(fakeAccessToken, fakeRefreshToken)
+    );
+
+    // when
+    ResultActions result = mockMvc.perform(post("/api/v1/auth/refresh")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(request)));
+
+    // then
+    result.andExpect(status().isOk())
+        .andDo(document("refresh-token-200",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestFields(
+                fieldWithPath("accessToken").description("만료된 엑세스 토큰"),
+                fieldWithPath("refreshToken").description("갱신할 리프레시 토큰")
+            )
+        ));
+  }
 }

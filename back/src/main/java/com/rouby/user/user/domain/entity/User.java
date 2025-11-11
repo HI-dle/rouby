@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -63,6 +64,9 @@ public class User extends BaseEntity {
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<NotificationSetting> notificationSettings = new HashSet<>();
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<RefreshToken> refreshTokens = new HashSet<>();
 
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
@@ -233,5 +237,52 @@ public class User extends BaseEntity {
     this.lastActivatedAt = null;
 
     super.delete(userId);
+  }
+
+  public RefreshToken saveRefreshToken(UserPasswordEncoder passwordEncoder, String token) {
+    if (token == null || token.isBlank()) {
+      throw new IllegalArgumentException("리프레시 토큰은 필수입니다.");
+    }
+
+    RefreshToken refreshToken = RefreshToken.create(this, passwordEncoder.encode(token));
+    this.refreshTokens.add(refreshToken);
+
+    return refreshToken;
+  }
+
+  public RefreshToken rotate(UserPasswordEncoder passwordEncoder, String oldRefreshToken,
+      String newRefreshToken) {
+    RefreshToken existingToken = findRefreshToken(passwordEncoder, oldRefreshToken);
+
+    if (existingToken.getExpiredAt().isAfter(LocalDateTime.now().plusDays(7))) {
+      return existingToken;
+    }
+
+    this.refreshTokens.remove(existingToken);
+    return saveRefreshToken(passwordEncoder, newRefreshToken);
+  }
+
+  public boolean isExpiredRefreshToken(UserPasswordEncoder passwordEncoder,
+      String oldRefreshToken) {
+    return findRefreshToken(passwordEncoder, oldRefreshToken).isExpired();
+  }
+
+  private RefreshToken findRefreshToken(UserPasswordEncoder passwordEncoder, String tokenValue) {
+    return this.refreshTokens.stream()
+        .filter(rt -> passwordEncoder.matches(tokenValue, rt.getToken()))
+        .findFirst()
+        .orElseThrow(() -> new IllegalStateException("일치하는 리프레시 토큰이 없습니다."));
+  }
+
+  public void removeOldestRefreshTokenByExpiration() {
+    if (refreshTokens.isEmpty()) {
+      return;
+    }
+
+    RefreshToken oldest = refreshTokens.stream()
+        .min(Comparator.comparing(RefreshToken::getExpiredAt))
+        .orElseThrow();
+
+    refreshTokens.remove(oldest);
   }
 }

@@ -3,31 +3,41 @@ package com.rouby.user.user.application.service;
 import static com.rouby.user.user.application.exception.UserErrorCode.DUPLICATE_EMAIL;
 import static com.rouby.user.user.application.exception.UserErrorCode.EMAIL_NOT_VERIFIED;
 import static com.rouby.user.user.application.exception.UserErrorCode.EMAIL_VERIFICATION_TOKEN_MISMATCH;
+import static com.rouby.user.user.application.exception.UserErrorCode.EXPIRED_REFRESH_TOKEN;
 import static com.rouby.user.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION;
 import static com.rouby.user.user.application.exception.UserErrorCode.INVALID_EMAIL_VERIFICATION_TOKEN;
+import static com.rouby.user.user.application.exception.UserErrorCode.INVALID_USER;
+import static com.rouby.user.user.application.exception.UserErrorCode.INVALID_USER_PASSWORD;
 import static com.rouby.user.user.application.exception.UserErrorCode.ONBOARDING_STATE_CHANGE_NOT_ALLOWED;
 import static com.rouby.user.user.application.exception.UserErrorCode.PASSWORD_TOKEN_EXPIRED;
+import static com.rouby.user.user.application.exception.UserErrorCode.TOO_MANY_SESSIONS;
 import static com.rouby.user.user.application.exception.UserErrorCode.USER_NOT_FOUND;
 
 import com.rouby.common.props.SettingProperties;
 import com.rouby.user.user.application.dto.command.CreateUserCommand;
 import com.rouby.user.user.application.dto.command.FindPasswordCommand;
+import com.rouby.user.user.application.dto.command.LoginCommand;
+import com.rouby.user.user.application.dto.command.RefreshTokenCommand;
 import com.rouby.user.user.application.dto.command.ResetPasswordByTokenCommand;
 import com.rouby.user.user.application.dto.command.ResetPasswordCommand;
 import com.rouby.user.user.application.dto.command.SaveVerificationCodeCommand;
 import com.rouby.user.user.application.dto.command.UpdateUserInfoCommand;
 import com.rouby.user.user.application.dto.command.UpdateUserRoubySettingCommand;
 import com.rouby.user.user.application.dto.command.VerifyEmailCommand;
+import com.rouby.user.user.application.dto.info.LoginInfo;
+import com.rouby.user.user.application.dto.info.TokenInfo;
 import com.rouby.user.user.application.exception.UserErrorCode;
 import com.rouby.user.user.application.exception.UserException;
 import com.rouby.user.user.application.service.token.TokenProvider;
 import com.rouby.user.user.application.service.verification.VerificationEmailCode;
 import com.rouby.user.user.application.service.verification.VerificationEmailCodeStorage;
 import com.rouby.user.user.application.service.verification.VerificationPasswordTokenStorage;
+import com.rouby.user.user.domain.entity.RefreshToken;
 import com.rouby.user.user.domain.entity.User;
 import com.rouby.user.user.domain.repository.UserRepository;
 import com.rouby.user.user.domain.service.UserPasswordEncoder;
 import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -41,7 +51,6 @@ public class UserWriteService {
   private final VerificationEmailCodeStorage verificationEmailCodeStorage;
   private final VerificationPasswordTokenStorage verificationPasswordCodeStorage;
   private final SettingProperties settingProperties;
-
   private final TokenProvider tokenProvider;
 
   @Transactional
@@ -197,5 +206,64 @@ public class UserWriteService {
         .orElseThrow(() -> UserException.from(USER_NOT_FOUND));
 
     user.delete(userId);
+  }
+
+  @Transactional
+  public LoginInfo validUser(LoginCommand command) {
+    User user = userRepository.findByEmail(command.email())
+        .orElseThrow(() -> UserException.from(INVALID_USER));
+
+    if (!passwordEncoder.matches(command.password(), user.getPassword())) {
+      throw UserException.from(INVALID_USER_PASSWORD);
+    }
+
+    long tokenCount = userRepository.countRefreshTokensByUser(user);
+
+    if (tokenCount >= 10) {
+      if (!command.isForceLogin()) {
+        throw UserException.from(TOO_MANY_SESSIONS);
+      } else {
+        user.removeOldestRefreshTokenByExpiration();
+      }
+    }
+
+    String token = tokenProvider.createRefreshToken();
+    user.saveRefreshToken(passwordEncoder, token);
+
+    return new LoginInfo(tokenProvider.createAccessToken(
+        user.getId().toString(),
+        user.getRole().toString(),
+        user.getEmail()),
+        token);
+  }
+
+  @Transactional
+  public TokenInfo refresh(RefreshTokenCommand command) {
+    String oldRefreshToken = command.refreshToken();
+
+    String email = tokenProvider.getEmailFromExpiredToken(command.accessToken());
+
+    User user = userRepository.findByEmail(email)
+        .orElseThrow(() -> UserException.from(INVALID_USER));
+
+    if (user.isExpiredRefreshToken(passwordEncoder, oldRefreshToken)) {
+      throw UserException.from(EXPIRED_REFRESH_TOKEN);
+    }
+
+    String newAccessToken = tokenProvider.createAccessToken(
+        user.getId().toString(),
+        user.getRole().toString(),
+        user.getEmail()
+    );
+
+    String newRefreshToken = tokenProvider.createRefreshToken();
+    RefreshToken refreshToken = user.rotate(passwordEncoder, oldRefreshToken, newRefreshToken);
+
+    return new TokenInfo(newAccessToken, refreshToken.getToken());
+  }
+
+  @Transactional
+  public long deleteExpiredRefreshTokens(LocalDateTime cutoffTime) {
+    return userRepository.deleteExpiredRefreshTokens(cutoffTime);
   }
 }

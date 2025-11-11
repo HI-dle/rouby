@@ -6,4 +6,7 @@ package com.rouby.user.user.application.dto.command;
  * @author : hanjihoon
  */
 public record LoginCommand(String email,
-                           String password) {}
+                           String password,
+                           boolean isForceLogin) {
+
+}

@@ -2,6 +2,7 @@ package com.rouby.user.user.infrastructure.token;
 
 import com.rouby.user.user.application.service.token.TokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,11 @@ public class TokenProviderImpl implements TokenProvider {
   }
 
   @Override
+  public String createRefreshToken() {
+    return UUID.randomUUID().toString();
+  }
+
+  @Override
   public boolean validateAccessToken(String token) {
     return jwtAuthTokenProvider.validateAccessToken(token);
   }
@@ -30,6 +36,11 @@ public class TokenProviderImpl implements TokenProvider {
   @Override
   public String getEmail(String token) {
     return jwtAuthTokenProvider.getEmail(token);
+  }
+
+  @Override
+  public String getEmailFromExpiredToken(String token) {
+    return jwtAuthTokenProvider.getEmailFromExpiredToken(token);
   }
 
   @Override

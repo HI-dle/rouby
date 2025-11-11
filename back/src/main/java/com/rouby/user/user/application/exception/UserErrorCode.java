@@ -31,6 +31,9 @@ public enum UserErrorCode implements ErrorCode {
       "이미 인증이 완료된 코드입니다.", "EMAIL_ALREADY_VERIFIED", HttpStatus.CONFLICT),
   ONBOARDING_STATE_CHANGE_NOT_ALLOWED("온보딩 상태를 변경할 수 없습니다.",
       "ONBOARDING_STATE_CHANGE_NOT_ALLOWED", HttpStatus.BAD_REQUEST),
+  EXPIRED_REFRESH_TOKEN("리프레시 토큰이 만료되었습니다.", "EXPIRED_REFRESH_TOKEN", HttpStatus.UNAUTHORIZED),
+  INVALID_REFRESH_TOKEN("일치하는 리프레시 토큰이 없습니다.", "INVALID_REFRESH_TOKEN", HttpStatus.UNAUTHORIZED),
+  TOO_MANY_SESSIONS("리프레시 토큰의 개수가 초과하였습니다.", "TOO_MANY_SESSIONS", HttpStatus.CONFLICT)
   ;
 
   private final String message;

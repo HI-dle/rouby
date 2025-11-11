@@ -1,19 +1,13 @@
 package com.rouby.user.user.application.service;
 
-import static com.rouby.user.user.application.exception.UserErrorCode.INVALID_USER;
-import static com.rouby.user.user.application.exception.UserErrorCode.INVALID_USER_PASSWORD;
 import static com.rouby.user.user.application.exception.UserErrorCode.USER_NOT_FOUND;
 
-import com.rouby.user.user.application.dto.command.LoginCommand;
-import com.rouby.user.user.application.dto.info.LoginInfo;
 import com.rouby.user.user.application.dto.info.RoubySettingInfo;
 import com.rouby.user.user.application.dto.info.UserDetailInfo;
 import com.rouby.user.user.application.dto.info.UserInfo;
 import com.rouby.user.user.application.exception.UserException;
-import com.rouby.user.user.application.service.token.TokenProvider;
 import com.rouby.user.user.domain.entity.User;
 import com.rouby.user.user.domain.repository.UserRepository;
-import com.rouby.user.user.domain.service.UserPasswordEncoder;
 import java.time.LocalTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -25,25 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserReadService {
 
   private final UserRepository userRepository;
-  private final UserPasswordEncoder passwordEncoder;
-  private final TokenProvider tokenProvider;
-
-  public LoginInfo validUser(LoginCommand command) {
-    User user = findByEmail(command.email());
-
-    if (!passwordEncoder.matches(command.password(), user.getPassword())) {
-      throw UserException.from(INVALID_USER_PASSWORD);
-    }
-    return new LoginInfo(tokenProvider.createAccessToken(
-        user.getId().toString(),
-        user.getRole().toString(),
-        user.getEmail()));
-  }
-
-  public User findByEmail(String email) {
-    return userRepository.findByEmail(email)
-        .orElseThrow(() -> UserException.from(INVALID_USER));
-  }
 
   public boolean alreadyExistsEmail(String email) {
     return userRepository.existsByEmail(email);

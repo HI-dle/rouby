@@ -6,20 +6,21 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
 /**
- * @Date : 2025. 07. 08.
- *
  * @author : hanjihoon
+ * @Date : 2025. 07. 08.
  */
 @Builder
-public record LoginRequest(@Email(message = "올바른 이메일 형식이 아닙니다.")
-                           @NotBlank(message = "이메일은 필수입니다.")
-                           String email,
+public record LoginRequest(
+    @Email(message = "올바른 이메일 형식이 아닙니다.")
+    @NotBlank(message = "이메일은 필수입니다.")
+    String email,
+    @NotBlank(message = "비밀번호는 필수입니다.")
+    String password,
+    boolean isForceLogin
+) {
 
-                           @NotBlank(message = "비밀번호는 필수입니다.")
-                           String password) {
-
-  public LoginCommand toApplication(){
-  return new LoginCommand(email, password);
+  public LoginCommand toApplication() {
+    return new LoginCommand(email, password, isForceLogin);
   }
 }
 
