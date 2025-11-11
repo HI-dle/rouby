@@ -14,13 +14,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
- * @Date : 2025. 07. 08.
- *
  * @author : hanjihoon
+ * @Date : 2025. 07. 08.
  */
 @Component
 @Slf4j
 public class JwtAuthTokenProvider {
+
   public static final String BEARER_PREFIX = "Bearer ";
   private static final String CLAIM_ROLE_KEY = "role";
   private static final String CLAIM_EMAIL_KEY = "email";
@@ -75,6 +75,9 @@ public class JwtAuthTokenProvider {
     return getClaimFromToken(token, claims -> claims.get(CLAIM_EMAIL_KEY, String.class));
   }
 
+  public String getEmailFromExpiredToken(String token) {
+    return getClaimFromExpiredToken(token, claims -> claims.get(CLAIM_EMAIL_KEY, String.class));
+  }
 
   public String getRole(String token) {
     return getClaimFromToken(token, claims -> claims.get(CLAIM_ROLE_KEY, String.class));
@@ -98,6 +101,16 @@ public class JwtAuthTokenProvider {
         .parseSignedClaims(removeBearerPrefix(token))
         .getPayload();
     return claimsResolver.apply(claims);
+  }
+
+  private <T> T getClaimFromExpiredToken(String token, Function<Claims, T> claimsResolver) {
+    try {
+      Claims claims = Jwts.parser().verifyWith(key).build()
+          .parseSignedClaims(removeBearerPrefix(token)).getPayload();
+      return claimsResolver.apply(claims);
+    } catch (ExpiredJwtException ex) {
+      return claimsResolver.apply(ex.getClaims());
+    }
   }
 
   private String removeBearerPrefix(String token) {
