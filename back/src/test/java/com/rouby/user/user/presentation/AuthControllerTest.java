@@ -44,6 +44,7 @@ class AuthControllerTest extends ControllerTestSupport {
     LoginRequest loginRequest = LoginRequest.builder()
         .email("test@gmail.com")
         .password("1234")
+        .isForceLogin(true)
         .build();
 
     LoginCommand command = loginRequest.toApplication();
@@ -64,7 +65,8 @@ class AuthControllerTest extends ControllerTestSupport {
             preprocessResponse(prettyPrint()),
             requestFields(
                 fieldWithPath("email").description("로그인 이메일"),
-                fieldWithPath("password").description("로그인 비밀번호")
+                fieldWithPath("password").description("로그인 비밀번호"),
+                fieldWithPath("isForceLogin").description("로그인 세션이 초과 되었을 때 강제 로그인 여부")
             )
         ));
   }
@@ -77,6 +79,7 @@ class AuthControllerTest extends ControllerTestSupport {
     LoginRequest loginRequest = LoginRequest.builder()
         .email("jinyoungchoi")
         .password("1234")
+        .isForceLogin(false)
         .build();
 
     doThrow(UserException.from(INVALID_USER)).when(userUsecase).login(any(LoginCommand.class));
@@ -95,7 +98,8 @@ class AuthControllerTest extends ControllerTestSupport {
             preprocessResponse(prettyPrint()),
             requestFields(
                 fieldWithPath("email").description("로그인 이메일"),
-                fieldWithPath("password").description("로그인 비밀번호")
+                fieldWithPath("password").description("로그인 비밀번호"),
+                fieldWithPath("isForceLogin").description("로그인 세션이 초과 되었을 때 강제 로그인 여부")
             ),
             getValidationErrorResponseFieldSnippet()
         ));
