@@ -8,7 +8,7 @@ import BaseButton from '@/components/common/BaseButton.vue'
 import BaseModal from '@/components/common/BaseModal.vue'
 import { ref } from 'vue';
 import { extractDate } from '@/shared/utils/dateTimeUtils'
-import DeleteScheduleModal from "@/features/schedule/components/DeleteScheduleModal.vue";
+import ConfirmModal from '@/components/common/ConfirmModal.vue'
 
 const props = defineProps({
   form: Object,
@@ -205,9 +205,12 @@ const deleteModal = ref(false);
     :message="errorModal.msg"
     buttonText="확인"
   />
-  <DeleteScheduleModal
+  <ConfirmModal
     v-model="deleteModal"
-    @deleteOne="() => emit('deleteOne', form)"
-    @deleteAll="() => emit('deleteAll', form)"
+    :message="'삭제하시겠습니까?'"
+    :actions="[
+    { label: '해당 일정만 삭제', type: 'primary', handler: handleDeleteOne },
+    { label: '이후 일정 모두 삭제', type: 'secondary', handler: handleDeleteAll }
+  ]"
   />
 </template>

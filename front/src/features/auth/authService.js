@@ -5,22 +5,24 @@ import {
   login,
   requestEmailVerification as requestEmailVerificationApi,
   resetPassword as resetPasswordApi,
+  refresh as refreshApi,
   signup as signupApi,
   verificationPasswordCode as verificationPasswordCodeApi,
   verifyEmail as verifyEmailApi,
 } from './api.js'
 import {
-  toEmailVerificationPayload,
+  toEmailVerificationPayload, toRefreshPayload,
   toResetPasswordPayload,
   toSignupPayload,
   toVerifyCodePayload,
-  toVerifyPasswordCodePayload,
+  toVerifyPasswordCodePayload
 } from './dto.js'
 import { useUserInfoStore } from '@/stores/useUserInfoStore.js'
 import { useAuthStore } from '@/stores/useAuthStore.js'
 import { registerUserDevice } from '../user/userService.js'
 import { requestPermissionAndInitFCM } from '@/shared/utils/notificationUtils.js'
 import { setPiniaStorage } from '@/shared/utils/piniaPersistUtils.js'
+import { getTokenExpiration } from '@/shared/utils/jwtUtils'
 
 export const requestEmailVerification = wrapApi(
   (email) => requestEmailVerificationApi(toEmailVerificationPayload(email)),
@@ -82,7 +84,23 @@ export const verificationPasswordCode = wrapApi(
   },
 )
 
-export const loginAndBootstrap = async (email, password, staySignedIn) => {
+export const refresh = wrapApi(
+  async (form) => {
+    const response = await refreshApi(toRefreshPayload(form))
+    const { accessToken, refreshToken } = response.data
+    return {
+      ok: true,
+      accessToken,
+      refreshToken,
+    }
+  },
+  {
+    fieldMessages: {},
+    fallbackMessage: '토큰 갱신에 실패했습니다.',
+  },
+)
+
+export const loginAndBootstrap = async (email, password, staySignedIn, isForceLogin) => {
   const userInfoStore = useUserInfoStore()
   const authStore = useAuthStore()
 
@@ -90,12 +108,17 @@ export const loginAndBootstrap = async (email, password, staySignedIn) => {
   const response = await login({
     email: email.trim(),
     password: password,
+    isForceLogin: isForceLogin
   })
 
   // 2. 토큰 저장
   setPiniaStorage(staySignedIn)
-  authStore.setToken(response.data.token)
+  authStore.setAccessToken(response.data.accessToken)
+  authStore.setRefreshToken(response.data.refreshToken)
   authStore.setStaySignedIn(staySignedIn)
+  authStore.setAccessTokenExpirationTime(
+    getTokenExpiration(response.data.accessToken)
+  )
 
   // 3. 유저 기본 정보 요청
   const userRes = await getUserBasicInfo()

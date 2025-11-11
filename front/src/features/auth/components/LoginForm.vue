@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="$emit('submit')" class="space-y-4">
+  <form @submit.prevent="emit('submit')" class="space-y-4">
     <!-- 이메일 입력 -->
     <div>
       <BaseInput
@@ -70,6 +70,16 @@
       />
     </div>
   </form>
+  <ConfirmModal
+    v-model="showForceLoginModal"
+    message="로그인 세션을 10개 초과하여 생성할 수 없습니다.
+             계속해서 로그인을 진행하시는 경우, 가장 오래된 로그인 세션이 만료됩니다.
+             계속하시겠습니까?"
+    :actions="[
+      { label: '계속 로그인', type: 'primary', handler: handleForceLogin },
+      { label: '취소', type: 'secondary', handler: () => showForceLoginModal = false }
+    ]"
+  />
 </template>
 
 <script setup>
@@ -81,6 +91,8 @@ import SocialLoginButton from './SocialLoginButton.vue'
 import kakaoIcon from '@/assets/kakao.svg'
 import googleIcon from '@/assets/google.svg'
 import appleIcon from '@/assets/apple.svg'
+import ConfirmModal from '@/components/common/ConfirmModal.vue'
+import { ref } from 'vue'
 
 // Props (에러 메시지, 상태)
 const props = defineProps({
@@ -95,6 +107,13 @@ const staySignedIn = defineModel('staySignedIn', {
   type: Boolean,
   default: false,
 })
+const showForceLoginModal = defineModel('showForceLoginModal', { type: Boolean, default: false })
+
+const handleForceLogin = async () => {
+  showForceLoginModal.value = false
+  // 강제 로그인 emit
+  emit('force-login')
+}
 
 const emit = defineEmits([
   'validate-email',

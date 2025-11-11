@@ -33,13 +33,18 @@ export const verificationPasswordCode = (payload) => {
   })
 }
 
-export const login = async ({ email, password }) => {
+export const login = async ({ email, password, isForceLogin }) => {
   return await axios.post('/v1/auth/login', {
     email,
     password,
+    isForceLogin
   })
 }
 
 export async function getUserBasicInfo() {
   return await axios.get('/v1/users/basic-info')
+}
+
+export const refresh = (payload) => {
+  return axios.post('/v1/auth/refresh', payload)
 }
